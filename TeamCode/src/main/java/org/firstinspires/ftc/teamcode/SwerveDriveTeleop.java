@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name="SwerveDrive: Teleop", group="SwerveDrive")
 public class SwerveDriveTeleop extends LinearOpMode {
-
+//ifdsfdshj
     /* Declare OpMode members. */
     SwerveDriveHardware robot           = new SwerveDriveHardware();
 
@@ -32,7 +32,7 @@ public class SwerveDriveTeleop extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
-            // The Left stick up/down shold move the wheels forward and backwards, while the Right stick left/right should rotate the wheels
+            // The left stick up/down moves the wheels forward and backwards, while the right stick left/right should rotate the wheels
             motorPower = -gamepad1.left_stick_y;
             servoPos = -gamepad1.right_stick_x;
 
@@ -45,7 +45,13 @@ public class SwerveDriveTeleop extends LinearOpMode {
                 servoPos = .5;
             }
 
+            // Possible idea where holding the left stick farther from the center makes it turn the servo farther. Not completed.
+//            while (-gamepad1.left_stick_y > .10 && -gamepad1.left_stick_y < -.10) {
+//                servoPos = -gamepad1.left_stick_y * .2;
+//            }
+
             // Normalize the values so neither exceed +/- 1.0
+
             max = Math.max(Math.abs(motorPower), Math.abs(servoPos));
             if (max > 1.0)
             {
