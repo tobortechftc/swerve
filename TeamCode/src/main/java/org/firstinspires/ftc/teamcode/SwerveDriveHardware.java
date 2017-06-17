@@ -27,15 +27,20 @@ public class SwerveDriveHardware {
     public DcMotor servoBackLeft = null;
     public DcMotor servoBackRight = null;
 
-    final static double SERVO_FL_FORWARD_POSITION = 0.5;
-    final static double SERVO_FR_FORWARD_POSITION = 0.5;
-    final static double SERVO_BL_FORWARD_POSITION = 0.5;
-    final static double SERVO_BR_FORWARD_POSITION = 0.5;
+    final static double SERVO_FL_FORWARD_POSITION = 0.05;
+    final static double SERVO_FR_FORWARD_POSITION = 0.05;
+    final static double SERVO_BL_FORWARD_POSITION = 0.05;
+    final static double SERVO_BR_FORWARD_POSITION = 0.05;
 
     final static double SERVO_FL_STRAFE_POSITION = 0.5;
     final static double SERVO_FR_STRAFE_POSITION = 0.5;
     final static double SERVO_BL_STRAFE_POSITION = 0.5;
     final static double SERVO_BR_STRAFE_POSITION = 0.5;
+
+    final static double SERVO_FL_TURN_POSITION = 0.5;
+    final static double SERVO_FR_TURN_POSITION = 0.5;
+    final static double SERVO_BL_TURN_POSITION = 0.5;
+    final static double SERVO_BR_TURN_POSITION = 0.5;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
