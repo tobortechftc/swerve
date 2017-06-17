@@ -6,6 +6,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class SwerveDriveHardware {
+
+    boolean isForward = true;
+
+    double motorPowerLeft;
+    double motorPowerRight;
+    double servoPosFL;
+    double servoPosFR;
+    double servoPosBL;
+    double servoPosBR;
+
     /* Public OpMode members. */
     public DcMotor motorFrontLeft = null;
     public DcMotor motorFrontRight = null;
@@ -16,6 +26,16 @@ public class SwerveDriveHardware {
     public DcMotor servoFrontRight = null;
     public DcMotor servoBackLeft = null;
     public DcMotor servoBackRight = null;
+
+    final static double SERVO_FL_FORWARD_POSITION = 0.5;
+    final static double SERVO_FR_FORWARD_POSITION = 0.5;
+    final static double SERVO_BL_FORWARD_POSITION = 0.5;
+    final static double SERVO_BR_FORWARD_POSITION = 0.5;
+
+    final static double SERVO_FL_STRAFE_POSITION = 0.5;
+    final static double SERVO_FR_STRAFE_POSITION = 0.5;
+    final static double SERVO_BL_STRAFE_POSITION = 0.5;
+    final static double SERVO_BR_STRAFE_POSITION = 0.5;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -48,15 +68,15 @@ public class SwerveDriveHardware {
 
         // Set all motors to zero power and set all servos to central position
         // May want to change servo #'s to the value where all wheels are pointing forward.
+        servoFrontLeft.setPower(SERVO_FL_FORWARD_POSITION);
+        servoFrontRight.setPower(SERVO_FR_FORWARD_POSITION);
+        servoBackLeft.setPower(SERVO_BL_FORWARD_POSITION);
+        servoBackRight.setPower(SERVO_BR_FORWARD_POSITION);
+
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
-
-        servoFrontLeft.setPower(0);
-        servoFrontRight.setPower(0);
-        servoBackLeft.setPower(0);
-        servoBackRight.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
