@@ -34,15 +34,14 @@ public class SwerveDriveTeleop extends LinearOpMode {
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
             // The left stick up/down moves the wheels forward and backwards, while the right stick left/right should rotate the wheels
             motorPower = -gamepad1.left_stick_y;
-            servoPos = -gamepad1.right_stick_x;
 
             // When the left bumper is pressed, it moves the servos to a -45 degree bearing.
             // When the right bumper is pressed, it moves the servos to a 45 degree bearing.
             if (gamepad1.left_bumper) {
-                servoPos = -.5;
+                servoPos += -.01;
             }
             if (gamepad1.right_bumper) {
-                servoPos = .5;
+                servoPos += .01;
             }
 
             // Possible idea where holding the left stick farther from the center makes it turn the servo farther. Not completed.
