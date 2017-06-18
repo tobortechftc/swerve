@@ -61,8 +61,8 @@ public class SwerveDriveHardware {
         motorBackLeft = hwMap.dcMotor.get("motorBackLeft");
         motorBackLeft = hwMap.dcMotor.get("motorBackRight");
 
-        servoFrontLeft = hwMap.dcMotor.get("servoFrontLeft");
         servoFrontRight = hwMap.dcMotor.get("servoFrontRight");
+        servoFrontLeft = hwMap.dcMotor.get("servoFrontLeft");
         servoBackLeft = hwMap.dcMotor.get("servoBackLeft");
         servoBackLeft = hwMap.dcMotor.get("servoBackRight");
 
