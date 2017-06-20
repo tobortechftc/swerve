@@ -22,20 +22,20 @@ public class SwerveDriveHardware {
     public DcMotor motorBackLeft = null;
     public DcMotor motorBackRight = null;
 
-    public DcMotor servoFrontLeft = null;
-    public DcMotor servoFrontRight = null;
-    public DcMotor servoBackLeft = null;
-    public DcMotor servoBackRight = null;
+    public Servo servoFrontLeft = null;
+    public Servo servoFrontRight = null;
+    public Servo servoBackLeft = null;
+    public Servo servoBackRight = null;
 
     final static double SERVO_FL_FORWARD_POSITION = 0.05;
     final static double SERVO_FR_FORWARD_POSITION = 0.05;
     final static double SERVO_BL_FORWARD_POSITION = 0.05;
-    final static double SERVO_BR_FORWARD_POSITION = 0.05;
+    final static double SERVO_BR_FORWARD_POSITION = 0.95;
 
-    final static double SERVO_FL_STRAFE_POSITION = 0.5;
-    final static double SERVO_FR_STRAFE_POSITION = 0.5;
-    final static double SERVO_BL_STRAFE_POSITION = 0.5;
-    final static double SERVO_BR_STRAFE_POSITION = 0.5;
+    final static double SERVO_FL_STRAFE_POSITION = 0.95;
+    final static double SERVO_FR_STRAFE_POSITION = 0.95;
+    final static double SERVO_BL_STRAFE_POSITION = 0.95;
+    final static double SERVO_BR_STRAFE_POSITION = 0.05;
 
     final static double SERVO_FL_TURN_POSITION = 0.5;
     final static double SERVO_FR_TURN_POSITION = 0.5;
@@ -59,12 +59,12 @@ public class SwerveDriveHardware {
         motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
         motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
         motorBackLeft = hwMap.dcMotor.get("motorBackLeft");
-        motorBackLeft = hwMap.dcMotor.get("motorBackRight");
+        motorBackRight = hwMap.dcMotor.get("motorBackRight");
 
-        servoFrontRight = hwMap.dcMotor.get("servoFrontRight");
-        servoFrontLeft = hwMap.dcMotor.get("servoFrontLeft");
-        servoBackLeft = hwMap.dcMotor.get("servoBackLeft");
-        servoBackLeft = hwMap.dcMotor.get("servoBackRight");
+        servoFrontRight = hwMap.servo.get("servoFrontRight");
+        servoFrontLeft = hwMap.servo.get("servoFrontLeft");
+        servoBackLeft = hwMap.servo.get("servoBackLeft");
+        servoBackRight = hwMap.servo.get("servoBackRight");
 
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -73,10 +73,10 @@ public class SwerveDriveHardware {
 
         // Set all motors to zero power and set all servos to central position
         // May want to change servo #'s to the value where all wheels are pointing forward.
-        servoFrontLeft.setPower(SERVO_FL_FORWARD_POSITION);
-        servoFrontRight.setPower(SERVO_FR_FORWARD_POSITION);
-        servoBackLeft.setPower(SERVO_BL_FORWARD_POSITION);
-        servoBackRight.setPower(SERVO_BR_FORWARD_POSITION);
+        servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
+        servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
+        servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
+        servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
 
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);

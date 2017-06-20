@@ -36,19 +36,20 @@ public class SwerveDriveTeleop extends LinearOpMode {
 
             if (gamepad1.x) {
                 if (robot.isForward) {
-                    robot.servoFrontLeft.setPower(robot.SERVO_FL_STRAFE_POSITION);
-                    robot.servoFrontRight.setPower(robot.SERVO_FR_STRAFE_POSITION);
-                    robot.servoBackLeft.setPower(robot.SERVO_BL_STRAFE_POSITION);
-                    robot.servoBackRight.setPower(robot.SERVO_BR_STRAFE_POSITION);
+                    robot.servoFrontLeft.setPosition(robot.SERVO_FL_STRAFE_POSITION);
+                    robot.servoFrontRight.setPosition(robot.SERVO_FR_STRAFE_POSITION);
+                    robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
+                    robot.servoBackRight.setPosition(robot.SERVO_BR_STRAFE_POSITION);
                     robot.isForward = false;
                 }
                 else  {
-                    robot.servoFrontLeft.setPower(robot.SERVO_FL_FORWARD_POSITION);
-                    robot.servoFrontRight.setPower(robot.SERVO_FR_FORWARD_POSITION);
-                    robot.servoBackLeft.setPower(robot.SERVO_BL_FORWARD_POSITION);
-                    robot.servoBackRight.setPower(robot.SERVO_BR_FORWARD_POSITION);
+                    robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+                    robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+                    robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+                    robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
                     robot.isForward = true;
                 }
+                sleep(100);
             }
 
             // Possible idea where holding the left stick farther from the center makes it turn the servo farther. Not completed.
