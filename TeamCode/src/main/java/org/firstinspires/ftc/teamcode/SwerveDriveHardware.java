@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class SwerveDriveHardware {
 
     boolean isForward = true;
+    boolean isTurn = false;
 
     double motorPowerLeft;
     double motorPowerRight;
