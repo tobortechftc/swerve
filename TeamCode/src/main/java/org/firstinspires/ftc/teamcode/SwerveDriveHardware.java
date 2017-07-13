@@ -28,12 +28,12 @@ public class SwerveDriveHardware {
     public Servo servoBackLeft = null;
     public Servo servoBackRight = null;
 
-    final static double SERVO_FL_FORWARD_POSITION = 0.05;
-    final static double SERVO_FR_FORWARD_POSITION = 0.05;
-    final static double SERVO_BL_FORWARD_POSITION = 0.05;
-    final static double SERVO_BR_FORWARD_POSITION = 0.95;
+    final static double SERVO_FL_FORWARD_POSITION = 0.55;
+    final static double SERVO_FR_FORWARD_POSITION = 0.45;
+    final static double SERVO_BL_FORWARD_POSITION = 0.45;
+    final static double SERVO_BR_FORWARD_POSITION = 0.58;
 
-    final static double SERVO_FL_STRAFE_POSITION = 0.95;
+    final static double SERVO_FL_STRAFE_POSITION = 0.05;
     final static double SERVO_FR_STRAFE_POSITION = 0.95;
     final static double SERVO_BL_STRAFE_POSITION = 0.95;
     final static double SERVO_BR_STRAFE_POSITION = 0.05;
@@ -78,6 +78,11 @@ public class SwerveDriveHardware {
         servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
         servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
         servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
+
+        servoPosFL = SERVO_FL_FORWARD_POSITION;
+        servoPosFR = SERVO_FR_FORWARD_POSITION;
+        servoPosBL = SERVO_BL_FORWARD_POSITION;
+        servoPosBR = SERVO_BR_FORWARD_POSITION;
 
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);

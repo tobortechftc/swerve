@@ -33,6 +33,31 @@ public class SwerveDriveTeleop extends LinearOpMode {
             robot.motorPowerLeft = -gamepad1.left_stick_y;
             robot.motorPowerRight = -gamepad1.right_stick_y;
 
+            if (gamepad1.left_trigger > 0.1){
+
+                robot.servoFrontLeft.setPosition(robot.servoPosFL + 0.05);
+                robot.servoFrontRight.setPosition(robot.servoPosFR + 0.05);
+                robot.servoBackLeft.setPosition(robot.servoPosBL + 0.05);
+                robot.servoBackRight.setPosition(robot.servoPosBR + 0.05);
+
+                robot.servoPosFL += 0.05;
+                robot.servoPosFR += 0.05;
+                robot.servoPosBL += 0.05;
+                robot.servoPosBR += 0.05;
+            }
+            if (gamepad1.right_trigger > 0.1){
+
+                robot.servoFrontLeft.setPosition(robot.servoPosFL - 0.05);
+                robot.servoFrontRight.setPosition(robot.servoPosFR - 0.05);
+                robot.servoBackLeft.setPosition(robot.servoPosBL - 0.05);
+                robot.servoBackRight.setPosition(robot.servoPosBR - 0.05);
+
+                robot.servoPosFL -= 0.05;
+                robot.servoPosFR -= 0.05;
+                robot.servoPosBL -= 0.05;
+                robot.servoPosBR -= 0.05;
+            }
+
 
             if (gamepad1.x) {
                 if (robot.isForward) {
@@ -66,12 +91,14 @@ public class SwerveDriveTeleop extends LinearOpMode {
                         robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
                         robot.servoBackRight.setPosition(robot.SERVO_BR_STRAFE_POSITION);
                     }
+                    robot.isTurn = false;
                 }
                 else{
                     robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
                     robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
                     robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
                     robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+                    robot.isTurn = true;
                 }
             }
 
