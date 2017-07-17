@@ -7,8 +7,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class SwerveDriveHardware {
 
+    boolean isCarMode = false;
     boolean isForward = true;
     boolean isTurn = false;
+    boolean isTrueCar = false;
+
+    //Booleans for Debugging
+    boolean isTestingFL = false;
+    boolean isTestingFR = false;
+    boolean isTestingBL = false;
+    boolean isTestingBR = false;
 
     double motorPowerLeft;
     double motorPowerRight;
@@ -29,9 +37,9 @@ public class SwerveDriveHardware {
     public Servo servoBackRight = null;
 
     final static double SERVO_FL_FORWARD_POSITION = 0.55;
-    final static double SERVO_FR_FORWARD_POSITION = 0.45;
-    final static double SERVO_BL_FORWARD_POSITION = 0.45;
-    final static double SERVO_BR_FORWARD_POSITION = 0.58;
+    final static double SERVO_FR_FORWARD_POSITION = 0.50;
+    final static double SERVO_BL_FORWARD_POSITION = 0.47;
+    final static double SERVO_BR_FORWARD_POSITION = 0.55;
 
     final static double SERVO_FL_STRAFE_POSITION = 0.05;
     final static double SERVO_FR_STRAFE_POSITION = 0.95;
