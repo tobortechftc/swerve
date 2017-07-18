@@ -290,6 +290,13 @@ public class SwerveDriveTeleop extends LinearOpMode {
                 robot.motorBackRight.setPower(robot.motorPowerRight);
 
             }
+            else if(robot.isTurn){
+                robot.motorPowerTurn = gamepad1.right_stick_x;
+                robot.motorFrontLeft.setPower(robot.motorPowerTurn);
+                robot.motorFrontRight.setPower(-robot.motorPowerTurn);
+                robot.motorBackLeft.setPower(robot.motorPowerTurn);
+                robot.motorBackRight.setPower(-robot.motorPowerTurn);
+            }
             else{
                 robot.motorPowerLeft = gamepad1.left_stick_y;
                 robot.motorPowerRight = gamepad1.right_stick_y;

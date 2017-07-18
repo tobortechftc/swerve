@@ -20,6 +20,7 @@ public class SwerveDriveHardware {
 
     double motorPowerLeft;
     double motorPowerRight;
+    double motorPowerTurn;
     double servoPosFL;
     double servoPosFR;
     double servoPosBL;
@@ -46,10 +47,10 @@ public class SwerveDriveHardware {
     final static double SERVO_BL_STRAFE_POSITION = 0.95;
     final static double SERVO_BR_STRAFE_POSITION = 0.05;
 
-    final static double SERVO_FL_TURN_POSITION = 0.5;
-    final static double SERVO_FR_TURN_POSITION = 0.5;
-    final static double SERVO_BL_TURN_POSITION = 0.5;
-    final static double SERVO_BR_TURN_POSITION = 0.5;
+    final static double SERVO_FL_TURN_POSITION = 0.29;
+    final static double SERVO_FR_TURN_POSITION = 0.78;
+    final static double SERVO_BL_TURN_POSITION = 0.73;
+    final static double SERVO_BR_TURN_POSITION = 0.31;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
