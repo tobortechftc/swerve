@@ -37,20 +37,20 @@ public class SwerveDriveHardware {
     public Servo servoBackLeft = null;
     public Servo servoBackRight = null;
 
-    final static double SERVO_FL_FORWARD_POSITION = 0.55;
-    final static double SERVO_FR_FORWARD_POSITION = 0.50;
-    final static double SERVO_BL_FORWARD_POSITION = 0.47;
-    final static double SERVO_BR_FORWARD_POSITION = 0.55;
+    final static double SERVO_FL_FORWARD_POSITION = 0.65;
+    final static double SERVO_FR_FORWARD_POSITION = 0.41;
+    final static double SERVO_BL_FORWARD_POSITION = 0.37;
+    final static double SERVO_BR_FORWARD_POSITION = 0.68;
 
-    final static double SERVO_FL_STRAFE_POSITION = 0.05;
-    final static double SERVO_FR_STRAFE_POSITION = 0.95;
-    final static double SERVO_BL_STRAFE_POSITION = 0.95;
-    final static double SERVO_BR_STRAFE_POSITION = 0.05;
+    final static double SERVO_FL_STRAFE_POSITION = 0.09;
+    final static double SERVO_FR_STRAFE_POSITION = 0.96;
+    final static double SERVO_BL_STRAFE_POSITION = 0.92;
+    final static double SERVO_BR_STRAFE_POSITION = 0.12;
 
-    final static double SERVO_FL_TURN_POSITION = 0.29;
-    final static double SERVO_FR_TURN_POSITION = 0.78;
-    final static double SERVO_BL_TURN_POSITION = 0.73;
-    final static double SERVO_BR_TURN_POSITION = 0.31;
+    final static double SERVO_FL_TURN_POSITION = 0.40;
+    final static double SERVO_FR_TURN_POSITION = 0.64;
+    final static double SERVO_BL_TURN_POSITION = 0.63;
+    final static double SERVO_BR_TURN_POSITION = 0.43;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
