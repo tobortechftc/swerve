@@ -12,7 +12,7 @@ public class SwerveDriveTeleop extends LinearOpMode {
     SwerveDriveHardware robot           = new SwerveDriveHardware();
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
@@ -101,6 +101,14 @@ public class SwerveDriveTeleop extends LinearOpMode {
                     robot.isTestingBL = false;
                     robot.isTestingBR = false;
 
+                }
+
+                if(gamepad1.left_bumper) {
+                    robot.TurnLeftD(0.2, 90.0);
+                }
+
+                if(gamepad1.right_bumper){
+                    robot.TurnRightD(0.2, 90.0);
                 }
 
                 if (gamepad1.left_trigger > 0.1) {
