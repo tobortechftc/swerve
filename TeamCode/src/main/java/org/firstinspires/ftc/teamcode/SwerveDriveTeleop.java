@@ -222,9 +222,13 @@ public class SwerveDriveTeleop extends LinearOpMode {
                     robot.isTurn = false;
                     sleep(400);
                 }
+
+                if(gamepad1.b){
+                    robot.StraightIn(0.3, 50);
+                }
             }
 
-            if (gamepad1.b){
+            if (gamepad1.b && false){
                 if(robot.isTurn){
                     if(robot.isForward){
                         robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);

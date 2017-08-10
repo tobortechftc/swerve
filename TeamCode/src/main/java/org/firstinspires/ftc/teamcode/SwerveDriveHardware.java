@@ -69,10 +69,10 @@ public class SwerveDriveHardware {
     public Servo servoBackLeft = null;
     public Servo servoBackRight = null;
 
-    final static double SERVO_FL_FORWARD_POSITION = 0.65;
+    final static double SERVO_FL_FORWARD_POSITION = 0.6;
     final static double SERVO_FR_FORWARD_POSITION = 0.41;
-    final static double SERVO_BL_FORWARD_POSITION = 0.37;
-    final static double SERVO_BR_FORWARD_POSITION = 0.68;
+    final static double SERVO_BL_FORWARD_POSITION = 0.40;
+    final static double SERVO_BR_FORWARD_POSITION = 0.63;
 
     final static double SERVO_FL_STRAFE_POSITION = 0.09;
     final static double SERVO_FR_STRAFE_POSITION = 0.96;
@@ -165,6 +165,11 @@ public class SwerveDriveHardware {
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -373,32 +378,36 @@ public class SwerveDriveHardware {
         int rightEncode = motorFrontRight.getCurrentPosition();
         leftCnt = (int) (ONE_ROTATION * RROBOT * degree / 720.0);
         rightCnt = (int) (-ONE_ROTATION * RROBOT * degree / 720.0);
+
         leftPower = (float) -power;
+        rightPower = (float) power;
 
         servoFrontLeft.setPosition(SERVO_FL_TURN_POSITION);
         servoFrontRight.setPosition(SERVO_FR_TURN_POSITION);
         servoBackLeft.setPosition(SERVO_BL_TURN_POSITION);
         servoBackRight.setPosition(SERVO_BR_TURN_POSITION);
 
+        sleep(200);
+
         leftCnt += leftEncode;
         rightCnt += rightEncode;
-        leftPower = (float) power;
+
         DbgLog.msg(String.format("imu Right Turn %.2f degree with %.2f power.", degree, power));
         if (use_imu) {
             current_pos = imu_heading();
             target_heading = current_pos - adjust_degree_navx;
-            if (target_heading <= 180) {
+            if (target_heading <= -180) {
                 target_heading += 360;
                 heading_cross_zero = true;
             }
-            if (heading_cross_zero && (current_pos <= -180)) {
+            if (heading_cross_zero && (current_pos <= 0)) {
                 current_pos += 360;
             }
             while ((current_pos >= target_heading) && (runtime.seconds() < 4.0)) {
                 current_pos = imu_heading();
                 // DbgLog.msg(String.format("imu current/target heading = %.2f/%.2f",current_pos,target_heading));
 
-                if (heading_cross_zero && (current_pos <= -180)) {
+                if (heading_cross_zero && (current_pos <= 0)) {
                     current_pos += 360;
                 }
                 driveTT(leftPower, rightPower);
@@ -453,6 +462,8 @@ public class SwerveDriveHardware {
         servoBackLeft.setPosition(SERVO_BL_TURN_POSITION);
         servoBackRight.setPosition(SERVO_BR_TURN_POSITION);
 
+        sleep(200);
+
         leftCnt += leftEncode;
         rightCnt += rightEncode;
 
@@ -465,13 +476,13 @@ public class SwerveDriveHardware {
                 target_heading -= 360;
                 heading_cross_zero = true;
             }
-            if (heading_cross_zero && (current_pos >= -180)) {
+            if (heading_cross_zero && (current_pos >= 0)) {
                 current_pos -= 360;
             }
             DbgLog.msg(String.format("imu Left Turn curr/target pos = %.2f/%.2f.", current_pos, target_heading));
             while ((current_pos <= target_heading) && (runtime.seconds() < 5.0)) {
                 current_pos = imu_heading();
-                if (heading_cross_zero && (current_pos >= -180)) {
+                if (heading_cross_zero && (current_pos >= 0)) {
                     current_pos -= 360;
                 }
                 driveTT(leftPower, rightPower);
