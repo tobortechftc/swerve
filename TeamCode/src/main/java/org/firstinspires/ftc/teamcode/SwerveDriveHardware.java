@@ -70,14 +70,14 @@ public class SwerveDriveHardware {
     public Servo servoBackRight = null;
 
     final static double SERVO_FL_FORWARD_POSITION = 0.6;
-    final static double SERVO_FR_FORWARD_POSITION = 0.41;
+    final static double SERVO_FR_FORWARD_POSITION = 0.43;
     final static double SERVO_BL_FORWARD_POSITION = 0.40;
     final static double SERVO_BR_FORWARD_POSITION = 0.63;
 
-    final static double SERVO_FL_STRAFE_POSITION = 0.09;
-    final static double SERVO_FR_STRAFE_POSITION = 0.96;
-    final static double SERVO_BL_STRAFE_POSITION = 0.92;
-    final static double SERVO_BR_STRAFE_POSITION = 0.12;
+    final static double SERVO_FL_STRAFE_POSITION = 0.14;
+    final static double SERVO_FR_STRAFE_POSITION = 0.87;
+    final static double SERVO_BL_STRAFE_POSITION = 0.86;
+    final static double SERVO_BR_STRAFE_POSITION = 0.17;
 
     final static double SERVO_FL_TURN_POSITION = 0.40;
     final static double SERVO_FR_TURN_POSITION = 0.64;

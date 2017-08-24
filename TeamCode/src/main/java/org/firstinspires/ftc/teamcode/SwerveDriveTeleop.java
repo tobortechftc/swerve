@@ -224,7 +224,7 @@ public class SwerveDriveTeleop extends LinearOpMode {
                 }
 
                 if(gamepad1.b){
-                    robot.StraightIn(0.3, 50);
+                    robot.StraightIn(-0.3, 50);
                 }
             }
 
