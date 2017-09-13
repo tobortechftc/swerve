@@ -228,11 +228,8 @@ public class SwerveDriveTeleop extends LinearOpMode {
                 }
 
                 if(gamepad1.b){
-                    if(!robot.isTurn) {
-                        telemetry.addData("IMU Heading = ", "%.2f", robot.imu_heading());
-                        sleep(100);
-                        robot.StraightIn(0.7, 50);
-                    }
+
+                    robot.StraightIn(-0.3, 50);
                 }
 
                 if(gamepad1.left_bumper) {
