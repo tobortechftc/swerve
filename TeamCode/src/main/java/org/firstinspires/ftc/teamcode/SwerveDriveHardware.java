@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -41,12 +42,12 @@ public class SwerveDriveHardware {
 
     final static int ONE_ROTATION = 1120; // for AndyMark-40 motor encoder one rotation
     final static double RROBOT = 6.63;  // number of wheel turns to get chassis 360-degree turn
-    final static double INCHES_PER_ROTATION = 12.57; // inches per chassis motor rotation based on 16/24 gear ratio
+    final static double INCHES_PER_ROTATION = 12.69; // inches per chassis motor rotation based on 1:1 gear ratio
     final static double GYRO_ROTATION_RATIO_L = 0.65; // 0.83; // Ratio of Gyro Sensor Left turn to prevent overshooting the turn.
     final static double GYRO_ROTATION_RATIO_R = 0.65; // 0.84; // Ratio of Gyro Sensor Right turn to prevent overshooting the turn.
-    final static double NAVX_ROTATION_RATIO_L = 0.65; // 0.84; // Ratio of NavX Sensor Left turn to prevent overshooting the turn.
-    final static double NAVX_ROTATION_RATIO_R = 0.65; // 0.84; // Ratio of NavX Sensor Right turn to prevent overshooting the turn.
-    final static double DRIVE_RATIO_L = 1.0; //control veering by lowering left motor power
+    final static double NAVX_ROTATION_RATIO_L = 0.857; // 0.84; // Ratio of NavX Sensor Left turn to prevent overshooting the turn.
+    final static double NAVX_ROTATION_RATIO_R = 0.857; // 0.84; // Ratio of NavX Sensor Right turn to prevent overshooting the turn.
+    final static double DRIVE_RATIO_L = 0.85; //control veering by lowering left motor power
     final static double DRIVE_RATIO_R = 1.0; //control veering by lowering right motor power
 
     double motorPowerLeft;
@@ -62,27 +63,34 @@ public class SwerveDriveHardware {
     public DcMotor motorFrontRight = null;
     public DcMotor motorBackLeft = null;
     public DcMotor motorBackRight = null;
-    public DcMotor motorEncoder = null;
+    //public DcMotor motorEncoder = null;
 
     public Servo servoFrontLeft = null;
     public Servo servoFrontRight = null;
     public Servo servoBackLeft = null;
     public Servo servoBackRight = null;
 
-    final static double SERVO_FL_FORWARD_POSITION = 0.6;
-    final static double SERVO_FR_FORWARD_POSITION = 0.41;
-    final static double SERVO_BL_FORWARD_POSITION = 0.40;
-    final static double SERVO_BR_FORWARD_POSITION = 0.63;
+    final static double SERVO_FL_FORWARD_POSITION = 0.5;
+    final static double SERVO_FR_FORWARD_POSITION = 0.5;
+    final static double SERVO_BL_FORWARD_POSITION = 0.5;
+    final static double SERVO_BR_FORWARD_POSITION = 0.5;
 
-    final static double SERVO_FL_STRAFE_POSITION = 0.09;
-    final static double SERVO_FR_STRAFE_POSITION = 0.96;
-    final static double SERVO_BL_STRAFE_POSITION = 0.92;
-    final static double SERVO_BR_STRAFE_POSITION = 0.12;
+    /* Old values, in case we need them
+    final static double SERVO_FL_FORWARD_POSITION = 0.38;
+    final static double SERVO_FR_FORWARD_POSITION = 0.68;
+    final static double SERVO_BL_FORWARD_POSITION = 0.67;
+    final static double SERVO_BR_FORWARD_POSITION = 0.37;
+    */
 
-    final static double SERVO_FL_TURN_POSITION = 0.40;
-    final static double SERVO_FR_TURN_POSITION = 0.64;
-    final static double SERVO_BL_TURN_POSITION = 0.63;
-    final static double SERVO_BR_TURN_POSITION = 0.43;
+    final static double SERVO_FL_STRAFE_POSITION = 0.96;
+    final static double SERVO_FR_STRAFE_POSITION = 0.04;
+    final static double SERVO_BL_STRAFE_POSITION = 0.04;
+    final static double SERVO_BR_STRAFE_POSITION = 0.98;
+
+    final static double SERVO_FL_TURN_POSITION = 0.20;
+    final static double SERVO_FR_TURN_POSITION = 0.78;
+    final static double SERVO_BL_TURN_POSITION = 0.79;
+    final static double SERVO_BR_TURN_POSITION = 0.23;
 
 
     // The IMU sensor object
@@ -129,17 +137,17 @@ public class SwerveDriveHardware {
         motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
         motorBackLeft = hwMap.dcMotor.get("motorBackLeft");
         motorBackRight = hwMap.dcMotor.get("motorBackRight");
-        motorEncoder = hwMap.dcMotor.get("motorEncoder");
+        //motorEncoder = hwMap.dcMotor.get("motorEncoder");
 
         servoFrontRight = hwMap.servo.get("servoFrontRight");
         servoFrontLeft = hwMap.servo.get("servoFrontLeft");
         servoBackLeft = hwMap.servo.get("servoBackLeft");
         servoBackRight = hwMap.servo.get("servoBackRight");
 
-        motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        motorBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        motorBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorBackRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power and set all servos to central position
         // May want to change servo #'s to the value where all wheels are pointing forward.
@@ -157,13 +165,13 @@ public class SwerveDriveHardware {
         motorFrontRight.setPower(0);
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
-        motorEncoder.setPower(0);
+        //motorEncoder.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -171,7 +179,7 @@ public class SwerveDriveHardware {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //motorEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
@@ -209,29 +217,53 @@ public class SwerveDriveHardware {
         if(!fast_mode && straight_mode) { // expect to go straight
             if (use_imu) {
                 double cur_heading = imu_heading();
-                if (cur_heading - target_heading > 0.7) { // crook to left,  slow down right motor
+                double heading_off_by = ((cur_heading - target_heading) / 360);
+                if (cur_heading - target_heading > 0.7){
+                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION - heading_off_by);
+                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION - heading_off_by);
+                    servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION - heading_off_by);
+                    servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION - heading_off_by);
+                }
+                else if (cur_heading - target_heading < -0.7){
+                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION + heading_off_by);
+                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION + heading_off_by);
+                    servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION + heading_off_by);
+                    servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION + heading_off_by);
+                }
+                /*if (cur_heading - target_heading > 0.7) { // crook to left,  slow down right motor
                     if (rp > 0) rp *= 0.5;
                     else lp *= 0.5;
                 } else if (cur_heading - target_heading < -0.7) { // crook to right, slow down left motor
                     if (lp > 0) lp *= 0.5;
                     else rp *= 0.5;
-                }
+                }*/
             }
         }
-        if (Math.abs(rp) > 0.3 && Math.abs(lp) > 0.3) {
-            motorFrontRight.setPower(rp * DRIVE_RATIO_R);
-            motorBackRight.setPower(rp * DRIVE_RATIO_R);
-            motorFrontLeft.setPower(lp * DRIVE_RATIO_L);
-            motorBackLeft.setPower(lp * DRIVE_RATIO_L);
+        if(isForward) {
+            if (Math.abs(rp) > 0.3 && Math.abs(lp) > 0.3) {
+                motorFrontRight.setPower(rp * DRIVE_RATIO_R);
+                motorBackRight.setPower(rp * DRIVE_RATIO_R);
+                motorFrontLeft.setPower(lp * DRIVE_RATIO_L);
+                motorBackLeft.setPower(lp * DRIVE_RATIO_L);
+            } else {
+                motorFrontRight.setPower(rp);
+                motorBackRight.setPower(rp);
+                motorFrontLeft.setPower(lp);
+                motorBackLeft.setPower(lp);
+            }
         }
         else{
-            motorFrontRight.setPower(rp);
-            motorBackRight.setPower(rp);
-            motorFrontLeft.setPower(lp);
-            motorBackLeft.setPower(lp);
-        }
-        if (use_encoder) {
-            motorEncoder.setPower(Math.max(lp, rp));
+            if (Math.abs(rp) > 0.3 && Math.abs(lp) > 0.3) {
+                motorFrontRight.setPower(rp * DRIVE_RATIO_R);
+                motorBackRight.setPower(-lp * DRIVE_RATIO_L);
+                motorFrontLeft.setPower(-rp * DRIVE_RATIO_R);
+                motorBackLeft.setPower(lp * DRIVE_RATIO_L);
+            } else {
+                motorFrontRight.setPower(rp);
+                motorBackRight.setPower(-lp);
+                motorFrontLeft.setPower(-rp);
+                motorBackLeft.setPower(lp);
+            }
         }
     }
 
@@ -240,7 +272,7 @@ public class SwerveDriveHardware {
         motorBackLeft.setPower(0);
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
-        motorEncoder.setPower(0);
+        //motorEncoder.setPower(0);
     }
     void reset_chassis()  {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -310,7 +342,7 @@ public class SwerveDriveHardware {
     }
 
     boolean has_left_drive_encoder_reached(double p_count) {
-        DcMotor mt = motorEncoder;
+        DcMotor mt = motorFrontLeft;
         if (leftPower < 0) {
             //return (Math.abs(motorFL.getCurrentPosition()) < p_count);
             return (mt.getCurrentPosition() <= p_count);
@@ -321,7 +353,7 @@ public class SwerveDriveHardware {
     } // has_left_drive_encoder_reached
 
     boolean has_right_drive_encoder_reached(double p_count) {
-        DcMotor mt = motorEncoder;
+        DcMotor mt = motorFrontLeft;
         if (rightPower < 0) {
             return (mt.getCurrentPosition() <= p_count);
         } else {
@@ -331,7 +363,7 @@ public class SwerveDriveHardware {
     } // has_right_drive_encoder_reached
 
     boolean have_drive_encoders_reached(double p_left_count, double p_right_count) {
-        DcMotor mt = motorEncoder;
+        DcMotor mt = motorFrontLeft;
         boolean l_return = false;
         if (has_left_drive_encoder_reached(p_left_count) && has_right_drive_encoder_reached(p_right_count)) {
             l_return = true;
@@ -363,6 +395,53 @@ public class SwerveDriveHardware {
         return l_return;
     } // have_encoders_reached
 
+    public void StraightR(double power, double n_rotations) throws InterruptedException {
+        DcMotor mt = motorFrontLeft;
+        straight_mode = true;
+        reset_chassis();
+        // set_drive_modes(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        int leftEncode = mt.getCurrentPosition();
+        int rightEncode = mt.getCurrentPosition();
+        //motorBL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        //motorFR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        leftCnt = (int) (ONE_ROTATION * n_rotations);
+        rightCnt = (int) (ONE_ROTATION * n_rotations);
+        leftPower = rightPower = (float) power;
+        if (power < 0) { // move backward
+            leftCnt = leftEncode - leftCnt;
+            rightCnt = rightEncode - rightCnt;
+        } else {
+            leftCnt += leftEncode;
+            rightCnt += rightEncode;
+        }
+        run_until_encoder(leftCnt, leftPower, rightCnt, rightPower);
+        straight_mode = false;
+        servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
+        servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
+        servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
+        servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
+        if (!fast_mode)
+            sleep(135);
+    }
+
+    public void StraightIn(double power, double in) throws InterruptedException {
+        if (use_imu) {
+            target_heading = imu_heading();
+        }
+        if (use_encoder) {
+            double numberR = in / INCHES_PER_ROTATION;
+            StraightR(-power, numberR);
+        } else { // using timer
+            double in_per_ms = 0.014 * power / 0.8;
+            if (in_per_ms < 0) in_per_ms *= -1.0;
+            long msec = (long) (in / in_per_ms);
+            if (msec < 100) msec = 100;
+            if (msec > 6000) msec = 6000; // limit to 6 sec
+            driveTT(power, power);
+            sleep(msec);
+            driveTT(0, 0);
+        }
+    }
     public void TurnRightD(double power, double degree) throws InterruptedException {
 
         double adjust_degree_gyro = GYRO_ROTATION_RATIO_R * (double) degree;
@@ -387,7 +466,7 @@ public class SwerveDriveHardware {
         servoBackLeft.setPosition(SERVO_BL_TURN_POSITION);
         servoBackRight.setPosition(SERVO_BR_TURN_POSITION);
 
-        sleep(200);
+        sleep(300);
 
         leftCnt += leftEncode;
         rightCnt += rightEncode;
@@ -439,6 +518,7 @@ public class SwerveDriveHardware {
         if (!fast_mode)
             sleep(135);
     }
+
     public void TurnLeftD(double power, double degree) throws InterruptedException {
         double adjust_degree_gyro = GYRO_ROTATION_RATIO_L * (double) degree;
         double adjust_degree_navx = NAVX_ROTATION_RATIO_L * (double) degree;
@@ -462,7 +542,7 @@ public class SwerveDriveHardware {
         servoBackLeft.setPosition(SERVO_BL_TURN_POSITION);
         servoBackRight.setPosition(SERVO_BR_TURN_POSITION);
 
-        sleep(200);
+        sleep(300);
 
         leftCnt += leftEncode;
         rightCnt += rightEncode;
@@ -513,49 +593,5 @@ public class SwerveDriveHardware {
         }
         if (!fast_mode)
             sleep(135);
-    }
-
-    public void StraightR(double power, double n_rotations) throws InterruptedException {
-        DcMotor mt = motorEncoder;
-        straight_mode = true;
-        reset_chassis();
-        // set_drive_modes(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        int leftEncode = mt.getCurrentPosition();
-        int rightEncode = mt.getCurrentPosition();
-        //motorBL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        //motorFR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        leftCnt = (int) (ONE_ROTATION * n_rotations);
-        rightCnt = (int) (ONE_ROTATION * n_rotations);
-        leftPower = rightPower = (float) power;
-        if (power < 0) { // move backward
-            leftCnt = leftEncode - leftCnt;
-            rightCnt = rightEncode - rightCnt;
-        } else {
-            leftCnt += leftEncode;
-            rightCnt += rightEncode;
-        }
-        run_until_encoder(leftCnt, leftPower, rightCnt, rightPower);
-        straight_mode = false;
-        if (!fast_mode)
-            sleep(135);
-    }
-
-    public void StraightIn(double power, double in) throws InterruptedException {
-        if (use_imu) {
-            target_heading = imu_heading();
-        }
-        if (use_encoder) {
-            double numberR = in / INCHES_PER_ROTATION;
-            StraightR(power, numberR);
-        } else { // using timer
-            double in_per_ms = 0.014 * power / 0.8;
-            if (in_per_ms < 0) in_per_ms *= -1.0;
-            long msec = (long) (in / in_per_ms);
-            if (msec < 100) msec = 100;
-            if (msec > 6000) msec = 6000; // limit to 6 sec
-            driveTT(power, power);
-            sleep(msec);
-            driveTT(0, 0);
-        }
     }
 }

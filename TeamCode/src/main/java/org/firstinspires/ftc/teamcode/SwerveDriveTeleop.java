@@ -103,14 +103,6 @@ public class SwerveDriveTeleop extends LinearOpMode {
 
                 }
 
-                if(gamepad1.left_bumper) {
-                    robot.TurnLeftD(0.2, 90.0);
-                }
-
-                if(gamepad1.right_bumper){
-                    robot.TurnRightD(0.2, 90.0);
-                }
-
                 if (gamepad1.left_trigger > 0.1) {
 
                     if (robot.isTestingFL) {
@@ -195,6 +187,19 @@ public class SwerveDriveTeleop extends LinearOpMode {
 
                 if (gamepad1.x) {
                     if (robot.isForward) {
+                        robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
+                        robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
+                        robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
+                        robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+
+                        robot.servoPosFL = robot.SERVO_FL_TURN_POSITION;
+                        robot.servoPosFR = robot.SERVO_FR_TURN_POSITION;
+                        robot.servoPosBL = robot.SERVO_BL_TURN_POSITION;
+                        robot.servoPosBR = robot.SERVO_BR_TURN_POSITION;
+
+                        robot.isTurn = true;
+                        robot.isForward = false;
+                    }else if(robot.isTurn){
                         robot.servoFrontLeft.setPosition(robot.SERVO_FL_STRAFE_POSITION);
                         robot.servoFrontRight.setPosition(robot.SERVO_FR_STRAFE_POSITION);
                         robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
@@ -205,8 +210,8 @@ public class SwerveDriveTeleop extends LinearOpMode {
                         robot.servoPosBL = robot.SERVO_BL_STRAFE_POSITION;
                         robot.servoPosBR = robot.SERVO_BR_STRAFE_POSITION;
 
-                        robot.isForward = false;
-                    } else {
+                        robot.isTurn = false;
+                    } else{
                         robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
                         robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
                         robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
@@ -219,39 +224,28 @@ public class SwerveDriveTeleop extends LinearOpMode {
 
                         robot.isForward = true;
                     }
-                    robot.isTurn = false;
                     sleep(400);
                 }
 
                 if(gamepad1.b){
-                    robot.StraightIn(0.3, 50);
+                    if(!robot.isTurn) {
+                        telemetry.addData("IMU Heading = ", "%.2f", robot.imu_heading());
+                        sleep(100);
+                        robot.StraightIn(0.7, 50);
+                    }
                 }
-            }
 
-            if (gamepad1.b && false){
-                if(robot.isTurn){
-                    if(robot.isForward){
-                        robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
-                        robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
-                        robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
-                        robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
-                    }
-                    else{
-                        robot.servoFrontLeft.setPosition(robot.SERVO_FL_STRAFE_POSITION);
-                        robot.servoFrontRight.setPosition(robot.SERVO_FR_STRAFE_POSITION);
-                        robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
-                        robot.servoBackRight.setPosition(robot.SERVO_BR_STRAFE_POSITION);
-                    }
-                    robot.isTurn = false;
+                if(gamepad1.left_bumper) {
+                    telemetry.addData("IMU Heading = ", "%.2f", robot.imu_heading());
+                    sleep(100);
+                    robot.TurnLeftD(0.5, 90.0);
                 }
-                else{
-                    robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
-                    robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
-                    robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
-                    robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
-                    robot.isTurn = true;
+
+                if(gamepad1.right_bumper){
+                    telemetry.addData("IMU Heading = ", "%.2f", robot.imu_heading());
+                    sleep(100);
+                    robot.TurnRightD(0.5, 90.0);
                 }
-                sleep(400);
             }
 
             // Possible idea where holding the left stick farther from the center makes it turn the servo farther. Not completed.
@@ -334,6 +328,7 @@ public class SwerveDriveTeleop extends LinearOpMode {
             telemetry.addData("rotation angle front right =", "%.2f", robot.servoPosFR);
             telemetry.addData("rotation angle back left =", "%.2f", robot.servoPosBL);
             telemetry.addData("rotation angle back right =", "%.2f", robot.servoPosBR);
+            telemetry.addData("IMU Heading = ", "%.2f", robot.imu_heading());
             if(robot.isCarMode){
                 telemetry.addLine("Currently in: Car Mode");
             }
