@@ -24,6 +24,9 @@ public class SwerveDriveHardware {
     boolean isTurn = false;
     boolean isTrueCar = false;
 
+    boolean hasTeleTurnLeft = false;
+    boolean hasTeleTurnRight = false;
+
     //Booleans for Debugging
     boolean isTestingFL = false;
     boolean isTestingFR = false;
@@ -47,8 +50,14 @@ public class SwerveDriveHardware {
     final static double GYRO_ROTATION_RATIO_R = 0.65; // 0.84; // Ratio of Gyro Sensor Right turn to prevent overshooting the turn.
     final static double NAVX_ROTATION_RATIO_L = 0.857; // 0.84; // Ratio of NavX Sensor Left turn to prevent overshooting the turn.
     final static double NAVX_ROTATION_RATIO_R = 0.857; // 0.84; // Ratio of NavX Sensor Right turn to prevent overshooting the turn.
-    final static double DRIVE_RATIO_L = 0.85; //control veering by lowering left motor power
-    final static double DRIVE_RATIO_R = 1.0; //control veering by lowering right motor power
+    final static double DRIVE_RATIO_FL = 0.85; //control veering by lowering left motor power
+    final static double DRIVE_RATIO_FR = 1.0; //control veering by lowering right motor power
+    final static double DRIVE_RATIO_BL = 0.85; //control veering by lowering left motor power
+    final static double DRIVE_RATIO_BR = 1.0; //control veering by lowering right motor power
+
+    final static double WIDTH_BETWEEN_WHEELS = 10.0625;
+    final static double LENGTH_BETWEEN_WHEELS = 12.125;
+    final static double MAX_TURNING_RADIUS = 30;
 
     double motorPowerLeft;
     double motorPowerRight;
@@ -57,6 +66,8 @@ public class SwerveDriveHardware {
     double servoPosFR;
     double servoPosBL;
     double servoPosBR;
+    double leftServoAngle;
+    double rightServoAngle;
 
     /* Public OpMode members. */
     public DcMotor motorFrontLeft = null;
@@ -242,10 +253,10 @@ public class SwerveDriveHardware {
         }
         if(isForward) {
             if (Math.abs(rp) > 0.3 && Math.abs(lp) > 0.3) {
-                motorFrontRight.setPower(rp * DRIVE_RATIO_R);
-                motorBackRight.setPower(rp * DRIVE_RATIO_R);
-                motorFrontLeft.setPower(lp * DRIVE_RATIO_L);
-                motorBackLeft.setPower(lp * DRIVE_RATIO_L);
+                motorFrontRight.setPower(rp * DRIVE_RATIO_FR);
+                motorBackRight.setPower(rp * DRIVE_RATIO_BR);
+                motorFrontLeft.setPower(lp * DRIVE_RATIO_FL);
+                motorBackLeft.setPower(lp * DRIVE_RATIO_BL);
             } else {
                 motorFrontRight.setPower(rp);
                 motorBackRight.setPower(rp);
@@ -255,10 +266,10 @@ public class SwerveDriveHardware {
         }
         else{
             if (Math.abs(rp) > 0.3 && Math.abs(lp) > 0.3) {
-                motorFrontRight.setPower(rp * DRIVE_RATIO_R);
-                motorBackRight.setPower(-lp * DRIVE_RATIO_L);
-                motorFrontLeft.setPower(-rp * DRIVE_RATIO_R);
-                motorBackLeft.setPower(lp * DRIVE_RATIO_L);
+                motorFrontRight.setPower(rp * DRIVE_RATIO_FR);
+                motorBackRight.setPower(-lp * DRIVE_RATIO_BR);
+                motorFrontLeft.setPower(-rp * DRIVE_RATIO_FL);
+                motorBackLeft.setPower(lp * DRIVE_RATIO_BL);
             } else {
                 motorFrontRight.setPower(rp);
                 motorBackRight.setPower(-lp);

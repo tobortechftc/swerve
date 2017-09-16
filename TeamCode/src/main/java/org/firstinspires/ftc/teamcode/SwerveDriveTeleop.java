@@ -44,14 +44,6 @@ public class SwerveDriveTeleop extends LinearOpMode {
 
             if(robot.isCarMode){
 
-                if(gamepad1.x){
-                    if (robot.isTrueCar){
-                        robot.isTrueCar = false;
-                    }
-                    else{
-                        robot.isTrueCar = true;
-                    }
-                }
 
                 if(robot.isTrueCar) {
                     robot.servoPosFL = (gamepad1.right_stick_x / 3) + 0.5;
@@ -60,14 +52,74 @@ public class SwerveDriveTeleop extends LinearOpMode {
                     robot.servoFrontRight.setPosition(robot.servoPosFR);
                 }
                 else{
-                    robot.servoPosFL = 1 - ((gamepad1.right_stick_x / 6) + 0.5);
-                    robot.servoPosFR = 1 - ((gamepad1.right_stick_x / 6) + 0.5);
-                    robot.servoPosBL = ((gamepad1.right_stick_x / 6) + 0.5);
-                    robot.servoPosBR = ((gamepad1.right_stick_x / 6) + 0.5);
+                    robot.leftServoAngle = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS)/((gamepad1.right_stick_x/robot.MAX_TURNING_RADIUS) - (0.5 * robot.LENGTH_BETWEEN_WHEELS)))/360) + 0.5; //Theta 1
+                    robot.rightServoAngle =  (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS)/((gamepad1.right_stick_x/robot.MAX_TURNING_RADIUS) + (0.5 * robot.LENGTH_BETWEEN_WHEELS)))/360) + 0.5; //Theta 2
+                    robot.servoPosFL = 1 - (robot.leftServoAngle);
+                    robot.servoPosFR = 1 - (robot.rightServoAngle);
+                    robot.servoPosBL = robot.leftServoAngle;
+                    robot.servoPosBR = robot.rightServoAngle;
                     robot.servoFrontLeft.setPosition(robot.servoPosFL);
                     robot.servoFrontRight.setPosition(robot.servoPosFR);
                     robot.servoBackLeft.setPosition(robot.servoPosBL);
                     robot.servoBackRight.setPosition(robot.servoPosBR);
+                }
+
+                if(gamepad1.left_trigger > 0.1){
+                    robot.isTurn = true;
+                    robot.hasTeleTurnLeft = true;
+
+                    robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
+                    robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
+                    robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
+                    robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+
+                    robot.motorFrontLeft.setPower(-gamepad1.left_trigger);
+                    robot.motorFrontRight.setPower(gamepad1.left_trigger);
+                    robot.motorBackLeft.setPower(-gamepad1.left_trigger);
+                    robot.motorBackRight.setPower(gamepad1.left_trigger);
+                }
+                else if(robot.hasTeleTurnLeft){
+                    robot.isTurn = false;
+                    robot.hasTeleTurnLeft = false;
+
+                    robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+                    robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+                    robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+                    robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+
+                    robot.motorFrontLeft.setPower(0);
+                    robot.motorFrontRight.setPower(0);
+                    robot.motorBackLeft.setPower(0);
+                    robot.motorBackRight.setPower(0);
+                }
+
+                if(gamepad1.right_trigger > 0.1){
+                    robot.isTurn = true;
+                    robot.hasTeleTurnRight = true;
+
+                    robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
+                    robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
+                    robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
+                    robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+
+                    robot.motorFrontLeft.setPower(gamepad1.right_trigger);
+                    robot.motorFrontRight.setPower(-gamepad1.right_trigger);
+                    robot.motorBackLeft.setPower(gamepad1.right_trigger);
+                    robot.motorBackRight.setPower(-gamepad1.right_trigger);
+                }
+                else if(robot.hasTeleTurnRight){
+                    robot.isTurn = false;
+                    robot.hasTeleTurnRight = false;
+
+                    robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+                    robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+                    robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+                    robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+
+                    robot.motorFrontLeft.setPower(0);
+                    robot.motorFrontRight.setPower(0);
+                    robot.motorBackLeft.setPower(0);
+                    robot.motorBackRight.setPower(0);
                 }
             }
             else {
