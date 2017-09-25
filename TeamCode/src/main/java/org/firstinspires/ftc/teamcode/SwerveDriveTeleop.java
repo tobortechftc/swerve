@@ -4,12 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
-
 @TeleOp(name="SwerveDrive: Teleop", group="SwerveDrive")
-public class SwerveDriveTeleop extends LinearOpMode {
+public class SwerveDriveTeleop extends SwerveUtilLOP {
 
     /* Declare OpMode members. */
-    SwerveDriveHardware robot           = new SwerveDriveHardware();
+    //SwerveDriveHardware robot           = new SwerveDriveHardware();
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -280,20 +279,19 @@ public class SwerveDriveTeleop extends LinearOpMode {
                 }
 
                 if(gamepad1.b){
-
-                    robot.StraightIn(-0.3, 50);
+                    StraightIn(-0.3, 50);
                 }
 
                 if(gamepad1.left_bumper) {
-                    telemetry.addData("IMU Heading = ", "%.2f", robot.imu_heading());
+                    telemetry.addData("IMU Heading = ", "%.2f", imu_heading());
                     sleep(100);
-                    robot.TurnLeftD(0.5, 90.0);
+                    TurnLeftD(0.5, 90.0);
                 }
 
                 if(gamepad1.right_bumper){
-                    telemetry.addData("IMU Heading = ", "%.2f", robot.imu_heading());
+                    telemetry.addData("IMU Heading = ", "%.2f", imu_heading());
                     sleep(100);
-                    robot.TurnRightD(0.5, 90.0);
+                    TurnRightD(0.5, 90.0);
                 }
             }
 
@@ -369,30 +367,7 @@ public class SwerveDriveTeleop extends LinearOpMode {
                 }
             }
 
-
-
-            telemetry.addData("power level left =", "%.2f", robot.motorPowerLeft);
-            telemetry.addData("power level Right =", "%.2f", robot.motorPowerRight);
-            telemetry.addData("rotation angle front left =", "%.2f", robot.servoPosFL);
-            telemetry.addData("rotation angle front right =", "%.2f", robot.servoPosFR);
-            telemetry.addData("rotation angle back left =", "%.2f", robot.servoPosBL);
-            telemetry.addData("rotation angle back right =", "%.2f", robot.servoPosBR);
-            telemetry.addData("IMU Heading = ", "%.2f", robot.imu_heading());
-            if(robot.isCarMode){
-                telemetry.addLine("Currently in: Car Mode");
-            }
-            else if(robot.isTurn){
-                telemetry.addLine("Currently in: Quick Turn Mode");
-            }
-            else if(robot.isForward){
-                telemetry.addLine("Currently in: Standard Mode");
-            }
-            else{
-                telemetry.addLine("Currently in: Strafe Mode");
-            }
-            telemetry.update();
-
-
+            show_telemetry();
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
             robot.waitForTick(40);
         }

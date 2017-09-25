@@ -150,7 +150,7 @@ public class VuMarkId extends LinearOpMode {
                  * it is perhaps unlikely that you will actually need to act on this pose information, but
                  * we illustrate it nevertheless, for completeness. */
                 OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
-                telemetry.addData("Pose", format(pose));
+                // telemetry.addData("Pose", format(pose));
 
                 /* We further illustrate how to decompose the pose into useful rotational and
                  * translational components */
@@ -172,12 +172,28 @@ public class VuMarkId extends LinearOpMode {
             else {
                 telemetry.addData("VuMark", "not visible");
             }
-
+            telemetry.addData("Row Index =", "%d", row_index(vuMark));
             telemetry.update();
         }
     }
 
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+    }
+
+    int row_index(RelicRecoveryVuMark vuMark) {
+        // return row index for Cryptograph
+        // unknown : -1
+        // left    :  0
+        // center  :  1
+        // right   :  2
+        if (vuMark == RelicRecoveryVuMark.LEFT)
+            return 0;
+        else if (vuMark == RelicRecoveryVuMark.CENTER)
+            return 1;
+        else if (vuMark == RelicRecoveryVuMark.RIGHT)
+            return 2;
+
+        return -1;
     }
 }
