@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -67,6 +68,8 @@ public class SwerveDriveHardware {
     double leftServoAngle;
     double rightServoAngle;
 
+
+
     /* Public OpMode members. */
     public DcMotor motorFrontLeft = null;
     public DcMotor motorFrontRight = null;
@@ -77,6 +80,11 @@ public class SwerveDriveHardware {
     public Servo servoFrontRight = null;
     public Servo servoBackLeft = null;
     public Servo servoBackRight = null;
+
+    public Servo sv_shoulder;
+    public Servo sv_elbow;
+
+    public ColorSensor colorSensor = null;
 
     final static double SERVO_FL_FORWARD_POSITION = 0.5;
     final static double SERVO_FR_FORWARD_POSITION = 0.5;
@@ -140,6 +148,9 @@ public class SwerveDriveHardware {
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        // map color sensors
+        colorSensor = hwMap.colorSensor.get("colorSensor");
 
         // Define and Initialize Motors
         motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -421,6 +422,15 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.fast_mode)
             sleep(135);
     }
+
+    boolean isRedBall(ColorSensor co) {
+        return true;
+    }
+
+    boolean isBlueBall(ColorSensor co) {
+        return false;
+    }
+
 
     void show_telemetry() {
         telemetry.addData("power level left =", "%.2f", robot.motorPowerLeft);
