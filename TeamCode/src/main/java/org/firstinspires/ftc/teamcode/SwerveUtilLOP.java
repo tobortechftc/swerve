@@ -423,11 +423,21 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(135);
     }
 
+    public double calcDelta(ColorSensor co) {
+        return (co.blue() - co.red());
+    }
+
     boolean isRedBall(ColorSensor co) {
-        return true;
+        if (calcDelta(co) >= robot.RED_BALL_MIN && calcDelta(co) <= robot.RED_BALL_MAX) {
+            return true;
+        }
+            return false;
     }
 
     boolean isBlueBall(ColorSensor co) {
+        if (calcDelta(co) >= robot.BLUE_BALL_MIN && calcDelta(co) <= robot.BLUE_BALL_MAX) {
+            return true;
+        }
         return false;
     }
 

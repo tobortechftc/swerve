@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 public class ColorChooser extends LinearOpMode {
 
 //    HardwareMiniBot hw = new HardwareMiniBot();
-//    HardwareMap hwMap = null;
 
     ColorSensor colorSensor;
 
@@ -25,20 +24,44 @@ public class ColorChooser extends LinearOpMode {
     final static int BLUE_BALL_MAX = 66;
     String ballColor = "unknown";
     // Calculates difference between red and blue, and uses this to determine the ball's color
-    public double calcDelta() {
-        return (colorSensor.blue() - colorSensor.red());
+    public double calcDelta(ColorSensor co) {
+        return (co.blue() - co.red());
     }
 
+    boolean isRedBall(ColorSensor co) {
+        if (calcDelta(co) >= RED_BALL_MIN && calcDelta(co) <= RED_BALL_MAX) {
+            return true;
+        }
+        return false;
+    }
 
+    boolean isBlueBall(ColorSensor co) {
+        if (calcDelta(co) >= BLUE_BALL_MIN && calcDelta(co) <= BLUE_BALL_MAX) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public void runOpMode() {
-        colorSensor = hardwareMap.get(ColorSensor.class, "rev_co");
+        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
         waitForStart();
 
 
         while (opModeIsActive()) {
+
+            // It saw a red ball
+            if (isRedBall(colorSensor)) {
+                ballColor = "red";
+            }
+            // It saw a blue ball
+            else if (isBlueBall(colorSensor)) {
+                ballColor = "blue";
+            }
+            else {
+                ballColor = "unknown";
+            }
             telemetry.addData("Time:", this.time);
             telemetry.addData("Red  ", colorSensor.red());
             telemetry.addData("Blue ", colorSensor.blue());
@@ -46,18 +69,6 @@ public class ColorChooser extends LinearOpMode {
             telemetry.addData("The ball color is ", ballColor);
             telemetry.update();
             sleep(100);
-
-            // It saw a red ball
-            if (calcDelta() >= RED_BALL_MIN && calcDelta() <= RED_BALL_MAX) {
-                ballColor = "red";
-            }
-            // It saw a blue ball
-            else if (calcDelta() >= BLUE_BALL_MIN && calcDelta() <= BLUE_BALL_MAX) {
-                ballColor = "blue";
-            }
-            else {
-                ballColor = "unknown";
-            }
         }
     }
 }

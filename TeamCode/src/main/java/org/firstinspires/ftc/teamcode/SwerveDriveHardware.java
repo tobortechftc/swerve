@@ -58,6 +58,11 @@ public class SwerveDriveHardware {
     final static double LENGTH_BETWEEN_WHEELS = 12.125;
     final static double MAX_TURNING_RADIUS = 30;
 
+    final static int RED_BALL_MIN = -94;
+    final static int RED_BALL_MAX = -36;
+    final static int BLUE_BALL_MIN = 12;
+    final static int BLUE_BALL_MAX = 66;
+
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
