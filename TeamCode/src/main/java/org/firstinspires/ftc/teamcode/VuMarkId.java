@@ -29,7 +29,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
@@ -111,7 +110,7 @@ public class VuMarkId extends LinearOpMode {
          * for a competition robot, the front camera might be more convenient.
          */
         // parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
         /**
@@ -172,7 +171,7 @@ public class VuMarkId extends LinearOpMode {
             else {
                 telemetry.addData("VuMark", "not visible");
             }
-            telemetry.addData("Row Index =", "%d", row_index(vuMark));
+            telemetry.addData("Column Index =", "%d", getColumnIndex(vuMark));
             telemetry.update();
         }
     }
@@ -181,7 +180,7 @@ public class VuMarkId extends LinearOpMode {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
 
-    int row_index(RelicRecoveryVuMark vuMark) {
+    int getColumnIndex(RelicRecoveryVuMark vuMark) {
         // return row index for Cryptograph
         // unknown : -1
         // left    :  0

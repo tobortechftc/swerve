@@ -9,16 +9,22 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
 
+    boolean isTobotEnabled = false;
+    
     boolean isCarMode = false;
     boolean isForward = true;
     boolean isTurn = false;
@@ -113,6 +119,11 @@ public class SwerveDriveHardware {
     HardwareMap hwMap = null;
     private ElapsedTime period = new ElapsedTime();
 
+    VuforiaLocalizer vuforia;
+
+    VuforiaTrackables relicTrackables;
+    VuforiaTrackable relicTemplate;
+
     /* Constructor */
     public SwerveDriveHardware() {
     }
@@ -122,70 +133,82 @@ public class SwerveDriveHardware {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
+        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+        parameters.vuforiaLicenseKey = "AaaZDWL/////AAAAGYIaD+Gn/UUDhEiR/gcOJxdEJlKEpCOKSLPfhYJfYthUNZ0vnEGm0VGPutkNgRq8bq1ufm3eAySnLhkJQ7d4w6VDT7os5FGPEOGPfsIWMYNAFMdX+wlJo2JCyljeSxQtXUd/YileyfYKBXOl2uFA4KnStCC9WkYTUBrAof3H7RGKorzYixDeOpbmCsf25rayjtAUQrKCwG4j6P5rRdxy7SC//v4VC6NirNwgJ/xn1r02/jbx8vUDrDODGyut9iLk06IzMnrq/P01yKOp48clTw0WIKNmVT7WUQweXy+E1w6xwFplTlPkjC+gzerDOpxHPqYg8RusWD2Y/IMlmnk1yzJba1B9Xf9Ih6BJbm/fVwL4";
+
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+        relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        BNO055IMU.Parameters imuParameters = new BNO055IMU.Parameters();
+        imuParameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        imuParameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        imuParameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        imuParameters.loggingEnabled      = true;
+        imuParameters.loggingTag          = "IMU";
+        imuParameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        imu.initialize(imuParameters);
 
-        // Define and Initialize Motors
-        motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
-        motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
-        motorBackLeft = hwMap.dcMotor.get("motorBackLeft");
-        motorBackRight = hwMap.dcMotor.get("motorBackRight");
+        if (isTobotEnabled) {
+            // Define and Initialize Motors
+            motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
+            motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
+            motorBackLeft = hwMap.dcMotor.get("motorBackLeft");
+            motorBackRight = hwMap.dcMotor.get("motorBackRight");
 
-        servoFrontRight = hwMap.servo.get("servoFrontRight");
-        servoFrontLeft = hwMap.servo.get("servoFrontLeft");
-        servoBackLeft = hwMap.servo.get("servoBackLeft");
-        servoBackRight = hwMap.servo.get("servoBackRight");
+            servoFrontRight = hwMap.servo.get("servoFrontRight");
+            servoFrontLeft = hwMap.servo.get("servoFrontLeft");
+            servoBackLeft = hwMap.servo.get("servoBackLeft");
+            servoBackRight = hwMap.servo.get("servoBackRight");
 
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        motorFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        motorBackRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+            motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+            motorFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+            motorBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+            motorBackRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
 
-        // Set all motors to zero power and set all servos to central position
-        // May want to change servo #'s to the value where all wheels are pointing forward.
-        servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
-        servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
-        servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
-        servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
+            // Set all motors to zero power and set all servos to central position
+            // May want to change servo #'s to the value where all wheels are pointing forward.
+            servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
+            servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
+            servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
+            servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
 
-        servoPosFL = SERVO_FL_FORWARD_POSITION;
-        servoPosFR = SERVO_FR_FORWARD_POSITION;
-        servoPosBL = SERVO_BL_FORWARD_POSITION;
-        servoPosBR = SERVO_BR_FORWARD_POSITION;
+            servoPosFL = SERVO_FL_FORWARD_POSITION;
+            servoPosFR = SERVO_FR_FORWARD_POSITION;
+            servoPosBL = SERVO_BL_FORWARD_POSITION;
+            servoPosBR = SERVO_BR_FORWARD_POSITION;
 
-        motorFrontLeft.setPower(0);
-        motorFrontRight.setPower(0);
-        motorBackLeft.setPower(0);
-        motorBackRight.setPower(0);
+            motorFrontLeft.setPower(0);
+            motorFrontRight.setPower(0);
+            motorBackLeft.setPower(0);
+            motorBackRight.setPower(0);
 
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            // Set all motors to run without encoders.
+            // May want to use RUN_USING_ENCODERS if encoders are installed.
+            motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+            motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
     }
 
     /***

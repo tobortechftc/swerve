@@ -6,9 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 import static java.lang.Thread.sleep;
 
@@ -422,6 +427,39 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(135);
     }
 
+    int get_cryptobox_column() {
+
+        int column = -1;
+        ElapsedTime runtime = new ElapsedTime();
+        while (runtime.seconds() < 5.0 && column == -1) {
+            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(robot.relicTemplate);
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+
+                /* Found an instance of the template. In the actual game, you will probably
+                 * loop until this condition occurs, then move on to act accordingly depending
+                 * on which VuMark was visible. */
+                telemetry.addData("VuMark", "%s visible", vuMark);
+                column = getColumnIndex(vuMark);
+            }
+        }
+        return column;
+    }
+    int getColumnIndex(RelicRecoveryVuMark vuMark) {
+        // return row index for Cryptograph
+        // unknown : -1
+        // left    :  0
+        // center  :  1
+        // right   :  2
+        if (vuMark == RelicRecoveryVuMark.LEFT)
+            return 0;
+        else if (vuMark == RelicRecoveryVuMark.CENTER)
+            return 1;
+        else if (vuMark == RelicRecoveryVuMark.RIGHT)
+            return 2;
+
+        return -1;
+    }
+
     void show_telemetry() {
         telemetry.addData("power level left =", "%.2f", robot.motorPowerLeft);
         telemetry.addData("power level Right =", "%.2f", robot.motorPowerRight);
@@ -430,6 +468,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.addData("rotation angle back left =", "%.2f", robot.servoPosBL);
         telemetry.addData("rotation angle back right =", "%.2f", robot.servoPosBR);
         telemetry.addData("IMU Heading = ", "%.2f", imu_heading());
+        telemetry.addData("Vuforia Column = ","%d", get_cryptobox_column());
         if(robot.isCarMode){
             telemetry.addLine("Currently in: Car Mode");
         }
