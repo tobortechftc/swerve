@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -63,6 +64,11 @@ public class SwerveDriveHardware {
     final static double LENGTH_BETWEEN_WHEELS = 12.125;
     final static double MAX_TURNING_RADIUS = 30;
 
+    final static int RED_BALL_MIN = -94;
+    final static int RED_BALL_MAX = -36;
+    final static int BLUE_BALL_MIN = 12;
+    final static int BLUE_BALL_MAX = 66;
+
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
@@ -72,6 +78,8 @@ public class SwerveDriveHardware {
     double servoPosBR;
     double leftServoAngle;
     double rightServoAngle;
+
+
 
     /* Public OpMode members. */
     public DcMotor motorFrontLeft = null;
@@ -83,6 +91,11 @@ public class SwerveDriveHardware {
     public Servo servoFrontRight = null;
     public Servo servoBackLeft = null;
     public Servo servoBackRight = null;
+
+    public Servo sv_shoulder;
+    public Servo sv_elbow;
+
+    public ColorSensor colorSensor = null;
 
     final static double SERVO_FL_FORWARD_POSITION = 0.5;
     final static double SERVO_FR_FORWARD_POSITION = 0.5;
@@ -161,6 +174,7 @@ public class SwerveDriveHardware {
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
+
         imu.initialize(imuParameters);
 
         if (isTobotEnabled) {
@@ -209,6 +223,7 @@ public class SwerveDriveHardware {
             motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+
     }
 
     /***
