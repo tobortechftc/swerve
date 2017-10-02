@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,9 +11,6 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -24,7 +20,14 @@ import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
 
-    boolean isTobotEnabled = false;
+    public boolean use_chassis = true;
+    public boolean use_Vuforia = true;
+    public boolean use_imu = true;
+    public boolean use_encoder = true;
+    public boolean use_color_sensor = false;
+    public boolean use_range_sensor = false;
+    public boolean fast_mode = false;
+    public boolean straight_mode = false;
     
     boolean isCarMode = false;
     boolean isForward = true;
@@ -40,10 +43,9 @@ public class SwerveDriveHardware {
     boolean isTestingBL = false;
     boolean isTestingBR = false;
 
-    public boolean use_imu = true;
-    public boolean use_encoder = true;
-    public boolean fast_mode = false;
-    public boolean straight_mode = false;
+    boolean isRedBall = false;
+    boolean isBlueBall = false;
+
     public double target_heading = 0.0;
     public float leftPower = 0;
     public float rightPower = 0;
@@ -136,6 +138,7 @@ public class SwerveDriveHardware {
 
     VuforiaTrackables relicTrackables;
     VuforiaTrackable relicTemplate;
+    VuforiaLocalizer.Parameters parameters;
 
     /* Constructor */
     public SwerveDriveHardware() {
@@ -146,38 +149,44 @@ public class SwerveDriveHardware {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        if (use_Vuforia) {
+            int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+            parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
-        parameters.vuforiaLicenseKey = "AaaZDWL/////AAAAGYIaD+Gn/UUDhEiR/gcOJxdEJlKEpCOKSLPfhYJfYthUNZ0vnEGm0VGPutkNgRq8bq1ufm3eAySnLhkJQ7d4w6VDT7os5FGPEOGPfsIWMYNAFMdX+wlJo2JCyljeSxQtXUd/YileyfYKBXOl2uFA4KnStCC9WkYTUBrAof3H7RGKorzYixDeOpbmCsf25rayjtAUQrKCwG4j6P5rRdxy7SC//v4VC6NirNwgJ/xn1r02/jbx8vUDrDODGyut9iLk06IzMnrq/P01yKOp48clTw0WIKNmVT7WUQweXy+E1w6xwFplTlPkjC+gzerDOpxHPqYg8RusWD2Y/IMlmnk1yzJba1B9Xf9Ih6BJbm/fVwL4";
+            parameters.vuforiaLicenseKey = "AaaZDWL/////AAAAGYIaD+Gn/UUDhEiR/gcOJxdEJlKEpCOKSLPfhYJfYthUNZ0vnEGm0VGPutkNgRq8bq1ufm3eAySnLhkJQ7d4w6VDT7os5FGPEOGPfsIWMYNAFMdX+wlJo2JCyljeSxQtXUd/YileyfYKBXOl2uFA4KnStCC9WkYTUBrAof3H7RGKorzYixDeOpbmCsf25rayjtAUQrKCwG4j6P5rRdxy7SC//v4VC6NirNwgJ/xn1r02/jbx8vUDrDODGyut9iLk06IzMnrq/P01yKOp48clTw0WIKNmVT7WUQweXy+E1w6xwFplTlPkjC+gzerDOpxHPqYg8RusWD2Y/IMlmnk1yzJba1B9Xf9Ih6BJbm/fVwL4";
 
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+            this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+            relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+            relicTemplate = relicTrackables.get(0);
+            relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+        }
 
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        BNO055IMU.Parameters imuParameters = new BNO055IMU.Parameters();
-        imuParameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        imuParameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imuParameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        imuParameters.loggingEnabled      = true;
-        imuParameters.loggingTag          = "IMU";
-        imuParameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        if (use_imu ) {
+            // Set up the parameters with which we will use our IMU. Note that integration
+            // algorithm here just reports accelerations to the logcat log; it doesn't actually
+            // provide positional information.
+            BNO055IMU.Parameters imuParameters = new BNO055IMU.Parameters();
+            imuParameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            imuParameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            imuParameters.loggingEnabled = true;
+            imuParameters.loggingTag = "IMU";
+            imuParameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
+            // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+            // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+            // and named "imu".
 
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hwMap.get(BNO055IMU.class, "imu");
+            imu = hwMap.get(BNO055IMU.class, "imu");
+            imu.initialize(imuParameters);
+        }
 
-        imu.initialize(imuParameters);
-
-        if (isTobotEnabled) {
+        if (use_color_sensor) {
+            colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
+        }
+        if (use_chassis) {
             // Define and Initialize Motors
             motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
             motorFrontRight = hwMap.dcMotor.get("motorFrontRight");

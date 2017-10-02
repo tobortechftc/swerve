@@ -3,18 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 import static java.lang.Thread.sleep;
 
@@ -47,6 +42,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public double imu_heading() {
+        if (!robot.use_imu)
+            return -1.0;
+
         robot.angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return robot.angles.firstAngle;
     }
@@ -230,7 +228,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         return l_return;
     } // have_encoders_reached
 
-    public void StraightR(double power, double n_rotations) throws InterruptedException {
+    void StraightR(double power, double n_rotations) throws InterruptedException {
         DcMotor mt = robot.motorFrontLeft;
         robot.straight_mode = true;
         reset_chassis();
@@ -259,7 +257,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(135);
     }
 
-    public void StraightIn(double power, double in) throws InterruptedException {
+    void StraightIn(double power, double in) throws InterruptedException {
         if (robot.use_imu) {
             robot.target_heading = imu_heading();
         }
@@ -277,7 +275,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             driveTT(0, 0);
         }
     }
-    public void TurnRightD(double power, double degree) throws InterruptedException {
+
+    void TurnRightD(double power, double degree) throws InterruptedException {
 
         double adjust_degree_imu = robot.IMU_ROTATION_RATIO_R * (double) degree;
         double current_pos = 0;
@@ -353,7 +352,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(135);
     }
 
-    public void TurnLeftD(double power, double degree) throws InterruptedException {
+    void TurnLeftD(double power, double degree) throws InterruptedException {
         double adjust_degree_imu = robot.IMU_ROTATION_RATIO_L * (double) degree;
         double current_pos = 0;
         boolean heading_cross_zero = false;
@@ -428,9 +427,12 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(135);
     }
 
-    int get_cryptobox_column() {
+    public int get_cryptobox_column() throws InterruptedException {
 
         int column = -1;
+        if (!robot.use_Vuforia)
+            return column;
+
         ElapsedTime runtime = new ElapsedTime();
         while (runtime.seconds() < 5.0 && column == -1) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(robot.relicTemplate);
@@ -445,7 +447,26 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         return column;
     }
-    int getColumnIndex(RelicRecoveryVuMark vuMark) {
+
+    double calcDelta() throws InterruptedException {
+        return (robot.colorSensor.blue() - robot.colorSensor.red());
+    }
+
+    void checkBallColor() throws InterruptedException {
+        double d = calcDelta();
+        if ( (d >= robot.BLUE_BALL_MIN) && (d <= robot.BLUE_BALL_MAX)) {
+            robot.isBlueBall = true;
+        } else {
+            robot.isBlueBall = false;
+        }
+        if (d >= robot.RED_BALL_MIN && d <= robot.RED_BALL_MAX) {
+            robot.isRedBall = true;
+        } else {
+            robot.isRedBall = false;
+        }
+    }
+
+    int getColumnIndex(RelicRecoveryVuMark vuMark) throws InterruptedException {
         // return row index for Cryptograph
         // unknown : -1
         // left    :  0
@@ -461,44 +482,30 @@ public class SwerveUtilLOP extends LinearOpMode {
         return -1;
     }
 
-    public double calcDelta(ColorSensor co) {
-        return (co.blue() - co.red());
-    }
-
-    boolean isRedBall(ColorSensor co) {
-        if (calcDelta(co) >= robot.RED_BALL_MIN && calcDelta(co) <= robot.RED_BALL_MAX) {
-            return true;
+    void show_telemetry() throws InterruptedException {
+        telemetry.addData("Tobot/Imu/Vu =", "%s/%s/%s",
+                (robot.use_chassis ?"on":"off"), (robot.use_imu?"on":"off"),
+                (robot.use_Vuforia ?"on":"off"));
+        telemetry.addData("W-Pw Left/Right =", "%.2f/%.2f",
+                robot.motorPowerLeft,robot.motorPowerRight);
+        telemetry.addData("W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
+                robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
+        if (robot.use_imu) {
+            telemetry.addData("IMU Heading = ", "%.2f", imu_heading());
         }
-            return false;
-    }
-
-    boolean isBlueBall(ColorSensor co) {
-        if (calcDelta(co) >= robot.BLUE_BALL_MIN && calcDelta(co) <= robot.BLUE_BALL_MAX) {
-            return true;
+        if (robot.use_Vuforia) {
+            telemetry.addData("Vuforia Column = ", "%d", get_cryptobox_column());
         }
-        return false;
-    }
-
-    void show_telemetry() {
-        telemetry.addData("power level left =", "%.2f", robot.motorPowerLeft);
-        telemetry.addData("power level Right =", "%.2f", robot.motorPowerRight);
-        telemetry.addData("rotation angle front left =", "%.2f", robot.servoPosFL);
-        telemetry.addData("rotation angle front right =", "%.2f", robot.servoPosFR);
-        telemetry.addData("rotation angle back left =", "%.2f", robot.servoPosBL);
-        telemetry.addData("rotation angle back right =", "%.2f", robot.servoPosBR);
-        telemetry.addData("IMU Heading = ", "%.2f", imu_heading());
-        telemetry.addData("Vuforia Column = ","%d", get_cryptobox_column());
-        if(robot.isCarMode){
-            telemetry.addLine("Currently in: Car Mode");
-        }
-        else if(robot.isTurn){
-            telemetry.addLine("Currently in: Quick Turn Mode");
-        }
-        else if(robot.isForward){
-            telemetry.addLine("Currently in: Standard Mode");
-        }
-        else{
-            telemetry.addLine("Currently in: Strafe Mode");
+        if (robot.use_chassis) {
+            if (robot.isCarMode) {
+                telemetry.addLine("Currently in: Car Mode");
+            } else if (robot.isTurn) {
+                telemetry.addLine("Currently in: Quick Turn Mode");
+            } else if (robot.isForward) {
+                telemetry.addLine("Currently in: Standard Mode");
+            } else {
+                telemetry.addLine("Currently in: Strafe Mode");
+            }
         }
         telemetry.update();
     }
