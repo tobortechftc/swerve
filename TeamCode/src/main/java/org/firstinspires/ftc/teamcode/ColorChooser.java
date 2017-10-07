@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
  * Created by Nick on 9/16/2017.
  */
-@Autonomous(name = "Swerve-ColorChooser", group = "Swerve")
+@TeleOp(name = "Swerve-ColorChooser", group = "Swerve")
 public class ColorChooser extends SwerveUtilLOP {
 
     String ballColor = "unknown";

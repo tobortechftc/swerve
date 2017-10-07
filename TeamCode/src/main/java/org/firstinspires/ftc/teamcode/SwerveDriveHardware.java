@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -28,6 +30,7 @@ public class SwerveDriveHardware {
     public boolean use_range_sensor = false;
     public boolean fast_mode = false;
     public boolean straight_mode = false;
+    public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight
     
     boolean isCarMode = false;
     boolean isForward = true;
@@ -98,6 +101,7 @@ public class SwerveDriveHardware {
     public Servo sv_elbow;
 
     public ColorSensor colorSensor = null;
+    public ModernRoboticsI2cRangeSensor rangeSensor = null;
 
     final static double SERVO_FL_FORWARD_POSITION = 0.5;
     final static double SERVO_FR_FORWARD_POSITION = 0.5;
@@ -163,7 +167,7 @@ public class SwerveDriveHardware {
             relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
         }
 
-        if (use_imu ) {
+        if (use_imu) {
             // Set up the parameters with which we will use our IMU. Note that integration
             // algorithm here just reports accelerations to the logcat log; it doesn't actually
             // provide positional information.
@@ -186,7 +190,15 @@ public class SwerveDriveHardware {
         if (use_color_sensor) {
             colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
         }
-        if (use_chassis) {
+        if (use_range_sensor) {
+            rangeSensor = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
+        }
+        if (use_minibot) {
+            motorFrontLeft = hwMap.dcMotor.get("left_drive");
+            motorFrontRight = hwMap.dcMotor.get("right_drive");
+            use_chassis = false;
+        }
+        else if (use_chassis) {
             // Define and Initialize Motors
             motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
             motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
