@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -22,16 +21,18 @@ import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
 
-    public boolean use_chassis = true;
+    // define all switches to turn on/off hardware each component
+    public boolean use_swerve = true;   // use four motors and four servos for chassis
+    public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight only for chassis
     public boolean use_Vuforia = true;
     public boolean use_imu = true;
     public boolean use_encoder = true;
     public boolean use_color_sensor = false;
     public boolean use_range_sensor = false;
+
     public boolean fast_mode = false;
     public boolean straight_mode = false;
-    public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight
-    
+
     boolean isCarMode = false;
     boolean isForward = true;
     boolean isTurn = false;
@@ -196,9 +197,9 @@ public class SwerveDriveHardware {
         if (use_minibot) {
             motorFrontLeft = hwMap.dcMotor.get("left_drive");
             motorFrontRight = hwMap.dcMotor.get("right_drive");
-            use_chassis = false;
+            use_swerve = false;
         }
-        else if (use_chassis) {
+        else if (use_swerve) {
             // Define and Initialize Motors
             motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
             motorFrontRight = hwMap.dcMotor.get("motorFrontRight");

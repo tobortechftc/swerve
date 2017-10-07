@@ -39,7 +39,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 sleep(400);
             }
 
-            if (robot.use_chassis) {
+            if (robot.use_swerve) {
                 if (robot.isCarMode) {
 
 
@@ -358,7 +358,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorBackRight.setPower(-robot.motorPowerLeft);
                     }
                 }
-            } // end use_chassis
+            } // end use_swerve
             show_telemetry();
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
             robot.waitForTick(40);
