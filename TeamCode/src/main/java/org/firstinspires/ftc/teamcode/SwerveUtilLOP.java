@@ -54,73 +54,90 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (robot.use_imu) {
                 double cur_heading = imu_heading();
                 double heading_off_by = ((cur_heading - robot.target_heading) / 360);
-                if (cur_heading - robot.target_heading > 0.7){
-                    robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION - heading_off_by);
-                    robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION - heading_off_by);
-                    robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION - heading_off_by);
-                    robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION - heading_off_by);
+                if(robot.use_swerve) {
+                    if (cur_heading - robot.target_heading > 0.7) {
+                        robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION - heading_off_by);
+                        robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION - heading_off_by);
+                        robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION + heading_off_by);
+                        robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION + heading_off_by);
+                    } else if (cur_heading - robot.target_heading < -0.7) {
+                        robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION + heading_off_by);
+                        robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION + heading_off_by);
+                        robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION - heading_off_by);
+                        robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION - heading_off_by);
+                    }
                 }
-                else if (cur_heading - robot.target_heading < -0.7){
-                    robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION + heading_off_by);
-                    robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION + heading_off_by);
-                    robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION + heading_off_by);
-                    robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION + heading_off_by);
+                else if(robot.use_minibot) {
+                    if (cur_heading - robot.target_heading > 0.7) { // crook to left,  slow down right motor
+                        if (rp > 0) rp *= 0.5;
+                        else lp *= 0.5;
+                    } else if (cur_heading - robot.target_heading < -0.7) { // crook to right, slow down left motor
+                        if (lp > 0) lp *= 0.5;
+                        else rp *= 0.5;
+                    }
                 }
-                /*if (cur_heading - target_heading > 0.7) { // crook to left,  slow down right motor
-                    if (rp > 0) rp *= 0.5;
-                    else lp *= 0.5;
-                } else if (cur_heading - target_heading < -0.7) { // crook to right, slow down left motor
-                    if (lp > 0) lp *= 0.5;
-                    else rp *= 0.5;
-                }*/
             }
         }
         if(robot.isForward) {
             if (Math.abs(rp) > 0.3 && Math.abs(lp) > 0.3) {
                 robot.motorFrontRight.setPower(rp * robot.DRIVE_RATIO_FR);
-                robot.motorBackRight.setPower(rp * robot.DRIVE_RATIO_BR);
                 robot.motorFrontLeft.setPower(lp * robot.DRIVE_RATIO_FL);
-                robot.motorBackLeft.setPower(lp * robot.DRIVE_RATIO_BL);
+                if (!robot.use_minibot) {
+                    robot.motorBackLeft.setPower(lp * robot.DRIVE_RATIO_BL);
+                    robot.motorBackRight.setPower(rp * robot.DRIVE_RATIO_BR);
+                }
             } else {
                 robot.motorFrontRight.setPower(rp);
-                robot.motorBackRight.setPower(rp);
                 robot.motorFrontLeft.setPower(lp);
-                robot.motorBackLeft.setPower(lp);
+                if (!robot.use_minibot) {
+                    robot.motorBackLeft.setPower(lp);
+                    robot.motorBackRight.setPower(rp);
+                }
             }
         }
         else{
             if (Math.abs(rp) > 0.3 && Math.abs(lp) > 0.3) {
                 robot.motorFrontRight.setPower(rp * robot.DRIVE_RATIO_FR);
-                robot.motorBackRight.setPower(-lp * robot.DRIVE_RATIO_BR);
                 robot.motorFrontLeft.setPower(-rp * robot.DRIVE_RATIO_FL);
-                robot.motorBackLeft.setPower(lp * robot.DRIVE_RATIO_BL);
+                if (!robot.use_minibot) {
+                    robot.motorBackRight.setPower(-lp * robot.DRIVE_RATIO_BR);
+                    robot.motorBackLeft.setPower(lp * robot.DRIVE_RATIO_BL);
+                }
             } else {
                 robot.motorFrontRight.setPower(rp);
-                robot.motorBackRight.setPower(-lp);
                 robot.motorFrontLeft.setPower(-rp);
-                robot.motorBackLeft.setPower(lp);
+                if (!robot.use_minibot) {
+                    robot.motorBackLeft.setPower(lp);
+                    robot.motorBackRight.setPower(-lp);
+                }
             }
         }
     }
 
     void stop_chassis() {
         robot.motorFrontLeft.setPower(0);
-        robot.motorBackLeft.setPower(0);
         robot.motorFrontRight.setPower(0);
-        robot.motorBackRight.setPower(0);
+        if (!robot.use_minibot) {
+            robot.motorBackLeft.setPower(0);
+            robot.motorBackRight.setPower(0);
+        }
     }
 
     void reset_chassis()  {
         robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (!robot.use_minibot) {
+            robot.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
         robot.leftCnt = 0;
         robot.rightCnt = 0;
         robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if (!robot.use_minibot) {
+            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     void stop_tobot() {
@@ -251,8 +268,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.straight_mode = false;
         robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
         robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
-        robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
-        robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+        if (!robot.use_minibot) {
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+        }
         if (!robot.fast_mode)
             sleep(135);
     }
@@ -296,8 +315,10 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
         robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
-        robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
-        robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+        if (!robot.use_minibot) {
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+        }
 
         sleep(300);
 
@@ -339,14 +360,18 @@ public class SwerveUtilLOP extends LinearOpMode {
         if(robot.isForward){
             robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
             robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
-            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
-            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+            if (!robot.use_minibot) {
+                robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+                robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+            }
         }
         else{
             robot.servoFrontLeft.setPosition(robot.SERVO_FL_STRAFE_POSITION);
             robot.servoFrontRight.setPosition(robot.SERVO_FR_STRAFE_POSITION);
-            robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
-            robot.servoBackRight.setPosition(robot.SERVO_BR_STRAFE_POSITION);
+            if (!robot.use_minibot) {
+                robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
+                robot.servoBackRight.setPosition(robot.SERVO_BR_STRAFE_POSITION);
+            }
         }
         if (!robot.fast_mode)
             sleep(135);
@@ -371,8 +396,10 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
         robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
-        robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
-        robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+        if (!robot.use_minibot) {
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+        }
 
         sleep(300);
 
@@ -414,14 +441,18 @@ public class SwerveUtilLOP extends LinearOpMode {
         if(robot.isForward){
             robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
             robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
-            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
-            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+            if (!robot.use_minibot) {
+                robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+                robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+            }
         }
         else{
             robot.servoFrontLeft.setPosition(robot.SERVO_FL_STRAFE_POSITION);
             robot.servoFrontRight.setPosition(robot.SERVO_FR_STRAFE_POSITION);
-            robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
-            robot.servoBackRight.setPosition(robot.SERVO_BR_STRAFE_POSITION);
+            if (!robot.use_minibot) {
+                robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
+                robot.servoBackRight.setPosition(robot.SERVO_BR_STRAFE_POSITION);
+            }
         }
         if (!robot.fast_mode)
             sleep(135);
@@ -503,7 +534,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void show_telemetry() throws InterruptedException {
         telemetry.addData("Tobot/Imu/Vu =", "%s/%s/%s",
-                (robot.use_chassis ?"on":"off"), (robot.use_imu?"on":"off"),
+                (robot.use_swerve ?"on":"off"), (robot.use_imu?"on":"off"),
                 (robot.use_Vuforia ?"on":"off"));
         telemetry.addData("W-Pw Left/Right =", "%.2f/%.2f",
                 robot.motorPowerLeft,robot.motorPowerRight);
@@ -515,7 +546,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_Vuforia) {
             telemetry.addData("Vuforia Column = ", "%d", get_cryptobox_column());
         }
-        if (robot.use_chassis) {
+        if (robot.use_swerve) {
             if (robot.isCarMode) {
                 telemetry.addLine("Currently in: Car Mode");
             } else if (robot.isTurn) {

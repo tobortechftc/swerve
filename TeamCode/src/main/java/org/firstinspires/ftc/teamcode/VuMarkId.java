@@ -58,7 +58,7 @@ public class VuMarkId extends SwerveUtilLOP {
 
     @Override public void runOpMode() throws InterruptedException {
 
-        robot.use_chassis = false;
+        robot.use_swerve = false;
         robot.use_imu = false;
         robot.use_Vuforia = true;
 

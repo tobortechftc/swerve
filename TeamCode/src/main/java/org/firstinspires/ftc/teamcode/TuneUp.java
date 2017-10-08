@@ -14,7 +14,7 @@ public class TuneUp extends SwerveUtilLOP {
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.use_chassis = false;
+        robot.use_swerve = false;
         robot.use_imu = false;
         robot.use_Vuforia = false;
         robot.use_color_sensor = true;
@@ -78,7 +78,7 @@ public class TuneUp extends SwerveUtilLOP {
                 sleep(400);
             }
 
-            if (robot.use_chassis) {
+            if (robot.use_swerve) {
                 if (robot.isCarMode) {
 
 

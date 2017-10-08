@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
@@ -28,7 +27,7 @@ public class ColorChooser extends SwerveUtilLOP {
 
     @Override
     public void runOpMode() throws InterruptedException{
-        robot.use_chassis = false;
+        robot.use_swerve = false;
         robot.use_color_sensor = true;
         robot.use_arm = true;
         robot.use_Vuforia = false;
