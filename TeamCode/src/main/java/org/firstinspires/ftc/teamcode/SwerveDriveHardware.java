@@ -29,9 +29,12 @@ public class SwerveDriveHardware {
     public boolean use_encoder = true;
     public boolean use_color_sensor = false;
     public boolean use_range_sensor = false;
+    public boolean use_relic_grabber = false;
+    public boolean use_glyph_grabber = false;
 
     public boolean fast_mode = false;
     public boolean straight_mode = false;
+
 
     boolean isCarMode = false;
     boolean isForward = true;
@@ -93,6 +96,10 @@ public class SwerveDriveHardware {
     public DcMotor motorBackLeft = null;
     public DcMotor motorBackRight = null;
 
+    public DcMotor mt_relic_slider = null;
+
+    public DcMotor mt_glyph_rotator = null;
+    public DcMotor mt_glyph_slider = null;
     public Servo servoFrontLeft = null;
     public Servo servoFrontRight = null;
     public Servo servoBackLeft = null;
@@ -100,6 +107,12 @@ public class SwerveDriveHardware {
 
     public Servo sv_shoulder;
     public Servo sv_elbow;
+
+    public Servo sv_glyph_grabber_top = null;
+    public Servo sv_glyph_grabber_bottom = null;
+
+    public Servo sv_relic_grabber = null;
+    public Servo sv_relic_arm = null;
 
     public ColorSensor colorSensor = null;
     public ModernRoboticsI2cRangeSensor rangeSensor = null;
@@ -194,6 +207,18 @@ public class SwerveDriveHardware {
         if (use_range_sensor) {
             rangeSensor = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
         }
+        if (use_relic_grabber) {
+            sv_relic_arm = hwMap.servo.get("sv_relic_arm");
+            sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
+            mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
+        }
+        if (use_glyph_grabber) {
+            sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");
+            sv_glyph_grabber_top = hwMap.servo.get("sv_grabber_top");
+            mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
+            mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
+        }
+
         if (use_minibot) {
             motorFrontLeft = hwMap.dcMotor.get("left_drive");
             motorFrontRight = hwMap.dcMotor.get("right_drive");
