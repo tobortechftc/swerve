@@ -482,6 +482,25 @@ public class SwerveUtilLOP extends LinearOpMode {
         return -1;
     }
 
+    void arm_up() {
+        robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_UP);
+    }
+
+    void arm_down() {
+        robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);
+    }
+    void arm_left() {
+        robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT);
+    }
+
+    void arm_right() {
+        robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
+    }
+
     void show_telemetry() throws InterruptedException {
         telemetry.addData("Tobot/Imu/Vu =", "%s/%s/%s",
                 (robot.use_chassis ?"on":"off"), (robot.use_imu?"on":"off"),

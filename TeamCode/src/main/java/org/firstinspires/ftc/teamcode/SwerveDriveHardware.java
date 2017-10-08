@@ -28,6 +28,7 @@ public class SwerveDriveHardware {
     public boolean use_encoder = true;
     public boolean use_color_sensor = false;
     public boolean use_range_sensor = false;
+    public boolean use_arm = false;
     public boolean fast_mode = false;
     public boolean straight_mode = false;
     public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight
@@ -73,6 +74,13 @@ public class SwerveDriveHardware {
     final static int RED_BALL_MAX = -36;
     final static int BLUE_BALL_MIN = 12;
     final static int BLUE_BALL_MAX = 66;
+
+    final static double SV_SHOULDER_UP = 0.54;
+    final static double SV_SHOULDER_DOWN = 0.54;
+    final static double SV_SHOULDER_LEFT = 0.6589;
+    final static double SV_SHOULDER_RIGHT = 0.39;
+    final static double SV_ELBOW_UP = 0.0067;
+    final static double SV_ELBOW_DOWN = 0.5367;
 
     double motorPowerLeft;
     double motorPowerRight;
@@ -243,6 +251,12 @@ public class SwerveDriveHardware {
             motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        if (use_arm) {
+            sv_elbow = hwMap.servo.get("sv_elbow");
+            sv_shoulder = hwMap.servo.get("sv_shoulder");
+            sv_elbow.setPosition(SV_ELBOW_UP);
+            sv_shoulder.setPosition(SV_SHOULDER_UP);
         }
 
     }
