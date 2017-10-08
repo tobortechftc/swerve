@@ -31,6 +31,7 @@ public class SwerveDriveHardware {
     public boolean use_range_sensor = false;
     public boolean use_relic_grabber = false;
     public boolean use_glyph_grabber = false;
+    public boolean use_arm = false;
 
     public boolean fast_mode = false;
     public boolean straight_mode = false;
@@ -43,6 +44,8 @@ public class SwerveDriveHardware {
 
     boolean hasTeleTurnLeft = false;
     boolean hasTeleTurnRight = false;
+    boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
+    boolean isSnakingLeft = false; //See if the snake drive is turning to the left
 
     //Booleans for Debugging
     boolean isTestingFL = false;
@@ -59,24 +62,35 @@ public class SwerveDriveHardware {
     public int leftCnt = 0; // left motor target counter
     public int rightCnt = 0; // right motor target counter
 
-    final static int ONE_ROTATION = 1120; // for AndyMark-40 motor encoder one rotation
+    final static int ONE_ROTATION = 538; // for AndyMark-40 motor encoder one rotation
     final static double RROBOT = 6.63;  // number of wheel turns to get chassis 360-degree turn
     final static double INCHES_PER_ROTATION = 12.69; // inches per chassis motor rotation based on 1:1 gear ratio
-    final static double IMU_ROTATION_RATIO_L = 0.857; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
-    final static double IMU_ROTATION_RATIO_R = 0.857; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
-    final static double DRIVE_RATIO_FL = 0.85; //control veering by lowering left motor power
-    final static double DRIVE_RATIO_FR = 1.0; //control veering by lowering right motor power
-    final static double DRIVE_RATIO_BL = 0.85; //control veering by lowering left motor power
-    final static double DRIVE_RATIO_BR = 1.0; //control veering by lowering right motor power
 
-    final static double WIDTH_BETWEEN_WHEELS = 10.0625;
-    final static double LENGTH_BETWEEN_WHEELS = 12.125;
-    final static double MAX_TURNING_RADIUS = 30;
+    final static double IMU_ROTATION_RATIO_L = 0.4655; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
+    final static double IMU_ROTATION_RATIO_R = 0.4966; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
+
+    final static double INIT_DRIVE_RATIO_FL = 1.0; //control veering by lowering left motor power
+    final static double INIT_DRIVE_RATIO_FR = 1.0; //control veering by lowering right motor power
+    final static double INIT_DRIVE_RATIO_BL = 1.0; //control veering by lowering left motor power
+    final static double INIT_DRIVE_RATIO_BR = 1.0; //control veering by lowering right motor power
+
+
+    final static double WIDTH_BETWEEN_WHEELS = 12;
+    final static double LENGTH_BETWEEN_WHEELS = 12;
+    final static double MIN_TURNING_RADIUS = 13;
+    final static double MAX_TURNING_RADIUS = 100;
 
     final static int RED_BALL_MIN = -94;
     final static int RED_BALL_MAX = -36;
     final static int BLUE_BALL_MIN = 12;
     final static int BLUE_BALL_MAX = 66;
+
+    final static double SV_SHOULDER_UP = 0.54;
+    final static double SV_SHOULDER_DOWN = 0.54;
+    final static double SV_SHOULDER_LEFT = 0.6589;
+    final static double SV_SHOULDER_RIGHT = 0.39;
+    final static double SV_ELBOW_UP = 0.0067;
+    final static double SV_ELBOW_DOWN = 0.5367;
 
     double motorPowerLeft;
     double motorPowerRight;
@@ -87,6 +101,16 @@ public class SwerveDriveHardware {
     double servoPosBR;
     double leftServoAngle;
     double rightServoAngle;
+    double r_Value;
+    double thetaOneCalc;
+    double thetaTwoCalc;
+    double insideWheelsMod;
+    double outsideWheelsMod;
+
+    double DRIVE_RATIO_FL = INIT_DRIVE_RATIO_FL; //control veering by lowering left motor power
+    double DRIVE_RATIO_FR = INIT_DRIVE_RATIO_FR;//control veering by lowering right motor power
+    double DRIVE_RATIO_BL = INIT_DRIVE_RATIO_BL; //control veering by lowering left motor power
+    double DRIVE_RATIO_BR = INIT_DRIVE_RATIO_BR;//control veering by lowering right motor power
 
 
 
@@ -135,10 +159,10 @@ public class SwerveDriveHardware {
     final static double SERVO_BL_STRAFE_POSITION = 0.04;
     final static double SERVO_BR_STRAFE_POSITION = 0.98;
 
-    final static double SERVO_FL_TURN_POSITION = 0.20;
-    final static double SERVO_FR_TURN_POSITION = 0.78;
-    final static double SERVO_BL_TURN_POSITION = 0.79;
-    final static double SERVO_BR_TURN_POSITION = 0.23;
+    final static double SERVO_FL_TURN_POSITION = 0.28;
+    final static double SERVO_FR_TURN_POSITION = 0.75;
+    final static double SERVO_BL_TURN_POSITION = 0.75;
+    final static double SERVO_BR_TURN_POSITION = 0.26;
 
 
     // The IMU sensor object
@@ -270,6 +294,12 @@ public class SwerveDriveHardware {
             motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+        if (use_arm) {
+            sv_elbow = hwMap.servo.get("sv_elbow");
+            sv_shoulder = hwMap.servo.get("sv_shoulder");
+            sv_elbow.setPosition(SV_ELBOW_UP);
+            sv_shoulder.setPosition(SV_SHOULDER_UP);
+        }
 
     }
 
@@ -297,5 +327,6 @@ public class SwerveDriveHardware {
         // Reset the cycle clock for the next pass.
         period.reset();
     }
+
 
 }
