@@ -533,28 +533,28 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     void show_telemetry() throws InterruptedException {
-        telemetry.addData("Tobot/Imu/Vu =", "%s/%s/%s",
+        telemetry.addData("1. Tobot/Imu/Vu =", "%s/%s/%s",
                 (robot.use_swerve ?"on":"off"), (robot.use_imu?"on":"off"),
                 (robot.use_Vuforia ?"on":"off"));
-        telemetry.addData("W-Pw Left/Right =", "%.2f/%.2f",
+        telemetry.addData("2. W-pw Left/Right =", "%.2f/%.2f",
                 robot.motorPowerLeft,robot.motorPowerRight);
-        telemetry.addData("W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
+        telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
         if (robot.use_imu) {
-            telemetry.addData("IMU Heading = ", "%.2f", imu_heading());
+            telemetry.addData("4. IMU Heading = ", "%.2f", imu_heading());
         }
         if (robot.use_Vuforia) {
-            telemetry.addData("Vuforia Column = ", "%d", get_cryptobox_column());
+            telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
         }
         if (robot.use_swerve) {
             if (robot.isCarMode) {
-                telemetry.addLine("Currently in: Car Mode");
+                telemetry.addLine("6. Currently in: Car Mode");
             } else if (robot.isTurn) {
-                telemetry.addLine("Currently in: Quick Turn Mode");
+                telemetry.addLine("6. Currently in: Quick Turn Mode");
             } else if (robot.isForward) {
-                telemetry.addLine("Currently in: Standard Mode");
+                telemetry.addLine("6. Currently in: Standard Mode");
             } else {
-                telemetry.addLine("Currently in: Strafe Mode");
+                telemetry.addLine("6. Currently in: Strafe Mode");
             }
         }
         telemetry.update();
