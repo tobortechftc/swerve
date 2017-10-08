@@ -196,7 +196,21 @@ public class SwerveDriveHardware {
         if (use_minibot) {
             motorFrontLeft = hwMap.dcMotor.get("left_drive");
             motorFrontRight = hwMap.dcMotor.get("right_drive");
+
             use_chassis = false;
+
+            motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+
+            motorFrontLeft.setPower(0);
+            motorFrontRight.setPower(0);
+
+            // Set all motors to run without encoders.
+            // May want to use RUN_USING_ENCODERS if encoders are installed.
+            motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         else if (use_chassis) {
             // Define and Initialize Motors

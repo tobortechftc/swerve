@@ -17,33 +17,30 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 
 @TeleOp(name = "Swerve: DriveToCryptobox2", group = "Swerve")
-public class SwerveDriveToCryptobox2 extends LinearOpMode {
-    SwerveDriveHardware hw = new SwerveDriveHardware();
+public class SwerveDriveToCryptobox2 extends SwerveUtilLOP {
 
     int driveDistance = 120; // 120=close, 139=middle, 158=far
 
 
     @Override
     public void runOpMode() {
-        hw.use_Vuforia = false;
-        hw.use_imu = false;
-        hw.use_encoder = false;
-        hw.use_minibot = true;
-        hw.use_range_sensor = true;
-        hw.init(hardwareMap);
+        robot.use_Vuforia = false;
+        robot.use_imu = false;
+        robot.use_encoder = false;
+        robot.use_minibot = true;
+        robot.use_range_sensor = true;
+        robot.use_color_sensor = true;
+        robot.init(hardwareMap);
+
+        waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("Distance: ", hw.rangeSensor.getDistance(DistanceUnit.CM));
+            boolean isDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) <= driveDistance;
+
+            telemetry.addData("Distance: ", robot.rangeSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("isDistance: ", isDistance);
             telemetry.update();
-            sleep(100);
-
-            hw.motorFrontLeft.setPower(.3);
-            hw.motorFrontRight.setPower(.3);
-
-            if (hw.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance) {
-                hw.motorFrontLeft.setPower(0.0);
-                hw.motorFrontRight.setPower(0.0);
-            }
+            sleep(50);
         }
     }
 }
