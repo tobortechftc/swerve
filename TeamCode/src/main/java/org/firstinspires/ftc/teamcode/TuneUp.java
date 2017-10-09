@@ -144,5 +144,6 @@ public class TuneUp extends SwerveUtilLOP {
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
             robot.waitForTick(40);
         }
+        stop_tobot();
     }
 }

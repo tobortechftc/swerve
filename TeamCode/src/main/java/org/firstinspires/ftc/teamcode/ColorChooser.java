@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 /**
  * Created by Nick on 9/16/2017.
  */
-@TeleOp(name = "ColorChooser=Arm", group = "Swerve")
+@TeleOp(name = "J-arm", group = "Test")
 public class ColorChooser extends SwerveUtilLOP {
 
     String ballColor = "unknown";
@@ -72,5 +72,6 @@ public class ColorChooser extends SwerveUtilLOP {
             telemetry.update();
             sleep(100);
         }
+        stop_tobot();
     }
 }

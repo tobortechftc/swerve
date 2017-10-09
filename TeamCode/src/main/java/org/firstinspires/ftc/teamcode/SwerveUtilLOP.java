@@ -140,10 +140,26 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
-    void stop_tobot() {
-        stop_chassis();
-        // stop all sensors
+    void stop_auto() {
+        if (robot.use_color_sensor) {
+            robot.colorSensor.enableLed(false);
+            robot.colorSensor.close();
+            robot.use_color_sensor = false;
+        }
+        if (robot.use_Vuforia) {
+            robot.relicTrackables.deactivate();
+            robot.use_Vuforia = false;
+        }
+    }
 
+    void stop_tobot() {
+        if (robot.use_swerve||robot.use_minibot)
+            stop_chassis();
+        if (robot.use_color_sensor) {
+            robot.colorSensor.enableLed(false);
+            robot.colorSensor.close();
+        }
+        // stop all sensors
     }
 
     public void run_until_encoder(int leftCnt, double leftPower, int rightCnt, double rightPower) throws InterruptedException {

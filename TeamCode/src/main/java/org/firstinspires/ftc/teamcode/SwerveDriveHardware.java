@@ -227,6 +227,7 @@ public class SwerveDriveHardware {
 
         if (use_color_sensor) {
             colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
+            colorSensor.enableLed(true);
         }
         if (use_range_sensor) {
             rangeSensor = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");

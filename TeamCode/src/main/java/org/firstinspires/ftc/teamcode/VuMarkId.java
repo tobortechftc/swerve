@@ -29,6 +29,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -57,9 +58,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 public class VuMarkId extends SwerveUtilLOP {
 
     @Override public void runOpMode() throws InterruptedException {
+        ElapsedTime runtime = new ElapsedTime();
 
         robot.use_swerve = false;
         robot.use_imu = false;
+        robot.use_color_sensor = false;
+        robot.use_range_sensor = false;
+        robot.use_arm = false;
+        robot.use_glyph_grabber = false;
+        robot.use_relic_grabber = false;
         robot.use_Vuforia = true;
 
         robot.init(hardwareMap);
@@ -70,13 +77,17 @@ public class VuMarkId extends SwerveUtilLOP {
             robot.relicTrackables.activate();
         }
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() && (runtime.seconds()<29)) {
             show_telemetry();
             robot.waitForTick(40);
+            if (runtime.seconds()>10) {
+               if (robot.use_Vuforia) {
+                   robot.use_Vuforia = false;
+                   robot.relicTrackables.deactivate();
+               }
+            }
         }
-
-        if (robot.use_Vuforia) {
-            robot.relicTrackables.deactivate();
-        }
+        // need to deactive before timeout
+        stop_auto();
     }
 }
