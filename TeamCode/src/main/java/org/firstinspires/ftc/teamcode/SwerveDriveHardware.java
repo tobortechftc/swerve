@@ -67,7 +67,7 @@ public class SwerveDriveHardware {
     final static double INCHES_PER_ROTATION = 12.69; // inches per chassis motor rotation based on 1:1 gear ratio
 
     final static double IMU_ROTATION_RATIO_L = 0.4655; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
-    final static double IMU_ROTATION_RATIO_R = 0.4966; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
+    final static double IMU_ROTATION_RATIO_R = 0.5122; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
 
     final static double INIT_DRIVE_RATIO_FL = 1.0; //control veering by lowering left motor power
     final static double INIT_DRIVE_RATIO_FR = 1.0; //control veering by lowering right motor power
@@ -145,14 +145,6 @@ public class SwerveDriveHardware {
     final static double SERVO_FR_FORWARD_POSITION = 0.5;
     final static double SERVO_BL_FORWARD_POSITION = 0.5;
     final static double SERVO_BR_FORWARD_POSITION = 0.5;
-
-    /* Old values, in case we need them
-    final static double SERVO_FL_FORWARD_POSITION = 0.38;
-    final static double SERVO_FR_FORWARD_POSITION = 0.68;
-    final static double SERVO_BL_FORWARD_POSITION = 0.67;
-    final static double SERVO_BR_FORWARD_POSITION = 0.37;
-    */
-
 
     final static double SERVO_FL_STRAFE_POSITION = 0.96;
     final static double SERVO_FR_STRAFE_POSITION = 0.04;
@@ -261,10 +253,10 @@ public class SwerveDriveHardware {
             servoBackLeft = hwMap.servo.get("servoBackLeft");
             servoBackRight = hwMap.servo.get("servoBackRight");
 
-            motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-            motorFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-            motorBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-            motorBackRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+            motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+            motorFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+            motorBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+            motorBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
             // Set all motors to zero power and set all servos to central position
             // May want to change servo #'s to the value where all wheels are pointing forward.

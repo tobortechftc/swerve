@@ -157,17 +157,6 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
                 }
                 else {
-                        robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
-                        robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
-                        robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
-                        robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
-
-                        robot.motorFrontLeft.setPower(-gamepad1.left_trigger);
-                        robot.motorFrontRight.setPower(gamepad1.left_trigger);
-                        robot.motorBackLeft.setPower(-gamepad1.left_trigger);
-                        robot.motorBackRight.setPower(gamepad1.left_trigger);
-                    }
-                } else {
                     if (gamepad1.dpad_up) {
                         robot.isTestingFL = true;
                         robot.isTestingFR = false;
@@ -323,18 +312,19 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         sleep(400);
                     }
 
-                    if(gamepad1.b) {
-                        StraightIn(-0.3, 50);
+                    if (gamepad1.b) {
+                        StraightIn(0.3, 50);
                     }
-                    if(gamepad1.left_bumper) {
+                    if (gamepad1.left_bumper) {
                         sleep(100);
                         TurnLeftD(0.5, 90.0);
                     }
 
-                    if(gamepad1.right_bumper) {
+                    if (gamepad1.right_bumper) {
                         sleep(100);
                         TurnRightD(0.5, 90.0);
                     }
+                }
 
                 // Possible idea where holding the left stick farther from the center makes it turn the servo farther. Not completed.
 //            while (-gamepad1.left_stick_y > .10 && -gamepad1.left_stick_y < -.10) {
@@ -375,10 +365,10 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 }
 
                 if(robot.isCarMode) {
-                    robot.insideWheelsMod = gamepad1.left_stick_y * (Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) - robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
-                            (robot.r_Value);
-                    robot.outsideWheelsMod = gamepad1.left_stick_y * (Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) + robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
-                            (robot.r_Value);
+                    robot.insideWheelsMod = gamepad1.left_stick_y * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) - robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                            (robot.r_Value));
+                    robot.outsideWheelsMod = gamepad1.left_stick_y * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) + robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                            (robot.r_Value));
                     if (robot.enoughToSnake) {
                         if (robot.isSnakingLeft) {
                             robot.motorPowerLeft = robot.insideWheelsMod;
@@ -391,6 +381,12 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorPowerLeft = gamepad1.left_stick_y;
                         robot.motorPowerRight = gamepad1.left_stick_y;
                     }
+
+                    robot.motorFrontLeft.setPower(robot.motorPowerLeft);
+                    robot.motorFrontRight.setPower(robot.motorPowerRight);
+                    robot.motorBackLeft.setPower(robot.motorPowerLeft);
+                    robot.motorBackRight.setPower(robot.motorPowerRight);
+
                 } else if (robot.isTurn) {
                     robot.motorPowerTurn = gamepad1.right_stick_x;
                     robot.motorFrontLeft.setPower(-robot.motorPowerTurn);

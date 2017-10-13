@@ -572,6 +572,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             } else {
                 telemetry.addLine("6. Currently in: Strafe Mode");
             }
+
         }
         telemetry.update();
     }
