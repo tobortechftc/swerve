@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -22,16 +21,22 @@ import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
 
-    public boolean use_chassis = true;
+    // define all switches to turn on/off hardware each component
+    public boolean use_swerve = true;   // use four motors and four servos for chassis
+    public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight only for chassis
     public boolean use_Vuforia = true;
     public boolean use_imu = true;
     public boolean use_encoder = true;
     public boolean use_color_sensor = false;
     public boolean use_range_sensor = false;
+    public boolean use_relic_grabber = false;
+    public boolean use_glyph_grabber = false;
+    public boolean use_arm = false;
+
     public boolean fast_mode = false;
     public boolean straight_mode = false;
-    public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight
-    
+
+
     boolean isCarMode = false;
     boolean isForward = true;
     boolean isTurn = false;
@@ -39,6 +44,8 @@ public class SwerveDriveHardware {
 
     boolean hasTeleTurnLeft = false;
     boolean hasTeleTurnRight = false;
+    boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
+    boolean isSnakingLeft = false; //See if the snake drive is turning to the left
 
     //Booleans for Debugging
     boolean isTestingFL = false;
@@ -55,24 +62,35 @@ public class SwerveDriveHardware {
     public int leftCnt = 0; // left motor target counter
     public int rightCnt = 0; // right motor target counter
 
-    final static int ONE_ROTATION = 1120; // for AndyMark-40 motor encoder one rotation
+    final static int ONE_ROTATION = 538; // for AndyMark-40 motor encoder one rotation
     final static double RROBOT = 6.63;  // number of wheel turns to get chassis 360-degree turn
     final static double INCHES_PER_ROTATION = 12.69; // inches per chassis motor rotation based on 1:1 gear ratio
-    final static double IMU_ROTATION_RATIO_L = 0.857; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
-    final static double IMU_ROTATION_RATIO_R = 0.857; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
-    final static double DRIVE_RATIO_FL = 0.85; //control veering by lowering left motor power
-    final static double DRIVE_RATIO_FR = 1.0; //control veering by lowering right motor power
-    final static double DRIVE_RATIO_BL = 0.85; //control veering by lowering left motor power
-    final static double DRIVE_RATIO_BR = 1.0; //control veering by lowering right motor power
 
-    final static double WIDTH_BETWEEN_WHEELS = 10.0625;
-    final static double LENGTH_BETWEEN_WHEELS = 12.125;
-    final static double MAX_TURNING_RADIUS = 30;
+    final static double IMU_ROTATION_RATIO_L = 0.4655; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
+    final static double IMU_ROTATION_RATIO_R = 0.5122; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
+
+    final static double INIT_DRIVE_RATIO_FL = 1.0; //control veering by lowering left motor power
+    final static double INIT_DRIVE_RATIO_FR = 1.0; //control veering by lowering right motor power
+    final static double INIT_DRIVE_RATIO_BL = 1.0; //control veering by lowering left motor power
+    final static double INIT_DRIVE_RATIO_BR = 1.0; //control veering by lowering right motor power
+
+
+    final static double WIDTH_BETWEEN_WHEELS = 12;
+    final static double LENGTH_BETWEEN_WHEELS = 12;
+    final static double MIN_TURNING_RADIUS = 13;
+    final static double MAX_TURNING_RADIUS = 100;
 
     final static int RED_BALL_MIN = -94;
     final static int RED_BALL_MAX = -36;
     final static int BLUE_BALL_MIN = 12;
     final static int BLUE_BALL_MAX = 66;
+
+    final static double SV_SHOULDER_UP = 0.54;
+    final static double SV_SHOULDER_DOWN = 0.54;
+    final static double SV_SHOULDER_LEFT = 0.6589;
+    final static double SV_SHOULDER_RIGHT = 0.39;
+    final static double SV_ELBOW_UP = 0.0067;
+    final static double SV_ELBOW_DOWN = 0.5367;
 
     double motorPowerLeft;
     double motorPowerRight;
@@ -83,6 +101,16 @@ public class SwerveDriveHardware {
     double servoPosBR;
     double leftServoAngle;
     double rightServoAngle;
+    double r_Value;
+    double thetaOneCalc;
+    double thetaTwoCalc;
+    double insideWheelsMod;
+    double outsideWheelsMod;
+
+    double DRIVE_RATIO_FL = INIT_DRIVE_RATIO_FL; //control veering by lowering left motor power
+    double DRIVE_RATIO_FR = INIT_DRIVE_RATIO_FR;//control veering by lowering right motor power
+    double DRIVE_RATIO_BL = INIT_DRIVE_RATIO_BL; //control veering by lowering left motor power
+    double DRIVE_RATIO_BR = INIT_DRIVE_RATIO_BR;//control veering by lowering right motor power
 
 
 
@@ -92,6 +120,10 @@ public class SwerveDriveHardware {
     public DcMotor motorBackLeft = null;
     public DcMotor motorBackRight = null;
 
+    public DcMotor mt_relic_slider = null;
+
+    public DcMotor mt_glyph_rotator = null;
+    public DcMotor mt_glyph_slider = null;
     public Servo servoFrontLeft = null;
     public Servo servoFrontRight = null;
     public Servo servoBackLeft = null;
@@ -99,6 +131,12 @@ public class SwerveDriveHardware {
 
     public Servo sv_shoulder;
     public Servo sv_elbow;
+
+    public Servo sv_glyph_grabber_top = null;
+    public Servo sv_glyph_grabber_bottom = null;
+
+    public Servo sv_relic_grabber = null;
+    public Servo sv_relic_arm = null;
 
     public ColorSensor colorSensor = null;
     public ModernRoboticsI2cRangeSensor rangeSensor = null;
@@ -108,23 +146,15 @@ public class SwerveDriveHardware {
     final static double SERVO_BL_FORWARD_POSITION = 0.5;
     final static double SERVO_BR_FORWARD_POSITION = 0.5;
 
-    /* Old values, in case we need them
-    final static double SERVO_FL_FORWARD_POSITION = 0.38;
-    final static double SERVO_FR_FORWARD_POSITION = 0.68;
-    final static double SERVO_BL_FORWARD_POSITION = 0.67;
-    final static double SERVO_BR_FORWARD_POSITION = 0.37;
-    */
-
-
     final static double SERVO_FL_STRAFE_POSITION = 0.96;
     final static double SERVO_FR_STRAFE_POSITION = 0.04;
     final static double SERVO_BL_STRAFE_POSITION = 0.04;
     final static double SERVO_BR_STRAFE_POSITION = 0.98;
 
-    final static double SERVO_FL_TURN_POSITION = 0.20;
-    final static double SERVO_FR_TURN_POSITION = 0.78;
-    final static double SERVO_BL_TURN_POSITION = 0.79;
-    final static double SERVO_BR_TURN_POSITION = 0.23;
+    final static double SERVO_FL_TURN_POSITION = 0.28;
+    final static double SERVO_FR_TURN_POSITION = 0.75;
+    final static double SERVO_BL_TURN_POSITION = 0.75;
+    final static double SERVO_BR_TURN_POSITION = 0.26;
 
 
     // The IMU sensor object
@@ -189,15 +219,26 @@ public class SwerveDriveHardware {
 
         if (use_color_sensor) {
             colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
+            colorSensor.enableLed(true);
         }
         if (use_range_sensor) {
             rangeSensor = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
         }
+        if (use_relic_grabber) {
+            sv_relic_arm = hwMap.servo.get("sv_relic_arm");
+            sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
+            mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
+        }
+        if (use_glyph_grabber) {
+            sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");
+            sv_glyph_grabber_top = hwMap.servo.get("sv_grabber_top");
+            mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
+            mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
+        }
+
         if (use_minibot) {
             motorFrontLeft = hwMap.dcMotor.get("left_drive");
             motorFrontRight = hwMap.dcMotor.get("right_drive");
-
-            use_chassis = false;
 
             motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
 
@@ -211,8 +252,9 @@ public class SwerveDriveHardware {
 
             motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            use_swerve = false;
         }
-        else if (use_chassis) {
+        else if (use_swerve) {
             // Define and Initialize Motors
             motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
             motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
@@ -224,10 +266,10 @@ public class SwerveDriveHardware {
             servoBackLeft = hwMap.servo.get("servoBackLeft");
             servoBackRight = hwMap.servo.get("servoBackRight");
 
-            motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-            motorFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-            motorBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-            motorBackRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+            motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+            motorFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+            motorBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+            motorBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
             // Set all motors to zero power and set all servos to central position
             // May want to change servo #'s to the value where all wheels are pointing forward.
@@ -258,6 +300,12 @@ public class SwerveDriveHardware {
             motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+        if (use_arm) {
+            sv_elbow = hwMap.servo.get("sv_elbow");
+            sv_shoulder = hwMap.servo.get("sv_shoulder");
+            sv_elbow.setPosition(SV_ELBOW_UP);
+            sv_shoulder.setPosition(SV_SHOULDER_UP);
+        }
 
     }
 
@@ -285,5 +333,6 @@ public class SwerveDriveHardware {
         // Reset the cycle clock for the next pass.
         period.reset();
     }
+
 
 }
