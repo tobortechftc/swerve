@@ -572,6 +572,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             } else {
                 telemetry.addLine("6. Currently in: Strafe Mode");
             }
+            telemetry.addData("7. Encoder values FL/FR/BL/BR = ", "%d/%d/%d/%d",
+                    robot.motorFrontLeft.getCurrentPosition(), robot.motorFrontRight.getCurrentPosition(), robot.motorBackLeft.getCurrentPosition(), robot.motorBackRight.getCurrentPosition());
 
         }
         telemetry.update();
