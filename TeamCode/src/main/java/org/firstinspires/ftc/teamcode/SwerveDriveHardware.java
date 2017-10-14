@@ -91,7 +91,14 @@ public class SwerveDriveHardware {
     final static double SV_SHOULDER_RIGHT = 0.39;
     final static double SV_ELBOW_UP = 0.0067;
     final static double SV_ELBOW_DOWN = 0.5367;
-
+    final static double SV_GLYPH_GRABBER_TOP_INIT = 0.3728;
+    final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.1572;
+    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.0022;
+    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.5733;
+    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.7078;
+    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.8995;
+    final static double SV_RELIC_GRABBER_INIT = 0.5;
+    final static double SV_RELIC_ARM_INIT = 0.5;
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
@@ -232,8 +239,8 @@ public class SwerveDriveHardware {
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");
             sv_glyph_grabber_top = hwMap.servo.get("sv_grabber_top");
-            mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
-            mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
+            //mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
+            //mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
         }
 
         if (use_minibot) {
