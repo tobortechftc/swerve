@@ -18,8 +18,9 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_swerve = false;
         robot.use_imu = false;
         robot.use_Vuforia = false;
-        robot.use_color_sensor = true;
-        robot.use_arm = true;
+        robot.use_color_sensor = false;
+        robot.use_arm = false;
+        robot.use_glyph_grabber = true;
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
@@ -74,8 +75,24 @@ public class TuneUp extends SwerveUtilLOP {
                 double pos = robot.sv_elbow.getPosition();
                 if (pos >= INCREMENT) {
                     robot.sv_elbow.setPosition(pos - INCREMENT);
+
                 }
             }
+            if (gamepad1.dpad_down) {
+                double pos = robot.sv_glyph_grabber_bottom.getPosition();
+                if (pos >= INCREMENT) {
+                    robot.sv_glyph_grabber_bottom.setPosition(pos - INCREMENT);
+
+                }
+            }
+            if (gamepad1.dpad_up) {
+                double pos = robot.sv_glyph_grabber_bottom.getPosition();
+                if (pos <= (1-INCREMENT)) {
+                    robot.sv_glyph_grabber_bottom.setPosition(pos + INCREMENT);
+
+                }
+            }
+
             if (gamepad2.a) {
                 robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
             }
@@ -113,24 +130,28 @@ public class TuneUp extends SwerveUtilLOP {
             if (gamepad1.x) {
                 cur_sv_ix --;
                 if (cur_sv_ix<0) cur_sv_ix = num_servos - 1;
-                while (sv_list[cur_sv_ix]==null && cur_sv_ix>0) {
+                int count = 0;
+                while (sv_list[cur_sv_ix]==null && cur_sv_ix>=0 && count<20) {
                     cur_sv_ix --;
+                    if (cur_sv_ix<0) cur_sv_ix = num_servos - 1;
                 }
-                sleep(50);
+                sleep(100);
             }
             if (gamepad1.b) {
                 cur_sv_ix ++;
                 if (cur_sv_ix>=num_servos) cur_sv_ix = 0;
-                while (sv_list[cur_sv_ix]==null && cur_sv_ix<num_servos) {
+                int count = 0;
+                while (cur_sv_ix<num_servos && sv_list[cur_sv_ix]==null && count<20) {
                     cur_sv_ix ++;
+                    if (cur_sv_ix>=num_servos) cur_sv_ix = 0;
                 }
-                sleep(50);
+                sleep(100);
             }
-            telemetry.addData("0. Gamepad1:", "X/B:servo select, Y/A:+/-%4.3f",INCREMENT);
+            telemetry.addData("0. GP1:", "X/B:sv sel, Y/A:+/-%4.3f(ix=%d)",INCREMENT,cur_sv_ix);
             if (show_all) {
                 for (int i=0; i<num_servos; i++) {
                     if (sv_list[i]!=null) {
-                        telemetry.addData("6.", "%d. Servo %s = %5.4f", i, sv_list[i].getDeviceName(), sv_list[i].getPosition());
+                        telemetry.addData("6.", "%d. Servo port %d = %5.4f", i, sv_list[i].getPortNumber(), sv_list[i].getPosition());
                     }
                 }
             }
