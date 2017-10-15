@@ -40,7 +40,7 @@ public class SwerveDriveHardware {
     boolean isCarMode = false;
     boolean isForward = true;
     boolean isTurn = false;
-    boolean isTrueCar = false;
+    boolean isTesting = false;
 
     boolean hasTeleTurnLeft = false;
     boolean hasTeleTurnRight = false;
@@ -66,7 +66,7 @@ public class SwerveDriveHardware {
     final static double RROBOT = 6.63;  // number of wheel turns to get chassis 360-degree turn
     final static double INCHES_PER_ROTATION = 12.69; // inches per chassis motor rotation based on 1:1 gear ratio
 
-    final static double IMU_ROTATION_RATIO_L = 0.61; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
+    final static double IMU_ROTATION_RATIO_L = 0.566; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
     final static double IMU_ROTATION_RATIO_R = 0.64; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
 
     final static double INIT_DRIVE_RATIO_FL = 0.998; //control veering by lowering left motor power
@@ -150,19 +150,27 @@ public class SwerveDriveHardware {
 
     final static double SERVO_FL_FORWARD_POSITION = 0.5;
     final static double SERVO_FR_FORWARD_POSITION = 0.5;
-    final static double SERVO_BL_FORWARD_POSITION = 0.49;
+    final static double SERVO_BL_FORWARD_POSITION = 0.51;
     final static double SERVO_BR_FORWARD_POSITION = 0.5;
 
-    final static double SERVO_FL_STRAFE_POSITION = 0.96;
-    final static double SERVO_FR_STRAFE_POSITION = 0.04;
-    final static double SERVO_BL_STRAFE_POSITION = 0.04;
-    final static double SERVO_BR_STRAFE_POSITION = 0.98;
+    final static double SERVO_FL_STRAFE_POSITION = 0.99;
+    final static double SERVO_FR_STRAFE_POSITION = 0.01;
+    final static double SERVO_BL_STRAFE_POSITION = 0.01;
+    final static double SERVO_BR_STRAFE_POSITION = 0.99;
 
     final static double SERVO_FL_TURN_POSITION = 0.28;
     final static double SERVO_FR_TURN_POSITION = 0.75;
     final static double SERVO_BL_TURN_POSITION = 0.75;
     final static double SERVO_BR_TURN_POSITION = 0.26;
 
+    enum CarMode {
+        CAR,
+        STRAIGHT,
+        CRAB,
+        TURN
+    };
+    CarMode cur_mode = CarMode.CAR;
+    CarMode old_mode = CarMode.STRAIGHT;
 
     // The IMU sensor object
     BNO055IMU imu;

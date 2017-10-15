@@ -548,6 +548,304 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
     }
 
+    void calc_snake(float stick_x){
+        if(stick_x > 0.1){
+            robot.isSnakingLeft = false;
+        }
+        else{
+            robot.isSnakingLeft = true;
+        }
+        if(Math.abs(stick_x) < 0.2){
+            robot.enoughToSnake = false;
+        }
+        else{
+            robot.enoughToSnake = true;
+        }
+
+        if(Math.abs(stick_x) > 0.8){
+            robot.r_Value = robot.MAX_TURNING_RADIUS - (/*Hypothetical limiter here*/(robot.MAX_TURNING_RADIUS - robot.MIN_TURNING_RADIUS));
+        }
+        else{
+            robot.r_Value = robot.MAX_TURNING_RADIUS - (Math.abs(stick_x) * (robot.MAX_TURNING_RADIUS - robot.MIN_TURNING_RADIUS));
+        }
+
+        robot.thetaOneCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) - (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1
+        robot.thetaTwoCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) + (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2
+    }
+
+    void snake_servo_adj(){
+        if(robot.enoughToSnake) {
+            if(robot.isSnakingLeft) {
+                robot.leftServoAngle = 1 - (robot.thetaOneCalc);
+                robot.rightServoAngle = 1 - (robot.thetaTwoCalc);
+            }
+            else{
+                robot.leftServoAngle = robot.thetaTwoCalc;
+                robot.rightServoAngle = robot.thetaOneCalc;
+            }
+            robot.servoPosFL = 1 - (robot.leftServoAngle);
+            robot.servoPosFR = 1 - (robot.rightServoAngle);
+            robot.servoPosBL = robot.leftServoAngle;
+            robot.servoPosBR = robot.rightServoAngle;
+            robot.servoFrontLeft.setPosition(robot.servoPosFL);
+            robot.servoFrontRight.setPosition(robot.servoPosFR);
+            robot.servoBackLeft.setPosition(robot.servoPosBL);
+            robot.servoBackRight.setPosition(robot.servoPosBR);
+        }
+        else{
+            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+        }
+    }
+
+    void test_swerve_servo(boolean isTestingLeft){
+        if(isTestingLeft){
+            if (robot.isTestingFL) {
+                robot.servoFrontLeft.setPosition(robot.servoPosFL + 0.01);
+                robot.servoPosFL += 0.01;
+            } else if (robot.isTestingFR) {
+                robot.servoFrontRight.setPosition(robot.servoPosFR + 0.01);
+                robot.servoPosFR += 0.01;
+            } else if (robot.isTestingBL) {
+                robot.servoBackLeft.setPosition(robot.servoPosBL + 0.01);
+                robot.servoPosBL += 0.01;
+            } else if (robot.isTestingBR) {
+                robot.servoBackRight.setPosition(robot.servoPosBR + 0.01);
+                robot.servoPosBR += 0.01;
+            } else {
+
+                robot.servoFrontLeft.setPosition(robot.servoPosFL + 0.05);
+                robot.servoPosFL += 0.05;
+
+                robot.servoFrontRight.setPosition(robot.servoPosFR + 0.05);
+                robot.servoPosFR += 0.05;
+
+                robot.servoBackLeft.setPosition(robot.servoPosBL + 0.05);
+                robot.servoPosBL += 0.05;
+
+                robot.servoBackRight.setPosition(robot.servoPosBR + 0.05);
+                robot.servoPosBR += 0.05;
+            }
+        }
+        else{
+            if (robot.isTestingFL) {
+                robot.servoFrontLeft.setPosition(robot.servoPosFL - 0.01);
+                robot.servoPosFL -= 0.01;
+            } else if (robot.isTestingFR) {
+                robot.servoFrontRight.setPosition(robot.servoPosFR - 0.01);
+                robot.servoPosFR -= 0.01;
+            } else if (robot.isTestingBL) {
+                robot.servoBackLeft.setPosition(robot.servoPosBL - 0.01);
+                robot.servoPosBL -= 0.01;
+            } else if (robot.isTestingBR) {
+                robot.servoBackRight.setPosition(robot.servoPosBR - 0.01);
+                robot.servoPosBR -= 0.01;
+            } else {
+
+                robot.servoFrontLeft.setPosition(robot.servoPosFL - 0.05);
+                robot.servoPosFL -= 0.05;
+
+                robot.servoFrontRight.setPosition(robot.servoPosFR - 0.05);
+                robot.servoPosFR -= 0.05;
+
+                robot.servoBackLeft.setPosition(robot.servoPosBL - 0.05);
+                robot.servoPosBL -= 0.05;
+
+                robot.servoBackRight.setPosition(robot.servoPosBR - 0.05);
+                robot.servoPosBR -= 0.05;
+            }
+        }
+    }
+
+    void tele_turn(boolean isLeft, double trigger_val){
+        if(isLeft){
+            robot.hasTeleTurnLeft = true;
+        }
+        else{
+            robot.hasTeleTurnRight = true;
+        }
+
+        robot.isTurn = true;
+
+        robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
+        robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
+        robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
+        robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+
+        robot.motorFrontLeft.setPower(-trigger_val);
+        robot.motorFrontRight.setPower(trigger_val);
+        robot.motorBackLeft.setPower(-trigger_val);
+        robot.motorBackRight.setPower(trigger_val);
+    }
+
+    void return_from_teleturn(){
+        robot.isTurn = false;
+        robot.hasTeleTurnLeft = false;
+        robot.hasTeleTurnRight = false;
+
+        robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+        robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+        robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+        robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+
+        robot.motorFrontLeft.setPower(0);
+        robot.motorFrontRight.setPower(0);
+        robot.motorBackLeft.setPower(0);
+        robot.motorBackRight.setPower(0);
+    }
+
+    void correct_swerve_servos(){
+        // Normalize the values so neither exceed 1.0 or 0.0
+
+        if (Math.abs(robot.motorPowerLeft) > 1) {
+            robot.motorPowerLeft = 1.0;
+        }
+        if (Math.abs(robot.motorPowerRight) > 1) {
+            robot.motorPowerRight = 1.0;
+        }
+        if (Math.abs(robot.servoPosFL) > 1) {
+            robot.servoPosFL = 1.0;
+        }
+        if (Math.abs(robot.servoPosFR) > 1) {
+            robot.servoPosFR = 1.0;
+        }
+        if (Math.abs(robot.servoPosBL) > 1) {
+            robot.servoPosBL = 1.0;
+        }
+        if (Math.abs(robot.servoPosBR) > 1) {
+            robot.servoPosBR = 1.0;
+        }
+        if (Math.abs(robot.servoPosFL) < 0) {
+            robot.servoPosFL = 0.0;
+        }
+        if (Math.abs(robot.servoPosFR) < 0) {
+            robot.servoPosFR = 0.0;
+        }
+        if (Math.abs(robot.servoPosBL) < 0) {
+            robot.servoPosBL = 0.0;
+        }
+        if (Math.abs(robot.servoPosBR) < 0) {
+            robot.servoPosBR = 0.0;
+        }
+    }
+
+    void change_swerve_pos(SwerveDriveHardware.CarMode new_mode) {
+        if (new_mode == SwerveDriveHardware.CarMode.TURN) {
+            robot.servoFrontLeft.setPosition(robot.SERVO_FL_TURN_POSITION);
+            robot.servoFrontRight.setPosition(robot.SERVO_FR_TURN_POSITION);
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_TURN_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_TURN_POSITION);
+
+            robot.servoPosFL = robot.SERVO_FL_TURN_POSITION;
+            robot.servoPosFR = robot.SERVO_FR_TURN_POSITION;
+            robot.servoPosBL = robot.SERVO_BL_TURN_POSITION;
+            robot.servoPosBR = robot.SERVO_BR_TURN_POSITION;
+
+            robot.isTurn = true;
+            robot.isForward = false;
+            robot.isCarMode = false;
+        }
+        else if(new_mode == SwerveDriveHardware.CarMode.CRAB){
+            robot.servoFrontLeft.setPosition(robot.SERVO_FL_STRAFE_POSITION);
+            robot.servoFrontRight.setPosition(robot.SERVO_FR_STRAFE_POSITION);
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_STRAFE_POSITION);
+
+            robot.servoPosFL = robot.SERVO_FL_STRAFE_POSITION;
+            robot.servoPosFR = robot.SERVO_FR_STRAFE_POSITION;
+            robot.servoPosBL = robot.SERVO_BL_STRAFE_POSITION;
+            robot.servoPosBR = robot.SERVO_BR_STRAFE_POSITION;
+
+            robot.isTurn = false;
+            robot.isForward = false;
+            robot.isCarMode = false;
+        }
+        else if(new_mode == SwerveDriveHardware.CarMode.STRAIGHT){
+            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+
+            robot.servoPosFL = robot.SERVO_FL_FORWARD_POSITION;
+            robot.servoPosFR = robot.SERVO_FR_FORWARD_POSITION;
+            robot.servoPosBL = robot.SERVO_BL_FORWARD_POSITION;
+            robot.servoPosBR = robot.SERVO_BR_FORWARD_POSITION;
+
+            robot.isForward = true;
+            robot.isTurn = false;
+            robot.isCarMode = false;
+        }
+        else if(new_mode == SwerveDriveHardware.CarMode.CAR){
+            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+
+            robot.servoPosFL = robot.SERVO_FL_FORWARD_POSITION;
+            robot.servoPosFR = robot.SERVO_FR_FORWARD_POSITION;
+            robot.servoPosBL = robot.SERVO_BL_FORWARD_POSITION;
+            robot.servoPosBR = robot.SERVO_BR_FORWARD_POSITION;
+            robot.isTurn = false;
+            robot.isCarMode = true;
+        }
+        robot.old_mode = robot.cur_mode;
+        robot.cur_mode = new_mode;
+
+        robot.isTestingFL = false;
+        robot.isTestingFR = false;
+        robot.isTestingBL = false;
+        robot.isTestingBR = false;
+    }
+
+    void set_swerve_power(float right_stick, float left_stick, float x_stick){
+        if(robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
+            robot.insideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) - robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                    (robot.r_Value));
+            robot.outsideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) + robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                    (robot.r_Value));
+            if (robot.enoughToSnake) {
+                if (robot.isSnakingLeft) {
+                    robot.motorPowerLeft = robot.insideWheelsMod;
+                    robot.motorPowerRight = robot.outsideWheelsMod;
+                } else {
+                    robot.motorPowerLeft = robot.outsideWheelsMod;
+                    robot.motorPowerRight = robot.insideWheelsMod;
+                }
+            } else {
+                robot.motorPowerLeft = left_stick;
+                robot.motorPowerRight = left_stick;
+            }
+
+            robot.motorFrontLeft.setPower(robot.motorPowerLeft);
+            robot.motorFrontRight.setPower(robot.motorPowerRight);
+            robot.motorBackLeft.setPower(robot.motorPowerLeft);
+            robot.motorBackRight.setPower(robot.motorPowerRight);
+
+        } else if (robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
+            robot.motorPowerTurn = x_stick;
+            robot.motorFrontLeft.setPower(-robot.motorPowerTurn);
+            robot.motorFrontRight.setPower(robot.motorPowerTurn);
+            robot.motorBackLeft.setPower(-robot.motorPowerTurn);
+            robot.motorBackRight.setPower(robot.motorPowerTurn);
+        } else {
+            robot.motorPowerLeft = left_stick;
+            robot.motorPowerRight = right_stick;
+            if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT) {
+                robot.motorFrontLeft.setPower(robot.motorPowerLeft);
+                robot.motorFrontRight.setPower(robot.motorPowerRight);
+                robot.motorBackLeft.setPower(robot.motorPowerLeft);
+                robot.motorBackRight.setPower(robot.motorPowerRight);
+            } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) {
+                robot.motorFrontLeft.setPower(-robot.motorPowerRight);
+                robot.motorFrontRight.setPower(robot.motorPowerRight);
+                robot.motorBackLeft.setPower(robot.motorPowerLeft);
+                robot.motorBackRight.setPower(-robot.motorPowerLeft);
+            }
+        }
+    }
+
     void show_telemetry() throws InterruptedException {
         telemetry.addData("1. Tobot/Imu/Vu =", "%s/%s/%s",
                 (robot.use_swerve ?"on":"off"), (robot.use_imu?"on":"off"),
