@@ -20,8 +20,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 /**
  * Created by Nick on 9/29/2017.
  */
-@TeleOp(name = "Swerve: DriveToCryptobox", group = "Swerve")
-public class SwerveDriveToCryptobox extends SwerveUtilLOP {
+@TeleOp(name = "Swerve: DriveToCryptoboxSpike", group = "Swerve")
+public class DriveToCryptoboxSpike extends SwerveUtilLOP {
 
 
     final static int SPIKE_DISTANCE = 22; // Rough estimate of value, just a placeholder.

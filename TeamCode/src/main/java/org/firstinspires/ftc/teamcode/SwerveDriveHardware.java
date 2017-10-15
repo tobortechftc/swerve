@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -240,7 +241,8 @@ public class SwerveDriveHardware {
             motorFrontLeft = hwMap.dcMotor.get("left_drive");
             motorFrontRight = hwMap.dcMotor.get("right_drive");
 
-            motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+            motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+            motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 
             motorFrontLeft.setPower(0);
             motorFrontRight.setPower(0);

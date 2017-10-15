@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 import static java.lang.Thread.sleep;
@@ -105,10 +106,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             } else {
                 robot.motorFrontRight.setPower(rp);
-                robot.motorFrontLeft.setPower(-rp);
+                robot.motorFrontLeft.setPower(rp);
                 if (!robot.use_minibot) {
                     robot.motorBackLeft.setPower(lp);
-                    robot.motorBackRight.setPower(-lp);
+                    robot.motorBackRight.setPower(lp);
                 }
             }
         }
@@ -557,7 +558,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
         if (robot.use_imu) {
-            telemetry.addData("4. IMU Heading = ", "%.2f", imu_heading());
+            telemetry.addData("4.1 IMU Heading = ", "%.2f", imu_heading());
+        }
+        if (robot.use_range_sensor) {
+            telemetry.addData("4.2 range = ", "%.2f cm",robot.rangeSensor.getDistance(DistanceUnit.CM));
         }
         if (robot.use_Vuforia) {
             telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
