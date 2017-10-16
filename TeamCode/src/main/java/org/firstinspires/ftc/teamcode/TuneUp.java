@@ -135,7 +135,8 @@ public class TuneUp extends SwerveUtilLOP {
                     cur_sv_ix --;
                     if (cur_sv_ix<0) cur_sv_ix = num_servos - 1;
                 }
-                sleep(100);
+                gamepad1.reset();
+                sleep(10);
             }
             if (gamepad1.b) {
                 cur_sv_ix ++;
@@ -145,8 +146,29 @@ public class TuneUp extends SwerveUtilLOP {
                     cur_sv_ix ++;
                     if (cur_sv_ix>=num_servos) cur_sv_ix = 0;
                 }
-                sleep(100);
+                gamepad1.reset();
+                sleep(10);
             }
+            if (gamepad1.left_bumper) {
+                // 1. glyph grabber auto rotates 180 degrees
+                glyph_grabber_auto_open();
+                // 2. if upside down, rotate back
+                if (robot.is_glyph_grabber_upside_down) {
+                    sleep(500);
+                    glyph_grabber_auto_rotate(.3);
+                }
+
+            }
+            if (gamepad1.left_trigger>0.1) {
+                // 1. glyph grabber auto close down grabber
+                // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
+                glyph_grabber_auto_close();
+                if (!robot.is_glyph_grabber_upside_down) {
+                    sleep(1000);
+                    glyph_grabber_auto_rotate(0.3);
+                }
+            }
+
             telemetry.addData("0. GP1:", "X/B:sv sel, Y/A:+/-%4.3f(ix=%d)",INCREMENT,cur_sv_ix);
             if (show_all) {
                 for (int i=0; i<num_servos; i++) {

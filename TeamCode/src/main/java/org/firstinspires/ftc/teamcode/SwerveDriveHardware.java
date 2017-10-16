@@ -47,6 +47,7 @@ public class SwerveDriveHardware {
     boolean hasTeleTurnRight = false;
     boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
     boolean isSnakingLeft = false; //See if the snake drive is turning to the left
+    boolean is_glyph_grabber_upside_down = false;
 
     //Booleans for Debugging
     boolean isTestingFL = false;
@@ -63,7 +64,10 @@ public class SwerveDriveHardware {
     public int leftCnt = 0; // left motor target counter
     public int rightCnt = 0; // right motor target counter
 
-    final static int ONE_ROTATION = 538; // for AndyMark-40 motor encoder one rotation
+    final static int ONE_ROTATION_60 = 1680; // AndyMark NeveRest-60
+    final static int ONE_ROTATION_40 = 1120; // AndyMark NeveRest-40
+    final static int ONE_ROTATION_20 = 560; // AndyMark NeveRest-20
+    final static int ONE_ROTATION = 538; // for new AndyMark-20 motor encoder one rotation
     final static double RROBOT = 6.63;  // number of wheel turns to get chassis 360-degree turn
     final static double INCHES_PER_ROTATION = 12.69; // inches per chassis motor rotation based on 1:1 gear ratio
 
@@ -92,12 +96,12 @@ public class SwerveDriveHardware {
     final static double SV_SHOULDER_RIGHT = 0.39;
     final static double SV_ELBOW_UP = 0.0067;
     final static double SV_ELBOW_DOWN = 0.5367;
-    final static double SV_GLYPH_GRABBER_TOP_INIT = 0.3728;
-    final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.1572;
-    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.0022;
-    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.5733;
-    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.7078;
-    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.8995;
+    final static double SV_GLYPH_GRABBER_TOP_INIT = 0.6078;
+    final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.6678;
+    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.9378;
+    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.3472;
+    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.1617;
+    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.001;
     final static double SV_RELIC_GRABBER_INIT = 0.5;
     final static double SV_RELIC_ARM_INIT = 0.5;
     double motorPowerLeft;
@@ -248,8 +252,11 @@ public class SwerveDriveHardware {
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");
             sv_glyph_grabber_top = hwMap.servo.get("sv_grabber_top");
-            //mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
+            mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
+            mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             //mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
+            sv_glyph_grabber_bottom.setPosition(SV_GLYPH_GRABBER_BOTTOM_INIT);
+            sv_glyph_grabber_top.setPosition(SV_GLYPH_GRABBER_TOP_INIT);
         }
 
         if (use_minibot) {
