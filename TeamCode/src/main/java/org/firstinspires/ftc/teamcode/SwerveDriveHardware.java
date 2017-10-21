@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -40,12 +41,13 @@ public class SwerveDriveHardware {
     boolean isCarMode = false;
     boolean isForward = true;
     boolean isTurn = false;
-    boolean isTrueCar = false;
+    boolean isTesting = false;
 
     boolean hasTeleTurnLeft = false;
     boolean hasTeleTurnRight = false;
     boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
     boolean isSnakingLeft = false; //See if the snake drive is turning to the left
+    boolean is_glyph_grabber_upside_down = false;
 
     //Booleans for Debugging
     boolean isTestingFL = false;
@@ -62,17 +64,20 @@ public class SwerveDriveHardware {
     public int leftCnt = 0; // left motor target counter
     public int rightCnt = 0; // right motor target counter
 
-    final static int ONE_ROTATION = 538; // for AndyMark-40 motor encoder one rotation
+    final static int ONE_ROTATION_60 = 1680; // AndyMark NeveRest-60
+    final static int ONE_ROTATION_40 = 1120; // AndyMark NeveRest-40
+    final static int ONE_ROTATION_20 = 560; // AndyMark NeveRest-20
+    final static int ONE_ROTATION = 538; // for new AndyMark-20 motor encoder one rotation
     final static double RROBOT = 6.63;  // number of wheel turns to get chassis 360-degree turn
     final static double INCHES_PER_ROTATION = 12.69; // inches per chassis motor rotation based on 1:1 gear ratio
 
-    final static double IMU_ROTATION_RATIO_L = 0.4655; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
-    final static double IMU_ROTATION_RATIO_R = 0.5122; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
+    final static double IMU_ROTATION_RATIO_L = 0.566; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
+    final static double IMU_ROTATION_RATIO_R = 0.64; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
 
-    final static double INIT_DRIVE_RATIO_FL = 1.0; //control veering by lowering left motor power
-    final static double INIT_DRIVE_RATIO_FR = 1.0; //control veering by lowering right motor power
+    final static double INIT_DRIVE_RATIO_FL = 0.998; //control veering by lowering left motor power
+    final static double INIT_DRIVE_RATIO_FR = 0.978; //control veering by lowering right motor power
     final static double INIT_DRIVE_RATIO_BL = 1.0; //control veering by lowering left motor power
-    final static double INIT_DRIVE_RATIO_BR = 1.0; //control veering by lowering right motor power
+    final static double INIT_DRIVE_RATIO_BR = 0.982; //control veering by lowering right motor power
 
 
     final static double WIDTH_BETWEEN_WHEELS = 12;
@@ -91,7 +96,14 @@ public class SwerveDriveHardware {
     final static double SV_SHOULDER_RIGHT = 0.39;
     final static double SV_ELBOW_UP = 0.0067;
     final static double SV_ELBOW_DOWN = 0.5367;
-
+    final static double SV_GLYPH_GRABBER_TOP_INIT = 0.6078;
+    final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.6678;
+    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.9378;
+    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.3472;
+    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.1617;
+    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.001;
+    final static double SV_RELIC_GRABBER_INIT = 0.5;
+    final static double SV_RELIC_ARM_INIT = 0.5;
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
@@ -143,19 +155,27 @@ public class SwerveDriveHardware {
 
     final static double SERVO_FL_FORWARD_POSITION = 0.5;
     final static double SERVO_FR_FORWARD_POSITION = 0.5;
-    final static double SERVO_BL_FORWARD_POSITION = 0.5;
+    final static double SERVO_BL_FORWARD_POSITION = 0.51;
     final static double SERVO_BR_FORWARD_POSITION = 0.5;
 
-    final static double SERVO_FL_STRAFE_POSITION = 0.96;
-    final static double SERVO_FR_STRAFE_POSITION = 0.04;
-    final static double SERVO_BL_STRAFE_POSITION = 0.04;
-    final static double SERVO_BR_STRAFE_POSITION = 0.98;
+    final static double SERVO_FL_STRAFE_POSITION = 0.99;
+    final static double SERVO_FR_STRAFE_POSITION = 0.01;
+    final static double SERVO_BL_STRAFE_POSITION = 0.01;
+    final static double SERVO_BR_STRAFE_POSITION = 0.99;
 
     final static double SERVO_FL_TURN_POSITION = 0.28;
     final static double SERVO_FR_TURN_POSITION = 0.75;
     final static double SERVO_BL_TURN_POSITION = 0.75;
     final static double SERVO_BR_TURN_POSITION = 0.26;
 
+    enum CarMode {
+        CAR,
+        STRAIGHT,
+        CRAB,
+        TURN
+    };
+    CarMode cur_mode = CarMode.CAR;
+    CarMode old_mode = CarMode.STRAIGHT;
 
     // The IMU sensor object
     BNO055IMU imu;
@@ -233,12 +253,29 @@ public class SwerveDriveHardware {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");
             sv_glyph_grabber_top = hwMap.servo.get("sv_grabber_top");
             mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
-            mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
+            mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
+            sv_glyph_grabber_bottom.setPosition(SV_GLYPH_GRABBER_BOTTOM_INIT);
+            sv_glyph_grabber_top.setPosition(SV_GLYPH_GRABBER_TOP_INIT);
         }
 
         if (use_minibot) {
             motorFrontLeft = hwMap.dcMotor.get("left_drive");
             motorFrontRight = hwMap.dcMotor.get("right_drive");
+
+            motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+            motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+
+            motorFrontLeft.setPower(0);
+            motorFrontRight.setPower(0);
+
+            // Set all motors to run without encoders.
+            // May want to use RUN_USING_ENCODERS if encoders are installed.
+            motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             use_swerve = false;
         }
         else if (use_swerve) {
