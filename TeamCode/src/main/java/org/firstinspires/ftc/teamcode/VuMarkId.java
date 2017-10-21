@@ -28,12 +28,18 @@
  */
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Bitmap;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.Image;
+import com.vuforia.PIXEL_FORMAT;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * This OpMode illustrates the basics of using the Vuforia engine to determine
@@ -57,7 +63,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 @Autonomous(name="Vu-Test", group ="Test")
 public class VuMarkId extends SwerveUtilLOP {
 
-    @Override public void runOpMode() throws InterruptedException {
+    @Override
+    public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
 
         robot.use_swerve = false;
@@ -77,17 +84,72 @@ public class VuMarkId extends SwerveUtilLOP {
             robot.relicTrackables.activate();
         }
 
-        while (opModeIsActive() && (runtime.seconds()<29)) {
-            show_telemetry();
+        int state = 0;
+        double stepStart = this.time;
+        int LoopRep = 0;
+        /* The state variable reflects what the loop is attempting to do:
+            -1 = quiting op mode (frame==null)
+            0 = awaiting activation
+            1 = attempting to get frame queue
+            2 = Frame retrieved
+
+         */
+        while (opModeIsActive() && (runtime.seconds() < 29)) {
+            LoopRep++;
+            //show_telemetry();
             robot.waitForTick(40);
-            if (runtime.seconds()>10) {
-               if (robot.use_Vuforia) {
-                   robot.use_Vuforia = false;
-                   robot.relicTrackables.deactivate();
-               }
+            telemetry.addData("Repetitions: x", LoopRep);
+            if (state == 0) {
+                int capacity = robot.vuforia.getFrameQueueCapacity();
+                telemetry.addData("6. Vuforia Queue State = ", capacity);
+                if (this.time - stepStart > 7) {
+                    state = 1;
+                    stepStart = this.time;
+                    robot.vuforia.setFrameQueueCapacity(1);
+                }
+            } else if (state == 1) {
+                int capacity = robot.vuforia.getFrameQueueCapacity();
+                telemetry.addData("6. Vuforia Queue State = ", capacity);
+                VuforiaLocalizer.CloseableFrame frame = robot.vuforia.getFrameQueue().poll(5, TimeUnit.SECONDS);
+                if (frame == null) {
+                    state = -1;
+                    telemetry.addData("7. ERROR State:", state);
+                    continue;
+                }
+                else {
+                    state = 2;
+                    stepStart = this.time;
+                    continue;
+                }
+//                if (runtime.seconds() > 10 && state == -1) {
+//                    if (robot.use_Vuforia) {
+//                        robot.use_Vuforia = false;
+//                        robot.relicTrackables.deactivate();
+//                    }
+//                }
+            }
+            else if (state == 2) {
+                telemetry.addData("Frame Got", null);
+            }
+            telemetry.addData("Current State:", state);
+            telemetry.addData("Time in state:", this.time - stepStart);
+            telemetry.update();
+            // need to deactive before timeout
+
+        }
+        stop_auto();
+    }
+    Bitmap convertFrameToBitmap(VuforiaLocalizer.CloseableFrame frame) {
+        long numImages = frame.getNumImages();
+        Image image = null;
+        for (int imageI = 0; imageI < numImages; imageI++) {
+            if (frame.getImage(imageI).getFormat() == PIXEL_FORMAT.RGB565) {
+                image = frame.getImage(imageI);
+                break;
             }
         }
-        // need to deactive before timeout
-        stop_auto();
+        Bitmap bitmap = Bitmap.createBitmap(image.getWidth(),image.getHeight(), Bitmap.Config.RGB_565);
+        bitmap.copyPixelsFromBuffer(image.getPixels());
+        return bitmap;
     }
 }
