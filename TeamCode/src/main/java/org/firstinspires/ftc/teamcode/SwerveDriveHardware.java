@@ -33,6 +33,7 @@ public class SwerveDriveHardware {
     public boolean use_relic_grabber = false;
     public boolean use_glyph_grabber = false;
     public boolean use_arm = false;
+    public boolean use_test_servo = false;
 
     public boolean fast_mode = false;
     public boolean straight_mode = false;
@@ -149,6 +150,7 @@ public class SwerveDriveHardware {
 
     public Servo sv_relic_grabber = null;
     public Servo sv_relic_arm = null;
+    public Servo sv_test = null;
 
     public ColorSensor colorSensor = null;
     public ModernRoboticsI2cRangeSensor rangeSensor = null;
@@ -243,6 +245,9 @@ public class SwerveDriveHardware {
         }
         if (use_range_sensor) {
             rangeSensor = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
+        }
+        if (use_test_servo) {
+            sv_test = hwMap.servo.get("sv_test");
         }
         if (use_relic_grabber) {
             sv_relic_arm = hwMap.servo.get("sv_relic_arm");
