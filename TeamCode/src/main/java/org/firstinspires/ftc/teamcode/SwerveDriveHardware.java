@@ -38,14 +38,8 @@ public class SwerveDriveHardware {
     public boolean fast_mode = false;
     public boolean straight_mode = false;
 
+    boolean isTesting = true;
 
-    boolean isCarMode = false;
-    boolean isForward = true;
-    boolean isTurn = false;
-    boolean isTesting = false;
-
-    boolean hasTeleTurnLeft = false;
-    boolean hasTeleTurnRight = false;
     boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
     boolean isSnakingLeft = false; //See if the snake drive is turning to the left
     boolean is_glyph_grabber_upside_down = false;
@@ -156,19 +150,19 @@ public class SwerveDriveHardware {
     public ModernRoboticsI2cRangeSensor rangeSensor = null;
 
     final static double SERVO_FL_FORWARD_POSITION = 0.5;
-    final static double SERVO_FR_FORWARD_POSITION = 0.5;
+    final static double SERVO_FR_FORWARD_POSITION = 0.47;
     final static double SERVO_BL_FORWARD_POSITION = 0.51;
-    final static double SERVO_BR_FORWARD_POSITION = 0.5;
+    final static double SERVO_BR_FORWARD_POSITION = 0.49;
 
-    final static double SERVO_FL_STRAFE_POSITION = 0.99;
-    final static double SERVO_FR_STRAFE_POSITION = 0.01;
-    final static double SERVO_BL_STRAFE_POSITION = 0.01;
-    final static double SERVO_BR_STRAFE_POSITION = 0.99;
+    final static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + 0.475;
+    final static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - 0.475;
+    final static double SERVO_BL_STRAFE_POSITION = SERVO_BL_FORWARD_POSITION - 0.475;
+    final static double SERVO_BR_STRAFE_POSITION = SERVO_BR_FORWARD_POSITION + 0.475;
 
-    final static double SERVO_FL_TURN_POSITION = 0.28;
-    final static double SERVO_FR_TURN_POSITION = 0.75;
-    final static double SERVO_BL_TURN_POSITION = 0.75;
-    final static double SERVO_BR_TURN_POSITION = 0.26;
+    final static double SERVO_FL_TURN_POSITION = SERVO_FL_FORWARD_POSITION - (0.475/2);
+    final static double SERVO_FR_TURN_POSITION = SERVO_FR_FORWARD_POSITION + (0.475/2);
+    final static double SERVO_BL_TURN_POSITION = SERVO_BL_FORWARD_POSITION + (0.475/2);
+    final static double SERVO_BR_TURN_POSITION = SERVO_BR_FORWARD_POSITION - (0.475/2);
 
     enum CarMode {
         CAR,
@@ -317,12 +311,12 @@ public class SwerveDriveHardware {
             motorBackLeft.setPower(0);
             motorBackRight.setPower(0);
 
-            // Set all motors to run without encoders.
+            // Set all motors to run with encoders.
             // May want to use RUN_USING_ENCODERS if encoders are installed.
             motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
