@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
+import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -63,6 +64,13 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name="Vu-Test", group ="Test")
 public class VuMarkId extends SwerveUtilLOP {
 
+    //Constants:
+    double IMAGE_WIDTH_CROP = 0.33;
+    double IMAGE_HEIGHT_CROP = 0.25;
+    double IMAGE_OFFSET_X = 0.33;
+    double IMAGE_OFFSET_Y = 0.75;
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
@@ -87,6 +95,8 @@ public class VuMarkId extends SwerveUtilLOP {
         int state = 0;
         double stepStart = this.time;
         int LoopRep = 0;
+        Bitmap bitmap = null;
+
         /* The state variable reflects what the loop is attempting to do:
             -1 = quiting op mode (frame==null)
             0 = awaiting activation
@@ -98,7 +108,6 @@ public class VuMarkId extends SwerveUtilLOP {
             LoopRep++;
             //show_telemetry();
             robot.waitForTick(40);
-            telemetry.addData("Repetitions: x", LoopRep);
             if (state == 0) {
                 int capacity = robot.vuforia.getFrameQueueCapacity();
                 telemetry.addData("6. Vuforia Queue State = ", capacity);
@@ -106,21 +115,29 @@ public class VuMarkId extends SwerveUtilLOP {
                     state = 1;
                     stepStart = this.time;
                     robot.vuforia.setFrameQueueCapacity(1);
+                    Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
+
                 }
             } else if (state == 1) {
                 int capacity = robot.vuforia.getFrameQueueCapacity();
                 telemetry.addData("6. Vuforia Queue State = ", capacity);
                 VuforiaLocalizer.CloseableFrame frame = robot.vuforia.getFrameQueue().poll(5, TimeUnit.SECONDS);
+
                 if (frame == null) {
                     state = -1;
-                    telemetry.addData("7. ERROR State:", state);
+                    telemetry.addData("7. ERROR failed to retrieve frame", null);
                     continue;
                 }
-                else {
-                    state = 2;
-                    stepStart = this.time;
+                Bitmap bitmapTemp = convertFrameToBitmap(frame);
+                if (bitmapTemp == null) {
+                    state = -1;
+                    telemetry.addData("ERROR Failed to retrieve bitmap", null);
                     continue;
                 }
+                state = 2;
+                stepStart = this.time;
+                bitmap = cropBitmap(bitmapTemp, IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+
 //                if (runtime.seconds() > 10 && state == -1) {
 //                    if (robot.use_Vuforia) {
 //                        robot.use_Vuforia = false;
@@ -128,28 +145,62 @@ public class VuMarkId extends SwerveUtilLOP {
 //                    }
 //                }
             }
-            else if (state == 2) {
-                telemetry.addData("Frame Got", null);
-            }
-            telemetry.addData("Current State:", state);
-            telemetry.addData("Time in state:", this.time - stepStart);
-            telemetry.update();
-            // need to deactive before timeout
 
+            else if (state == 2) {
+                telemetry.addData("Bitmap Got", null);
+                int height = bitmap.getHeight();
+                int width = bitmap.getWidth();
+                telemetry.addData("Height:", height);
+                telemetry.addData("Width:", width);
+            }
+
+            if (state < 0) {
+                //Error occurred if in state -1
+                robot.waitForTick(40);
+                if (state == -1) {
+                    telemetry.update();
+                    state = -2;
+                }
+            }
+            else{
+                telemetry.addData("Current State:", state);
+                telemetry.addData("Time in state:", this.time - stepStart);
+                telemetry.addData("Repetitions: x", LoopRep);
+                telemetry.update();
+                // need to deactive before timeout
+            }
         }
         stop_auto();
     }
     Bitmap convertFrameToBitmap(VuforiaLocalizer.CloseableFrame frame) {
         long numImages = frame.getNumImages();
         Image image = null;
+
         for (int imageI = 0; imageI < numImages; imageI++) {
             if (frame.getImage(imageI).getFormat() == PIXEL_FORMAT.RGB565) {
                 image = frame.getImage(imageI);
                 break;
             }
         }
+        if (image == null) {
+            for (int imageI = 0; imageI < numImages; imageI++) {
+                telemetry.addData("Image Formats", frame.getImage(imageI).getFormat());
+                //For diagnostic purposes
+            }
+            telemetry.addData("ERROR: failed to find Pixel Format", null);
+            return null;
+
+        }
         Bitmap bitmap = Bitmap.createBitmap(image.getWidth(),image.getHeight(), Bitmap.Config.RGB_565);
         bitmap.copyPixelsFromBuffer(image.getPixels());
         return bitmap;
+    }
+    Bitmap cropBitmap(Bitmap source, double widthF, double heightF, double offset_xF, double offset_yF) {
+        int offset_x = (int)(source.getWidth() * offset_xF);
+        int offset_y = (int)(source.getHeight() * offset_yF);
+        int width = (int)(source.getWidth() * widthF);
+        int height = (int)(source.getHeight() * heightF);
+        Bitmap destBitmap = Bitmap.createBitmap(source, offset_x, offset_y, width, height);
+        return destBitmap;
     }
 }
