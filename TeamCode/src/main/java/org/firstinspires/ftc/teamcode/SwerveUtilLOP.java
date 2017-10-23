@@ -54,13 +54,16 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.is_glyph_grabber_upside_down) { // close up grabber
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
         } else {
-            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
         }
     }
 
     public void glyph_grabber_auto_open() { // open both grabbers
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
-        robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
+        robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
+        sleep(500);
+        if (robot.is_glyph_grabber_upside_down)
+            glyph_grabber_auto_rotate(0.3);
     }
 
     public void glyph_grabber_auto_rotate(double power) {
@@ -74,23 +77,41 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_rotate(double power, double degree) {
+        double adjust_r = 1.0;
+        if (power>0) {
+            adjust_r = 1.0;
+        } else {
+            adjust_r = 1.05;
+        }
+
         robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.mt_glyph_rotator.setPower(power);
+        // robot.mt_glyph_rotator.setPower(power);
         int cur_count = robot.mt_glyph_rotator.getCurrentPosition();
-        double target_count = degree/360.0 * robot.ONE_ROTATION_60;
+        double target_count = degree/360.0 * robot.ONE_ROTATION_60 * adjust_r;
         ElapsedTime runtime = new ElapsedTime();
-        sleep(10);
         if (power>0) {
             target_count += cur_count;
-            while (robot.mt_glyph_rotator.getCurrentPosition()<target_count && runtime.seconds()<3) {
-                sleep(5);
+            robot.mt_glyph_rotator.setTargetPosition((int)target_count);
+            robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.mt_glyph_rotator.setPower(power);
+            while (robot.mt_glyph_rotator.isBusy() && runtime.seconds()<3 && opModeIsActive()) {
+                telemetry.addData("8. gg-rot pwr/cnt/down = ","%3.2f/%d/%s",
+                        robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),
+                        robot.is_glyph_grabber_upside_down);
+                telemetry.update();
             }
         } else {
             target_count -= cur_count;
-            while (robot.mt_glyph_rotator.getCurrentPosition()>target_count && runtime.seconds()<3) {
-                sleep(5);
+            robot.mt_glyph_rotator.setPower(power);
+            while (robot.mt_glyph_rotator.getCurrentPosition()>=target_count && runtime.seconds()<3 && opModeIsActive()) {
+                telemetry.addData("8. gg-rot pwr/cnt/down = ","%3.2f/%d/%s",
+                        robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),
+                        robot.is_glyph_grabber_upside_down);
+                telemetry.update();
             }
         }
+
+        robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.mt_glyph_rotator.setPower(0);
 
     }
@@ -930,8 +951,9 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         }
         if (robot.use_glyph_grabber)  {
-            telemetry.addData("8. gg-rotator power/count = ","%3.2f/%d",
-                    robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition());
+            telemetry.addData("8. gg-rot pwr/cnt = ","%3.2f/%d (%s)",
+                    robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),
+                    (robot.is_glyph_grabber_upside_down?"down":"up"));
         }
         telemetry.update();
     }
