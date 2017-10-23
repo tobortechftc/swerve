@@ -25,7 +25,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Hello Driver");    //
+        telemetry.addData("Say", "Initialization Complete");    //
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -84,21 +84,22 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
                     if (gamepad1.left_trigger > 0.1) {
 
-                        test_swerve_servo(true);
+                        sleep(100);
+                        TurnLeftD(0.5, 90.0);
                     }
                     if (gamepad1.right_trigger > 0.1) {
-
-                        test_swerve_servo(false);
+                        sleep(100);
+                        TurnRightD(0.5, 90.0);
                     }
 
                     if (gamepad1.left_bumper) {
                         sleep(100);
-                        TurnLeftD(0.5, 90.0);
+                        test_swerve_servo(true);
                     }
 
                     if (gamepad1.right_bumper) {
                         sleep(100);
-                        TurnRightD(0.5, 90.0);
+                        test_swerve_servo(false);
                     }
 
                     if (gamepad1.b) {
@@ -106,6 +107,27 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
                     if (gamepad1.a){
                         StraightIn(-0.5, 50);
+                    }
+                    if(gamepad1.y){
+                        while(gamepad1.y) {
+                            test_swerve_motor(1, true);
+                        }
+                        stop_chassis();
+                    }
+                    if(gamepad1.x){
+                        while(gamepad1.x) {
+                            test_swerve_motor(1, false);
+                        }
+                        stop_chassis();
+                    }
+                    if(gamepad1.start){
+                        if(!(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB)){// If in any other mode, switch to crab
+                            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                        }
+                        else{ //Return from snake to previous drive mode
+                            change_swerve_pos(robot.old_mode);
+                        }
+                        sleep(400);
                     }
                 }
                 else { //If not allowed to test servo positions, triggers do teleop spot turn
@@ -203,11 +225,11 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
 
                     if (gamepad1.x) { //Cycle through non-snake drive modes
-                        if (robot.isForward) {
+                        if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT) {
 
                             change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
 
-                        } else if (robot.isTurn) {
+                        } else if (robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
 
                             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
 
