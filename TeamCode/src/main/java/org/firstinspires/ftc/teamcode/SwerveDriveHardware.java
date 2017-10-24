@@ -35,6 +35,7 @@ public class SwerveDriveHardware {
     public boolean use_glyph_grabber = false;
     public boolean use_arm = false;
     public boolean use_test_servo = false;
+    public boolean use_test_motor = false;
 
     public boolean fast_mode = false;
     public boolean straight_mode = false;
@@ -114,6 +115,8 @@ public class SwerveDriveHardware {
     double thetaTwoCalc;
     double insideWheelsMod;
     double outsideWheelsMod;
+    int orig_mt_pos = 0;
+    int target_mt_pos = 0;
 
     double DRIVE_RATIO_FL = INIT_DRIVE_RATIO_FL; //control veering by lowering left motor power
     double DRIVE_RATIO_FR = INIT_DRIVE_RATIO_FR;//control veering by lowering right motor power
@@ -129,6 +132,7 @@ public class SwerveDriveHardware {
     public DcMotor motorBackRight = null;
 
     public DcMotor mt_relic_slider = null;
+    public DcMotor mt_test = null;
 
     public DcMotor mt_glyph_rotator = null;
     public DcMotor mt_glyph_slider = null;
@@ -149,6 +153,8 @@ public class SwerveDriveHardware {
 
     public ColorSensor colorSensor = null;
     public ModernRoboticsI2cRangeSensor rangeSensor = null;
+
+    ElapsedTime runtime = new ElapsedTime();
 
     final static double SERVO_FL_FORWARD_POSITION = 0.5;
     final static double SERVO_FR_FORWARD_POSITION = 0.47;
@@ -242,6 +248,12 @@ public class SwerveDriveHardware {
         }
         if (use_test_servo) {
             sv_test = hwMap.servo.get("sv_test");
+        }
+        if (use_test_motor) {
+            mt_test = hwMap.dcMotor.get("mt_test");
+            mt_test.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mt_test.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            orig_mt_pos = mt_test.getCurrentPosition();
         }
         if (use_relic_grabber) {
             sv_relic_arm = hwMap.servo.get("sv_relic_arm");
