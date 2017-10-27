@@ -16,10 +16,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Created by Nick on 10/6/2017.
  */
 
-@Autonomous(name = "Drive-Range", group = "Swerve")
+@TeleOp(name = "Drive-Range", group = "Swerve")
 public class DriveToCryptoboxDistance extends SwerveUtilLOP {
 
-    int driveDistance = 49; // 32=close, 49=middle, 70=far
+    int driveDistance = 40; // 32=close, 49=middle, 70=far
     int mode = 1;
 
     @Override
@@ -34,45 +34,53 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
         robot.init(hardwareMap);
 
         waitForStart();
+
         while (opModeIsActive()) {
-            driveTT(0.3,0.3);
-            sleep(2000);
-            driveTT(0,0);
-            requestOpModeStop();
+            boolean isOverDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance;
+            boolean isUnderDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) <= driveDistance;
+
+            telemetry.addData("Left Power: ", robot.motorFrontLeft.getPower());
+            telemetry.addData("Right Power: ", robot.motorFrontRight.getPower());
+            telemetry.addData("Distance", robot.rangeSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("isOverDistance", isOverDistance);
+            telemetry.addData("isUnderDistance,", isUnderDistance);
+            telemetry.addData("Mode: ", mode);
+            telemetry.addData("Time: ", getRuntime());
+            telemetry.update();
+            sleep(50);
+
+
+            if (mode == 1) {    // Drives forward off platform
+                driveTT(.5, .5 *(4.0/5.0));
+                sleep(1000);
+                mode = 2;
+            }
+            else if (mode == 2) {   // Checks if it's gone far enouh
+                isOverDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance;
+                if (isOverDistance) {
+                    driveTT(-.25, -.25*(4.0/5.0));
+                    isOverDistance = false;
+                    mode = 3;
+                }
+            }
+            else if (mode == 3) { // Drives backwards to compensate
+                isUnderDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) <= driveDistance;
+                if (isUnderDistance) {
+                    driveTT(.25, .25*(4.0/5.0));
+                    isUnderDistance = false;
+                    mode = 4;
+                }
+            }
+            else if (mode == 4) { // Drives forwards to compensate again
+                isOverDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance;
+                if (isOverDistance) {
+                    driveTT(.0, .0);
+                    isOverDistance = false;
+                    mode = 5;
+                }
+            }
+            else if (mode == 5) { // End
+            }
         }
-        stop_auto();
-
-        //while (opModeIsActive()) {
-        //    boolean isDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance &&
-          //                       robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance;
-         //   telemetry.addData("Left Power: ", robot.motorFrontLeft.getPower());
-         //   telemetry.addData("Right Power: ", robot.motorFrontRight.getPower());
-         //   telemetry.addData("Distance", robot.rangeSensor.getDistance(DistanceUnit.CM));
-         //   telemetry.addData("isDistance", isDistance);
-         //   telemetry.addData("Mode: ", mode);
-         //   telemetry.addData("Time: ", getRuntime());
-         //   telemetry.update();
-         //   sleep(50);
-
-
-
-
-//            if (mode == 1) {
-//                driveTT(.2, .25);
-//                sleep(500);
-//                mode = 2;
-//            }
-//            else if (mode == 2) {
-//                isDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance &&
-//                             robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance;
-//                if (isDistance) {
-//                    driveTT(0, 0);
-//                    mode = 3;
-//                }
-//            }
-//            else if (mode == 3) {
-//                // end
-//            }
-//        }
     }
 }
