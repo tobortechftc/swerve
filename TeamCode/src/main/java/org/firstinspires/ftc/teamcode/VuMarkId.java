@@ -29,6 +29,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -67,7 +68,7 @@ public class VuMarkId extends SwerveUtilLOP {
     //Constants:
     double IMAGE_WIDTH_CROP = 0.33;
     double IMAGE_HEIGHT_CROP = 0.25;
-    double IMAGE_OFFSET_X = 0.33;
+    double IMAGE_OFFSET_X = 0;
     double IMAGE_OFFSET_Y = 0.75;
 
 
@@ -132,11 +133,13 @@ public class VuMarkId extends SwerveUtilLOP {
                 if (bitmapTemp == null) {
                     state = -1;
                     telemetry.addData("ERROR Failed to retrieve bitmap", null);
+                    frame.close();
                     continue;
                 }
                 state = 2;
                 stepStart = this.time;
                 bitmap = cropBitmap(bitmapTemp, IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+                frame.close();
 
 //                if (runtime.seconds() > 10 && state == -1) {
 //                    if (robot.use_Vuforia) {
@@ -152,6 +155,43 @@ public class VuMarkId extends SwerveUtilLOP {
                 int width = bitmap.getWidth();
                 telemetry.addData("Height:", height);
                 telemetry.addData("Width:", width);
+
+                int[] pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
+
+                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                int redTotal = 0;
+                int blueTotal = 0;
+                int redValue = 0;
+                int blueValue = 0;
+
+                for (int pixelI = 0; pixelI < pixels.length; pixelI++) {
+                    int b = Color.blue(pixels[pixelI]);
+                    int r = Color.red(pixels[pixelI]);
+
+                    if (r > b) {
+                        redTotal++;
+                        redValue += r;
+                    }
+                    else {
+                        blueTotal++;
+                        blueValue += b;
+                    }
+                }
+                if (redTotal > 1.3 * blueTotal) {
+                    telemetry.addData("Red Jewel", redTotal);
+
+                }
+                else if (blueTotal > 1.3 * redTotal){
+                    telemetry.addData("Blue Jewel", blueTotal);
+
+                }
+                else {
+                    telemetry.addData("ERROR! Threshold not great enough!", null);
+                }
+                telemetry.addData("Red Total", redTotal);
+                telemetry.addData("Blue Total", blueTotal);
+                telemetry.addData("Red Value AVG", redTotal > 0 ? redValue/redTotal : 0);
+                telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
             }
 
             if (state < 0) {
@@ -195,7 +235,7 @@ public class VuMarkId extends SwerveUtilLOP {
         bitmap.copyPixelsFromBuffer(image.getPixels());
         return bitmap;
     }
-    Bitmap cropBitmap(Bitmap source, double widthF, double heightF, double offset_xF, double offset_yF) {
+    Bitmap cropBitmap(Bitmap source, double offset_xF, double offset_yF, double widthF, double heightF) {
         int offset_x = (int)(source.getWidth() * offset_xF);
         int offset_y = (int)(source.getHeight() * offset_yF);
         int width = (int)(source.getWidth() * widthF);

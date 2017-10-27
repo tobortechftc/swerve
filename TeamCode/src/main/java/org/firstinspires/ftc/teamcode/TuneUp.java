@@ -20,7 +20,8 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_Vuforia = false;
         robot.use_color_sensor = false;
         robot.use_arm = false;
-        robot.use_glyph_grabber = true;
+        robot.use_glyph_grabber = false;
+        robot.use_test_motor = true;
 
         robot.init(hardwareMap);
 
@@ -45,9 +46,10 @@ public class TuneUp extends SwerveUtilLOP {
         };
 
         num_servos = sv_list.length;
-        while (sv_list[cur_sv_ix] == null && cur_sv_ix < num_servos) {
+        while (cur_sv_ix < num_servos && sv_list[cur_sv_ix] == null) {
             cur_sv_ix++;
         }
+        if (cur_sv_ix==num_servos) cur_sv_ix = 0; // no servo available
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -132,7 +134,31 @@ public class TuneUp extends SwerveUtilLOP {
                     sv_list[cur_sv_ix].setPosition(pos - INCREMENT);
                 }
             }
-            if (gamepad1.x) {
+
+            if (robot.use_test_motor) {
+                if (gamepad1.x) {
+                   if (robot.is_glyph_grabber_upside_down) {
+                       test_rotate(-0.4);
+                   } else {
+                       test_rotate(0.4);
+                   }
+                }
+                if (gamepad1.b) {
+                    test_rotate_refine();
+                }
+            } else if (gamepad1.left_bumper) {
+                glyph_grabber_auto_open();
+            }
+            else if (gamepad1.left_trigger > 0.1) {
+                // 1. glyph grabber auto close down grabber
+                // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
+                glyph_grabber_auto_close();
+                if (!robot.is_glyph_grabber_upside_down) {
+                    sleep(1000);
+                    glyph_grabber_auto_rotate(0.3);
+                }
+            }
+            else if (gamepad1.x) {
                 cur_sv_ix--;
                 if (cur_sv_ix < 0) cur_sv_ix = num_servos - 1;
                 int count = 0;
@@ -144,7 +170,7 @@ public class TuneUp extends SwerveUtilLOP {
                 gamepad1.reset();
                 sleep(10);
             }
-            if (gamepad1.b) {
+            else if (gamepad1.b) {
                 cur_sv_ix++;
                 if (cur_sv_ix >= num_servos) cur_sv_ix = 0;
                 int count = 0;
@@ -156,20 +182,6 @@ public class TuneUp extends SwerveUtilLOP {
                 gamepad1.reset();
                 sleep(10);
             }
-            if (gamepad1.left_bumper) {
-                glyph_grabber_auto_open();
-            }
-
-            if (gamepad1.left_trigger > 0.1) {
-                // 1. glyph grabber auto close down grabber
-                // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
-                glyph_grabber_auto_close();
-                if (!robot.is_glyph_grabber_upside_down) {
-                    sleep(1000);
-                    glyph_grabber_auto_rotate(0.3);
-                }
-            }
-
             telemetry.addData("0. GP1:", "X/B:sv sel, Y/A:+/-%4.3f(ix=%d)", INCREMENT, cur_sv_ix);
             if (show_all) {
                 for (int i = 0; i < num_servos; i++) {
@@ -185,7 +197,7 @@ public class TuneUp extends SwerveUtilLOP {
             }
             show_telemetry();
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
-            robot.waitForTick(40);
+            // robot.waitForTick(40);
         }
     }
 
