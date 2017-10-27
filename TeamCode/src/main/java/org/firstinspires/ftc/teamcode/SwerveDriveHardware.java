@@ -68,8 +68,8 @@ public class SwerveDriveHardware {
     final static double RROBOT = 6.63;  // number of wheel turns to get chassis 360-degree turn
     final static double INCHES_PER_ROTATION = 12.69; // inches per chassis motor rotation based on 1:1 gear ratio
 
-    final static double IMU_ROTATION_RATIO_L = 0.566; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
-    final static double IMU_ROTATION_RATIO_R = 0.64; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
+    final static double IMU_ROTATION_RATIO_L = 0.6; // 0.84; // Ratio of IMU Sensor Left turn to prevent overshooting the turn.
+    final static double IMU_ROTATION_RATIO_R = 0.6; // 0.84; // Ratio of IMU Sensor Right turn to prevent overshooting the turn.
 
     final static double INIT_DRIVE_RATIO_FL = 0.998; //control veering by lowering left motor power
     final static double INIT_DRIVE_RATIO_FR = 0.978; //control veering by lowering right motor power
@@ -158,7 +158,7 @@ public class SwerveDriveHardware {
 
     final static double SERVO_FL_FORWARD_POSITION = 0.5;
     final static double SERVO_FR_FORWARD_POSITION = 0.47;
-    final static double SERVO_BL_FORWARD_POSITION = 0.51;
+    final static double SERVO_BL_FORWARD_POSITION = 0.53;
     final static double SERVO_BR_FORWARD_POSITION = 0.49;
 
     final static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + 0.475;

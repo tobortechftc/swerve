@@ -152,26 +152,58 @@ public class SwerveUtilLOP extends LinearOpMode {
                 double cur_heading = imu_heading();
                 double heading_off_by = ((cur_heading - robot.target_heading) / 360);
                 if(robot.use_swerve) {
-                    if(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT || robot.cur_mode == SwerveDriveHardware.CarMode.CAR)
-                    if (cur_heading - robot.target_heading > 0.7) {
-                        robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION - heading_off_by);
-                        robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION - heading_off_by);
-                        robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION + heading_off_by);
-                        robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION + heading_off_by);
-                    } else if (cur_heading - robot.target_heading < -0.7) {
-                        robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION + heading_off_by);
-                        robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION + heading_off_by);
-                        robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION - heading_off_by);
-                        robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION - heading_off_by);
+                    if(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT || robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
+                        if (cur_heading - robot.target_heading > 0.7) {
+                            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION - heading_off_by);
+                            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION - heading_off_by);
+                            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION + heading_off_by);
+                            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION + heading_off_by);
+                        } else if (cur_heading - robot.target_heading < -0.7) {
+                            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION + heading_off_by);
+                            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION + heading_off_by);
+                            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION - heading_off_by);
+                            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION - heading_off_by);
+                        }
+                    }
+                    else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){  //Tentative, could stand to remove
+                        if(lp > 0.05 || rp > 0.05) {//If the robot is going forward...
+                            if (cur_heading - robot.target_heading > 0.7) { // crook to left,  slow down right motor
+                                if (rp > 0) rp *= 0.8;
+                                else lp *= 0.8;
+                            } else if (cur_heading - robot.target_heading < -0.7) { // crook to right, slow down left motor
+                                if (lp > 0) lp *= 0.8;
+                                else rp *= 0.8;
+                            }
+                        }
+                        else{// If the robot is going backwards...
+                            if (cur_heading - robot.target_heading > 0.7) { // crook to left,  slow down left motor
+                                if (lp > 0) lp *= 0.8;
+                                else rp *= 0.8;
+                            } else if (cur_heading - robot.target_heading < -0.7) { // crook to right, slow right left motor
+                                if (rp > 0) rp *= 0.8;
+                                else lp *= 0.8;
+                            }
+                        }
                     }
                 }
                 else if(robot.use_minibot) {
-                    if (cur_heading - robot.target_heading > 0.7) { // crook to left,  slow down right motor
-                        if (rp > 0) rp *= 0.5;
-                        else lp *= 0.5;
-                    } else if (cur_heading - robot.target_heading < -0.7) { // crook to right, slow down left motor
-                        if (lp > 0) lp *= 0.5;
-                        else rp *= 0.5;
+                    if(lp > 0.05 || rp > 0.05) {//If the robot is going forward...
+                        if (cur_heading - robot.target_heading > 0.7) { // crook to left,  slow down right motor
+                            if (rp > 0) rp *= 0.8;
+                            else lp *= 0.8;
+                        } else if (cur_heading - robot.target_heading < -0.7) { // crook to right, slow down left motor
+                            if (lp > 0) lp *= 0.8;
+                            else rp *= 0.8;
+                        }
+                    }
+                    else{// If the robot is going backwards...
+                        if (cur_heading - robot.target_heading > 0.7) { // crook to left,  slow down left motor
+                            if (lp > 0) lp *= 0.8;
+                            else rp *= 0.8;
+                        } else if (cur_heading - robot.target_heading < -0.7) { // crook to right, slow right left motor
+                            if (rp > 0) rp *= 0.8;
+                            else lp *= 0.8;
+                        }
                     }
                 }
             }
