@@ -28,9 +28,12 @@ public class ColorChooser extends SwerveUtilLOP {
     @Override
     public void runOpMode() throws InterruptedException{
         robot.use_swerve = false;
+        robot.use_imu = false;
+        robot.use_Vuforia = false;
         robot.use_color_sensor = true;
         robot.use_arm = true;
-        robot.use_Vuforia = false;
+        robot.use_glyph_grabber = false;
+        robot.use_test_motor = false;
         robot.init(hardwareMap);
 
         waitForStart();

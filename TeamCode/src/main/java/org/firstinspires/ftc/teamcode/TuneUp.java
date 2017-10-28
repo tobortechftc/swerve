@@ -21,6 +21,7 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_color_sensor = false;
         robot.use_arm = false;
         robot.use_glyph_grabber = true;
+
         robot.use_test_motor = false;
 
         robot.init(hardwareMap);
@@ -128,11 +129,13 @@ public class TuneUp extends SwerveUtilLOP {
                 if (pos <= (1 - INCREMENT)) {
                     sv_list[cur_sv_ix].setPosition(pos + INCREMENT);
                 }
+                sleep(20);
             } else if (gamepad1.y && (sv_list[cur_sv_ix] != null)) {
                 double pos = sv_list[cur_sv_ix].getPosition();
                 if (pos >= INCREMENT) {
                     sv_list[cur_sv_ix].setPosition(pos - INCREMENT);
                 }
+                sleep(20);
             }
 
             if (robot.use_test_motor) {

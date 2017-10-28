@@ -686,7 +686,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void arm_up() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
-        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_UP);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_INIT);
     }
 
     void arm_down() {
