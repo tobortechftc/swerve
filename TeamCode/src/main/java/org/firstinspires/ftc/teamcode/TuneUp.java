@@ -8,13 +8,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class TuneUp extends SwerveUtilLOP {
 
     /* Declare OpMode members. */
-    static final double INCREMENT = 0.005;
+    static final double INCREMENT = 0.001;
 
     @Override
     public void runOpMode() throws InterruptedException {
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
+        boolean serve_tune_up = true; // enable servo tune up
         robot.use_swerve = false;
         robot.use_imu = false;
         robot.use_Vuforia = false;
@@ -121,6 +122,7 @@ public class TuneUp extends SwerveUtilLOP {
 
             } // end use_swerve
 
+<<<<<<< Updated upstream
             if (gamepad1.back && gamepad1.a) {
                 show_all = !show_all;
                 sleep(50);
@@ -137,6 +139,8 @@ public class TuneUp extends SwerveUtilLOP {
                 }
                 sleep(20);
             }
+=======
+>>>>>>> Stashed changes
 
             if (robot.use_test_motor) {
                 if (gamepad1.x) {
@@ -147,7 +151,7 @@ public class TuneUp extends SwerveUtilLOP {
                    }
                 }
                 if (gamepad1.b) {
-                    test_rotate_refine();
+                    rotate_refine();
                 }
             }
             if (robot.use_glyph_grabber) {
@@ -159,41 +163,61 @@ public class TuneUp extends SwerveUtilLOP {
                     glyph_grabber_auto_close();
                     if (!robot.is_glyph_grabber_upside_down) {
                         sleep(1000);
-                        glyph_grabber_auto_rotate(0.3);
+                        glyph_grabber_auto_rotate(0.4);
                     }
                 }
                 if (gamepad1.right_bumper) {
-                    robot.mt_glyph_slider_pw = 0.7;
+                    glyph_slider_up();
                 } else if (gamepad1.right_trigger > 0.1) {
-                    robot.mt_glyph_slider_pw = -0.4;
+                    glyph_slider_down();
                 } else {
-                    robot.mt_glyph_slider_pw = 0.0;
+                    glyph_slider_stop();
                 }
-                robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
+                if (gamepad1.dpad_down) {
+                    rotate_refine();
+                } else if (gamepad1.dpad_left) {
+                    glyph_grabber_all_close();
+                    glyph_grabber_auto_rotate(0.4);
+                }
             }
-            else if (gamepad1.x) {
-                cur_sv_ix--;
-                if (cur_sv_ix < 0) cur_sv_ix = num_servos - 1;
-                int count = 0;
-                while (sv_list[cur_sv_ix] == null && cur_sv_ix >= 0 && count < 20) {
+            if (serve_tune_up) {
+                if (gamepad1.back && gamepad1.a) {
+                    show_all = !show_all;
+                    sleep(50);
+                } else if (gamepad1.a && (sv_list[cur_sv_ix] != null)) {
+                    double pos = sv_list[cur_sv_ix].getPosition();
+                    if (pos <= (1 - INCREMENT)) {
+                        sv_list[cur_sv_ix].setPosition(pos + INCREMENT);
+                    }
+                } else if (gamepad1.y && (sv_list[cur_sv_ix] != null)) {
+                    double pos = sv_list[cur_sv_ix].getPosition();
+                    if (pos >= INCREMENT) {
+                        sv_list[cur_sv_ix].setPosition(pos - INCREMENT);
+                    }
+                }
+                if (gamepad1.x) {
                     cur_sv_ix--;
                     if (cur_sv_ix < 0) cur_sv_ix = num_servos - 1;
-                    count++;
-                }
-                gamepad1.reset();
-                sleep(10);
-            }
-            else if (gamepad1.b) {
-                cur_sv_ix++;
-                if (cur_sv_ix >= num_servos) cur_sv_ix = 0;
-                int count = 0;
-                while (cur_sv_ix < num_servos && sv_list[cur_sv_ix] == null && count < 20) {
+                    int count = 0;
+                    while (sv_list[cur_sv_ix] == null && cur_sv_ix >= 0 && count < 20) {
+                        cur_sv_ix--;
+                        if (cur_sv_ix < 0) cur_sv_ix = num_servos - 1;
+                        count++;
+                    }
+                    gamepad1.reset();
+                    sleep(10);
+                } else if (gamepad1.b) {
                     cur_sv_ix++;
                     if (cur_sv_ix >= num_servos) cur_sv_ix = 0;
-                    count++;
+                    int count = 0;
+                    while (cur_sv_ix < num_servos && sv_list[cur_sv_ix] == null && count < 20) {
+                        cur_sv_ix++;
+                        if (cur_sv_ix >= num_servos) cur_sv_ix = 0;
+                        count++;
+                    }
+                    gamepad1.reset();
+                    sleep(10);
                 }
-                gamepad1.reset();
-                sleep(10);
             }
             telemetry.addData("0. GP1:", "X/B:sv sel, Y/A:+/-%4.3f(ix=%d)", INCREMENT, cur_sv_ix);
             if (show_all) {

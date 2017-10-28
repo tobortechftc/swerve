@@ -57,6 +57,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
         }
     }
+    public void glyph_grabber_all_close() { // close the down/up grabber depend on upside down
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
+    }
 
     public void glyph_grabber_auto_open() { // open both grabbers
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
@@ -67,17 +71,20 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_auto_rotate(double power) {
-        // this routine auto rotate glyph grabber 180 degree with specified power
-        if (robot.is_glyph_grabber_upside_down) { // turn 180 the other way
-            glyph_grabber_rotate(-power, 180.0);
+        // test rotation 180 degrees back and forth
+        int cur_count = robot.orig_mt_pos; // robot.mt_test.getCurrentPosition();
+        if (robot.is_glyph_grabber_upside_down) { // back to orig pos
+            robot.target_mt_pos = robot.orig_mt_pos;
         } else {
-            glyph_grabber_rotate(power, 180.0);
+            // robot.orig_mt_pos = cur_count;
+            robot.target_mt_pos = cur_count + (int) (180.0 / 360.0 * robot.ONE_ROTATION_60);
         }
+        rotate_to_target(power);
         robot.is_glyph_grabber_upside_down = !robot.is_glyph_grabber_upside_down;
     }
 
-    public void test_rotate_refine() {
-        test_rotate_to_target(0.2);
+    public void rotate_refine() {
+        rotate_to_target(0.2);
     }
 
     public void test_rotate(double power) {
@@ -89,30 +96,30 @@ public class SwerveUtilLOP extends LinearOpMode {
             // robot.orig_mt_pos = cur_count;
             robot.target_mt_pos = cur_count + (int) (180.0 / 360.0 * robot.ONE_ROTATION_60);
         }
-        test_rotate_to_target(power);
+        //test_rotate_to_target(power);
         robot.is_glyph_grabber_upside_down = !robot.is_glyph_grabber_upside_down;
     }
 
-    public void test_rotate_to_target(double power) {
-        robot.mt_test.setTargetPosition(robot.target_mt_pos);
-        robot.mt_test.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void rotate_to_target(double power) {
+        robot.mt_glyph_rotator.setTargetPosition(robot.target_mt_pos);
+        robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.runtime.reset();
-        robot.mt_test.setPower(Math.abs(power));
-        while (robot.mt_test.isBusy() && (robot.runtime.seconds()<3) && opModeIsActive()) {
+        robot.mt_glyph_rotator.setPower(Math.abs(power));
+        while (robot.mt_glyph_rotator.isBusy() && (robot.runtime.seconds()<3) && opModeIsActive()) {
             telemetry.addData("8. gg-rot pwr/cur/tar = ","%3.2f/%d/%d(%s)",
-                    robot.mt_test.getPower(),robot.mt_test.getCurrentPosition(),robot.target_mt_pos,
+                    robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),robot.target_mt_pos,
                     (robot.is_glyph_grabber_upside_down?"dw":"up"));
             telemetry.update();
         }
-        robot.mt_test.setPower(Math.abs(power/2.0));
-        while (robot.mt_test.isBusy() && (robot.runtime.seconds()<1) && opModeIsActive()) {
+        robot.mt_glyph_rotator.setPower(Math.abs(power/2.0));
+        while (robot.mt_glyph_rotator.isBusy() && (robot.runtime.seconds()<1) && opModeIsActive()) {
             telemetry.addData("8. gg-rot pwr/cur/tar = ","%3.2f/%d/%d(%s)",
-                    robot.mt_test.getPower(),robot.mt_test.getCurrentPosition(),robot.target_mt_pos,
+                    robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),robot.target_mt_pos,
                     (robot.is_glyph_grabber_upside_down?"dw":"up"));
             telemetry.update();
         }
-        robot.mt_test.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.mt_test.setPower(0);
+        robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.mt_glyph_rotator.setPower(0);
     }
 
     public void glyph_grabber_rotate(double power, double degree) {
@@ -975,6 +982,18 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
     }
+    void glyph_slider_up() {
+        robot.mt_glyph_slider_pw = 0.7;
+        robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
+    }
+    void glyph_slider_down() {
+        robot.mt_glyph_slider_pw = -0.7;
+        robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
+    }
+    void glyph_slider_stop() {
+        robot.mt_glyph_slider_pw = 0.0;
+        robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
+    }
 
     void show_telemetry() throws InterruptedException {
         telemetry.addData("1. Tobot/Imu/Vu =", "%s/%s/%s",
@@ -1008,9 +1027,9 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         }
         if (robot.use_glyph_grabber)  {
-            telemetry.addData("8. gg-rot pwr/cnt = ","%3.2f/%d (%s)",
+            telemetry.addData("8. gg-rot pwr/cur/tar = ","%3.2f/%d/%d (%s)",
                     robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),
-                    (robot.is_glyph_grabber_upside_down?"down":"up"));
+                    robot.target_mt_pos, (robot.is_glyph_grabber_upside_down?"dw":"up"));
         } else if (robot.use_test_motor) {
             telemetry.addData("8. gg-rot pwr/cur/tar = ","%3.2f/%d/%d(%s)",
                     robot.mt_test.getPower(),robot.mt_test.getCurrentPosition(),robot.target_mt_pos,
