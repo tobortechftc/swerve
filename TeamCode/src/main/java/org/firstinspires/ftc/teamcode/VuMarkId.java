@@ -66,10 +66,11 @@ import java.util.concurrent.TimeUnit;
 public class VuMarkId extends SwerveUtilLOP {
 
     //Constants:
-    double IMAGE_WIDTH_CROP = 0.33;
-    double IMAGE_HEIGHT_CROP = 0.25;
-    double IMAGE_OFFSET_X = 0;
-    double IMAGE_OFFSET_Y = 0.75;
+    //(Assuming portrait) Top left is (0,0), Top right (0,1), Bottom left is (1,0), Bottom right is (1,1)
+    double IMAGE_WIDTH_CROP = 1;
+    double IMAGE_HEIGHT_CROP = 1;
+    double IMAGE_OFFSET_X = 0; // Cannot be 1
+    double IMAGE_OFFSET_Y = 0; // Cannot be 1
 
 
     @Override
@@ -112,7 +113,7 @@ public class VuMarkId extends SwerveUtilLOP {
             if (state == 0) {
                 int capacity = robot.vuforia.getFrameQueueCapacity();
                 telemetry.addData("6. Vuforia Queue State = ", capacity);
-                if (this.time - stepStart > 7) {
+                if (this.time - stepStart > 2) {
                     state = 1;
                     stepStart = this.time;
                     robot.vuforia.setFrameQueueCapacity(1);
@@ -121,7 +122,7 @@ public class VuMarkId extends SwerveUtilLOP {
                 }
             } else if (state == 1) {
                 int capacity = robot.vuforia.getFrameQueueCapacity();
-                telemetry.addData("6. Vuforia Queue State = ", capacity);
+                telemetry.addData("6. Vuforia Queue Cap = ", capacity);
                 VuforiaLocalizer.CloseableFrame frame = robot.vuforia.getFrameQueue().poll(5, TimeUnit.SECONDS);
 
                 if (frame == null) {
@@ -129,24 +130,23 @@ public class VuMarkId extends SwerveUtilLOP {
                     telemetry.addData("7. ERROR failed to retrieve frame", null);
                     continue;
                 }
+
                 Bitmap bitmapTemp = convertFrameToBitmap(frame);
-                if (bitmapTemp == null) {
+
+                frame.close();
+                if (this.time - stepStart > 5) {
                     state = -1;
-                    telemetry.addData("ERROR Failed to retrieve bitmap", null);
-                    frame.close();
                     continue;
                 }
-                state = 2;
-                stepStart = this.time;
-                bitmap = cropBitmap(bitmapTemp, IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
-                frame.close();
+                if (bitmapTemp == null) {
+                    telemetry.addData("ERROR Failed to retrieve bitmap", null);
 
-//                if (runtime.seconds() > 10 && state == -1) {
-//                    if (robot.use_Vuforia) {
-//                        robot.use_Vuforia = false;
-//                        robot.relicTrackables.deactivate();
-//                    }
-//                }
+                }
+                else {
+                    state = 2;
+                    stepStart = this.time;
+                    bitmap = cropBitmap(bitmapTemp, IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+                }
             }
 
             else if (state == 2) {
@@ -163,6 +163,18 @@ public class VuMarkId extends SwerveUtilLOP {
                 int blueTotal = 0;
                 int redValue = 0;
                 int blueValue = 0;
+
+                int pixelTR = bitmap.getPixel(bitmap.getWidth() * 3 / 4, bitmap.getHeight() - 1);
+//                int pixelBR = bitmap.getPixel(bitmap.getWidth() * 3 / 4,bitmap.getHeight() / 4);
+//                int pixelTL = bitmap.getPixel(bitmap.getWidth() /4, bitmap.getHeight() - 1);
+//                int pixelBL = bitmap.getPixel(bitmap.getWidth() / 4,bitmap.getHeight() / 4);
+//                int pixelM = bitmap.getPixel(bitmap.getWidth() / 2,bitmap.getHeight() / 2);
+//
+                telemetry.addData("Pixel", String.format("%x", pixelTR));
+//                telemetry.addData("PixelBR", String.format("%x", pixelBR));
+//                telemetry.addData("PixelTL", String.format("%x", pixelTL));
+//                telemetry.addData("PixelBL", String.format("%x", pixelBL));
+//                telemetry.addData("PixelM", String.format("%x", pixelM));
 
                 for (int pixelI = 0; pixelI < pixels.length; pixelI++) {
                     int b = Color.blue(pixels[pixelI]);
@@ -235,6 +247,16 @@ public class VuMarkId extends SwerveUtilLOP {
         bitmap.copyPixelsFromBuffer(image.getPixels());
         return bitmap;
     }
+
+    /**
+     * Bottom left of frame is (0,0), while top right is (1,1)
+     * @param source
+     * @param offset_xF
+     * @param offset_yF
+     * @param widthF
+     * @param heightF
+     * @return
+     */
     Bitmap cropBitmap(Bitmap source, double offset_xF, double offset_yF, double widthF, double heightF) {
         int offset_x = (int)(source.getWidth() * offset_xF);
         int offset_y = (int)(source.getHeight() * offset_yF);
