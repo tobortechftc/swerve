@@ -56,6 +56,7 @@ public class SwerveDriveHardware {
     boolean isBlueBall = false;
 
     public double target_heading = 0.0;
+    public double mt_glyph_slider_pw = 0.0;
     public float leftPower = 0;
     public float rightPower = 0;
     public int leftCnt = 0; // left motor target counter
@@ -86,13 +87,12 @@ public class SwerveDriveHardware {
     final static int RED_BALL_MAX = -36;
     final static int BLUE_BALL_MIN = 12;
     final static int BLUE_BALL_MAX = 66;
-
-    final static double SV_SHOULDER_UP = 0.54;
-    final static double SV_SHOULDER_DOWN = 0.54;
-    final static double SV_SHOULDER_LEFT = 0.6589;
-    final static double SV_SHOULDER_RIGHT = 0.39;
-    final static double SV_ELBOW_UP = 0.0067;
-    final static double SV_ELBOW_DOWN = 0.5367;
+    final static double SV_SHOULDER_INIT = 0.4278;
+    final static double SV_SHOULDER_DOWN = 0.55;
+    final static double SV_SHOULDER_LEFT = 0.4239;
+    final static double SV_SHOULDER_RIGHT = 0.7128;
+    final static double SV_ELBOW_UP = 0.0039;
+    final static double SV_ELBOW_DOWN = 0.55;
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.6078;
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.6678;
     final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.9378;
@@ -266,7 +266,10 @@ public class SwerveDriveHardware {
             mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
             mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mt_glyph_rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
+            mt_glyph_rotator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
+            mt_glyph_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             sv_glyph_grabber_bottom.setPosition(SV_GLYPH_GRABBER_BOTTOM_INIT);
             sv_glyph_grabber_top.setPosition(SV_GLYPH_GRABBER_TOP_INIT);
         }
@@ -340,7 +343,7 @@ public class SwerveDriveHardware {
             sv_elbow = hwMap.servo.get("sv_elbow");
             sv_shoulder = hwMap.servo.get("sv_shoulder");
             sv_elbow.setPosition(SV_ELBOW_UP);
-            sv_shoulder.setPosition(SV_SHOULDER_UP);
+            sv_shoulder.setPosition(SV_SHOULDER_INIT);
         }
 
     }

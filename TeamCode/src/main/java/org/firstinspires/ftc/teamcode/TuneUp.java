@@ -20,8 +20,9 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_Vuforia = false;
         robot.use_color_sensor = false;
         robot.use_arm = false;
-        robot.use_glyph_grabber = false;
-        robot.use_test_motor = true;
+        robot.use_glyph_grabber = true;
+
+        robot.use_test_motor = false;
 
         robot.init(hardwareMap);
 
@@ -128,11 +129,13 @@ public class TuneUp extends SwerveUtilLOP {
                 if (pos <= (1 - INCREMENT)) {
                     sv_list[cur_sv_ix].setPosition(pos + INCREMENT);
                 }
+                sleep(20);
             } else if (gamepad1.y && (sv_list[cur_sv_ix] != null)) {
                 double pos = sv_list[cur_sv_ix].getPosition();
                 if (pos >= INCREMENT) {
                     sv_list[cur_sv_ix].setPosition(pos - INCREMENT);
                 }
+                sleep(20);
             }
 
             if (robot.use_test_motor) {
@@ -146,17 +149,27 @@ public class TuneUp extends SwerveUtilLOP {
                 if (gamepad1.b) {
                     test_rotate_refine();
                 }
-            } else if (gamepad1.left_bumper) {
-                glyph_grabber_auto_open();
             }
-            else if (gamepad1.left_trigger > 0.1) {
-                // 1. glyph grabber auto close down grabber
-                // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
-                glyph_grabber_auto_close();
-                if (!robot.is_glyph_grabber_upside_down) {
-                    sleep(1000);
-                    glyph_grabber_auto_rotate(0.3);
+            if (robot.use_glyph_grabber) {
+                if (gamepad1.left_bumper) {
+                    glyph_grabber_auto_open();
+                } else if (gamepad1.left_trigger > 0.1) {
+                    // 1. glyph grabber auto close down grabber
+                    // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
+                    glyph_grabber_auto_close();
+                    if (!robot.is_glyph_grabber_upside_down) {
+                        sleep(1000);
+                        glyph_grabber_auto_rotate(0.3);
+                    }
                 }
+                if (gamepad1.right_bumper) {
+                    robot.mt_glyph_slider_pw = 0.7;
+                } else if (gamepad1.right_trigger > 0.1) {
+                    robot.mt_glyph_slider_pw = -0.4;
+                } else {
+                    robot.mt_glyph_slider_pw = 0.0;
+                }
+                robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
             }
             else if (gamepad1.x) {
                 cur_sv_ix--;
