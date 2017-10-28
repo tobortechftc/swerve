@@ -24,14 +24,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class DriveToCryptoboxSpike extends SwerveUtilLOP {
 
 
-    final static int SPIKE_DISTANCE = 22; // Rough estimate of value, just a placeholder.
-    int spikeCount = 0;
+    final static int SPIKE_DISTANCE = 40;
     final static int SPIKE_PASS_LIMIT = 2; // 1=close, 2=middle, 3=far
+
+    int spikeCount = 0;
 
     public void detectSpike() {
         if (robot.rangeSensor.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE) {
             spikeCount++;
-            sleep(100);
+            sleep(250);
         }
     }
 
@@ -42,7 +43,7 @@ public class DriveToCryptoboxSpike extends SwerveUtilLOP {
         robot.use_encoder = false;
         robot.use_minibot = true;
         robot.use_range_sensor = true;
-        robot.use_color_sensor = true;
+        robot.use_color_sensor = false;
         robot.init(hardwareMap);
 
         waitForStart();
@@ -54,20 +55,13 @@ public class DriveToCryptoboxSpike extends SwerveUtilLOP {
             sleep(50);
 
             // Hasn't detected enough spikes
-            if (SPIKE_PASS_LIMIT != spikeCount) {
-                robot.motorFrontLeft.setPower(0.3);
-                robot.motorFrontRight.setPower(0.3);
+            if (spikeCount < SPIKE_PASS_LIMIT) {
+                driveTT(.5, .5 *.7);
                 detectSpike();
             }
             // It has reached the correct number of spikes
-            else if (SPIKE_PASS_LIMIT >= spikeCount) {
-                robot.motorFrontLeft.setPower(0.0);
-                robot.motorFrontRight.setPower(0.0);
-            }
-
-            // It's gone on for too long, probably missed one. Stop the program
-            if (getRuntime() >= 5) {
-                requestOpModeStop();
+            else {
+                driveTT(.0, .0);
             }
         }
     }

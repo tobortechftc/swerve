@@ -21,6 +21,7 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
 
     int driveDistance = 40; // 32=close, 49=middle, 70=far
     int mode = 1;
+    double speedValue = .7  ;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,14 +52,14 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
 
 
             if (mode == 1) {    // Drives forward off platform
-                driveTT(.5, .5 *(4.0/5.0));
+                driveTT(speedValue, speedValue *(4.0/5.0));
                 sleep(1000);
                 mode = 2;
             }
-            else if (mode == 2) {   // Checks if it's gone far enouh
+            else if (mode == 2) {   // Checks if it's gone far enough
                 isOverDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance;
                 if (isOverDistance) {
-                    driveTT(-.25, -.25*(4.0/5.0));
+                    driveTT(-1*speedValue/2, -1*speedValue/2*(4.0/5.0));
                     isOverDistance = false;
                     mode = 3;
                 }
@@ -66,7 +67,7 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
             else if (mode == 3) { // Drives backwards to compensate
                 isUnderDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) <= driveDistance;
                 if (isUnderDistance) {
-                    driveTT(.25, .25*(4.0/5.0));
+                    driveTT(speedValue/2, speedValue/2*(4.0/5.0));
                     isUnderDistance = false;
                     mode = 4;
                 }
