@@ -103,10 +103,10 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
 
                     if (gamepad1.b) {
-                        StraightIn(0.5, 50);
+                        StraightIn(0.5, 30);
                     }
                     if (gamepad1.a){
-                        StraightIn(-0.5, 50);
+                        StraightIn(-0.5, 30);
                     }
                     if(gamepad1.y){
                         while(gamepad1.y) {

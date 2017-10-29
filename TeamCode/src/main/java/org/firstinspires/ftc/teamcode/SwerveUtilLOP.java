@@ -304,39 +304,82 @@ public class SwerveUtilLOP extends LinearOpMode {
         int rightTC2 = 0;
         int leftTC0 = 0;
         int rightTC0 = 0;
+        int targetPosLeft;
+        int curPosLeft = robot.motorFrontLeft.getCurrentPosition();
+        int targetPosRight;
+        int curPosRight = robot.motorFrontRight.getCurrentPosition();
         double initLeftPower = leftPower;
         double initRightPower = rightPower;
+        double leftPowerSign = leftPower/Math.abs(leftPower);
+        double rightPowerSign = rightPower/Math.abs(rightPower);
         if (leftPower > 0.4 && leftTC1 > 600 && !robot.fast_mode) {
-            leftTC2 = 450;
-            leftTC0 = 50;
-            leftTC1 -= 500;
+            leftTC2 = 150;
+            leftTC0 = 25;
+            leftTC1 -= 175;
         }
         if (rightPower > 0.4 && rightTC1 > 600 && !robot.fast_mode) {
-            rightTC2 = 450;
-            rightTC0 = 50;
-            rightTC1 -= 500;
+            rightTC2 = 150;
+            rightTC0 = 25;
+            rightTC1 -= 175;
         }
         if (rightTC0 > 0 || leftTC0 > 0) {
-            driveTT(0.3, 0.3);
-            while (!have_drive_encoders_reached(leftTC0, rightTC0) && (robot.runtime.seconds()<7)) {
-                driveTT(0.3, 0.3);
+            targetPosLeft = curPosLeft + ((int)leftPowerSign * leftTC0);
+            targetPosRight = curPosRight + ((int)rightPowerSign * rightTC0);
+
+            robot.motorFrontLeft.setTargetPosition(targetPosLeft);
+            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorFrontRight.setTargetPosition(targetPosRight);
+            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorBackLeft.setTargetPosition(targetPosLeft);
+            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorBackRight.setTargetPosition(targetPosRight);
+            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.runtime.reset();
+            driveTT(leftPowerSign * 0.3, rightPowerSign * 0.3);
+            while (robot.motorFrontLeft.isBusy() && robot.motorFrontRight.isBusy() && (robot.runtime.seconds()<1) && opModeIsActive()) {
+                driveTT(leftPowerSign * 0.3, rightPowerSign * 0.3);
                 // show_telemetry();
             }
         }
-        driveTT(leftPower, rightPower);
-        robot.runtime.reset();
+        curPosLeft = robot.motorFrontLeft.getCurrentPosition();
+        curPosRight = robot.motorFrontRight.getCurrentPosition();
 
-        while (!have_drive_encoders_reached(leftTC1, rightTC1) && (robot.runtime.seconds() < 5)) {
+        targetPosLeft = curPosLeft + ((int)leftPowerSign * leftTC1);
+        targetPosRight = curPosRight + ((int)rightPowerSign * rightTC1);
+
+        robot.motorFrontLeft.setTargetPosition(targetPosLeft);
+        robot.motorFrontRight.setTargetPosition(targetPosRight);
+        robot.motorBackLeft.setTargetPosition(targetPosLeft);
+        robot.motorBackRight.setTargetPosition(targetPosRight);
+
+        driveTT(leftPower, rightPower);
+        while (robot.motorFrontLeft.isBusy() && robot.motorFrontRight.isBusy() && (robot.runtime.seconds()<7) && opModeIsActive()){
             driveTT(leftPower, rightPower);
         }
+
         if (rightTC2 > 0 || leftTC2 > 0) {
-            driveTT(0.2, 0.2);
-            while (!have_drive_encoders_reached(leftTC2, rightTC2) && (robot.runtime.seconds() < 7)) {
-                driveTT(0.2, 0.2);
-                // show_telemetry();
+            curPosLeft = robot.motorFrontLeft.getCurrentPosition();
+            curPosRight = robot.motorFrontRight.getCurrentPosition();
+
+            targetPosLeft = curPosLeft + ((int)leftPowerSign * leftTC2);
+            targetPosRight = curPosRight + ((int)rightPowerSign * rightTC2);
+
+            robot.motorFrontLeft.setTargetPosition(targetPosLeft);
+            robot.motorFrontRight.setTargetPosition(targetPosRight);
+            robot.motorBackLeft.setTargetPosition(targetPosLeft);
+            robot.motorBackRight.setTargetPosition(targetPosRight);
+            driveTT(leftPowerSign * 0.2, rightPowerSign * 0.2);
+            while (robot.motorFrontLeft.isBusy() && robot.motorFrontRight.isBusy() && (robot.runtime.seconds()<8) && opModeIsActive()) {
+                driveTT(leftPowerSign * 0.2, rightPowerSign * 0.2);
             }
         }
+        robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         stop_chassis();
+        robot.runtime.reset();
     }
 
     boolean has_left_drive_encoder_reached(double p_count) {
@@ -475,7 +518,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void TurnRightD(double power, double degree) throws InterruptedException {
 
-        double adjust_degree_imu = robot.IMU_ROTATION_RATIO_R * (double) degree;
+        double adjust_degree_imu = robot.IMU_ROTATION_RATIO_R * degree;
         double current_pos = 0;
         boolean heading_cross_zero = false;
         robot.runtime.reset();
