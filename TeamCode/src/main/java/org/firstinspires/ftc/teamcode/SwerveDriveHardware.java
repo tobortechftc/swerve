@@ -90,10 +90,10 @@ public class SwerveDriveHardware {
     final static int BLUE_BALL_MAX = 66;
     final static double SV_SHOULDER_INIT = 0.4278;
     final static double SV_SHOULDER_DOWN = 0.55;
-    final static double SV_SHOULDER_LEFT = 0.4239;
-    final static double SV_SHOULDER_RIGHT = 0.7128;
+    final static double SV_SHOULDER_LEFT = 0.7128;
+    final static double SV_SHOULDER_RIGHT = 0.4239;
     final static double SV_ELBOW_UP = 0.0039;
-    final static double SV_ELBOW_DOWN = 0.55;
+    final static double SV_ELBOW_DOWN = 0.5033;
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.4;
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.475;
     final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.6;
