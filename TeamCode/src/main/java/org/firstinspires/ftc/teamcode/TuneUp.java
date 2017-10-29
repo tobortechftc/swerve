@@ -122,7 +122,7 @@ public class TuneUp extends SwerveUtilLOP {
 
             } // end use_swerve
 
-<<<<<<< Updated upstream
+
             if (gamepad1.back && gamepad1.a) {
                 show_all = !show_all;
                 sleep(50);
@@ -139,8 +139,8 @@ public class TuneUp extends SwerveUtilLOP {
                 }
                 sleep(20);
             }
-=======
->>>>>>> Stashed changes
+
+
 
             if (robot.use_test_motor) {
                 if (gamepad1.x) {
