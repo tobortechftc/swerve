@@ -277,8 +277,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     void stop_auto() {
         if (robot.use_color_sensor) {
             robot.colorSensor.enableLed(false);
-            robot.colorSensor.close();
-            robot.use_color_sensor = false;
+            //robot.colorSensor.close();
+            //robot.use_color_sensor = false;
         }
         if (robot.use_Vuforia) {
             robot.relicTrackables.deactivate();
@@ -658,21 +658,58 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     double calcDelta() throws InterruptedException {
-        return (robot.colorSensor.blue() - robot.colorSensor.red());
+        robot.blue = robot.colorSensor.blue();
+        robot.red = robot.colorSensor.red();
+        return (robot.blue - robot.red);
+    }
+
+    public void Jewel_Mission(boolean IsBlueAlliance) throws InterruptedException {
+        arm_down();
+        sleep(1000);
+        checkBallColor();
+        //assuming sensing the right jewel
+        if (robot.isRedBall) {
+            if (IsBlueAlliance) {
+                arm_right();
+            }
+            else {
+                arm_left();
+            }
+        }
+        else if (robot.isBlueBall) {
+            if (IsBlueAlliance){
+                arm_left();
+            }
+            else {
+                arm_right();
+            }
+        }
+        sleep(1000);
+        arm_up();
     }
 
     void checkBallColor() throws InterruptedException {
+        robot.isBlueBall = false;
+        robot.isRedBall = false;
+        robot.runtime.reset();
         double d = calcDelta();
-        if ( (d >= robot.BLUE_BALL_MIN) && (d <= robot.BLUE_BALL_MAX)) {
-            robot.isBlueBall = true;
-        } else {
-            robot.isBlueBall = false;
+
+        while (!robot.isBlueBall && !robot.isRedBall && (robot.runtime.seconds()<1.0)) {
+            if ((d >= robot.BLUE_BALL_MIN) && (d <= robot.BLUE_BALL_MAX)) {
+                robot.isBlueBall = true;
+            } else {
+                robot.isBlueBall = false;
+            }
+            if (d >= robot.RED_BALL_MIN && d <= robot.RED_BALL_MAX) {
+                robot.isRedBall = true;
+            } else {
+                robot.isRedBall = false;
+            }
+
+            d = calcDelta();
         }
-        if (d >= robot.RED_BALL_MIN && d <= robot.RED_BALL_MAX) {
-            robot.isRedBall = true;
-        } else {
-            robot.isRedBall = false;
-        }
+        telemetry.addData("delta/isBlueBall/isRedBall=", "%3.1f/%s/%s",d,robot.isBlueBall,robot.isRedBall);
+        telemetry.update();
     }
 
     int getColumnIndex(RelicRecoveryVuMark vuMark) throws InterruptedException {
@@ -693,6 +730,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void arm_up() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
+        sleep(200);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_INIT);
     }
 
