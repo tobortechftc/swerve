@@ -33,6 +33,7 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.CameraDevice;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
@@ -67,10 +68,10 @@ public class VuMarkId extends SwerveUtilLOP {
 
     //Constants:
     //(Assuming portrait) Top left is (0,0), Top right (0,1), Bottom left is (1,0), Bottom right is (1,1)
-    double IMAGE_WIDTH_CROP = 1;
-    double IMAGE_HEIGHT_CROP = 1;
-    double IMAGE_OFFSET_X = 0; // Cannot be 1
-    double IMAGE_OFFSET_Y = 0; // Cannot be 1
+    double IMAGE_WIDTH_CROP = 0.25;
+    double IMAGE_HEIGHT_CROP = 0.33;
+    double IMAGE_OFFSET_X = 0.75; // Cannot be 1, make sure take the respective crop into consideration
+    double IMAGE_OFFSET_Y = 0; // Cannot be 1, make sure take the respective crop into consideration
 
 
     @Override
@@ -113,7 +114,7 @@ public class VuMarkId extends SwerveUtilLOP {
             if (state == 0) {
                 int capacity = robot.vuforia.getFrameQueueCapacity();
                 telemetry.addData("6. Vuforia Queue State = ", capacity);
-                if (this.time - stepStart > 2) {
+                if (this.time - stepStart > 0) {
                     state = 1;
                     stepStart = this.time;
                     robot.vuforia.setFrameQueueCapacity(1);
@@ -164,12 +165,12 @@ public class VuMarkId extends SwerveUtilLOP {
                 int redValue = 0;
                 int blueValue = 0;
 
-                int pixelTR = bitmap.getPixel(bitmap.getWidth() * 3 / 4, bitmap.getHeight() - 1);
+                int pixelTR = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
 //                int pixelBR = bitmap.getPixel(bitmap.getWidth() * 3 / 4,bitmap.getHeight() / 4);
 //                int pixelTL = bitmap.getPixel(bitmap.getWidth() /4, bitmap.getHeight() - 1);
 //                int pixelBL = bitmap.getPixel(bitmap.getWidth() / 4,bitmap.getHeight() / 4);
 //                int pixelM = bitmap.getPixel(bitmap.getWidth() / 2,bitmap.getHeight() / 2);
-//
+
                 telemetry.addData("Pixel", String.format("%x", pixelTR));
 //                telemetry.addData("PixelBR", String.format("%x", pixelBR));
 //                telemetry.addData("PixelTL", String.format("%x", pixelTL));
@@ -224,6 +225,12 @@ public class VuMarkId extends SwerveUtilLOP {
         }
         stop_auto();
     }
+
+    /**
+     *
+     * @param frame
+     * @return
+     */
     Bitmap convertFrameToBitmap(VuforiaLocalizer.CloseableFrame frame) {
         long numImages = frame.getNumImages();
         Image image = null;
@@ -249,7 +256,7 @@ public class VuMarkId extends SwerveUtilLOP {
     }
 
     /**
-     * Bottom left of frame is (0,0), while top right is (1,1)
+     * Top left of frame is (0,0), bottom right is (1,1)
      * @param source
      * @param offset_xF
      * @param offset_yF

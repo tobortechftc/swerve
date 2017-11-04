@@ -4,13 +4,11 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -82,6 +80,9 @@ public class SwerveDriveHardware {
     final static double LENGTH_BETWEEN_WHEELS = 12;
     final static double MIN_TURNING_RADIUS = 13;
     final static double MAX_TURNING_RADIUS = 100;
+    final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
+    final static double GG_SLIDE_MAX_COUNT = 4100; // ~14 inches
+
 
     final static int RED_BALL_MIN = -94;
     final static int RED_BALL_MAX = -36;
@@ -89,18 +90,22 @@ public class SwerveDriveHardware {
     final static int BLUE_BALL_MAX = 66;
     final static double SV_SHOULDER_INIT = 0.4278;
     final static double SV_SHOULDER_DOWN = 0.55;
-    final static double SV_SHOULDER_LEFT = 0.4239;
-    final static double SV_SHOULDER_RIGHT = 0.7128;
+    final static double SV_SHOULDER_LEFT = 0.7128;
+    final static double SV_SHOULDER_RIGHT = 0.4239;
     final static double SV_ELBOW_UP = 0.0039;
-    final static double SV_ELBOW_DOWN = 0.55;
-    final static double SV_GLYPH_GRABBER_TOP_INIT = 0.6078;
-    final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.6678;
-    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.9378;
-    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.4106;
-    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.365;
-    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.1294;
+    final static double SV_ELBOW_DOWN = 0.5033;
+    final static double SV_GLYPH_GRABBER_TOP_INIT = 0.4;
+    final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.475;
+    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.6;
+    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.4;
+    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.326;
+    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.183;
     final static double SV_RELIC_GRABBER_INIT = 0.5;
     final static double SV_RELIC_ARM_INIT = 0.5;
+    final static double GG_SLIDE_UP_POWER = 0.8;
+    final static double GG_SLIDE_DOWN_POWER = -0.5;
+
+
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
@@ -115,8 +120,15 @@ public class SwerveDriveHardware {
     double thetaTwoCalc;
     double insideWheelsMod;
     double outsideWheelsMod;
-    int orig_mt_pos = 0;
-    int target_mt_pos = 0;
+    double blue = 0;
+    double red = 0;
+    int orig_rot_pos = 0;
+    int target_rot_pos = 0;
+    int init_gg_slider_pos = 0;
+    int target_gg_slider_pos = 0;
+    int gg_layer = 0;
+    int max_gg_layer = 2;
+    int [] layer_positions = {10, ONE_ROTATION_60, 2*ONE_ROTATION_60};
 
     double DRIVE_RATIO_FL = INIT_DRIVE_RATIO_FL; //control veering by lowering left motor power
     double DRIVE_RATIO_FR = INIT_DRIVE_RATIO_FR;//control veering by lowering right motor power
@@ -253,7 +265,7 @@ public class SwerveDriveHardware {
             mt_test = hwMap.dcMotor.get("mt_test");
             mt_test.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mt_test.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            orig_mt_pos = mt_test.getCurrentPosition();
+            orig_rot_pos = mt_test.getCurrentPosition();
         }
         if (use_relic_grabber) {
             sv_relic_arm = hwMap.servo.get("sv_relic_arm");
@@ -262,7 +274,11 @@ public class SwerveDriveHardware {
         }
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");
+            sv_glyph_grabber_bottom.setPosition(SV_GLYPH_GRABBER_BOTTOM_INIT);
+
             sv_glyph_grabber_top = hwMap.servo.get("sv_grabber_top");
+            sv_glyph_grabber_top.setPosition(SV_GLYPH_GRABBER_TOP_INIT);
+
             mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
             mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mt_glyph_rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -270,8 +286,8 @@ public class SwerveDriveHardware {
 
             mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
             mt_glyph_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            sv_glyph_grabber_bottom.setPosition(SV_GLYPH_GRABBER_BOTTOM_INIT);
-            sv_glyph_grabber_top.setPosition(SV_GLYPH_GRABBER_TOP_INIT);
+            mt_glyph_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mt_glyph_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
         if (use_minibot) {
