@@ -121,29 +121,6 @@ public class TuneUp extends SwerveUtilLOP {
 
             } // end use_swerve
 
-<<<<<<< HEAD
-
-            if (gamepad1.back && gamepad1.a) {
-                show_all = !show_all;
-                sleep(50);
-            } else if (gamepad1.a && (sv_list[cur_sv_ix] != null)) {
-                double pos = sv_list[cur_sv_ix].getPosition();
-                if (pos <= (1 - INCREMENT)) {
-                    sv_list[cur_sv_ix].setPosition(pos + INCREMENT);
-                }
-                sleep(20);
-            } else if (gamepad1.y && (sv_list[cur_sv_ix] != null)) {
-                double pos = sv_list[cur_sv_ix].getPosition();
-                if (pos >= INCREMENT) {
-                    sv_list[cur_sv_ix].setPosition(pos - INCREMENT);
-                }
-                sleep(20);
-            }
-
-
-
-=======
->>>>>>> 0d0a76ed9ac4e457db0c32d51e362cb5510d4314
             if (robot.use_test_motor) {
                 if (gamepad1.x) {
                    if (robot.is_glyph_grabber_upside_down) {
