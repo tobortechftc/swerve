@@ -1237,7 +1237,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("4.1 IMU Heading = ", "%.2f", imu_heading());
         }
         if (robot.use_range_sensor) {
-            telemetry.addData("4.2 range = ", "%.2f cm",robot.rangeSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("4.2 range = ", "%.2f cm",robot.rangeSensorBack.getDistance(DistanceUnit.CM));
         }
         if (robot.use_Vuforia) {
             telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
