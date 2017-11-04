@@ -7,37 +7,31 @@ This isn't the final design, just an idea.
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * Created by Nick on 9/29/2017.
  */
-@TeleOp(name = "Swerve: DriveToCryptoboxSpike", group = "Swerve")
+@TeleOp(name = "Swerve GoToCryptoSpike", group = "Swerve")
 public class DriveToCryptoboxSpike extends SwerveUtilLOP {
 
 
     final static int SPIKE_DISTANCE = 30;
-    static int SPIKE_PASS_LIMIT = 2; // 1=close, 2=middle, 3=far
+    final static int SPIKE_PASS_LIMIT = 2; // 1=close, 2=middle, 3=far
     int mode = 1;
 
     int spikeCount = 0;
 
     public void detectSpike() {
-        if (robot.rangeSensor.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE) {
+        if (robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE) {
             spikeCount++;
             sleep(200);
         }
     }
     public boolean isSpike() {
-        return robot.rangeSensor.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE;
+        return robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE;
     }
 
     @Override
@@ -45,26 +39,18 @@ public class DriveToCryptoboxSpike extends SwerveUtilLOP {
         robot.use_Vuforia = false;
         robot.use_imu = false;
         robot.use_encoder = false;
-        robot.use_minibot = true;
+        robot.use_minibot = false;
         robot.use_range_sensor = true;
         robot.init(hardwareMap);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("Distance", robot.rangeSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("Distance", robot.rangeSensorBack.getDistance(DistanceUnit.CM));
             telemetry.addData("Spike Count", spikeCount);
             telemetry.addData("Is Spike? ", isSpike());
             telemetry.update();
             sleep(50);
-
-            if (gamepad1.a) {
-                SPIKE_PASS_LIMIT++;
-            }
-            if (gamepad1.b) {
-                SPIKE_PASS_LIMIT--;
-            }
-
             isSpike();
 
             // Begins driving forward
@@ -81,7 +67,7 @@ public class DriveToCryptoboxSpike extends SwerveUtilLOP {
                 }
             }
             else if (mode == 3) {
-                if (robot.rangeSensor.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE) {
+                if (robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE) {
                     sleep(100);
                     driveTT(.0, .0);
                 }

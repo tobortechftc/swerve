@@ -5,23 +5,20 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * Created by Nick on 10/6/2017.
  */
 
-@TeleOp(name = "Drive-Range", group = "Swerve")
+@TeleOp(name = "Swerve GoToCryptoDist", group = "Swerve")
 public class DriveToCryptoboxDistance extends SwerveUtilLOP {
 
     int driveDistance = 40; // 32=close, 49=middle, 70=far
     int mode = 1;
-    double speedValue = .7  ;
+    double speedValue = .5;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -29,20 +26,24 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
         robot.use_Vuforia = false;
         robot.use_imu = false;
         robot.use_encoder = false;
-        robot.use_minibot = true;
+        robot.use_swerve = true;
+        robot.use_minibot = false;
         robot.use_range_sensor = true;
         robot.use_color_sensor = false;
         robot.init(hardwareMap);
 
+        telemetry.addData("Say", "Initialization Complete");    //
+        telemetry.update();
+
         waitForStart();
 
         while (opModeIsActive()) {
-            boolean isOverDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance;
-            boolean isUnderDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) <= driveDistance;
+            boolean isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+            boolean isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
 
             telemetry.addData("Left Power: ", robot.motorFrontLeft.getPower());
             telemetry.addData("Right Power: ", robot.motorFrontRight.getPower());
-            telemetry.addData("Distance", robot.rangeSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("Distance", robot.rangeSensorBack.getDistance(DistanceUnit.CM));
             telemetry.addData("isOverDistance", isOverDistance);
             telemetry.addData("isUnderDistance,", isUnderDistance);
             telemetry.addData("Mode: ", mode);
@@ -54,28 +55,28 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
 
 
             if (mode == 1) {    // Drives forward off platform
-                driveTT(speedValue, speedValue *(4.0/5.0));
+                driveTT(speedValue, speedValue);
                 sleep(1000);
                 mode = 2;
             }
             else if (mode == 2) {   // Checks if it's gone far enough
-                isOverDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance;
+                isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
                 if (isOverDistance) {
-                    driveTT(-1*speedValue/2, -1*speedValue/2*(4.0/5.0));
+                    driveTT(-1*speedValue, -1*speedValue);
                     isOverDistance = false;
                     mode = 3;
                 }
             }
             else if (mode == 3) { // Drives backwards to compensate
-                isUnderDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) <= driveDistance;
+                isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
                 if (isUnderDistance) {
-                    driveTT(speedValue/2, speedValue/2*(4.0/5.0));
+                    driveTT(speedValue/2, speedValue/2);
                     isUnderDistance = false;
                     mode = 4;
                 }
             }
             else if (mode == 4) { // Drives forwards to compensate again
-                isOverDistance = robot.rangeSensor.getDistance(DistanceUnit.CM) >= driveDistance;
+                isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
                 if (isOverDistance) {
                     driveTT(.0, .0);
                     isOverDistance = false;

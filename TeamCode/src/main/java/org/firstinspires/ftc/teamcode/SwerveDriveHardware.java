@@ -164,7 +164,8 @@ public class SwerveDriveHardware {
     public Servo sv_test = null;
 
     public ColorSensor colorSensor = null;
-    public ModernRoboticsI2cRangeSensor rangeSensor = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -188,7 +189,7 @@ public class SwerveDriveHardware {
         STRAIGHT,
         CRAB,
         TURN
-    };
+    }
     CarMode cur_mode = CarMode.CAR;
     CarMode old_mode = CarMode.STRAIGHT;
 
@@ -256,7 +257,8 @@ public class SwerveDriveHardware {
             colorSensor.enableLed(true);
         }
         if (use_range_sensor) {
-            rangeSensor = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
+            rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorBack");
+            rangeSensorLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorLeft");
         }
         if (use_test_servo) {
             sv_test = hwMap.servo.get("sv_test");
