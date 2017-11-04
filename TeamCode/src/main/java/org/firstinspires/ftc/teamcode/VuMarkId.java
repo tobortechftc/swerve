@@ -95,6 +95,7 @@ public class VuMarkId extends SwerveUtilLOP {
             robot.relicTrackables.activate();
         }
 
+        Camera camera = new Camera(robot.vuforia);
         int state = 0;
         double stepStart = this.time;
         int LoopRep = 0;
@@ -105,7 +106,6 @@ public class VuMarkId extends SwerveUtilLOP {
             0 = awaiting activation
             1 = attempting to get frame queue
             2 = Frame retrieved
-
          */
         while (opModeIsActive() && (runtime.seconds() < 29)) {
             LoopRep++;
@@ -117,94 +117,26 @@ public class VuMarkId extends SwerveUtilLOP {
                 if (this.time - stepStart > 0) {
                     state = 1;
                     stepStart = this.time;
-                    robot.vuforia.setFrameQueueCapacity(1);
-                    Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
-
+                    camera.activate();
                 }
             } else if (state == 1) {
-                int capacity = robot.vuforia.getFrameQueueCapacity();
-                telemetry.addData("6. Vuforia Queue Cap = ", capacity);
-                VuforiaLocalizer.CloseableFrame frame = robot.vuforia.getFrameQueue().poll(5, TimeUnit.SECONDS);
-
-                if (frame == null) {
-                    state = -1;
-                    telemetry.addData("7. ERROR failed to retrieve frame", null);
-                    continue;
+                bitmap = camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+                if (bitmap == null) {
+                    telemetry.addData("Couldn't get a bitmap", camera.lastError);
+                    if (this.time - stepStart > 5) {
+                        state = -1;
+                        continue;
+                    }
                 }
 
-                Bitmap bitmapTemp = convertFrameToBitmap(frame);
-
-                frame.close();
-                if (this.time - stepStart > 5) {
-                    state = -1;
-                    continue;
-                }
-                if (bitmapTemp == null) {
-                    telemetry.addData("ERROR Failed to retrieve bitmap", null);
-
-                }
-                else {
+                if (bitmap != null) {
                     state = 2;
                     stepStart = this.time;
-                    bitmap = cropBitmap(bitmapTemp, IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
                 }
             }
 
             else if (state == 2) {
-                telemetry.addData("Bitmap Got", null);
-                int height = bitmap.getHeight();
-                int width = bitmap.getWidth();
-                telemetry.addData("Height:", height);
-                telemetry.addData("Width:", width);
-
-                int[] pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
-
-                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                int redTotal = 0;
-                int blueTotal = 0;
-                int redValue = 0;
-                int blueValue = 0;
-
-                int pixelTR = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
-//                int pixelBR = bitmap.getPixel(bitmap.getWidth() * 3 / 4,bitmap.getHeight() / 4);
-//                int pixelTL = bitmap.getPixel(bitmap.getWidth() /4, bitmap.getHeight() - 1);
-//                int pixelBL = bitmap.getPixel(bitmap.getWidth() / 4,bitmap.getHeight() / 4);
-//                int pixelM = bitmap.getPixel(bitmap.getWidth() / 2,bitmap.getHeight() / 2);
-
-                telemetry.addData("Pixel", String.format("%x", pixelTR));
-//                telemetry.addData("PixelBR", String.format("%x", pixelBR));
-//                telemetry.addData("PixelTL", String.format("%x", pixelTL));
-//                telemetry.addData("PixelBL", String.format("%x", pixelBL));
-//                telemetry.addData("PixelM", String.format("%x", pixelM));
-
-                for (int pixelI = 0; pixelI < pixels.length; pixelI++) {
-                    int b = Color.blue(pixels[pixelI]);
-                    int r = Color.red(pixels[pixelI]);
-
-                    if (r > b) {
-                        redTotal++;
-                        redValue += r;
-                    }
-                    else {
-                        blueTotal++;
-                        blueValue += b;
-                    }
-                }
-                if (redTotal > 1.3 * blueTotal) {
-                    telemetry.addData("Red Jewel", redTotal);
-
-                }
-                else if (blueTotal > 1.3 * redTotal){
-                    telemetry.addData("Blue Jewel", blueTotal);
-
-                }
-                else {
-                    telemetry.addData("ERROR! Threshold not great enough!", null);
-                }
-                telemetry.addData("Red Total", redTotal);
-                telemetry.addData("Blue Total", blueTotal);
-                telemetry.addData("Red Value AVG", redTotal > 0 ? redValue/redTotal : 0);
-                telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
+                telemetry.addData("Color", determineColor(bitmap));
             }
 
             if (state < 0) {
@@ -227,49 +159,64 @@ public class VuMarkId extends SwerveUtilLOP {
     }
 
     /**
-     *
-     * @param frame
+     * Determines if color is blue, red, or other/unsure.
+     * Expects majority of bitmap to be either red or blue.
+     * @param bitmap
      * @return
      */
-    Bitmap convertFrameToBitmap(VuforiaLocalizer.CloseableFrame frame) {
-        long numImages = frame.getNumImages();
-        Image image = null;
+    String determineColor(Bitmap bitmap) {
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
 
-        for (int imageI = 0; imageI < numImages; imageI++) {
-            if (frame.getImage(imageI).getFormat() == PIXEL_FORMAT.RGB565) {
-                image = frame.getImage(imageI);
-                break;
+        int[] pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
+
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        int redTotal = 0;
+        int blueTotal = 0;
+        int redValue = 0;
+        int blueValue = 0;
+
+//        int pixelTR = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+//                int pixelBR = bitmap.getPixel(bitmap.getWidth() * 3 / 4,bitmap.getHeight() / 4);
+//                int pixelTL = bitmap.getPixel(bitmap.getWidth() /4, bitmap.getHeight() - 1);
+//                int pixelBL = bitmap.getPixel(bitmap.getWidth() / 4,bitmap.getHeight() / 4);
+//                int pixelM = bitmap.getPixel(bitmap.getWidth() / 2,bitmap.getHeight() / 2);
+
+//        telemetry.addData("Pixel", String.format("%x", pixelTR));
+//                telemetry.addData("PixelBR", String.format("%x", pixelBR));
+//                telemetry.addData("PixelTL", String.format("%x", pixelTL));
+//                telemetry.addData("PixelBL", String.format("%x", pixelBL));
+//                telemetry.addData("PixelM", String.format("%x", pixelM));
+
+        for (int pixelI = 0; pixelI < pixels.length; pixelI++) {
+            int b = Color.blue(pixels[pixelI]);
+            int r = Color.red(pixels[pixelI]);
+
+            if (r > b) {
+                redTotal++;
+                redValue += r;
+            }
+            else {
+                blueTotal++;
+                blueValue += b;
             }
         }
-        if (image == null) {
-            for (int imageI = 0; imageI < numImages; imageI++) {
-                telemetry.addData("Image Formats", frame.getImage(imageI).getFormat());
-                //For diagnostic purposes
-            }
-            telemetry.addData("ERROR: failed to find Pixel Format", null);
-            return null;
+        if (redTotal > 1.3 * blueTotal) {
+            return "Red";
 
         }
-        Bitmap bitmap = Bitmap.createBitmap(image.getWidth(),image.getHeight(), Bitmap.Config.RGB_565);
-        bitmap.copyPixelsFromBuffer(image.getPixels());
-        return bitmap;
-    }
+        else if (blueTotal > 1.3 * redTotal){
+            return "Blue";
 
-    /**
-     * Top left of frame is (0,0), bottom right is (1,1)
-     * @param source
-     * @param offset_xF
-     * @param offset_yF
-     * @param widthF
-     * @param heightF
-     * @return
-     */
-    Bitmap cropBitmap(Bitmap source, double offset_xF, double offset_yF, double widthF, double heightF) {
-        int offset_x = (int)(source.getWidth() * offset_xF);
-        int offset_y = (int)(source.getHeight() * offset_yF);
-        int width = (int)(source.getWidth() * widthF);
-        int height = (int)(source.getHeight() * heightF);
-        Bitmap destBitmap = Bitmap.createBitmap(source, offset_x, offset_y, width, height);
-        return destBitmap;
+        }
+        else {
+            return "I don't know!";
+        }
+//        telemetry.addData("Red Total", redTotal);
+//        telemetry.addData("Blue Total", blueTotal);
+//        telemetry.addData("Red Value AVG", redTotal > 0 ? redValue/redTotal : 0);
+//        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
+
+
     }
 }
