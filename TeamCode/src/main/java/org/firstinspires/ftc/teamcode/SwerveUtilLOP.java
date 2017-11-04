@@ -1,15 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Bitmap;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.vuforia.Image;
+import com.vuforia.PIXEL_FORMAT;
+import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 import static java.lang.Thread.sleep;
 
@@ -1210,6 +1216,82 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
+    static class Camera {
+        private VuforiaLocalizer vuforia;
+        String lastError = "";
+
+        Camera(VuforiaLocalizer vuforia){
+            this.vuforia = vuforia;
+        }
+
+        void activate() {
+            this.vuforia.setFrameQueueCapacity(1);
+            Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
+        }
+
+        Bitmap convertFrameToBitmap(VuforiaLocalizer.CloseableFrame frame) {
+            long numImages = frame.getNumImages();
+            Image image = null;
+
+            for (int imageI = 0; imageI < numImages; imageI++) {
+                if (frame.getImage(imageI).getFormat() == PIXEL_FORMAT.RGB565) {
+                    image = frame.getImage(imageI);
+                    break;
+                }
+            }
+            if (image == null) {
+                for (int imageI = 0; imageI < numImages; imageI++) {
+                    //For diagnostic purposes
+                }
+                lastError = "Failed to get RGB565 image format!";
+                return null;
+            }
+            Bitmap bitmap = Bitmap.createBitmap(image.getWidth(),image.getHeight(), Bitmap.Config.RGB_565);
+            bitmap.copyPixelsFromBuffer(image.getPixels());
+            return bitmap;
+        }
+
+        Bitmap cropBitmap(Bitmap source, double xOffsetF, double yOffsetF, double widthF, double heightF) {
+            int offset_x = (int)(source.getWidth() * xOffsetF);
+            int offset_y = (int)(source.getHeight() * yOffsetF);
+            int width = (int)(source.getWidth() * widthF);
+            int height = (int)(source.getHeight() * heightF);
+            Bitmap destBitmap = Bitmap.createBitmap(source, offset_x, offset_y, width, height);
+            return destBitmap;
+        }
+
+        /**
+         *
+         * @param xOffsetF
+         * @param yOffsetF
+         * @param widthF
+         * @param heightF
+         * @return
+         */
+        Bitmap captureBitmap(double xOffsetF, double yOffsetF, double widthF, double heightF) {
+            lastError = "";
+            int capacity = vuforia.getFrameQueueCapacity();
+            VuforiaLocalizer.CloseableFrame frame = vuforia.getFrameQueue().poll();
+
+            if (frame == null) {
+                lastError = "ERROR! Failed to retrieve frame!";
+                return null;
+            }
+
+            Bitmap bitmapTemp = convertFrameToBitmap(frame);
+
+            frame.close();
+            if (bitmapTemp == null) {
+                lastError = "ERROR Failed to retrieve bitmap";
+                return null;
+
+            }
+            Bitmap bitmap = cropBitmap(bitmapTemp, xOffsetF, yOffsetF, widthF, heightF);
+            return bitmap;
+        }
+
+
+    }
 
     void show_telemetry() throws InterruptedException {
         telemetry.addData("1. Tobot/Imu/Vu =", "%s/%s/%s",
