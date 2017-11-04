@@ -122,6 +122,7 @@ public class TuneUp extends SwerveUtilLOP {
 
             } // end use_swerve
 
+<<<<<<< HEAD
 
             if (gamepad1.back && gamepad1.a) {
                 show_all = !show_all;
@@ -142,6 +143,8 @@ public class TuneUp extends SwerveUtilLOP {
 
 
 
+=======
+>>>>>>> 0d0a76ed9ac4e457db0c32d51e362cb5510d4314
             if (robot.use_test_motor) {
                 if (gamepad1.x) {
                    if (robot.is_glyph_grabber_upside_down) {
