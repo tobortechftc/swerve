@@ -35,7 +35,7 @@ public class SwerveDriveHardware {
     public boolean use_test_servo = false;
     public boolean use_test_motor = false;
 
-    public boolean fast_mode = false;
+    public boolean fast_mode = true;
     public boolean straight_mode = false;
 
     boolean isTesting = true;
