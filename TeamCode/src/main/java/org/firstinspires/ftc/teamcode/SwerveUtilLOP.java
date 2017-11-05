@@ -943,6 +943,15 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
     }
 
+    void go_to_distance_from(double power, int targetColumn, boolean isSideBox){ //Go until a certain distance from a target depending on the cryptobox and the column
+        if(isSideBox){
+
+        }
+        else{
+
+        }
+    }
+
     void calc_snake(float stick_x){
         if(stick_x > 0.1){
             robot.isSnakingLeft = false;

@@ -5,7 +5,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Created by Nick on 10/6/2017.
  */
 
-@TeleOp(name = "Swerve GoToCryptoDist", group = "Swerve")
+@Autonomous(name = "Swerve GoToCryptoDist", group = "Swerve")
 public class DriveToCryptoboxDistance extends SwerveUtilLOP {
 
     int driveDistance = 40; // 32=close, 49=middle, 70=far
