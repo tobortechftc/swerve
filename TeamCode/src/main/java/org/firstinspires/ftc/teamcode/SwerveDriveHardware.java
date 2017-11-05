@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
+import java.security.InvalidParameterException;
+
 import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
@@ -25,6 +27,7 @@ public class SwerveDriveHardware {
     public boolean use_swerve = true;   // use four motors and four servos for chassis
     public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight only for chassis
     public boolean use_Vuforia = true;
+    public boolean use_camera = false;
     public boolean use_imu = true;
     public boolean use_encoder = true;
     public boolean use_color_sensor = false;
@@ -166,6 +169,7 @@ public class SwerveDriveHardware {
     public ColorSensor colorSensor = null;
     public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
     public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
+    public SwerveUtilLOP.Camera camera = null;
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -230,6 +234,12 @@ public class SwerveDriveHardware {
             relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
             relicTemplate = relicTrackables.get(0);
             relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+        }
+        if (use_camera) {
+            if (!use_Vuforia) {
+                throw new IllegalStateException("use_camera cannot be flagged as true without use_Vuforia also being true!");
+            }
+            this.camera = new SwerveUtilLOP.Camera(this.vuforia);
         }
 
         if (use_imu) {

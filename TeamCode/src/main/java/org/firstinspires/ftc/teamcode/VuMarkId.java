@@ -33,16 +33,10 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.vuforia.CameraDevice;
-import com.vuforia.Image;
-import com.vuforia.PIXEL_FORMAT;
-import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * This OpMode illustrates the basics of using the Vuforia engine to determine
@@ -86,6 +80,7 @@ public class VuMarkId extends SwerveUtilLOP {
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = false;
         robot.use_Vuforia = true;
+        robot.use_camera = true;
 
         robot.init(hardwareMap);
 
@@ -95,7 +90,6 @@ public class VuMarkId extends SwerveUtilLOP {
             robot.relicTrackables.activate();
         }
 
-        Camera camera = new Camera(robot.vuforia);
         int state = 0;
         double stepStart = this.time;
         int LoopRep = 0;
@@ -117,12 +111,12 @@ public class VuMarkId extends SwerveUtilLOP {
                 if (this.time - stepStart > 0) {
                     state = 1;
                     stepStart = this.time;
-                    camera.activate();
+                    robot.camera.activate();
                 }
             } else if (state == 1) {
-                bitmap = camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+                bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
                 if (bitmap == null) {
-                    telemetry.addData("Couldn't get a bitmap", camera.lastError);
+                    telemetry.addData("Couldn't get a bitmap", robot.camera.getLastError());
                     if (this.time - stepStart > 5) {
                         state = -1;
                         continue;
@@ -136,7 +130,7 @@ public class VuMarkId extends SwerveUtilLOP {
             }
 
             else if (state == 2) {
-                telemetry.addData("Color", determineColor(bitmap));
+                telemetry.addData("Color", determineJewelColor(bitmap));
             }
 
             if (state < 0) {
@@ -156,67 +150,5 @@ public class VuMarkId extends SwerveUtilLOP {
             }
         }
         stop_auto();
-    }
-
-    /**
-     * Determines if color is blue, red, or other/unsure.
-     * Expects majority of bitmap to be either red or blue.
-     * @param bitmap
-     * @return
-     */
-    String determineColor(Bitmap bitmap) {
-        int height = bitmap.getHeight();
-        int width = bitmap.getWidth();
-
-        int[] pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
-
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        int redTotal = 0;
-        int blueTotal = 0;
-        int redValue = 0;
-        int blueValue = 0;
-
-//        int pixelTR = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
-//                int pixelBR = bitmap.getPixel(bitmap.getWidth() * 3 / 4,bitmap.getHeight() / 4);
-//                int pixelTL = bitmap.getPixel(bitmap.getWidth() /4, bitmap.getHeight() - 1);
-//                int pixelBL = bitmap.getPixel(bitmap.getWidth() / 4,bitmap.getHeight() / 4);
-//                int pixelM = bitmap.getPixel(bitmap.getWidth() / 2,bitmap.getHeight() / 2);
-
-//        telemetry.addData("Pixel", String.format("%x", pixelTR));
-//                telemetry.addData("PixelBR", String.format("%x", pixelBR));
-//                telemetry.addData("PixelTL", String.format("%x", pixelTL));
-//                telemetry.addData("PixelBL", String.format("%x", pixelBL));
-//                telemetry.addData("PixelM", String.format("%x", pixelM));
-
-        for (int pixelI = 0; pixelI < pixels.length; pixelI++) {
-            int b = Color.blue(pixels[pixelI]);
-            int r = Color.red(pixels[pixelI]);
-
-            if (r > b) {
-                redTotal++;
-                redValue += r;
-            }
-            else {
-                blueTotal++;
-                blueValue += b;
-            }
-        }
-        if (redTotal > 1.3 * blueTotal) {
-            return "Red";
-
-        }
-        else if (blueTotal > 1.3 * redTotal){
-            return "Blue";
-
-        }
-        else {
-            return "I don't know!";
-        }
-//        telemetry.addData("Red Total", redTotal);
-//        telemetry.addData("Blue Total", blueTotal);
-//        telemetry.addData("Red Value AVG", redTotal > 0 ? redValue/redTotal : 0);
-//        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
-
-
     }
 }

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.app.AliasActivity;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -26,6 +28,14 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     /* Declare OpMode members. */
     SwerveDriveHardware robot           = new SwerveDriveHardware();
+
+    /**
+     * Is used for checking or determining a color based on an alliance
+     * Can be used to set opposing or team alliance color
+     */
+    enum AllianceColor {
+        RED, BLUE, UNKNOWN
+    }
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -368,6 +378,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.relicTrackables.deactivate();
             robot.use_Vuforia = false;
         }
+        if (robot.use_camera) {
+            robot.use_camera = false;
+            //todo: for turning off Camera class
+        }
+
     }
 
     void stop_tobot() {
@@ -785,15 +800,26 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     double calcDelta() throws InterruptedException {
-        robot.blue = robot.colorSensor.blue();
-        robot.red = robot.colorSensor.red();
-        return (robot.blue - robot.red);
+        double blue = robot.colorSensor.blue();
+        double red = robot.colorSensor.red();
+        return (blue - red);
     }
 
-    public void Jewel_Mission(boolean IsBlueAlliance) throws InterruptedException {
+    public void Jewel_Mission(boolean IsBlueAlliance, AllianceColor rightJewelColor) throws InterruptedException {
         arm_down();
         sleep(1000);
-        checkBallColor();
+        AllianceColor colorSensorRightJewelColor = checkBallColor();
+
+        if (colorSensorRightJewelColor == AllianceColor.UNKNOWN) {
+            colorSensorRightJewelColor = rightJewelColor;
+        }
+
+        robot.isRedBall = (colorSensorRightJewelColor == AllianceColor.RED);
+        robot.isBlueBall = (colorSensorRightJewelColor == AllianceColor.BLUE);
+
+        telemetry.addData("isBlueBall/isRedBall", "%s/%s",robot.isBlueBall,robot.isRedBall);
+        telemetry.update();
+
         //assuming sensing the right jewel
         if (robot.isRedBall) {
             if (IsBlueAlliance) {
@@ -815,28 +841,39 @@ public class SwerveUtilLOP extends LinearOpMode {
         arm_up();
     }
 
-    void checkBallColor() throws InterruptedException {
-        robot.isBlueBall = false;
-        robot.isRedBall = false;
+    AllianceColor checkBallColor() throws InterruptedException {
+        boolean isBlueBall = false;
+        boolean isRedBall = false;
         robot.runtime.reset();
         double d = calcDelta();
+        AllianceColor result = AllianceColor.UNKNOWN;
 
-        while (!robot.isBlueBall && !robot.isRedBall && (robot.runtime.seconds()<1.0)) {
+        while (!isBlueBall && !isRedBall && (robot.runtime.seconds()<1.0)) {
             if ((d >= robot.BLUE_BALL_MIN) && (d <= robot.BLUE_BALL_MAX)) {
-                robot.isBlueBall = true;
+                isBlueBall = true;
             } else {
-                robot.isBlueBall = false;
+                isBlueBall = false;
             }
             if (d >= robot.RED_BALL_MIN && d <= robot.RED_BALL_MAX) {
-                robot.isRedBall = true;
+                isRedBall = true;
             } else {
-                robot.isRedBall = false;
+                isRedBall = false;
             }
 
             d = calcDelta();
         }
-        telemetry.addData("delta/isBlueBall/isRedBall=", "%3.1f/%s/%s",d,robot.isBlueBall,robot.isRedBall);
-        telemetry.update();
+//        telemetry.addData("delta/isBlueBall/isRedBall=", "%3.1f/%s/%s",d,robot.isBlueBall,robot.isRedBall);
+//        telemetry.update();
+        if (isBlueBall) {
+            result = AllianceColor.BLUE;
+        }
+        else if (isRedBall) {
+            result = AllianceColor.RED;
+        }
+        else if (isBlueBall && isRedBall) {
+            result = AllianceColor.UNKNOWN;
+        }
+        return result;
     }
 
     int getColumnIndex(RelicRecoveryVuMark vuMark) throws InterruptedException {
@@ -1150,7 +1187,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     static class Camera {
         private VuforiaLocalizer vuforia;
-        String lastError = "";
+        private String lastError = "";
 
         Camera(VuforiaLocalizer vuforia){
             this.vuforia = vuforia;
@@ -1161,7 +1198,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
         }
 
-        Bitmap convertFrameToBitmap(VuforiaLocalizer.CloseableFrame frame) {
+        String getLastError() {
+            return lastError;
+        }
+
+        private Bitmap convertFrameToBitmap(VuforiaLocalizer.CloseableFrame frame) {
             long numImages = frame.getNumImages();
             Image image = null;
 
@@ -1183,7 +1224,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             return bitmap;
         }
 
-        Bitmap cropBitmap(Bitmap source, double xOffsetF, double yOffsetF, double widthF, double heightF) {
+        private Bitmap cropBitmap(Bitmap source, double xOffsetF, double yOffsetF, double widthF, double heightF) {
             int offset_x = (int)(source.getWidth() * xOffsetF);
             int offset_y = (int)(source.getHeight() * yOffsetF);
             int width = (int)(source.getWidth() * widthF);
@@ -1221,8 +1262,77 @@ public class SwerveUtilLOP extends LinearOpMode {
             Bitmap bitmap = cropBitmap(bitmapTemp, xOffsetF, yOffsetF, widthF, heightF);
             return bitmap;
         }
+    }
 
+    /**
+     * Determines if jewel color is blue, red, or other/unsure.
+     * Expects majority of bitmap to be either red or blue.
+     * Outputs string as either "Red", "Blue", or "Unsure"
+     * @param bitmap
+     * @return String
+     */
+    AllianceColor determineJewelColor(Bitmap bitmap) {
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
 
+        int[] pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
+
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        int redTotal = 0;
+        int blueTotal = 0;
+        int redValue = 0;
+        int blueValue = 0;
+
+//        int pixelTR = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+//                int pixelBR = bitmap.getPixel(bitmap.getWidth() * 3 / 4,bitmap.getHeight() / 4);
+//                int pixelTL = bitmap.getPixel(bitmap.getWidth() /4, bitmap.getHeight() - 1);
+//                int pixelBL = bitmap.getPixel(bitmap.getWidth() / 4,bitmap.getHeight() / 4);
+//                int pixelM = bitmap.getPixel(bitmap.getWidth() / 2,bitmap.getHeight() / 2);
+
+//        telemetry.addData("Pixel", String.format("%x", pixelTR));
+//                telemetry.addData("PixelBR", String.format("%x", pixelBR));
+//                telemetry.addData("PixelTL", String.format("%x", pixelTL));
+//                telemetry.addData("PixelBL", String.format("%x", pixelBL));
+//                telemetry.addData("PixelM", String.format("%x", pixelM));
+
+        for (int pixelI = 0; pixelI < pixels.length; pixelI++) {
+            int b = Color.blue(pixels[pixelI]);
+            int r = Color.red(pixels[pixelI]);
+
+            if (r > b) {
+                redTotal++;
+                redValue += r;
+            }
+            else {
+                blueTotal++;
+                blueValue += b;
+            }
+        }
+        if (redTotal > 1.3 * blueTotal) {
+            return AllianceColor.RED;
+
+        }
+        else if (blueTotal > 1.3 * redTotal){
+            return AllianceColor.BLUE;
+
+        }
+        else {
+            return AllianceColor.UNKNOWN;
+        }
+//        telemetry.addData("Red Total", redTotal);
+//        telemetry.addData("Blue Total", blueTotal);
+//        telemetry.addData("Red Value AVG", redTotal > 0 ? redValue/redTotal : 0);
+//        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
+    }
+    AllianceColor getOpposingColor(AllianceColor leftJewelColor) {
+        if (leftJewelColor == AllianceColor.RED) {
+            return AllianceColor.BLUE;
+
+        }
+        else if (leftJewelColor == AllianceColor.BLUE) {
+            return AllianceColor.RED;
+        }
+        return AllianceColor.UNKNOWN;
     }
 
     void show_telemetry() throws InterruptedException {
