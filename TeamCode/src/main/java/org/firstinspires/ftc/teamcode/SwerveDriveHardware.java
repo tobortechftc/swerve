@@ -38,7 +38,7 @@ public class SwerveDriveHardware {
     public boolean use_test_servo = false;
     public boolean use_test_motor = false;
 
-    public boolean fast_mode = false;
+    public boolean fast_mode = true;
     public boolean straight_mode = false;
 
     boolean isTesting = true;
@@ -83,6 +83,7 @@ public class SwerveDriveHardware {
     final static double LENGTH_BETWEEN_WHEELS = 12;
     final static double MIN_TURNING_RADIUS = 13;
     final static double MAX_TURNING_RADIUS = 100;
+
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4100; // ~14 inches
 
@@ -91,20 +92,26 @@ public class SwerveDriveHardware {
     final static int RED_BALL_MAX = -36;
     final static int BLUE_BALL_MIN = 12;
     final static int BLUE_BALL_MAX = 66;
+
     final static double SV_SHOULDER_INIT = 0.4278;
     final static double SV_SHOULDER_DOWN = 0.55;
     final static double SV_SHOULDER_LEFT = 0.7128;
     final static double SV_SHOULDER_RIGHT = 0.4239;
+
     final static double SV_ELBOW_UP = 0.0039;
     final static double SV_ELBOW_DOWN = 0.5033;
+
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.4;
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.475;
     final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.6;
+
     final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.4;
     final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.326;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.183;
+
     final static double SV_RELIC_GRABBER_INIT = 0.5;
     final static double SV_RELIC_ARM_INIT = 0.5;
+
     final static double GG_SLIDE_UP_POWER = 0.8;
     final static double GG_SLIDE_DOWN_POWER = -0.5;
 
@@ -112,10 +119,12 @@ public class SwerveDriveHardware {
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
+
     double servoPosFL;
     double servoPosFR;
     double servoPosBL;
     double servoPosBR;
+
     double leftServoAngle;
     double rightServoAngle;
     double r_Value;
@@ -123,8 +132,12 @@ public class SwerveDriveHardware {
     double thetaTwoCalc;
     double insideWheelsMod;
     double outsideWheelsMod;
+
+    int targetColumn;
+
     double blue = 0;
     double red = 0;
+
     int orig_rot_pos = 0;
     int target_rot_pos = 0;
     int init_gg_slider_pos = 0;
