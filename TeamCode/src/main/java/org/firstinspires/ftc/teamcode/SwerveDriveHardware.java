@@ -108,10 +108,10 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.4;
     final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.326;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.183;
-
-    final static double SV_RELIC_GRABBER_INIT = 0.5;
+    final static double SV_RELIC_GRABBER_INIT = 0.76;
     final static double SV_RELIC_ARM_INIT = 0.5;
-
+    final static double SV_RELIC_ARM_UP = 0.5;
+    final static double SV_RELIC_ARM_DOWN = 0.5;
     final static double GG_SLIDE_UP_POWER = 0.8;
     final static double GG_SLIDE_DOWN_POWER = -0.5;
 
@@ -284,7 +284,7 @@ public class SwerveDriveHardware {
             rangeSensorLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorLeft");
         }
         if (use_test_servo) {
-            sv_test = hwMap.servo.get("sv_test");
+            // sv_test = hwMap.servo.get("sv_test");
         }
         if (use_test_motor) {
             mt_test = hwMap.dcMotor.get("mt_test");
@@ -294,8 +294,10 @@ public class SwerveDriveHardware {
         }
         if (use_relic_grabber) {
             sv_relic_arm = hwMap.servo.get("sv_relic_arm");
+            sv_relic_arm.setPosition(SV_RELIC_ARM_INIT);
             sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
-            mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
+            sv_relic_grabber.setPosition(SV_RELIC_GRABBER_INIT);
+            // mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
         }
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");
@@ -310,6 +312,7 @@ public class SwerveDriveHardware {
             mt_glyph_rotator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
+            mt_glyph_slider.setDirection(DcMotor.Direction.REVERSE);
             mt_glyph_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             mt_glyph_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mt_glyph_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
