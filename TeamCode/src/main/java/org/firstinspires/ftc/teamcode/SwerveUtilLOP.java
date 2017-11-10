@@ -33,7 +33,19 @@ public class SwerveUtilLOP extends LinearOpMode {
      * Can be used to set opposing or team alliance color
      */
     enum TeamColor {
-        RED, BLUE, UNKNOWN
+        RED, BLUE, UNKNOWN;
+
+        private TeamColor opposite;
+
+        static {
+            RED.opposite = BLUE;
+            BLUE.opposite = RED;
+            UNKNOWN.opposite = UNKNOWN;
+        }
+
+        public TeamColor getOpposingColor(){
+            return opposite;
+        }
     }
 
     @Override
@@ -894,28 +906,28 @@ public class SwerveUtilLOP extends LinearOpMode {
         if(robot.use_camera) {
             Bitmap bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
             if (bitmap == null) {
-                telemetry.addData("ERROR!", robot.camera.getLastError());
+                telemetry.log().add("ERROR!", robot.camera.getLastError());
                 telemetry.update();
 
                 //while (opModeIsActive());
             }
             else {
                 TeamColor leftJewelColor = determineJewelColor(bitmap);
-                rightJewelColor = getOpposingColor(leftJewelColor);
+                rightJewelColor = leftJewelColor.getOpposingColor();
                 //Current mounting solution only allows camera to check the left jewel color
             }
         }
 
         arm_down();
         sleep(1000);
-        TeamColor colorSensorRightJewelColor = checkBallColor();
+        TeamColor rightJewelGuess = checkBallColor();
 
-        if (colorSensorRightJewelColor == TeamColor.UNKNOWN) {
-            colorSensorRightJewelColor = rightJewelColor;
+        if (rightJewelGuess == TeamColor.UNKNOWN) {
+            rightJewelGuess = rightJewelColor;
         }
 
-        robot.isRedBall = (colorSensorRightJewelColor == TeamColor.RED);
-        robot.isBlueBall = (colorSensorRightJewelColor == TeamColor.BLUE);
+        robot.isRedBall = (rightJewelGuess == TeamColor.RED);
+        robot.isBlueBall = (rightJewelGuess == TeamColor.BLUE);
 
         telemetry.addData("isBlueBall/isRedBall", "%s/%s",robot.isBlueBall,robot.isRedBall);
         telemetry.update();
@@ -1433,16 +1445,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 //        telemetry.addData("Red Value AVG", redTotal > 0 ? redValue/redTotal : 0);
 //        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
     }
-    TeamColor getOpposingColor(TeamColor leftJewelColor) {
-        if (leftJewelColor == TeamColor.RED) {
-            return TeamColor.BLUE;
 
-        }
-        else if (leftJewelColor == TeamColor.BLUE) {
-            return TeamColor.RED;
-        }
-        return TeamColor.UNKNOWN;
-    }
 
     void show_telemetry() throws InterruptedException {
         telemetry.addData("1. Tobot/Imu/Vu =", "%s/%s/%s",
