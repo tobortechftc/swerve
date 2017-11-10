@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 /**
  * Created by carlw on 11/4/2017.
  */
@@ -12,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class AutoBlueSideBox extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
-        AllianceColor rightJewelColor = AllianceColor.UNKNOWN;
 
         robot.use_swerve = true;
         robot.use_imu = true;
@@ -33,8 +30,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            Jewel_Mission(true, rightJewelColor);
-            robot.targetColumn = get_cryptobox_column();
+            doPlatformMission(true);
             StraightIn(0.5, 22); // Drive off the balance stone
             go_to_distance_from(0.5, robot.targetColumn, true);
             //Deliver particle from the side
