@@ -18,6 +18,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.use_range_sensor = true;
         robot.use_color_sensor = true;
         robot.use_Vuforia = true;
+        robot.use_camera = true;
 
         robot.init(hardwareMap);
 
