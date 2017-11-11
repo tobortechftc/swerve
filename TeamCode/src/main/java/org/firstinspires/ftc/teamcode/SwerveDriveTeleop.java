@@ -104,10 +104,10 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
 
                     if (gamepad1.b) {
-                        StraightIn(0.5, 30);
+                        StraightIn(0.5, 22);
                     }
                     if (gamepad1.a){
-                        StraightIn(-0.5, 30);
+                        StraightIn(-0.5, 22);
                     }
                     if(gamepad1.y){
                         while(gamepad1.y) {
@@ -210,6 +210,19 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorFrontRight.setPower(0);
                         robot.motorBackLeft.setPower(0);
                         robot.motorBackRight.setPower(0);
+                    }
+
+                    if (gamepad1.a){
+                        robot.drivePowerRatio -=0.3;
+                        if(robot.drivePowerRatio < 0.1){
+                            robot.drivePowerRatio = 0.1;
+                        }
+                    }
+                    if (gamepad1.y){
+                        robot.drivePowerRatio += 0.3;
+                        if(robot.drivePowerRatio > 1.0){
+                            robot.drivePowerRatio = 1.0;
+                        }
                     }
                 }
 
