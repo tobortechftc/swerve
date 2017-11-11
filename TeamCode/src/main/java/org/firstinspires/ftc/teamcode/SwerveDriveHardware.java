@@ -55,6 +55,9 @@ public class SwerveDriveHardware {
 
     boolean isRedBall = false;
     boolean isBlueBall = false;
+    boolean gg_slider_encoder_ok = false;
+    boolean gg_rotator_encoder_ok = false;
+
 
     public double target_heading = 0.0;
     public double mt_glyph_slider_pw = 0.0;
@@ -85,7 +88,8 @@ public class SwerveDriveHardware {
     final static double MAX_TURNING_RADIUS = 100;
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
-    final static double GG_SLIDE_MAX_COUNT = 4100; // ~14 inches
+    final static double GG_SLIDE_MAX_COUNT = 4150; // ~14 inches
+    final static int GG_SLIDE_INIT = 50;
 
 
     final static int RED_BALL_MIN = -94;
@@ -140,11 +144,11 @@ public class SwerveDriveHardware {
 
     int orig_rot_pos = 0;
     int target_rot_pos = 0;
-    int init_gg_slider_pos = 0;
+    int init_gg_slider_pos = GG_SLIDE_INIT;
     int target_gg_slider_pos = 0;
     int gg_layer = 0;
     int max_gg_layer = 2;
-    int [] layer_positions = {10, ONE_ROTATION_60, 2*ONE_ROTATION_60};
+    int [] layer_positions = {GG_SLIDE_INIT, ONE_ROTATION_60+GG_SLIDE_INIT, 2*ONE_ROTATION_60+GG_SLIDE_INIT};
 
     double DRIVE_RATIO_FL = INIT_DRIVE_RATIO_FL; //control veering by lowering left motor power
     double DRIVE_RATIO_FR = INIT_DRIVE_RATIO_FR;//control veering by lowering right motor power
