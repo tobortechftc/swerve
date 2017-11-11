@@ -21,8 +21,9 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
         robot.use_range_sensor = false;
         robot.use_color_sensor = false;
         robot.use_Vuforia = false;
+        robot.use_glyph_grabber = true;
 
-        robot.init(hardwareMap);
+        init_and_test();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Initialization Complete");    //
@@ -103,10 +104,10 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
 
                     if (gamepad1.b) {
-                        StraightIn(0.5, 30);
+                        StraightIn(0.5, 22);
                     }
                     if (gamepad1.a){
-                        StraightIn(-0.5, 30);
+                        StraightIn(-0.5, 22);
                     }
                     if(gamepad1.y){
                         while(gamepad1.y) {
@@ -210,6 +211,19 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorBackLeft.setPower(0);
                         robot.motorBackRight.setPower(0);
                     }
+
+                    if (gamepad1.a){
+                        robot.drivePowerRatio -=0.3;
+                        if(robot.drivePowerRatio < 0.1){
+                            robot.drivePowerRatio = 0.1;
+                        }
+                    }
+                    if (gamepad1.y){
+                        robot.drivePowerRatio += 0.3;
+                        if(robot.drivePowerRatio > 1.0){
+                            robot.drivePowerRatio = 1.0;
+                        }
+                    }
                 }
 
 
@@ -253,6 +267,43 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
             } // end use_swerve
+
+            if (robot.use_glyph_grabber) {
+                if (gamepad2.left_bumper) {
+                    glyph_grabber_auto_open();
+                    // should slide back to init
+                    // glyph_slider_init();
+                } else if (gamepad2.b && (gamepad2.left_trigger > 0.1)) { // close both
+                    glyph_grabber_all_close();
+                } else if (gamepad2.a && (gamepad2.left_trigger > 0.1)) { // close one + rotate
+                    // 1. glyph grabber auto close down grabber
+                    // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
+                    glyph_grabber_auto_close();
+                    if (!robot.is_glyph_grabber_upside_down) {
+                        sleep(1000);
+                        glyph_grabber_auto_rotate(0.4);
+                    }
+                } else if (gamepad2.left_trigger > 0.1) {
+                    glyph_grabber_auto_close();
+                }
+                if (gamepad2.a && gamepad2.dpad_down) {
+                    glyph_slider_init();
+                } else if (gamepad2.dpad_down) {
+                    glyph_slider_down_auto();
+                } else if (gamepad2.dpad_up) {
+                    glyph_slider_up_auto();
+                } else if (gamepad2.dpad_left) {
+                    glyph_grabber_auto_rotate(0.4);
+                } else if (gamepad2.dpad_right) {
+                    // glyph_grabber_auto_rotate(0.4);
+                } else if (gamepad2.right_bumper) { // manual up
+                    glyph_slider_up();
+                } else if (gamepad2.right_trigger > 0.1) { // manual down
+                    glyph_slider_down();
+                } else {
+                    glyph_slider_stop();
+                }
+            }
             show_telemetry();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.

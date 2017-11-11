@@ -41,7 +41,7 @@ public class SwerveDriveHardware {
     public boolean fast_mode = true;
     public boolean straight_mode = false;
 
-    boolean isTesting = true;
+    boolean isTesting = false;
 
     boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
     boolean isSnakingLeft = false; //See if the snake drive is turning to the left
@@ -123,6 +123,7 @@ public class SwerveDriveHardware {
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
+    double drivePowerRatio = 1.0;
 
     double servoPosFL;
     double servoPosFR;
