@@ -1071,14 +1071,103 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
     }
 
-    void go_to_distance_from(double power, int targetColumn, boolean isSideBox){ //Go until a certain distance from a target depending on the cryptobox and the column
-        if(isSideBox){
+    void go_to_distance_from(double power, int targetColumn, boolean isSideBox) { //Go until a certain distance from a target depending on the cryptobox and the column
+        int mode = 1;
+        int driveDistance;
+        boolean isOverDistance;
+        boolean isUnderDistance;
+        telemetry.addData("Mode", mode);
 
-        }
-        else{
+        if (isSideBox) {
+            while (mode <= 4) { // Makes sure it loops enough for all of the code to be completed
+                switch (targetColumn) { // Defines distance it needs to drive based on column input.
+                    case 1:
+                        driveDistance = 22;
+                        break;
+                    case 2:
+                        driveDistance = 38;
+                        break;
+                    case 3:
+                        driveDistance = 59;
+                        break;
+                    default:
+                        driveDistance = 38;
+                        break;
+                }
 
+                if (mode == 1) {    // Drives forward
+                    driveTT(power, power);
+                    mode = 2;
+                } else if (mode == 2) {   // Checks if it's gone far enough
+                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+                    if (isOverDistance) {
+                        driveTT(-1 * power, -1 * power);
+                        mode = 3;
+                    }
+                } else if (mode == 3) { // Drives backwards to compensate
+                    isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
+                    if (isUnderDistance) {
+                        driveTT(power * 3 / 4, power * 3 / 4);
+                        mode = 4;
+                    }
+                } else if (mode == 4) { // Drives forwards to compensate again (May not need this is robot is precise enough)
+                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+                    if (isOverDistance) {
+                        driveTT(.0, .0);
+                        mode = 5;
+                    }
+                }
+            }
+        } else {
+            while (mode <= 4) {
+                switch (targetColumn) { // Defines distance it needs to drive based on column input.
+                    case 1:
+                        driveDistance = 56;
+                        break;
+                    case 2:
+                        driveDistance = 75;
+                        break;
+                    case 3:
+                        driveDistance = 92;
+                        break;
+                    default:
+                        driveDistance = 75;
+                        break;
+                }
+
+
+                if (mode == 1) { // Stops, turns to crab mode and drives to the right
+                        driveTT(.0, .0);
+                        sleep(200);
+                        change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                        sleep(500);
+                        driveTT(power, power);
+                        mode = 2;
+                } else if (mode == 2) { // Reverses when it's gone far enough
+                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+                    if (isOverDistance) {
+                        driveTT(-1 * power * 3 / 4, -1 * power * 3 / 4);
+                        mode = 3;
+                    }
+                } else if (mode == 3) {
+                    isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
+                    if (isUnderDistance) {
+                        driveTT(power / 2, power / 2);
+                        mode = 4;
+                    }
+                } else if (mode == 4) {
+                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+                    if (isOverDistance) {
+                        driveTT(-1 * power / 2, -1 * power / 2);
+                        mode = 5;
+                    }
+                }
+            }
         }
     }
+
+
+
 
     void calc_snake(float stick_x){
         if(stick_x > 0.1){
@@ -1511,7 +1600,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("4.1 IMU Heading = ", "%.2f", imu_heading());
         }
         if (robot.use_range_sensor) {
-            telemetry.addData("4.2 range = ", "%.2f cm",robot.rangeSensorBack.getDistance(DistanceUnit.CM));
+            telemetry.addData("4.2 rangeBack = ", "%.2f cm",robot.rangeSensorBack.getDistance(DistanceUnit.CM));
+            //telemetry.addData("4.3 rangeLeft = ", "%.2f cm", robot.rangeSensorLeft.getDistance(DistanceUnit.CM));
         }
         if (robot.use_Vuforia) {
             telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
