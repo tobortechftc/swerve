@@ -433,7 +433,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (robot.use_camera) {
             robot.use_camera = false;
-            //todo: for turning off Camera class
         }
 
     }
