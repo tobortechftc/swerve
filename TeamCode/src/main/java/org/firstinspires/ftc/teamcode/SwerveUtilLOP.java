@@ -70,9 +70,13 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     public void init_and_test() {
         robot.init(hardwareMap);
-        test_glyph_rotator_encoder();
-        test_glyph_slider_encoder();
-        glyph_slider_init();
+
+        if (robot.use_glyph_grabber) {
+            test_glyph_rotator_encoder();
+            test_glyph_slider_encoder();
+            glyph_grabber_auto_open();
+            glyph_slider_init();
+        }
     }
 
     public double imu_heading() {

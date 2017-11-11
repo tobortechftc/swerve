@@ -27,9 +27,6 @@ public class GG_TeleOp extends SwerveUtilLOP {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        if (robot.use_glyph_grabber) {
-            glyph_grabber_auto_open();
-        }
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
