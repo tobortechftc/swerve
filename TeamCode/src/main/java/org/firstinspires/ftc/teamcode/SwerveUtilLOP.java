@@ -936,6 +936,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.isRedBall) {
             if (IsBlueAlliance) {
                 arm_right();
+
             }
             else {
                 arm_left();
@@ -951,6 +952,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         sleep(1000);
         arm_up();
+        robot.camera.stopCamera();
     }
 
     TeamColor checkBallColor() throws InterruptedException {
@@ -1382,6 +1384,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             Bitmap bitmap = cropBitmap(bitmapTemp, xOffsetF, yOffsetF, widthF, heightF);
             return bitmap;
+        }
+        void stopCamera(){
+            this.vuforia.setFrameQueueCapacity(0);
+            Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
         }
     }
 
