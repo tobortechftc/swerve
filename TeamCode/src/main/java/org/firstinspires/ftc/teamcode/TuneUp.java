@@ -21,12 +21,12 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_Vuforia = false;
         robot.use_color_sensor = false;
         robot.use_arm = false;
-        robot.use_glyph_grabber = false;
-        robot.use_relic_grabber = true;
-        robot.use_test_servo = true;
+        robot.use_glyph_grabber = true;
+        robot.use_relic_grabber = false;
+        robot.use_test_servo = false;
         robot.use_test_motor = false;
 
-        robot.init(hardwareMap);
+        init_and_test();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("My name is Tobot.", "Need tune-up?");

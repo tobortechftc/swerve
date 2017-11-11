@@ -23,7 +23,7 @@ public class GG_TeleOp extends SwerveUtilLOP {
         robot.use_glyph_grabber = true;
         robot.use_test_motor = false;
 
-        robot.init(hardwareMap);
+        init_and_test();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();

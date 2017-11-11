@@ -68,6 +68,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
+    public void init_and_test() {
+        robot.init(hardwareMap);
+        test_glyph_rotator_encoder();
+        test_glyph_slider_encoder();
+        glyph_slider_init();
+    }
+
     public double imu_heading() {
         if (!robot.use_imu)
             return -1.0;
@@ -127,6 +134,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void rotate_to_target(double power) {
+        if (!robot.gg_rotator_encoder_ok)
+            return;
         robot.mt_glyph_rotator.setTargetPosition(robot.target_rot_pos);
         robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.runtime.reset();
@@ -149,6 +158,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_rotate(double power, double degree) {
+        if (!robot.gg_rotator_encoder_ok)
+            return;
+
         double adjust_r = 1.0;
         if (power>0) {
             adjust_r = 1.0;
@@ -179,6 +191,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_glyph_rotator.setPower(0);
     }
 
+    void glyph_slider_init() {
+        robot.target_gg_slider_pos = (int)(robot.GG_SLIDE_INIT);
+        slide_to_target(.5);
+    }
+
     void glyph_slider_up_inches(double power, double in) {
         int count = (int)(in / robot.GG_SLIDE_INCHES_PER_ROTATION * robot.ONE_ROTATION_60);
         robot.target_gg_slider_pos = robot.init_gg_slider_pos + count;
@@ -199,7 +216,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         slide_to_target(robot.GG_SLIDE_DOWN_POWER);
     }
 
-    void glyph_slider_init() { // back to initial position
+    void glyph_slider_back_init() { // back to initial position
         robot.target_gg_slider_pos = robot.init_gg_slider_pos;
         slide_to_target(robot.GG_SLIDE_DOWN_POWER);
         robot.gg_layer = 0;
@@ -237,7 +254,32 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
     }
 
+    void test_glyph_rotator_encoder() {
+        robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.mt_glyph_rotator.setPower(.4);
+        sleep(10);
+        robot.mt_glyph_rotator.setPower(0);
+        if (robot.mt_glyph_rotator.getCurrentPosition()!=0)
+            robot.gg_rotator_encoder_ok = true;
+        else
+            robot.gg_rotator_encoder_ok = false;
+    }
+
+    void test_glyph_slider_encoder() {
+        robot.mt_glyph_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.mt_glyph_slider.setPower(.4);
+        sleep(10);
+        robot.mt_glyph_slider.setPower(0);
+        if (robot.mt_glyph_slider.getCurrentPosition()!=0)
+            robot.gg_slider_encoder_ok = true;
+        else
+            robot.gg_slider_encoder_ok = false;
+    }
+
     public void slide_to_target(double power) {
+        if (!robot.gg_slider_encoder_ok)
+            return;
+
         if (power<0) power=-1.0*power;
         robot.mt_glyph_slider.setTargetPosition(robot.target_gg_slider_pos);
         robot.mt_glyph_slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -1454,11 +1496,12 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
     void show_telemetry() throws InterruptedException {
-        telemetry.addData("1. Tobot/Imu/Vu =", "%s/%s/%s",
-                (robot.use_swerve ?"on":"off"), (robot.use_imu?"on":"off"),
-                (robot.use_Vuforia ?"on":"off"));
-        telemetry.addData("2. W-pw Left/Right =", "%.2f/%.2f",
-                robot.motorPowerLeft,robot.motorPowerRight);
+        telemetry.addData("1. Sw/Imu/Vu/GG =", "%s/%s/%s/%s",
+                (robot.use_swerve ?"Y":"N"), (robot.use_imu?"Y":"N"),
+                (robot.use_Vuforia ?"Y":"N"), (robot.use_glyph_grabber ?"Y":"N"));
+        telemetry.addData("2. PW Left/Right/Rot-En/Sl-En =", "%.2f/%.2f/%s/%s",
+                robot.motorPowerLeft,robot.motorPowerRight,
+                (robot.gg_rotator_encoder_ok ?"Y":"N"),(robot.gg_slider_encoder_ok ?"Y":"N"));
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
         if (robot.use_imu) {
