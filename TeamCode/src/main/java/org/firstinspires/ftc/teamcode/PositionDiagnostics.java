@@ -40,13 +40,35 @@ public class PositionDiagnostics extends SwerveUtilLOP{
                 if (pictograph != -1){
                     telemetry.addData("Pictograph Visible!", pictograph);
                 }
+                else {
+                    telemetry.addData("Pictograph Not Visible!", null);
+                }
 
                 double idealDistance = 39;
                 double currentDistance = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+                double diff = currentDistance - idealDistance;
 
 //                if (currentDistance + 2 > idealDistance || currentDistance - 2 < idealDistance) {
-//
+//                    telemetry.addData("We are at a good Distance from the wall! Move", diff);
 //                }
+//                else if (currentDistance + 2 < idealDistance){
+//                    telemetry.addData("Robot is too close to the wall! Move", diff);
+//                }
+//                else if (currentDistance -2 > idealDistance) {
+//                    telemetry.addData("Robot is too far away from the wall! Move", diff);
+//                }
+//                else {
+//                    telemetry.addData("You should not see this message, scream at Mason!", null);
+//                }
+
+                TeamColor jewel = checkBallColor();
+                if (jewel != TeamColor.UNKNOWN){
+                    telemetry.addData("I can see the Jewels!", jewel);
+                }
+                else {
+                    telemetry.addData("I can't see the Jewels!", null);
+                }
+                telemetry.update();
             }
         }
     }
