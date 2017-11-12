@@ -72,8 +72,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.init(hardwareMap);
 
         if (robot.use_glyph_grabber) {
-            test_glyph_rotator_encoder();
-            test_glyph_slider_encoder();
+            // test_glyph_rotator_encoder();
+            robot.gg_rotator_encoder_ok = true;
+            // test_glyph_slider_encoder();
+            robot.gg_slider_encoder_ok = true;
             glyph_grabber_auto_open();
             glyph_slider_init();
         }
@@ -88,36 +90,60 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_auto_close() { // close the down/up grabber depend on upside down
-        if (robot.is_glyph_grabber_upside_down) { // close up grabber
+        if (robot.is_gg_upside_down) { // close up grabber
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
+            robot.gg_top_close = true;
         } else {
             robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
+            robot.gg_bottom_close = true;
         }
     }
     public void glyph_grabber_all_close() { // close the down/up grabber depend on upside down
-            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
-            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
+        robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
+        robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
+        robot.gg_top_close = true;
+        robot.gg_bottom_close = true;
+
     }
 
     public void glyph_grabber_auto_open() { // open both grabbers
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
         robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
-        sleep(500);
-        if (robot.is_glyph_grabber_upside_down)
-            glyph_grabber_auto_rotate(0.3);
+        robot.gg_top_close = false;
+        robot.gg_bottom_close = false;
+        // auto rotate back to top up
+        // sleep(500);
+        //if (robot.is_gg_upside_down)
+        //    glyph_grabber_auto_rotate(0.3);
     }
 
     public void glyph_grabber_auto_rotate(double power) {
-        // test rotation 180 degrees back and forth
+        // if grabber is close and at ladder 0, need to slide up a little bit before rotation
+        boolean need_slide_up = false;
+        if (robot.gg_layer==0) {
+            if ((robot.is_gg_upside_down && robot.gg_top_close) ||
+                    (!robot.is_gg_upside_down && robot.gg_bottom_close)   ) {
+                need_slide_up = true;
+            }
+        }
+        if (need_slide_up) {
+            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 1);
+            sleep(300);
+        }
+        // rotate 180 degrees back and forth
         int cur_count = robot.orig_rot_pos; // robot.mt_test.getCurrentPosition();
-        if (robot.is_glyph_grabber_upside_down) { // back to orig pos
+        if (robot.is_gg_upside_down) { // back to orig pos
             robot.target_rot_pos = robot.orig_rot_pos;
         } else {
             // robot.orig_rot_pos = cur_count;
             robot.target_rot_pos = cur_count + (int) (180.0 / 360.0 * robot.ONE_ROTATION_60);
         }
         rotate_to_target(power);
-        robot.is_glyph_grabber_upside_down = !robot.is_glyph_grabber_upside_down;
+        robot.is_gg_upside_down = !robot.is_gg_upside_down;
+        if (need_slide_up) {
+            sleep(500);
+            glyph_slider_init();
+        }
     }
 
     public void rotate_refine() {
@@ -127,14 +153,14 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void test_rotate(double power) {
         // test rotation 180 degrees back and forth
         int cur_count = robot.orig_rot_pos; // robot.mt_test.getCurrentPosition();
-        if (robot.is_glyph_grabber_upside_down) { // back to orig pos
+        if (robot.is_gg_upside_down) { // back to orig pos
             robot.target_rot_pos = robot.orig_rot_pos;
         } else {
             // robot.orig_rot_pos = cur_count;
             robot.target_rot_pos = cur_count + (int) (180.0 / 360.0 * robot.ONE_ROTATION_60);
         }
         //test_rotate_to_target(power);
-        robot.is_glyph_grabber_upside_down = !robot.is_glyph_grabber_upside_down;
+        robot.is_gg_upside_down = !robot.is_gg_upside_down;
     }
 
     public void rotate_to_target(double power) {
@@ -147,14 +173,14 @@ public class SwerveUtilLOP extends LinearOpMode {
         while (robot.mt_glyph_rotator.isBusy() && (robot.runtime.seconds()<3) && opModeIsActive()) {
             telemetry.addData("8. gg-rot pwr/cur/tar = ","%3.2f/%d/%d(%s)",
                     robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),robot.target_rot_pos,
-                    (robot.is_glyph_grabber_upside_down?"dw":"up"));
+                    (robot.is_gg_upside_down ?"dw":"up"));
             telemetry.update();
         }
         robot.mt_glyph_rotator.setPower(Math.abs(power/2.0));
         while (robot.mt_glyph_rotator.isBusy() && (robot.runtime.seconds()<1) && opModeIsActive()) {
             telemetry.addData("8. gg-rot pwr/cur/tar = ","%3.2f/%d/%d(%s)",
                     robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),robot.target_rot_pos,
-                    (robot.is_glyph_grabber_upside_down?"dw":"up"));
+                    (robot.is_gg_upside_down ?"dw":"up"));
             telemetry.update();
         }
         robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -188,7 +214,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         while (robot.mt_glyph_rotator.isBusy() && (robot.runtime.seconds()<3) && opModeIsActive()) {
             telemetry.addData("8. gg-rot pwr/cnt/down = ","%3.2f/%d/%s",
                     robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),
-                    (robot.is_glyph_grabber_upside_down?"down":"up"));
+                    (robot.is_gg_upside_down ?"down":"up"));
             telemetry.update();
         }
         robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -253,6 +279,17 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
     }
 
+    void glyph_slider_down_and_reset() { // force to go negative and reset encode
+        robot.mt_glyph_slider_pw = -0.4;
+        robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
+        int cur_pos = robot.mt_glyph_slider.getCurrentPosition();
+        if (cur_pos<0) {
+            robot.gg_layer = 0;
+            robot.mt_glyph_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.mt_glyph_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
     void glyph_slider_stop() {
         robot.mt_glyph_slider_pw = 0.0;
         robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
@@ -260,19 +297,22 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void test_glyph_rotator_encoder() {
         robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.mt_glyph_rotator.setPower(.4);
-        sleep(10);
+        robot.mt_glyph_rotator.setPower(.6);
+        sleep(20);
         robot.mt_glyph_rotator.setPower(0);
         if (robot.mt_glyph_rotator.getCurrentPosition()!=0)
             robot.gg_rotator_encoder_ok = true;
         else
             robot.gg_rotator_encoder_ok = false;
+        robot.mt_glyph_rotator.setPower(-0.6);
+        sleep(20);
+        robot.mt_glyph_rotator.setPower(0);
     }
 
     void test_glyph_slider_encoder() {
         robot.mt_glyph_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.mt_glyph_slider.setPower(.4);
-        sleep(10);
+        robot.mt_glyph_slider.setPower(.6);
+        sleep(20);
         robot.mt_glyph_slider.setPower(0);
         if (robot.mt_glyph_slider.getCurrentPosition()!=0)
             robot.gg_slider_encoder_ok = true;
@@ -1071,14 +1111,103 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
     }
 
-    void go_to_distance_from(double power, int targetColumn, boolean isSideBox){ //Go until a certain distance from a target depending on the cryptobox and the column
-        if(isSideBox){
+    void go_to_distance_from(double power, int targetColumn, boolean isSideBox) { //Go until a certain distance from a target depending on the cryptobox and the column
+        int mode = 1;
+        int driveDistance;
+        boolean isOverDistance;
+        boolean isUnderDistance;
+        telemetry.addData("Mode", mode);
 
-        }
-        else{
+        if (isSideBox) {
+            switch (targetColumn) { // Defines distance it needs to drive based on column input.
+                case 0:
+                    driveDistance = 22;
+                    break;
+                case 1:
+                    driveDistance = 38;
+                    break;
+                case 2:
+                    driveDistance = 59;
+                    break;
+                default:
+                    driveDistance = 38;
+                    break;
+            }
 
+            while (mode <= 4) {
+                telemetry.addData("Mode", mode);
+                telemetry.update();
+                if (mode == 1) { // Begins driving forward
+                    driveTT(power, power);
+                    mode++;
+                } else if (mode == 2) {   // Checks if it's gone far enough
+                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+                    if (isOverDistance) {
+                        driveTT(-1 * power, -1 * power);
+                        mode++;
+                    }
+                } else if (mode == 3) { // Drives backwards to compensate
+                    isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
+                    if (isUnderDistance) {
+                        driveTT(power / 2, power / 2);
+                        mode++;
+                    }
+                } else if (mode == 4) { // Drives forwards to compensate again (May not need this is robot is precise enough)
+                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+                    if (isOverDistance) {
+                        driveTT(.0, .0);
+                        mode++;
+                    }
+                }
+            }
+        } else {
+            switch (targetColumn) { // Defines distance it needs to drive based on column input.
+                case 0:
+                    driveDistance = 52;
+                    break;
+                case 1:
+                    driveDistance = 68;
+                    break;
+                case 2:
+                    driveDistance = 75;
+                    break;
+                default:
+                    driveDistance = 68;
+                    break;
+            }
+            while (mode <= 4) {
+                if (mode == 1) { // Stops, turns to crab mode and drives to the right
+                        driveTT(.0, .0);
+                        sleep(200);
+                        change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                        sleep(500);
+                        driveTT(power, power);
+                        mode = 2;
+                } else if (mode == 2) { // Reverses when it's gone far enough
+                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+                    if (isOverDistance) {
+                        driveTT(-1 * power * 3 / 4, -1 * power * 3 / 4);
+                        mode = 3;
+                    }
+                } else if (mode == 3) {
+                    isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
+                    if (isUnderDistance) {
+                        driveTT(power / 2, power / 2);
+                        mode = 4;
+                    }
+                } else if (mode == 4) {
+                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+                    if (isOverDistance) {
+                        driveTT(-1 * power / 2, -1 * power / 2);
+                        mode = 5;
+                    }
+                }
+            }
         }
     }
+
+
+
 
     void calc_snake(float stick_x){
         if(stick_x > 0.1){
@@ -1518,7 +1647,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("4.1 IMU Heading = ", "%.2f", imu_heading());
         }
         if (robot.use_range_sensor) {
-            telemetry.addData("4.2 range = ", "%.2f cm",robot.rangeSensorBack.getDistance(DistanceUnit.CM));
+            telemetry.addData("4.2 rangeBack = ", "%.2f cm",robot.rangeSensorBack.getDistance(DistanceUnit.CM));
+            //telemetry.addData("4.3 rangeLeft = ", "%.2f cm", robot.rangeSensorLeft.getDistance(DistanceUnit.CM));
         }
         if (robot.use_Vuforia) {
             telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
@@ -1540,14 +1670,14 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_glyph_grabber)  {
             telemetry.addData("8.1 gg-rot pwr/cur/tar = ","%3.2f/%d/%d (%s)",
                     robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),
-                    robot.target_rot_pos, (robot.is_glyph_grabber_upside_down?"dw":"up"));
+                    robot.target_rot_pos, (robot.is_gg_upside_down ?"dw":"up"));
             telemetry.addData("8.2 gg-sli pwr/cur/tar = ","%3.2f/%d/%d (%d)",
                     robot.mt_glyph_slider.getPower(),robot.mt_glyph_slider.getCurrentPosition(),
                     robot.target_gg_slider_pos, robot.gg_layer);
         } else if (robot.use_test_motor) {
             telemetry.addData("8. gg-rot pwr/cur/tar = ","%3.2f/%d/%d(%s)",
                     robot.mt_test.getPower(),robot.mt_test.getCurrentPosition(),robot.target_rot_pos,
-                    (robot.is_glyph_grabber_upside_down?"dw":"up"));
+                    (robot.is_gg_upside_down ?"dw":"up"));
         }
         telemetry.update();
     }
