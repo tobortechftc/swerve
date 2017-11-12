@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.Servo;
-
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="GG-TeleOp", group="SwerveDrive")
 public class GG_TeleOp extends SwerveUtilLOP {
@@ -46,7 +44,7 @@ public class GG_TeleOp extends SwerveUtilLOP {
                     // 1. glyph grabber auto close down grabber
                     // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
                     glyph_grabber_auto_close();
-                    if (!robot.is_glyph_grabber_upside_down) {
+                    if (!robot.is_gg_upside_down) {
                         sleep(1000);
                         glyph_grabber_auto_rotate(0.4);
                     }

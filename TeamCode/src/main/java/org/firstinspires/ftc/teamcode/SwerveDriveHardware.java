@@ -45,7 +45,6 @@ public class SwerveDriveHardware {
 
     boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
     boolean isSnakingLeft = false; //See if the snake drive is turning to the left
-    boolean is_glyph_grabber_upside_down = false;
 
     //Booleans for Debugging
     boolean isTestingFL = false;
@@ -57,6 +56,9 @@ public class SwerveDriveHardware {
     boolean isBlueBall = false;
     boolean gg_slider_encoder_ok = false;
     boolean gg_rotator_encoder_ok = false;
+    boolean gg_top_close = false;
+    boolean gg_bottom_close = false;
+    boolean is_gg_upside_down = false;
 
 
     public double target_heading = 0.0;

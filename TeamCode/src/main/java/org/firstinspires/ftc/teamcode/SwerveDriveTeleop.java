@@ -22,6 +22,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
         robot.use_color_sensor = false;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = true;
+        robot.use_arm = true;
 
         init_and_test();
 
@@ -279,7 +280,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     // 1. glyph grabber auto close down grabber
                     // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
                     glyph_grabber_auto_close();
-                    if (!robot.is_glyph_grabber_upside_down) {
+                    if (!robot.is_gg_upside_down) {
                         sleep(1000);
                         glyph_grabber_auto_rotate(0.4);
                     }
@@ -298,7 +299,9 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     // glyph_grabber_auto_rotate(0.4);
                 } else if (gamepad2.right_bumper) { // manual up
                     glyph_slider_up();
-                } else if (gamepad2.right_trigger > 0.1) { // manual down
+                } else if (gamepad2.back && gamepad2.right_trigger > 0.1) { // down and reset
+                    glyph_slider_down_and_reset();
+                }else if (gamepad2.right_trigger > 0.1) { // manual down
                     glyph_slider_down();
                 } else {
                     glyph_slider_stop();

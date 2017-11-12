@@ -125,7 +125,7 @@ public class TuneUp extends SwerveUtilLOP {
 
             if (robot.use_test_motor) {
                 if (gamepad1.x) {
-                   if (robot.is_glyph_grabber_upside_down) {
+                   if (robot.is_gg_upside_down) {
                        test_rotate(-0.4);
                    } else {
                        test_rotate(0.4);
@@ -142,7 +142,7 @@ public class TuneUp extends SwerveUtilLOP {
                     // 1. glyph grabber auto close down grabber
                     // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
                     glyph_grabber_auto_close();
-                    if (!robot.is_glyph_grabber_upside_down) {
+                    if (!robot.is_gg_upside_down) {
                         sleep(1000);
                         glyph_grabber_auto_rotate(0.4);
                     }
