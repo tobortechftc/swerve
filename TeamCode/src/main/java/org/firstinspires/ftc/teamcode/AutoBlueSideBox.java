@@ -27,7 +27,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Initialization Complete");    //
+        telemetry.addData("Say", "Initialization Complete");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -40,7 +40,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
 
             if (loops == 1) {
                 StraightIn(0.5, 30); // Drive off the balance stone
-                go_to_distance_from(0.3, 1, true); // Drive to cryptobox
+                go_to_distance_from(-0.3, 1, false); // Drive to cryptobox. Values are negative because driveTT goes backwards
                 driveTT(.0, .0);
                 //Deliver particle from the side
                 loops++;

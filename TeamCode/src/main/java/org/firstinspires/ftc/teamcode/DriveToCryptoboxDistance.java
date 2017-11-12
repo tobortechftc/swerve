@@ -7,6 +7,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
@@ -17,6 +18,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class DriveToCryptoboxDistance extends SwerveUtilLOP {
 
 
+    class DistanceMetrics implements Func<String> {
+
+        @Override
+        public String value() {
+            String str = String.format("%f / %f", robot.rangeSensorLeft.getDistance(DistanceUnit.CM), robot.rangeSensorBack.getDistance(DistanceUnit.CM));
+            return str;
+        }
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -25,10 +35,9 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
         int driveDistance;
         boolean isOverDistance;
         boolean isUnderDistance;
-        telemetry.addData("Mode", mode);
 
-        double power = .5;
-        int targetColumn = 2;
+        double power = -.2;
+        int targetColumn = 1;
 
 
         robot.use_swerve = true;
@@ -45,23 +54,24 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
         telemetry.addData("Say", "Initialization Complete");
         telemetry.update();
 
+
+        telemetry.addData("RangeSensorLeft/RangeSensorBack", new DistanceMetrics()).setRetained(true);
+        telemetry.update();
+
         waitForStart();
 
         while (opModeIsActive()) {
             telemetry.addData("Mode", mode);
-            telemetry.addData("RangeSensorLeft", robot.rangeSensorLeft.getDistance(DistanceUnit.CM));
-            telemetry.addData("RangeSensorBack", robot.rangeSensorBack.getDistance(DistanceUnit.CM));
-            sleep(50);
             telemetry.update();
 
             switch (targetColumn) { // Defines distance it needs to drive based on column input.
-                case 1:
+                case 0:
                     driveDistance = 22;
                     break;
-                case 2:
+                case 1:
                     driveDistance = 38;
                     break;
-                case 3:
+                case 2:
                     driveDistance = 59;
                     break;
                 default:
@@ -69,28 +79,32 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
                     break;
             }
 
-            if (mode == 1) {    // Drives forward
-                driveTT(power, power);
-                mode = 2;
-            } else if (mode == 2) {   // Checks if it's gone far enough
-                isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
-                if (isOverDistance) {
-                    driveTT(-1 * power, -1 * power);
-                    mode = 3;
-                }
-            } else if (mode == 3) { // Drives backwards to compensate
-                isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
-                if (isUnderDistance) {
-                    driveTT(power * 3 / 4, power * 3 / 4);
-                    mode = 4;
-                }
-            } else if (mode == 4) { // Drives forwards to compensate again (May not need this is robot is precise enough)
-                isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
-                if (isOverDistance) {
-                    driveTT(.0, .0);
-                    mode = 5;
-                }
-            }
+//            if (mode == 1) {
+//                driveTT(-.3, -.3);
+//                sleep(1250);
+//                driveTT(.0, .0);
+//                sleep(2000);
+//                driveTT(power, power);
+//                mode++;
+//            } else if (mode == 2) {   // Checks if it's gone far enough
+//                isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+//                if (isOverDistance) {
+//                    driveTT(-1 * power, -1 * power);
+//                    mode++;
+//                }
+//            } else if (mode == 3) { // Drives backwards to compensate
+//                isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
+//                if (isUnderDistance) {
+//                    driveTT(power / 2, power / 2);
+//                    mode++;
+//                }
+//            } else if (mode == 4) { // Drives forwards to compensate again (May not need this is robot is precise enough)
+//                isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+//                if (isOverDistance) {
+//                    driveTT(.0, .0);
+//                    mode++;
+//                }
+//            }
         }
     }
 }

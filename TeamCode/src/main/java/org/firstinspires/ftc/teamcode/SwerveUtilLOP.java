@@ -1079,63 +1079,63 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.addData("Mode", mode);
 
         if (isSideBox) {
-            while (mode <= 4) { // Makes sure it loops enough for all of the code to be completed
-                switch (targetColumn) { // Defines distance it needs to drive based on column input.
-                    case 1:
-                        driveDistance = 22;
-                        break;
-                    case 2:
-                        driveDistance = 38;
-                        break;
-                    case 3:
-                        driveDistance = 59;
-                        break;
-                    default:
-                        driveDistance = 38;
-                        break;
-                }
+            switch (targetColumn) { // Defines distance it needs to drive based on column input.
+                case 0:
+                    driveDistance = 22;
+                    break;
+                case 1:
+                    driveDistance = 38;
+                    break;
+                case 2:
+                    driveDistance = 59;
+                    break;
+                default:
+                    driveDistance = 38;
+                    break;
+            }
 
-                if (mode == 1) {    // Drives forward
+            while (mode <= 4) {
+                telemetry.addData("Mode", mode);
+                telemetry.update();
+                if (mode == 1) { // Begins driving forward
                     driveTT(power, power);
-                    mode = 2;
+                    mode++;
                 } else if (mode == 2) {   // Checks if it's gone far enough
                     isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
                     if (isOverDistance) {
                         driveTT(-1 * power, -1 * power);
-                        mode = 3;
+                        mode++;
                     }
                 } else if (mode == 3) { // Drives backwards to compensate
                     isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
                     if (isUnderDistance) {
-                        driveTT(power * 3 / 4, power * 3 / 4);
-                        mode = 4;
+                        driveTT(power / 2, power / 2);
+                        mode++;
                     }
                 } else if (mode == 4) { // Drives forwards to compensate again (May not need this is robot is precise enough)
                     isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
                     if (isOverDistance) {
                         driveTT(.0, .0);
-                        mode = 5;
+                        mode++;
                     }
                 }
             }
         } else {
+            switch (targetColumn) { // Defines distance it needs to drive based on column input.
+                case 0:
+                    driveDistance = 52;
+                    break;
+                case 1:
+                    driveDistance = 68;
+                    break;
+                case 2:
+                    driveDistance = 75;
+                    break;
+                default:
+                    driveDistance = 68;
+                    break;
+            }
             while (mode <= 4) {
-                switch (targetColumn) { // Defines distance it needs to drive based on column input.
-                    case 1:
-                        driveDistance = 56;
-                        break;
-                    case 2:
-                        driveDistance = 75;
-                        break;
-                    case 3:
-                        driveDistance = 92;
-                        break;
-                    default:
-                        driveDistance = 75;
-                        break;
-                }
-
-
                 if (mode == 1) { // Stops, turns to crab mode and drives to the right
                         driveTT(.0, .0);
                         sleep(200);
