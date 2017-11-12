@@ -951,7 +951,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if(robot.use_camera) {
             Bitmap bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
             if (bitmap == null) {
-                telemetry.log().add("ERROR!", robot.camera.getLastError());
+                telemetry.log().add("ERROR!", (robot.camera.getLastError()==null?"":robot.camera.getLastError()));
                 telemetry.update();
 
                 //while (opModeIsActive());
@@ -1423,13 +1423,20 @@ public class SwerveUtilLOP extends LinearOpMode {
 
             frame.close();
             if (bitmapTemp == null) {
-                lastError = "ERROR Failed to retrieve bitmap";
+                lastError = "ERROR! Failed to retrieve bitmap";
                 return null;
 
             }
             Bitmap bitmap = cropBitmap(bitmapTemp, xOffsetF, yOffsetF, widthF, heightF);
             return bitmap;
         }
+
+//        int getWhitestPixel(){
+//            int currentPixel = 0;
+//            captureBitmap(0, 0, 1, 1).getPixels();
+//
+//        }
+
         void stopCamera(){
             this.vuforia.setFrameQueueCapacity(0);
             Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
