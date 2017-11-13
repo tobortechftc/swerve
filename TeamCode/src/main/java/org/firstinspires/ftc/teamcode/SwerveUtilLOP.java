@@ -1116,6 +1116,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         int driveDistance;
         boolean isOverDistance;
         boolean isUnderDistance;
+        power = -power; //Reverse power, as driveTT goes backwards
         telemetry.addData("Mode", mode);
 
         if (isSideBox) {

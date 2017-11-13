@@ -22,6 +22,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
         robot.use_color_sensor = false;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = true;
+        robot.use_glyph_grabber = false;
         robot.use_arm = true;
 
         init_and_test();
@@ -214,13 +215,13 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
 
                     if (gamepad1.a){
-                        robot.drivePowerRatio -=0.3;
+                        robot.drivePowerRatio -=0.1;
                         if(robot.drivePowerRatio < 0.1){
                             robot.drivePowerRatio = 0.1;
                         }
                     }
                     if (gamepad1.y){
-                        robot.drivePowerRatio += 0.3;
+                        robot.drivePowerRatio += 0.1;
                         if(robot.drivePowerRatio > 1.0){
                             robot.drivePowerRatio = 1.0;
                         }
