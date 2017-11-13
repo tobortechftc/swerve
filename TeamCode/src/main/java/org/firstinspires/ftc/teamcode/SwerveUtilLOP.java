@@ -985,18 +985,24 @@ public class SwerveUtilLOP extends LinearOpMode {
         double IMAGE_OFFSET_X = 0.75; // Cannot be 1, make sure take the respective crop into consideration
         double IMAGE_OFFSET_Y = 0; // Cannot be 1, make sure take the respective crop into consideration
 
+        boolean debug = true;
+
         robot.targetColumn = get_cryptobox_column();
+        telemetry.log().add("A");
         TeamColor rightJewelColor = TeamColor.UNKNOWN;
 
         if(robot.use_camera) {
             Bitmap bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+            telemetry.log().add("B");
             if (bitmap == null) {
+                telemetry.log().add("C1");
                 telemetry.log().add("ERROR!", (robot.camera.getLastError()==null?"":robot.camera.getLastError()));
                 telemetry.update();
 
                 //while (opModeIsActive());
             }
             else {
+                telemetry.log().add("C");
                 TeamColor leftJewelColor = determineJewelColor(bitmap);
                 rightJewelColor = leftJewelColor.getOpposingColor();
                 //Current mounting solution only allows camera to check the left jewel color
@@ -1005,9 +1011,12 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         arm_down();
         sleep(1000);
+        telemetry.log().add("D");
         TeamColor rightJewelGuess = checkBallColor();
+        telemetry.log().add("E");
 
         if (rightJewelGuess == TeamColor.UNKNOWN) {
+            telemetry.log().add("F");
             rightJewelGuess = rightJewelColor;
         }
 
@@ -1019,24 +1028,31 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         //assuming sensing the right jewel
         if (robot.isRedBall) {
+            telemetry.log().add("G");
             if (IsBlueAlliance) {
+                telemetry.log().add("H");
                 arm_right();
 
             }
             else {
+                telemetry.log().add("I");
                 arm_left();
             }
         }
         else if (robot.isBlueBall) {
+            telemetry.log().add("J");
             if (IsBlueAlliance){
+                telemetry.log().add("K");
                 arm_left();
             }
             else {
+                telemetry.log().add("L");
                 arm_right();
             }
         }
         sleep(1000);
         arm_up();
+        telemetry.log().add("M");
         robot.camera.stopCamera();
     }
 
@@ -1560,10 +1576,17 @@ public class SwerveUtilLOP extends LinearOpMode {
             return bitmap;
         }
 
-//        int getWhitestPixel(){
-//            int currentPixel = 0;
-//            captureBitmap(0, 0, 1, 1).getPixels();
+//        int getWhitestPixel(Bitmap source){
+//            int[] pixels = new int[source.getHeight() * source.getWidth()];
 //
+//            source.getPixels(pixels, 0, 1, 0, 0, source.getWidth(), source.getHeight());
+//
+//            int pixelCount = 0;
+//            while (pixelCount < pixels.length) {
+//                pixels[pixelCount];
+//
+//                pixelCount++;
+//            }
 //        }
 
         void stopCamera(){

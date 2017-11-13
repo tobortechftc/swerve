@@ -14,6 +14,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
     public void runOpMode() throws InterruptedException {
 
         robot.use_swerve = true;
+        robot.use_arm = true;
         robot.use_imu = true;
         robot.use_encoder = true;
         robot.use_minibot = false;
@@ -36,15 +37,16 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            //doPlatformMission(true);
+            doPlatformMission(true);
+            telemetry.log().add("N");
 
-            if (loops == 1) {
-                StraightIn(0.5, 30); // Drive off the balance stone
-                go_to_distance_from(-0.3, 1, false); // Drive to cryptobox. Values are negative because driveTT goes backwards
-                driveTT(.0, .0);
-                //Deliver particle from the side
-                loops++;
-            }
+//            if (loops == 1) {
+//                StraightIn(0.5, 30); // Drive off the balance stone
+//                go_to_distance_from(-0.3, 1, false); // Drive to cryptobox. Values are negative because driveTT goes backwards
+//                driveTT(.0, .0);
+//                //Deliver particle from the side
+//                loops++;
+//            }
         }
     }
 }
