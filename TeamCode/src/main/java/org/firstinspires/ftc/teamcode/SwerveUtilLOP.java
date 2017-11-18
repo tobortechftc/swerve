@@ -18,6 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
+import java.util.Arrays;
+
 import static java.lang.Thread.sleep;
 
 
@@ -949,7 +951,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             return column;
 
         robot.runtime.reset();
-        while (robot.runtime.seconds() < 5.0 && column == -1) {
+        while (robot.runtime.seconds() < 2.0 && column == -1) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(robot.relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
@@ -985,7 +987,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         double IMAGE_OFFSET_X = 0.75; // Cannot be 1, make sure take the respective crop into consideration
         double IMAGE_OFFSET_Y = 0; // Cannot be 1, make sure take the respective crop into consideration
 
-        boolean debug = true;
 
         robot.targetColumn = get_cryptobox_column();
         TeamColor rightJewelColor = TeamColor.UNKNOWN;
@@ -1563,18 +1564,48 @@ public class SwerveUtilLOP extends LinearOpMode {
             return bitmap;
         }
 
-//        int getWhitestPixel(Bitmap source){
+        /**
+         * Takes a Bitmap as input and outputs an integer of the color constant of the "whitest" pixel
+         * @param source
+         * @return
+         */
+        int getWhitestPixel(Bitmap source){
+            int[] pixels = new int[source.getHeight() * source.getWidth()];
+
+            int whitestPixel = 0;
+
+            source.getPixels(pixels, 0, 1, 0, 0, source.getWidth(), source.getHeight());
+
+            Arrays.sort(pixels);
+
+            pixels[pixels.length] = whitestPixel;
+
+            return whitestPixel;
+        }
+
+//        Bitmap applyWhiteBalance(Bitmap source, int whitestPixel) {
+//            int whiteBalF = 0;
+//            -1 / whitestPixel = whiteBalF;
+//            Bitmap.createBitmap(source);
+//
+//            return source;
+//        }
+
+//      Needs refinement of Array logic to get true gray int (-7829368)
+//        int getGrayestPixel(Bitmap source){
 //            int[] pixels = new int[source.getHeight() * source.getWidth()];
+//
+//            int grayestPixel = 0;
 //
 //            source.getPixels(pixels, 0, 1, 0, 0, source.getWidth(), source.getHeight());
 //
-//            int pixelCount = 0;
-//            while (pixelCount < pixels.length) {
-//                pixels[pixelCount];
+//            Arrays.sort(pixels);
 //
-//                pixelCount++;
-//            }
+//            pixels[pixels.length / 2] = grayestPixel;
+//            return grayestPixel;
 //        }
+
+
 
         void stopCamera(){
             this.vuforia.setFrameQueueCapacity(0);

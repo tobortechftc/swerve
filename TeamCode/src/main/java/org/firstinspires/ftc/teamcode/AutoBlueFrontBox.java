@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  * Created by carlw on 11/4/2017.
  */
 
-@Autonomous(name = "Swerve BlueSideBox", group = "SwerveDrive")
+@Autonomous(name = "Swerve BlueFrontBox", group = "SwerveDrive")
 public class AutoBlueFrontBox extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
@@ -34,7 +34,7 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            //doPlatformMission(true);
+            doPlatformMission(true);
 
             if (loops == 1) {
                 StraightIn(0.5, 30); // Drive off the balance stone
