@@ -41,8 +41,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
             // The left stick up/down moves the wheels forward and backwards, while the right stick left/right should rotate the wheels
 
             if(gamepad1.back && gamepad1.a){
-                if(!(robot.cur_mode == SwerveDriveHardware.CarMode.CAR)){// If in any other mode, switch to snake
-                    change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+                if(!(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT)){// If in any other mode, switch to snake
+                    change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
                 }
                 else{ //Return from snake to previous drive mode
                     change_swerve_pos(robot.old_mode);

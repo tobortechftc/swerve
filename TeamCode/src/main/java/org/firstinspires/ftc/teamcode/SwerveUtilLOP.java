@@ -1214,6 +1214,47 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
 
+    void turnToColumn (int targetColumn, double power, boolean isBlueSide, boolean isSideBox) throws InterruptedException{
+        if(isSideBox) {//Values are currently place holders, after every turn value add a forward for a fixed distance to deliver the glyph
+            if (isBlueSide) {
+                if (targetColumn == 0) {
+                    TurnLeftD(power, 72);
+                } else if (targetColumn == 1) {
+                    TurnLeftD(power, 58);
+                } else if (targetColumn == 2) {
+                    TurnLeftD(power, 44);
+                }
+            } else {
+                if (targetColumn == 0) {
+                    TurnLeftD(power, 75);
+                } else if (targetColumn == 1) {
+                    TurnLeftD(power, 45);
+                } else if (targetColumn == 2) {
+                    TurnLeftD(power, 30);
+                }
+            }
+        }
+        else{//Values are currently place holders
+            if(isBlueSide) {
+                if (targetColumn == 0) {
+                    TurnLeftD(power, 75);
+                } else if (targetColumn == 1) {
+                    TurnLeftD(power, 45);
+                } else if (targetColumn == 2) {
+                    TurnLeftD(power, 30);
+                }
+            }
+            else{
+                if (targetColumn == 0) {
+                    TurnLeftD(power, 75);
+                } else if (targetColumn == 1) {
+                    TurnLeftD(power, 45);
+                } else if (targetColumn == 2) {
+                    TurnLeftD(power, 30);
+                }
+            }
+        }
+    }
 
 
     void calc_snake(float stick_x){
