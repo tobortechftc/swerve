@@ -21,7 +21,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.use_range_sensor = true;
         robot.use_color_sensor = true;
         robot.use_Vuforia = true;
-        robot.use_camera = true;
+        robot.use_camera = false;
 
         int loops = 1;
 
@@ -39,13 +39,13 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         while (opModeIsActive()) {
             doPlatformMission(true);
 
-            if (loops == 1) {
-                StraightIn(0.5, 30); // Drive off the balance stone
-                go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
-                driveTT(.0, .0);
-                //Deliver particle from the side
-                loops++;
-            }
+//            if (loops == 1) {
+//                StraightIn(0.5, 30); // Drive off the balance stone
+//                go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
+//                driveTT(.0, .0);
+//                //Deliver particle from the side
+//                loops++;
+//            }
         }
     }
 }
