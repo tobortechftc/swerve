@@ -1066,13 +1066,16 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
 //        telemetry.addData("delta/isBlueBall/isRedBall=", "%3.1f/%s/%s",d,robot.isBlueBall,robot.isRedBall);
 //        telemetry.update();
+        if (isBlueBall && isBlueBall) {
+            result = TeamColor.UNKNOWN;
+        }
         if (isBlueBall) {
             result = TeamColor.BLUE;
         }
         else if (isRedBall) {
             result = TeamColor.RED;
         }
-        else if (isBlueBall && isRedBall) {
+        else {
             result = TeamColor.UNKNOWN;
         }
         return result;
@@ -1610,6 +1613,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         void stopCamera(){
             this.vuforia.setFrameQueueCapacity(0);
             Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
+            //todo: test commenting out parts of this code to determine NullPointerException
         }
     }
 
