@@ -71,7 +71,7 @@ public class VuMarkId extends SwerveUtilLOP {
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
-
+        int box_colume = -1;
         robot.use_swerve = false;
         robot.use_imu = false;
         robot.use_color_sensor = false;
@@ -88,6 +88,7 @@ public class VuMarkId extends SwerveUtilLOP {
 
         if (robot.use_Vuforia) {
             robot.relicTrackables.activate();
+            box_colume = get_cryptobox_column();
         }
 
         int state = 0;
@@ -105,6 +106,7 @@ public class VuMarkId extends SwerveUtilLOP {
             LoopRep++;
             //show_telemetry();
             robot.waitForTick(40);
+            telemetry.addData("Box colume = ", box_colume);
             if (state == 0) {
                 int capacity = robot.vuforia.getFrameQueueCapacity();
                 telemetry.addData("6. Vuforia Queue State = ", capacity);

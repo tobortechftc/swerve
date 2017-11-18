@@ -127,8 +127,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
         if (need_slide_up) {
-            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 1);
-            sleep(300);
+            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 3);
+            sleep(500);
         }
         // rotate 180 degrees back and forth
         int cur_count = robot.orig_rot_pos; // robot.mt_test.getCurrentPosition();
@@ -1648,8 +1648,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.addData("1. Sw/Imu/Vu/GG =", "%s/%s/%s/%s",
                 (robot.use_swerve ?"Y":"N"), (robot.use_imu?"Y":"N"),
                 (robot.use_Vuforia ?"Y":"N"), (robot.use_glyph_grabber ?"Y":"N"));
-        telemetry.addData("2. PW Left/Right/Rot-En/Sl-En =", "%.2f/%.2f/%s/%s",
-                robot.motorPowerLeft,robot.motorPowerRight,
+        telemetry.addData("2. PW R/L/R/Rot-En/Sl-En =", "%.2f,%.2f/%.2f/%s/%s",
+                robot.drivePowerRatio, robot.motorPowerLeft,robot.motorPowerRight,
                 (robot.gg_rotator_encoder_ok ?"Y":"N"),(robot.gg_slider_encoder_ok ?"Y":"N"));
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);

@@ -215,13 +215,13 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
 
                     if (gamepad1.a){
-                        robot.drivePowerRatio -=0.1;
+                        robot.drivePowerRatio -=0.05;
                         if(robot.drivePowerRatio < 0.1){
                             robot.drivePowerRatio = 0.1;
                         }
                     }
                     if (gamepad1.y){
-                        robot.drivePowerRatio += 0.1;
+                        robot.drivePowerRatio += 0.05;
                         if(robot.drivePowerRatio > 1.0){
                             robot.drivePowerRatio = 1.0;
                         }
