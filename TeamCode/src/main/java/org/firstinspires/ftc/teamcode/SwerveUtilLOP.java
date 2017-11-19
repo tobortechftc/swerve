@@ -1040,7 +1040,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         sleep(1000);
         arm_up();
-        robot.camera.stopCamera();
+        //robot.camera.stopCamera();
     }
 
     TeamColor checkBallColor() throws InterruptedException {
@@ -1627,13 +1627,34 @@ public class SwerveUtilLOP extends LinearOpMode {
             return whitestPixel;
         }
 
-//        Bitmap applyWhiteBalance(Bitmap source, int whitestPixel) {
-//            int whiteBalF = 0;
-//            -1 / whitestPixel = whiteBalF;
-//            Bitmap.createBitmap(source);
-//
-//            return source;
-//        }
+        Bitmap applyWhiteBalance(Bitmap source, int whitestPixel) {
+            if (Color.red(whitestPixel) != 0 && Color.green(whitestPixel) != 0 && Color.red(whitestPixel) != 0) {
+                double rComp = 255 / Color.red(whitestPixel);
+                double gComp = 255 / Color.green(whitestPixel);
+                double bComp = 255 / Color.blue(whitestPixel);
+
+                int w = source.getWidth();
+                int h = source.getHeight();
+
+                for (int i = 0; i < w; i++) {
+                    for (int j = 0; j < h; j++) {
+                        int pixColor = source.getPixel(i, j);
+
+                        int inR = Color.red(pixColor);
+                        int inG = Color.green(pixColor);
+                        int inB = Color.blue(pixColor);
+
+                        double rDoub = inR * rComp;
+                        double gDoub = inG * gComp;
+                        double bDoub = inB * bComp;
+
+                        source.setPixel(i, j, Color.argb(255, (int) rDoub, (int) gDoub, (int) bDoub));
+                    }
+                }
+            }
+            return source;
+        }
+
 
 //      Needs refinement of Array logic to get true gray int (-7829368)
 //        int getGrayestPixel(Bitmap source){
