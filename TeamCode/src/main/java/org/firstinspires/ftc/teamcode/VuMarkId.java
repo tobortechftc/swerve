@@ -39,6 +39,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavi
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
 /**
  * This OpMode illustrates the basics of using the Vuforia engine to determine
  * the identity of Vuforia VuMarks encountered on the field. The code is structured as
@@ -72,7 +75,7 @@ public class VuMarkId extends SwerveUtilLOP {
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
-        int box_colume = -1;
+        int box_column = -1;
         robot.use_swerve = false;
         robot.use_imu = false;
         robot.use_color_sensor = false;
@@ -89,7 +92,7 @@ public class VuMarkId extends SwerveUtilLOP {
 
         if (robot.use_Vuforia) {
             robot.relicTrackables.activate();
-            box_colume = get_cryptobox_column();
+            box_column = get_cryptobox_column();
         }
 
         int state = 0;
@@ -107,7 +110,7 @@ public class VuMarkId extends SwerveUtilLOP {
             LoopRep++;
             //show_telemetry();
             robot.waitForTick(40);
-            telemetry.addData("Box colume = ", box_colume);
+            telemetry.addData("Box column = ", box_column);
             if (state == 0) {
                 int capacity = robot.vuforia.getFrameQueueCapacity();
                 telemetry.addData("6. Vuforia Queue State = ", capacity);
@@ -135,6 +138,8 @@ public class VuMarkId extends SwerveUtilLOP {
             else if (state == 2) {
                 int whitestPixel = robot.camera.getWhitestPixel(bitmap);
                 robot.camera.applyWhiteBalance(bitmap, whitestPixel);
+//                OutputStream output = new FileOutputStream("Phone/DCIM/Camera/Bitmap.bmp");
+//                bitmap.compress(Bitmap.CompressFormat.PNG, 90, output);
 
                 telemetry.addData("Color", determineJewelColor(bitmap));
             }
