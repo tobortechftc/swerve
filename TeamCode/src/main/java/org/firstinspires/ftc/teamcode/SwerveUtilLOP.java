@@ -1040,7 +1040,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         sleep(1000);
         arm_up();
-        robot.camera.stopCamera();
+        //robot.camera.stopCamera();
     }
 
     TeamColor checkBallColor() throws InterruptedException {
@@ -1100,8 +1100,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     void arm_up() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
         sleep(200);
+
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_INIT);
-    }
+}
 
     void arm_down() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
@@ -1116,7 +1117,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
     }
-
     void go_to_distance_from(double power, int targetColumn, boolean isSideBox) { //Go until a certain distance from a target depending on the cryptobox and the column
         int mode = 1;
         int driveDistance;
@@ -1168,7 +1168,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         } else {
-            switch (targetColumn) { // Defines distance it needs to drive based on column input.
+            switch (targetColumn) { // Defines distance it needs to drive based on column input. These values may be wrong? Not sure.
                 case 0:
                     driveDistance = 52;
                     break;
@@ -1182,31 +1182,25 @@ public class SwerveUtilLOP extends LinearOpMode {
                     driveDistance = 68;
                     break;
             }
-            while (mode <= 4) {
+            while (mode <= 3) {
                 if (mode == 1) { // Stops, turns to crab mode and drives to the right
                         driveTT(.0, .0);
                         sleep(200);
                         change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                         sleep(500);
-                        driveTT(power, power);
+                        driveTT(-1 * power, -1 * power);
                         mode = 2;
                 } else if (mode == 2) { // Reverses when it's gone far enough
                     isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
                     if (isOverDistance) {
-                        driveTT(-1 * power * 3 / 4, -1 * power * 3 / 4);
+                        driveTT(power * 3 / 4, power * 3 / 4);
                         mode = 3;
                     }
-                } else if (mode == 3) {
+                } else if (mode == 3) { //
                     isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
                     if (isUnderDistance) {
-                        driveTT(power / 2, power / 2);
+                        driveTT(.0, .0);
                         mode = 4;
-                    }
-                } else if (mode == 4) {
-                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
-                    if (isOverDistance) {
-                        driveTT(-1 * power / 2, -1 * power / 2);
-                        mode = 5;
                     }
                 }
             }
@@ -1214,6 +1208,47 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
 
+    void turnToColumn (int targetColumn, double power, boolean isBlueSide, boolean isSideBox) throws InterruptedException{
+        if(isSideBox) {//Values are currently place holders, after every turn value add a forward for a fixed distance to deliver the glyph
+            if (isBlueSide) {
+                if (targetColumn == 0) {
+                    TurnLeftD(power, 72);
+                } else if (targetColumn == 1) {
+                    TurnLeftD(power, 58);
+                } else if (targetColumn == 2) {
+                    TurnLeftD(power, 44);
+                }
+            } else {
+                if (targetColumn == 0) {
+                    TurnRightD(power, 75);
+                } else if (targetColumn == 1) {
+                    TurnRightD(power, 45);
+                } else if (targetColumn == 2) {
+                    TurnRightD(power, 30);
+                }
+            }
+        }
+        else{//Values are currently place holders
+            if(isBlueSide) {
+                if (targetColumn == 0) {
+                    TurnLeftD(power, 75);
+                } else if (targetColumn == 1) {
+                    TurnLeftD(power, 45);
+                } else if (targetColumn == 2) {
+                    TurnLeftD(power, 30);
+                }
+            }
+            else{
+                if (targetColumn == 0) {
+                    TurnRightD(power, 75);
+                } else if (targetColumn == 1) {
+                    TurnRightD(power, 45);
+                } else if (targetColumn == 2) {
+                    TurnRightD(power, 30);
+                }
+            }
+        }
+    }
 
 
     // void calc_snake(float stick_x){
@@ -1598,13 +1633,34 @@ public class SwerveUtilLOP extends LinearOpMode {
             return whitestPixel;
         }
 
-//        Bitmap applyWhiteBalance(Bitmap source, int whitestPixel) {
-//            int whiteBalF = 0;
-//            -1 / whitestPixel = whiteBalF;
-//            Bitmap.createBitmap(source);
-//
-//            return source;
-//        }
+        Bitmap applyWhiteBalance(Bitmap source, int whitestPixel) {
+            if (Color.red(whitestPixel) != 0 && Color.green(whitestPixel) != 0 && Color.red(whitestPixel) != 0) {
+                double rComp = 255 / Color.red(whitestPixel);
+                double gComp = 255 / Color.green(whitestPixel);
+                double bComp = 255 / Color.blue(whitestPixel);
+
+                int w = source.getWidth();
+                int h = source.getHeight();
+
+                for (int i = 0; i < w; i++) {
+                    for (int j = 0; j < h; j++) {
+                        int pixColor = source.getPixel(i, j);
+
+                        int inR = Color.red(pixColor);
+                        int inG = Color.green(pixColor);
+                        int inB = Color.blue(pixColor);
+
+                        double rDoub = inR * rComp;
+                        double gDoub = inG * gComp;
+                        double bDoub = inB * bComp;
+
+                        source.setPixel(i, j, Color.argb(255, (int) rDoub, (int) gDoub, (int) bDoub));
+                    }
+                }
+            }
+            return source;
+        }
+
 
 //      Needs refinement of Array logic to get true gray int (-7829368)
 //        int getGrayestPixel(Bitmap source){
