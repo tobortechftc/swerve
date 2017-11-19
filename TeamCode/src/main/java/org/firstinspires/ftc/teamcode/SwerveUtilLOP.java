@@ -1100,8 +1100,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     void arm_up() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
         sleep(200);
+
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_INIT);
-    }
+}
 
     void arm_down() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
@@ -1116,7 +1117,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
     }
-
     void go_to_distance_from(double power, int targetColumn, boolean isSideBox) { //Go until a certain distance from a target depending on the cryptobox and the column
         int mode = 1;
         int driveDistance;
@@ -1168,7 +1168,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         } else {
-            switch (targetColumn) { // Defines distance it needs to drive based on column input.
+            switch (targetColumn) { // Defines distance it needs to drive based on column input. These values may be wrong? Not sure.
                 case 0:
                     driveDistance = 52;
                     break;
