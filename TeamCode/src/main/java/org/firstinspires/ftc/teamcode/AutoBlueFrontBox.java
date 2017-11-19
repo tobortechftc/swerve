@@ -40,7 +40,7 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
 
             if (loops == 1) {
                 StraightIn(0.2, 30); // Drive off the balance stone
-                go_to_distance_from(0.3, 1, false); // Drive to cryptobox. Values are negative because driveTT goes backwards
+                go_to_distance_from(0.3, get_cryptobox_column(), false); // Drive to cryptobox. Values are negative because driveTT goes backwards
                 //Deliver particle from the side
                 loops++;
             }
