@@ -46,21 +46,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         telemetry.update();
 
         // run until the end of the match (driver presses STOP)
-
-<<<<<<< Updated upstream
-//        while (opModeIsActive()) {
-//
-//
-//            if (loops == 1) {
-//                StraightIn(0.5, 22); // Drive off the balance stone
-//                turnToColumn(robot.targetColumn, 0.4, true, true);
-//                //go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
-//                stop_chassis();
-//                //Deliver particle from the side
-//                loops++;
-//            }
-//        }
-=======
+        if (opModeIsActive()) {
             if (loops == 1) {
                 StraightIn(0.2, 22); // Drive off the balance stone
                 turnToColumn(robot.targetColumn, 0.2, true, true);
@@ -70,6 +56,5 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
                 loops++;
             }
         }
->>>>>>> Stashed changes
     }
 }

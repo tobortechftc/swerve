@@ -1167,44 +1167,32 @@ public class SwerveUtilLOP extends LinearOpMode {
                     }
                 }
             }
-        } else {
-            switch (targetColumn) { // Defines distance it needs to drive based on column input. These values may be wrong? Not sure.
+        } else { // front box
+            switch (targetColumn) { // Defines distance it needs to drive based on column input.
                 case 0:
-                    driveDistance = 52;
+                    driveDistance = 50;
                     break;
                 case 1:
-                    driveDistance = 68;
+                    driveDistance = 58;
                     break;
                 case 2:
-                    driveDistance = 75;
+                    driveDistance = 66;
                     break;
                 default:
-                    driveDistance = 68;
+                    driveDistance = 58;
                     break;
             }
-            while (mode <= 3) {
-                if (mode == 1) { // Stops, turns to crab mode and drives to the right
-                        driveTT(.0, .0);
-                        sleep(200);
-                        change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                        sleep(500);
-                        driveTT(-1 * power, -1 * power);
-                        mode = 2;
-                } else if (mode == 2) { // Reverses when it's gone far enough
-                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
-                    if (isOverDistance) {
-                        driveTT(power * 3 / 4, power * 3 / 4);
-                        mode = 3;
-                    }
-                } else if (mode == 3) { //
-                    isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
-                    if (isUnderDistance) {
-                        driveTT(.0, .0);
-                        mode = 4;
-                    }
-                }
+            robot.runtime.reset();
+            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+            sleep(500);
+            double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+            driveTT(-1*power, -1*power);
+            while (cur_dist <= driveDistance && robot.runtime.seconds()<3) {
+                cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
             }
         }
+        driveTT(0,0);
+        change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
     }
 
 

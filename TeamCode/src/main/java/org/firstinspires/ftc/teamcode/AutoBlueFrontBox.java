@@ -19,6 +19,8 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         robot.use_color_sensor = true;
         robot.use_Vuforia = true;
         robot.use_camera = true;
+        robot.use_arm = true;
+        robot.use_glyph_grabber = false;
 
         int loops = 1;
 
@@ -33,13 +35,12 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        if (opModeIsActive()) {
             doPlatformMission(true);
 
             if (loops == 1) {
-                StraightIn(0.5, 30); // Drive off the balance stone
+                StraightIn(0.2, 30); // Drive off the balance stone
                 go_to_distance_from(0.3, 1, false); // Drive to cryptobox. Values are negative because driveTT goes backwards
-                driveTT(.0, .0);
                 //Deliver particle from the side
                 loops++;
             }
