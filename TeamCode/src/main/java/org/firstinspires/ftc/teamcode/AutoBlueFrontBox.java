@@ -20,9 +20,7 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         robot.use_Vuforia = true;
         robot.use_camera = true;
         robot.use_arm = true;
-        robot.use_glyph_grabber = false;
-
-        int loops = 1;
+        robot.use_glyph_grabber = true;
 
         robot.init(hardwareMap);
 
@@ -37,13 +35,11 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             doPlatformMission(true);
-
-            if (loops == 1) {
-                StraightIn(0.2, 30); // Drive off the balance stone
-                go_to_distance_from(0.3, get_cryptobox_column(), false); // Drive to cryptobox. Values are negative because driveTT goes backwards
-                //Deliver particle from the side
-                loops++;
-            }
+            StraightIn(0.2, 24); // Drive off the balance stone
+            go_to_distance_from(0.3, get_cryptobox_column(), false); // Drive to cryptobox. Values are negative because driveTT goes backwards
+            StraightIn(.2, 9); // Drives into cryptobox
+            glyph_grabber_auto_open();
+            StraightIn(-.2, 9);
         }
     }
 }

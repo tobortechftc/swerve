@@ -1045,6 +1045,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(1000);
         arm_up();
         //robot.camera.stopCamera();
+        glyph_grabber_auto_close();
+        glyph_slider_up_inches(.5, 2);
+        sleep(1000);
     }
 
     TeamColor checkBallColor() throws InterruptedException {
@@ -1126,7 +1129,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         double driveDistance;
         boolean isOverDistance;
         boolean isUnderDistance;
-
+        if (targetColumn < 0) targetColumn = 1;
 
         if (isSideBox) {
             driveDistance = 22 + (20.32 * targetColumn); // 20.32 is 8 * 2.54, converts in to cm. 8 is distance between columns
@@ -1166,11 +1169,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(500);
             double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
             driveTT(-1* power, -1* power); // Drives to the right
-            while (cur_dist <= driveDistance && robot.runtime.seconds() < 5) { // Waits until it has reached distance
+            while (cur_dist <= driveDistance && robot.runtime.seconds() < 6) { // Waits until it has reached distance
                 cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
             }
             driveTT(power /2, power /2); // Drives to the left, slower
-            while (cur_dist >= driveDistance && robot.runtime.seconds() < 5) { // Waits until it has reached distance
+            while (cur_dist >= driveDistance && robot.runtime.seconds() < 6) { // Waits until it has reached distance
                 cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
             }
         }
