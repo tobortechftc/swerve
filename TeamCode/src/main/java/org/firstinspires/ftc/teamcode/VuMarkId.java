@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.provider.MediaStore;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -132,6 +133,9 @@ public class VuMarkId extends SwerveUtilLOP {
             }
 
             else if (state == 2) {
+                int whitestPixel = robot.camera.getWhitestPixel(bitmap);
+                robot.camera.applyWhiteBalance(bitmap, whitestPixel);
+
                 telemetry.addData("Color", determineJewelColor(bitmap));
             }
 
