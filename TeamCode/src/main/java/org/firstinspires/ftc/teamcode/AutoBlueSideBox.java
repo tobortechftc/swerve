@@ -37,7 +37,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         // Wait for the game to start (driver presses PLAY)
         robot.runtime.reset();
         waitForStart();
-        
+
         doPlatformMission(true);
         //robot.targetColumn = get_cryptobox_column();
         //sleep(2000);
