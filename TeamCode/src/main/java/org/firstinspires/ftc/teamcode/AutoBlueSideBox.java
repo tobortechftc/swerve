@@ -47,6 +47,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
 
         // run until the end of the match (driver presses STOP)
 
+<<<<<<< Updated upstream
 //        while (opModeIsActive()) {
 //
 //
@@ -59,5 +60,16 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
 //                loops++;
 //            }
 //        }
+=======
+            if (loops == 1) {
+                StraightIn(0.2, 22); // Drive off the balance stone
+                turnToColumn(robot.targetColumn, 0.2, true, true);
+                //go_to_distance_from(0.3, 2, true); // Drive to cryptobox.
+                stop_chassis();
+                //Deliver particle from the side
+                loops++;
+            }
+        }
+>>>>>>> Stashed changes
     }
 }

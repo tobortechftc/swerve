@@ -1182,31 +1182,25 @@ public class SwerveUtilLOP extends LinearOpMode {
                     driveDistance = 68;
                     break;
             }
-            while (mode <= 4) {
+            while (mode <= 3) {
                 if (mode == 1) { // Stops, turns to crab mode and drives to the right
                         driveTT(.0, .0);
                         sleep(200);
                         change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                         sleep(500);
-                        driveTT(power, power);
+                        driveTT(-1 * power, -1 * power);
                         mode = 2;
                 } else if (mode == 2) { // Reverses when it's gone far enough
                     isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
                     if (isOverDistance) {
-                        driveTT(-1 * power * 3 / 4, -1 * power * 3 / 4);
+                        driveTT(power * 3 / 4, power * 3 / 4);
                         mode = 3;
                     }
-                } else if (mode == 3) {
+                } else if (mode == 3) { //
                     isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
                     if (isUnderDistance) {
-                        driveTT(power / 2, power / 2);
+                        driveTT(.0, .0);
                         mode = 4;
-                    }
-                } else if (mode == 4) {
-                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
-                    if (isOverDistance) {
-                        driveTT(-1 * power / 2, -1 * power / 2);
-                        mode = 5;
                     }
                 }
             }
@@ -1226,11 +1220,11 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             } else {
                 if (targetColumn == 0) {
-                    TurnLeftD(power, 75);
+                    TurnRightD(power, 75);
                 } else if (targetColumn == 1) {
-                    TurnLeftD(power, 45);
+                    TurnRightD(power, 45);
                 } else if (targetColumn == 2) {
-                    TurnLeftD(power, 30);
+                    TurnRightD(power, 30);
                 }
             }
         }
@@ -1246,11 +1240,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             else{
                 if (targetColumn == 0) {
-                    TurnLeftD(power, 75);
+                    TurnRightD(power, 75);
                 } else if (targetColumn == 1) {
-                    TurnLeftD(power, 45);
+                    TurnRightD(power, 45);
                 } else if (targetColumn == 2) {
-                    TurnLeftD(power, 30);
+                    TurnRightD(power, 30);
                 }
             }
         }
