@@ -950,6 +950,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.use_Vuforia)
             return column;
 
+        robot.relicTrackables.activate();
         robot.runtime.reset();
         while (robot.runtime.seconds() < 2.0 && column == -1) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(robot.relicTemplate);
