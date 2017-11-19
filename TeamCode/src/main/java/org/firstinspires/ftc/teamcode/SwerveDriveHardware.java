@@ -108,7 +108,7 @@ public class SwerveDriveHardware {
     final static double SV_ELBOW_DOWN = 0.5089;
 
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.4;
-    final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.475;
+    final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.5;
     final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.6;
 
     final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.65;
@@ -194,7 +194,7 @@ public class SwerveDriveHardware {
     ElapsedTime runtime = new ElapsedTime();
 
     final static double SERVO_FL_FORWARD_POSITION = 0.48;
-    final static double SERVO_FR_FORWARD_POSITION = 0.5; 
+    final static double SERVO_FR_FORWARD_POSITION = 0.45;
     final static double SERVO_BL_FORWARD_POSITION = 0.48;
     final static double SERVO_BR_FORWARD_POSITION = 0.5;
 
