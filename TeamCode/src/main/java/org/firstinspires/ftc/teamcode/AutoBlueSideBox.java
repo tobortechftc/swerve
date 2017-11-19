@@ -22,6 +22,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.use_color_sensor = true;
         robot.use_Vuforia = true;
         robot.use_camera = false;
+        robot.use_glyph_grabber = false;
         robot.use_arm = true;
 
 
@@ -36,8 +37,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         // Wait for the game to start (driver presses PLAY)
         robot.runtime.reset();
         waitForStart();
-
-
+        
         doPlatformMission(true);
         //robot.targetColumn = get_cryptobox_column();
         //sleep(2000);
