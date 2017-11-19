@@ -130,7 +130,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (need_slide_up) {
             glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 3);
-            sleep(500);
+            sleep(300);
         }
         // rotate 180 degrees back and forth
         int cur_count = robot.orig_rot_pos; // robot.mt_test.getCurrentPosition();
@@ -1182,31 +1182,25 @@ public class SwerveUtilLOP extends LinearOpMode {
                     driveDistance = 68;
                     break;
             }
-            while (mode <= 4) {
+            while (mode <= 3) {
                 if (mode == 1) { // Stops, turns to crab mode and drives to the right
                         driveTT(.0, .0);
                         sleep(200);
                         change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                         sleep(500);
-                        driveTT(power, power);
+                        driveTT(-1 * power, -1 * power);
                         mode = 2;
                 } else if (mode == 2) { // Reverses when it's gone far enough
                     isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
                     if (isOverDistance) {
-                        driveTT(-1 * power * 3 / 4, -1 * power * 3 / 4);
+                        driveTT(power * 3 / 4, power * 3 / 4);
                         mode = 3;
                     }
-                } else if (mode == 3) {
+                } else if (mode == 3) { //
                     isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
                     if (isUnderDistance) {
-                        driveTT(power / 2, power / 2);
+                        driveTT(.0, .0);
                         mode = 4;
-                    }
-                } else if (mode == 4) {
-                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
-                    if (isOverDistance) {
-                        driveTT(-1 * power / 2, -1 * power / 2);
-                        mode = 5;
                     }
                 }
             }
@@ -1226,11 +1220,11 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             } else {
                 if (targetColumn == 0) {
-                    TurnLeftD(power, 75);
+                    TurnRightD(power, 75);
                 } else if (targetColumn == 1) {
-                    TurnLeftD(power, 45);
+                    TurnRightD(power, 45);
                 } else if (targetColumn == 2) {
-                    TurnLeftD(power, 30);
+                    TurnRightD(power, 30);
                 }
             }
         }
@@ -1246,24 +1240,30 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             else{
                 if (targetColumn == 0) {
-                    TurnLeftD(power, 75);
+                    TurnRightD(power, 75);
                 } else if (targetColumn == 1) {
-                    TurnLeftD(power, 45);
+                    TurnRightD(power, 45);
                 } else if (targetColumn == 2) {
-                    TurnLeftD(power, 30);
+                    TurnRightD(power, 30);
                 }
             }
         }
     }
 
 
-    void calc_snake(float stick_x){
+    // void calc_snake(float stick_x){
+    void calc_snake(float left_t, float right_t){
+        float stick_x = 0;
+        if (left_t > 0.1)
+            stick_x = -1 * left_t;
+        else stick_x = right_t;
         if(stick_x > 0.1){
             robot.isSnakingLeft = false;
         }
         else{
             robot.isSnakingLeft = true;
         }
+
         if(Math.abs(stick_x) < 0.2){
             robot.enoughToSnake = false;
         }
@@ -1483,7 +1483,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.isTestingBR = false;
     }
 
-    void set_swerve_power(float right_stick, float left_stick, float x_stick){
+    // void set_swerve_power(float right_stick, float left_stick, float x_stick){
+    void set_swerve_power(float right_stick, float left_stick, float left_t, float right_t){
+        float x_stick = 0;
+        if (left_t > 0.1)
+            x_stick = -1 * left_t;
+        else x_stick = right_t;
+
         if(robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
             robot.insideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) - robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
                     (robot.r_Value));
