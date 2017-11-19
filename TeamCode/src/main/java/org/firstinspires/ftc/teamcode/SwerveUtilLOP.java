@@ -1120,29 +1120,16 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
     }
-    void go_to_distance_from(double power, int targetColumn, boolean isSideBox) { //Go until a certain distance from a target depending on the cryptobox and the column
+    void go_to_distance_from(double power, int targetColumn, boolean isSideBox) { // Go until a certain distance from a target depending on the cryptobox and the column
         int mode = 1;
-        int driveDistance;
+        double driveDistance;
         boolean isOverDistance;
         boolean isUnderDistance;
 
-        telemetry.addData("Mode", mode);
 
         if (isSideBox) {
-            switch (targetColumn) { // Defines distance it needs to drive based on column input.
-                case 0:
-                    driveDistance = 22;
-                    break;
-                case 1:
-                    driveDistance = 38;
-                    break;
-                case 2:
-                    driveDistance = 59;
-                    break;
-                default:
-                    driveDistance = 38;
-                    break;
-            }
+            driveDistance = 22 + (20.32 * targetColumn); // 20.32 is 8 * 2.54, converts in to cm. 8 is distance between columns
+
 
             while (mode <= 4) {
                 telemetry.addData("Mode", mode);
@@ -1150,7 +1137,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 if (mode == 1) { // Begins driving forward
                     driveTT(power, power);
                     mode++;
-                } else if (mode == 2) {   // Checks if it's gone far enough
+                } else if (mode == 2) { // Checks if it's gone far enough
                     isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
                     if (isOverDistance) {
                         driveTT(-1 * power, -1 * power);
@@ -1170,31 +1157,23 @@ public class SwerveUtilLOP extends LinearOpMode {
                     }
                 }
             }
-        } else { // front box
-            switch (targetColumn) { // Defines distance it needs to drive based on column input.
-                case 0:
-                    driveDistance = 50;
-                    break;
-                case 1:
-                    driveDistance = 58;
-                    break;
-                case 2:
-                    driveDistance = 66;
-                    break;
-                default:
-                    driveDistance = 58;
-                    break;
-            }
+        } else { // Front box
+            driveDistance = 50 + (20.32 * targetColumn); // 20.32 is 8 * 2.54, converts in to cm. 8 is distance between columns
+
             robot.runtime.reset();
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(500);
             double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-            driveTT(-1*power, -1*power);
-            while (cur_dist <= driveDistance && robot.runtime.seconds()<3) {
+            driveTT(-1* power, -1* power); // Drives to the right
+            while (cur_dist <= driveDistance && robot.runtime.seconds() < 5) { // Waits until it has reached distance
+                cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+            }
+            driveTT(power /2, power /2); // Drives to the left, slower
+            while (cur_dist >= driveDistance && robot.runtime.seconds() < 5) { // Waits until it has reached distance
                 cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
             }
         }
-        driveTT(0,0);
+        driveTT(0,0); // Stops
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
     }
 
