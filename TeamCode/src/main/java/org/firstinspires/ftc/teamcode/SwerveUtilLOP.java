@@ -1579,7 +1579,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
 
         /**
-         *
          * @param xOffsetF
          * @param yOffsetF
          * @param widthF
@@ -1627,6 +1626,12 @@ public class SwerveUtilLOP extends LinearOpMode {
             return whitestPixel;
         }
 
+        /**
+         * Takes returned integer from getWhitestPixel and a source bitmap then returns a white balanced bitmap
+         * @param source
+         * @param whitestPixel
+         * @return
+         */
         Bitmap applyWhiteBalance(Bitmap source, int whitestPixel) {
             if (Color.red(whitestPixel) != 0 && Color.green(whitestPixel) != 0 && Color.red(whitestPixel) != 0) {
                 double rComp = 255 / Color.red(whitestPixel);
@@ -1649,6 +1654,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                         double bDoub = inB * bComp;
 
                         source.setPixel(i, j, Color.argb(255, (int) rDoub, (int) gDoub, (int) bDoub));
+
+                        if(source.getConfig() != Bitmap.Config.RGB_565) {
+                         source.setConfig(Bitmap.Config.RGB_565);
+                        }
                     }
                 }
             }
@@ -1673,8 +1682,8 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
         void stopCamera(){
-            this.vuforia.setFrameQueueCapacity(0);
             Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
+            this.vuforia.setFrameQueueCapacity(0);
             //todo: test commenting out parts of this code to determine NullPointerException
         }
     }
