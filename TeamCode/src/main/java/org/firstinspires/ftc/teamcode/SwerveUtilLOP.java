@@ -1000,6 +1000,9 @@ public class SwerveUtilLOP extends LinearOpMode {
                 //while (opModeIsActive());
             }
             else {
+//                int whitestPixel = robot.camera.getWhitestPixel(bitmap);
+//                robot.camera.applyWhiteBalance(bitmap, whitestPixel);
+
                 TeamColor leftJewelColor = determineJewelColor(bitmap);
                 rightJewelColor = leftJewelColor.getOpposingColor();
                 //Current mounting solution only allows camera to check the left jewel color
