@@ -130,7 +130,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (need_slide_up) {
             glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 3);
-            sleep(500);
+            sleep(300);
         }
         // rotate 180 degrees back and forth
         int cur_count = robot.orig_rot_pos; // robot.mt_test.getCurrentPosition();
@@ -1216,13 +1216,19 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
 
-    void calc_snake(float stick_x){
+    // void calc_snake(float stick_x){
+    void calc_snake(float left_t, float right_t){
+        float stick_x = 0;
+        if (left_t > 0.1)
+            stick_x = -1 * left_t;
+        else stick_x = right_t;
         if(stick_x > 0.1){
             robot.isSnakingLeft = false;
         }
         else{
             robot.isSnakingLeft = true;
         }
+
         if(Math.abs(stick_x) < 0.2){
             robot.enoughToSnake = false;
         }
@@ -1442,7 +1448,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.isTestingBR = false;
     }
 
-    void set_swerve_power(float right_stick, float left_stick, float x_stick){
+    // void set_swerve_power(float right_stick, float left_stick, float x_stick){
+    void set_swerve_power(float right_stick, float left_stick, float left_t, float right_t){
+        float x_stick = 0;
+        if (left_t > 0.1)
+            x_stick = -1 * left_t;
+        else x_stick = right_t;
+
         if(robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
             robot.insideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) - robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
                     (robot.r_Value));

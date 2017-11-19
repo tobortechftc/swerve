@@ -112,8 +112,8 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.6;
 
     final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.65;
-    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.625;
-    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.45;
+    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.615;
+    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.46;
     final static double SV_RELIC_GRABBER_INIT = 0.76;
     final static double SV_RELIC_ARM_INIT = 0.5;
     final static double SV_RELIC_ARM_UP = 0.5;
@@ -125,7 +125,7 @@ public class SwerveDriveHardware {
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
-    double drivePowerRatio = 1.0;
+    double drivePowerRatio = 0.8;
 
     double servoPosFL;
     double servoPosFR;
