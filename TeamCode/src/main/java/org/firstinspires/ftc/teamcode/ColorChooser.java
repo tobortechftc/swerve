@@ -12,7 +12,7 @@ public class ColorChooser extends SwerveUtilLOP {
 
     TeamColor rightJewelColor = TeamColor.UNKNOWN;
     // Calculates difference between red and blue, and uses this to determine the ball's color
-
+    //use to isolate the experiment for sensor
 
 
     @Override
