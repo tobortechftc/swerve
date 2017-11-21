@@ -91,7 +91,6 @@ public class VuMarkId extends SwerveUtilLOP {
         waitForStart();
 
         if (robot.use_Vuforia) {
-
             box_column = get_cryptobox_column();
         }
 
