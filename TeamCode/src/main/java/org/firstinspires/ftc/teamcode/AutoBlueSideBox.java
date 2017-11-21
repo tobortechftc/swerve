@@ -22,10 +22,8 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.use_color_sensor = true;
         robot.use_Vuforia = true;
         robot.use_camera = false;
-        robot.use_glyph_grabber = false;
+        robot.use_glyph_grabber = true;
         robot.use_arm = true;
-
-        boolean checkSensors = false;
 
 
         int loops = 1;
@@ -40,25 +38,21 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.runtime.reset();
         waitForStart();
 
-        doPlatformMission(true);
-        //robot.targetColumn = get_cryptobox_column();
-        //sleep(2000);
 
-        telemetry.addData("Column", robot.targetColumn);
-        telemetry.update();
 
         // run until the end of the match (driver presses STOP)
-        if (!checkSensors) {
-            if (opModeIsActive()) {
-                if (loops == 1) {
-                    StraightIn(0.2, 22); // Drive off the balance stone
-                    turnToColumn(robot.targetColumn, 0.2, true, true);
-                    //go_to_distance_from(0.3, 2, true); // Drive to cryptobox.
-                    stop_chassis();
-                    //Deliver particle from the side
-                    loops++;
-                }
-            }
+        if (opModeIsActive()) {
+            doPlatformMission(true);
+            //robot.targetColumn = get_cryptobox_column();
+            //sleep(2000);
+            telemetry.addData("Column", robot.targetColumn);
+            telemetry.update();
+            StraightIn(0.2, 22); // Drive off the balance stone
+            //turnToColumn(robot.targetColumn, 0.2, true, true);
+            go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
+            TurnLeftD(0.4, 90);
+            stop_chassis();
+            //Deliver particle from the side
         }
     }
 }

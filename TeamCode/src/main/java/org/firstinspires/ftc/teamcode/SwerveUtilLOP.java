@@ -1153,31 +1153,15 @@ public class SwerveUtilLOP extends LinearOpMode {
             driveDistance = 22 + (20.32 * targetColumn); // 20.32 is 8 * 2.54, converts in to cm. 8 is distance between columns
 
 
-            while (mode <= 4) {
-                telemetry.addData("Mode", mode);
-                telemetry.update();
-                if (mode == 1) { // Begins driving forward
-                    driveTT(power, power);
-                    mode++;
-                } else if (mode == 2) { // Checks if it's gone far enough
-                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
-                    if (isOverDistance) {
-                        driveTT(-1 * power, -1 * power);
-                        mode++;
-                    }
-                } else if (mode == 3) { // Drives backwards to compensate
-                    isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
-                    if (isUnderDistance) {
-                        driveTT(power / 2, power / 2);
-                        mode++;
-                    }
-                } else if (mode == 4) { // Drives forwards to compensate again (May not need this is robot is precise enough)
-                    isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
-                    if (isOverDistance) {
-                        driveTT(.0, .0);
-                        mode++;
-                    }
-                }
+            robot.runtime.reset();
+            double cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+            driveTT(-1* power, -1* power); // Drives to the right
+            while (cur_dist <= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
+                cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+            }
+            driveTT(power /2, power /2); // Drives to the left, slower
+            while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
+                cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
             }
         } else { // Front box
             driveDistance = 50 + (20.32 * targetColumn); // 20.32 is 8 * 2.54, converts in to cm. 8 is distance between columns
