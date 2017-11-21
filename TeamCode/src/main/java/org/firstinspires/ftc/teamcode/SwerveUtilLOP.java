@@ -78,9 +78,12 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.gg_rotator_encoder_ok = true;
             // test_glyph_slider_encoder();
             robot.gg_slider_encoder_ok = true;
-            glyph_grabber_auto_open();
-            glyph_slider_init();
         }
+    }
+
+    public void start_init() {
+        glyph_grabber_auto_open();
+        glyph_slider_init();
     }
 
     public double imu_heading() {
@@ -129,7 +132,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
         if (need_slide_up) {
-            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 3);
+            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 2);
             sleep(300);
         }
         // rotate 180 degrees back and forth
@@ -142,9 +145,14 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         rotate_to_target(power);
         robot.is_gg_upside_down = !robot.is_gg_upside_down;
-        if (need_slide_up) {
-            sleep(500);
+        boolean need_slide_down = need_slide_up;
+        if (robot.is_gg_upside_down && robot.gg_top_close)
+            need_slide_down = false;
+        if (!robot.is_gg_upside_down && robot.gg_bottom_close)
+            need_slide_down = false;
+        if (need_slide_down) {
             glyph_slider_init();
+            sleep(500);
         }
     }
 
@@ -950,6 +958,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.use_Vuforia)
             return column;
 
+        robot.relicTrackables.activate();
         robot.runtime.reset();
         while (robot.runtime.seconds() < 2.0 && column == -1) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(robot.relicTemplate);
@@ -1044,6 +1053,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(1000);
         arm_up();
         //robot.camera.stopCamera();
+        glyph_grabber_auto_close();
+        glyph_slider_up_inches(.5, 2);
+        sleep(1000);
     }
 
     TeamColor checkBallColor() throws InterruptedException {
@@ -1125,7 +1137,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         double driveDistance;
         boolean isOverDistance;
         boolean isUnderDistance;
-
+        if (targetColumn < 0) targetColumn = 1;
 
         if (isSideBox) {
             driveDistance = 22 + (20.32 * targetColumn); // 20.32 is 8 * 2.54, converts in to cm. 8 is distance between columns
@@ -1165,11 +1177,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(500);
             double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
             driveTT(-1* power, -1* power); // Drives to the right
-            while (cur_dist <= driveDistance && robot.runtime.seconds() < 5) { // Waits until it has reached distance
+            while (cur_dist <= driveDistance && robot.runtime.seconds() < 6) { // Waits until it has reached distance
                 cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
             }
             driveTT(power /2, power /2); // Drives to the left, slower
-            while (cur_dist >= driveDistance && robot.runtime.seconds() < 5) { // Waits until it has reached distance
+            while (cur_dist >= driveDistance && robot.runtime.seconds() < 6) { // Waits until it has reached distance
                 cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
             }
         }

@@ -33,6 +33,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        start_init();
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -47,6 +49,10 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     change_swerve_pos(robot.old_mode);
                 }
                 sleep(400);
+            }
+            if(gamepad1.back && gamepad1.start){ // swap test/normalglyph_grabber_auto_open mode
+                robot.isTesting = !robot.isTesting;
+                sleep(100);
             }
 
             if (robot.use_swerve) {
