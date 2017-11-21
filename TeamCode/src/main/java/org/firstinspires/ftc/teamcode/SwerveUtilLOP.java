@@ -111,6 +111,16 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     }
 
+    public void glyph_grabber_half_close() {
+        if (robot.is_gg_upside_down) { // close up grabber
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
+            robot.gg_top_close = true;
+        } else {
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED);
+            robot.gg_bottom_close = true;
+        }
+    }
+
     public void glyph_grabber_auto_open() { // open both grabbers
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
         robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);

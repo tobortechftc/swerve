@@ -291,6 +291,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     glyph_grabber_auto_open();
                     // should slide back to init
                     // glyph_slider_init();
+                } else if (gamepad2.back && (gamepad2.left_trigger > 0.1)) { // half close
+                    glyph_grabber_half_close();
                 } else if (gamepad2.b && (gamepad2.left_trigger > 0.1)) { // close both
                     glyph_grabber_all_close();
                 } else if (gamepad2.a && (gamepad2.left_trigger > 0.1)) { // close one + rotate
