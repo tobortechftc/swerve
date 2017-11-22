@@ -22,7 +22,7 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         robot.use_arm = true;
         robot.use_glyph_grabber = true;
 
-        robot.init(hardwareMap);
+        init_and_test();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Initialization Complete");
@@ -31,6 +31,7 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         // Wait for the game to start (driver presses PLAY)
         robot.runtime.reset();
         waitForStart();
+        start_init();
 
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {

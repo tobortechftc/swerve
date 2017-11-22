@@ -990,6 +990,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
 
         arm_down();
+        if (robot.use_glyph_grabber) {
+            glyph_grabber_auto_close();
+            glyph_slider_up_inches(.5, 4);
+        }
         sleep(1000);
 
         TeamColor rightJewelColorCS = checkBallColor();
@@ -1026,11 +1030,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(1000);
         arm_up();
         //robot.camera.stopCamera();
-        if (robot.use_glyph_grabber) {
-            glyph_grabber_auto_close();
-            glyph_slider_up_inches(.5, 2);
-            sleep(1000);
-        }
+
     }
 
     TeamColor checkBallColor() throws InterruptedException {
@@ -1098,12 +1098,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);
     }
     void arm_left() {
-        robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
+        robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN_HIT);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT);
     }
 
     void arm_right() {
-        robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
+        robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN_HIT);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
     }
     void go_to_distance_from(double power, int targetColumn, boolean isSideBox) { // Go until a certain distance from a target depending on the cryptobox and the column
