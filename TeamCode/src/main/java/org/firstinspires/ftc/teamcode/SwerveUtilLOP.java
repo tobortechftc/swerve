@@ -968,7 +968,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
         robot.targetColumn = get_cryptobox_column();
-        TeamColor rightJewelColor = TeamColor.UNKNOWN;
+        TeamColor rightJewelColorCamera = TeamColor.UNKNOWN;
 
         if(robot.use_camera) {
             Bitmap bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
@@ -979,31 +979,34 @@ public class SwerveUtilLOP extends LinearOpMode {
                 //while (opModeIsActive());
             }
             else {
-//                int whitestPixel = robot.camera.getWhitestPixel(bitmap);
-//                robot.camera.applyWhiteBalance(bitmap, whitestPixel);
+                //White Balance applied here
+                int whitestPixel = robot.camera.getWhitestPixel(bitmap);
+                robot.camera.applyWhiteBalance(bitmap, whitestPixel);
 
-                TeamColor leftJewelColor = determineJewelColor(bitmap);
-                rightJewelColor = leftJewelColor.getOpposingColor();
+                TeamColor leftJewelColorCamera = determineJewelColor(bitmap);
+                rightJewelColorCamera = leftJewelColorCamera.getOpposingColor();
                 //Current mounting solution only allows camera to check the left jewel color
             }
         }
 
         arm_down();
         sleep(1000);
-        TeamColor rightJewelGuess = checkBallColor();
 
-        if (rightJewelGuess == TeamColor.UNKNOWN) {
-            rightJewelGuess = rightJewelColor;
+        TeamColor rightJewelColorCS = checkBallColor();
+
+        //Comparing of sensor data begins here
+        if (rightJewelColorCS == TeamColor.UNKNOWN) {
+            rightJewelColorCS = rightJewelColorCamera;
         }
 
-        robot.isRedBall = (rightJewelGuess == TeamColor.RED);
-        robot.isBlueBall = (rightJewelGuess == TeamColor.BLUE);
+        robot.isRedBall = (rightJewelColorCS == TeamColor.RED);
+        robot.isBlueBall = (rightJewelColorCS == TeamColor.BLUE);
 
         telemetry.addData("isBlueBall/isRedBall", "%s/%s",robot.isBlueBall,robot.isRedBall);
         telemetry.update();
 
         //assuming sensing the right jewel
-        if (robot.isRedBall) {
+        if (rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.RED) {
             if (IsBlueAlliance) {
                 arm_right();
 
@@ -1012,7 +1015,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 arm_left();
             }
         }
-        else if (robot.isBlueBall) {
+        else if (rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.BLUE) {
             if (IsBlueAlliance){
                 arm_left();
             }
@@ -1623,11 +1626,10 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
 
-        void stopCamera(){
-            Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
-            this.vuforia.setFrameQueueCapacity(0);
-            //todo: test commenting out parts of this code to determine NullPointerException
-        }
+//        void stopCamera(){
+//            Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
+//            this.vuforia.setFrameQueueCapacity(0);
+//        }
     }
 
     /**
