@@ -94,10 +94,10 @@ public class SwerveDriveHardware {
     final static int GG_SLIDE_INIT = 100;
 
 
-    final static int RED_BALL_MIN = -94;
+    final static int RED_BALL_MIN = -300;
     final static int RED_BALL_MAX = -36;
     final static int BLUE_BALL_MIN = 12;
-    final static int BLUE_BALL_MAX = 66;
+    final static int BLUE_BALL_MAX = 300;
 
     final static double SV_SHOULDER_INIT = 0.4978;
     final static double SV_SHOULDER_DOWN = 0.4889;
