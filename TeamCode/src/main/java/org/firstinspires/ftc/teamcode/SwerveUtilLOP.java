@@ -945,9 +945,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     double calcDelta() throws InterruptedException {
-        double blue = robot.colorSensor.blue();
-        double red = robot.colorSensor.red();
-        return (blue - red);
+        robot.blue = robot.colorSensor.blue();
+        robot.red = robot.colorSensor.red();
+        return (robot.blue - robot.red);
     }
 
     /**
@@ -1026,9 +1026,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(1000);
         arm_up();
         //robot.camera.stopCamera();
-        glyph_grabber_auto_close();
-        glyph_slider_up_inches(.5, 2);
-        sleep(1000);
+        if (robot.use_glyph_grabber) {
+            glyph_grabber_auto_close();
+            glyph_slider_up_inches(.5, 2);
+            sleep(1000);
+        }
     }
 
     TeamColor checkBallColor() throws InterruptedException {
@@ -1054,10 +1056,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
 //        telemetry.addData("delta/isBlueBall/isRedBall=", "%3.1f/%s/%s",d,robot.isBlueBall,robot.isRedBall);
 //        telemetry.update();
-        if (isBlueBall && isBlueBall) {
+        if (isBlueBall && isRedBall) {
             result = TeamColor.UNKNOWN;
-        }
-        if (isBlueBall) {
+        } else if (isBlueBall) {
             result = TeamColor.BLUE;
         }
         else if (isRedBall) {
