@@ -427,17 +427,20 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT || robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(lp);
-                if (!robot.use_minibot) {
-                    robot.motorBackLeft.setPower(lp);
-                    robot.motorBackRight.setPower(rp);
-                }
+                robot.motorBackLeft.setPower(lp);
+                robot.motorBackRight.setPower(rp);
+
             } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(-rp);
-                if (!robot.use_minibot) {
-                    robot.motorBackLeft.setPower(lp);
-                    robot.motorBackRight.setPower(-lp);
-                }
+                robot.motorBackLeft.setPower(lp);
+                robot.motorBackRight.setPower(-lp);
+            }
+            else if(robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
+                robot.motorFrontRight.setPower(rp);
+                robot.motorFrontLeft.setPower(lp);
+                robot.motorBackLeft.setPower(lp);
+                robot.motorBackRight.setPower(rp);
             }
         }
         else{
@@ -1125,10 +1128,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             while (cur_dist <= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
                 cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
             }
-            driveTT(power /2, power /2); // Drives to the left, slower
+            /*driveTT(power /2, power /2); // Drives to the left, slower
             while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
                 cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
-            }
+            }*/
         } else { // Front box
             driveDistance = 52 + (19.5 * targetColumn); // 19.5cm between columns
 

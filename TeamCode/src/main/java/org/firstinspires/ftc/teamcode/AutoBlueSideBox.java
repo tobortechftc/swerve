@@ -28,7 +28,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
 
         int loops = 1;
 
-        robot.init(hardwareMap);
+        init_and_test();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Initialization Complete");
@@ -38,10 +38,12 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.runtime.reset();
         waitForStart();
 
+        start_init();
 
 
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
+
             doPlatformMission(true);
             //robot.targetColumn = get_cryptobox_column();
             //sleep(2000);
@@ -49,8 +51,8 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
             telemetry.update();
             StraightIn(0.2, 22); // Drive off the balance stone
             //turnToColumn(robot.targetColumn, 0.2, true, true);
-            //go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
-            //TurnLeftD(0.4, 90);
+            go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
+            TurnLeftD(0.4, 90);
             stop_chassis();
             //Deliver particle from the side
         }
