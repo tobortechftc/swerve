@@ -1010,16 +1010,19 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.update();
 
         //assuming sensing the right jewel
-        if (rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.RED) {
+        if ((rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.RED)||
+                (rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.UNKNOWN) ||
+                (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.RED)) {
             if (IsBlueAlliance) {
                 arm_right();
-
             }
             else {
                 arm_left();
             }
         }
-        else if (rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.BLUE) {
+        else if ((rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.BLUE) ||
+                (rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.UNKNOWN) ||
+                (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.BLUE)) {
             if (IsBlueAlliance){
                 arm_left();
             }
@@ -1030,7 +1033,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(1000);
         arm_up();
         //robot.camera.stopCamera();
-
     }
 
     TeamColor checkBallColor() throws InterruptedException {
@@ -1114,7 +1116,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (targetColumn < 0) targetColumn = 1;
 
         if (isSideBox) {
-            driveDistance = 22 + (20.32 * targetColumn); // 20.32 is 8 * 2.54, converts in to cm. 8 is distance between columns
+            driveDistance = 22 + (19.5 * targetColumn); // 19.5cm between columns
 
 
             robot.runtime.reset();
@@ -1128,7 +1130,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
             }
         } else { // Front box
-            driveDistance = 50 + (20.32 * targetColumn); // 20.32 is 8 * 2.54, converts in to cm. 8 is distance between columns
+            driveDistance = 52 + (19.5 * targetColumn); // 19.5cm between columns
 
             robot.runtime.reset();
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
