@@ -58,37 +58,6 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
             if (robot.use_swerve) {
 
                 if(robot.isTesting){ //Allow to test individual servo positions
-                    if (gamepad1.dpad_up) {
-                        robot.isTestingFL = true;
-                        robot.isTestingFR = false;
-                        robot.isTestingBL = false;
-                        robot.isTestingBR = false;
-
-                    }
-
-                    if (gamepad1.dpad_down) {
-                        robot.isTestingFL = false;
-                        robot.isTestingFR = false;
-                        robot.isTestingBL = false;
-                        robot.isTestingBR = true;
-
-                    }
-
-                    if (gamepad1.dpad_left) {
-                        robot.isTestingFL = false;
-                        robot.isTestingFR = false;
-                        robot.isTestingBL = true;
-                        robot.isTestingBR = false;
-
-                    }
-
-                    if (gamepad1.dpad_right) {
-                        robot.isTestingFL = false;
-                        robot.isTestingFR = true;
-                        robot.isTestingBL = false;
-                        robot.isTestingBR = false;
-
-                    }
 
                     if (gamepad1.left_trigger > 0.1) {
 
@@ -100,34 +69,14 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         TurnRightD(0.5, 90.0);
                     }
 
-                    if (gamepad1.left_bumper) {
-                        sleep(100);
-                        test_swerve_servo(true);
-                    }
-
-                    if (gamepad1.right_bumper) {
-                        sleep(100);
-                        test_swerve_servo(false);
-                    }
-
                     if (gamepad1.b) {
                         StraightIn(0.5, 22);
                     }
+
                     if (gamepad1.a){
                         StraightIn(-0.5, 22);
                     }
-                    if(gamepad1.y){
-                        while(gamepad1.y) {
-                            test_swerve_motor(1, true);
-                        }
-                        stop_chassis();
-                    }
-                    if(gamepad1.x){
-                        while(gamepad1.x) {
-                            test_swerve_motor(1, false);
-                        }
-                        stop_chassis();
-                    }
+
                     if(gamepad1.start){
                         if(!(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB)){// If in any other mode, switch to crab
                             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
