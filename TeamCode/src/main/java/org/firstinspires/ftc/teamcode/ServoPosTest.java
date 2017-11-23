@@ -19,10 +19,10 @@ public class ServoPosTest extends SwerveUtilLOP {
          */
         boolean serve_tune_up = true; // enable servo tune up
         robot.use_swerve = true;
-        robot.use_imu = false;
+        robot.use_imu = true;
         robot.use_Vuforia = false;
         robot.use_color_sensor = false;
-        robot.use_arm = false;
+        robot.use_arm = true;
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = false;
         robot.use_test_servo = false;
@@ -109,14 +109,28 @@ public class ServoPosTest extends SwerveUtilLOP {
                 }
                 stop_chassis();
             }
-            if(gamepad1.x){
-                while(gamepad1.x) {
+            if(gamepad1.a){
+                while(gamepad1.a) {
                     test_swerve_motor(1, false);
                 }
                 stop_chassis();
             }
+
+            if(gamepad1.x){
+                change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
+                sleep(100);
+                TurnLeftD(0.4, 90);
+            }
+
+            if(gamepad1.b){
+                change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
+                sleep(100);
+                TurnRightD(0.4, 90);
+            }
+
             telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                     robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
+            telemetry.addData("4.1 IMU Heading = ", "%.2f", imu_heading());
             telemetry.update();
         }
     }

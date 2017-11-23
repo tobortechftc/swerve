@@ -45,7 +45,6 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         if (opModeIsActive()) {
 
             doPlatformMission(true);
-            //robot.targetColumn = get_cryptobox_column();
             //sleep(2000);
             telemetry.addData("Column", robot.targetColumn);
             telemetry.update();
@@ -53,6 +52,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
             //turnToColumn(robot.targetColumn, 0.2, true, true);
             go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
             TurnLeftD(0.4, 90);
+            StraightIn(0.5, 5);
             stop_chassis();
             //Deliver particle from the side
         }
