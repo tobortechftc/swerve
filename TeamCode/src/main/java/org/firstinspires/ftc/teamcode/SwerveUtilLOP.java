@@ -982,11 +982,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                 //while (opModeIsActive());
             }
             else {
-                //White Balance applied here
-                int whitestPixel = robot.camera.getWhitestPixel(bitmap);
-                robot.camera.applyWhiteBalance(bitmap, whitestPixel);
-
                 TeamColor leftJewelColorCamera = determineJewelColor(bitmap);
+                //Mirrors to allow checking of right jewel
                 rightJewelColorCamera = leftJewelColorCamera.getOpposingColor();
                 //Current mounting solution only allows camera to check the left jewel color
             }
@@ -995,6 +992,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         arm_down();
         if (robot.use_glyph_grabber) {
             glyph_grabber_auto_close();
+            sleep(100);
             glyph_slider_up_inches(.5, 4);
         }
         sleep(1000);
@@ -1002,10 +1000,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         TeamColor rightJewelColorCS = checkBallColor();
 
         //Comparing of sensor data begins here
-        if (rightJewelColorCS == TeamColor.UNKNOWN) {
-            rightJewelColorCS = rightJewelColorCamera;
-        }
-
         robot.isRedBall = (rightJewelColorCS == TeamColor.RED);
         robot.isBlueBall = (rightJewelColorCS == TeamColor.BLUE);
 
@@ -1013,8 +1007,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.update();
 
         //assuming sensing the right jewel
-        if ((rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.RED)||
-                (rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.UNKNOWN) ||
+        //Handles if one sensor is unknown and other thinks red
+        if ((rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.UNKNOWN) ||
                 (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.RED)) {
             if (IsBlueAlliance) {
                 arm_right();
@@ -1023,8 +1017,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                 arm_left();
             }
         }
-        else if ((rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.BLUE) ||
-                (rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.UNKNOWN) ||
+        //Handles if one sensor is unknown and the other thinks blue
+        else if ((rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.UNKNOWN) ||
                 (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.BLUE)) {
             if (IsBlueAlliance){
                 arm_left();
@@ -1032,6 +1026,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             else {
                 arm_right();
             }
+        }
+        //Checks if they both "know" but disagree
+        else if ((rightJewelColorCamera == rightJewelColorCS ||
+                (rightJewelColorCamera != TeamColor.UNKNOWN && rightJewelColorCS != TeamColor.UNKNOWN && rightJewelColorCamera != rightJewelColorCS))) {
+
         }
         sleep(1000);
         arm_up();
@@ -1554,6 +1553,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                 return null;
 
             }
+            //White Balance applied here
+            int whitestPixel = getWhitestPixel(bitmapTemp);
+            applyWhiteBalance(bitmapTemp, whitestPixel);
+
             Bitmap bitmap = cropBitmap(bitmapTemp, xOffsetF, yOffsetF, widthF, heightF);
             return bitmap;
         }
