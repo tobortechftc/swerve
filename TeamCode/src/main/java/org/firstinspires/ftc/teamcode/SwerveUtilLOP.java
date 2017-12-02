@@ -1110,44 +1110,61 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN_HIT);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
     }
-    void go_to_distance_from(double power, int targetColumn, boolean isSideBox) { // Go until a certain distance from a target depending on the cryptobox and the column
-        int mode = 1;
+    void go_to_distance_from(double power, int targetColumn, boolean isBlue, boolean isSideBox) { // Go until a certain distance from a target depending on the cryptobox and the column
         double driveDistance;
-        boolean isOverDistance;
-        boolean isUnderDistance;
-        if (targetColumn < 0) targetColumn = 1;
 
+        if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
             driveDistance = 22 + (19.5 * targetColumn); // 19.5cm between columns
-
-
             robot.runtime.reset();
             double cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
-            driveTT(-1* power, -1* power); // Drives to the right
+            driveTT(-1 * power, -1 * power); // Drives to the right
             while (cur_dist <= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
                 cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
             }
-            /*driveTT(power /2, power /2); // Drives to the left, slower
-            while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
-                cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
-            }*/
-        } else { // Front box
-            driveDistance = 52 + (19.5 * targetColumn); // 19.5cm between columns
-
-            robot.runtime.reset();
-            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-            sleep(500);
-            double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-            driveTT(-1* power, -1* power); // Drives to the right
-            while (cur_dist <= driveDistance && robot.runtime.seconds() < 6) { // Waits until it has reached distance
-                cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+//            driveTT(power /2, power /2); // Drives to the left, slower
+//            while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
+//               cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+//           }
+            if (isBlue) {
+                // Turn left 90 degrees
             }
-            driveTT(power /2, power /2); // Drives to the left, slower
-            while (cur_dist >= driveDistance && robot.runtime.seconds() < 6) { // Waits until it has reached distance
-                cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+            else {
+                // Turn right 90 degrees
+            }
+        } else { // Front box
+            if (isBlue) {
+                driveDistance = 52 + (19.5 * targetColumn); // 19.5cm between columns
+                robot.runtime.reset();
+                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                sleep(500);
+                double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+                driveTT(-1 * power, -1 * power); // Drives to the right
+                while ((cur_dist <= driveDistance - 20) && (robot.runtime.seconds() < 6)) { // Waits until within 10 cm
+                    cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+                }
+                driveTT(0,0);
+                sleep(500);
+                driveTT(-1 * power / 2, -1 * power / 2); // Slows to half speed
+                while (cur_dist <= driveDistance - 5 && robot.runtime.seconds() < 6) { // Waits until within 4 cm
+                    cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+                }
+                driveTT(0,0);
+                sleep(500);
+                driveTT(-1 * power / 3, -1 * power / 3); // Slows to third speed
+                while (cur_dist <= driveDistance && robot.runtime.seconds() < 7) { // Waits until it has reached distance
+                    cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+                }
+//                driveTT(power / 2, power / 2); // Drives to the left, slower
+//                while (cur_dist >= driveDistance && robot.runtime.seconds() < 7) { // Waits until it has reached distance
+//                    cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+//                }
+            }
+            else {
+                // Front red box
             }
         }
-        driveTT(0,0); // Stops
+        driveTT(0, 0); // Stops
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
     }
 
