@@ -52,24 +52,32 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
                 telemetry.addData("Column", robot.targetColumn);
                 telemetry.update();
                 StraightIn(0.2, 22); // Drive off the balance stone
+                sleep(500);
                 //turnToColumn(robot.targetColumn, 0.2, true, true);
                 go_to_distance_from(0.3, robot.targetColumn, true, true); // Drive to cryptobox.
-                TurnLeftD(0.4, 90);
+                TurnLeftD(0.3, 80);
                 StraightIn(0.5, 5);
-            }
-            catch (Exception e){
+                glyph_grabber_auto_open();
+                StraightIn(-0.4, 7);
+                glyph_grabber_half_close();
+                glyph_slider_back_init();
+                sleep(500);
+                StraightIn(0.4, 10);
+                sleep(100);
+                StraightIn(-0.4, 3);
+                glyph_grabber_auto_open();
+                stop_chassis();
+            } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
-
                 telemetry.log().add(sw.toString());
                 stop_chassis();
-                while(true) {
+                while (true) {
                     sleep(1000);
                 }
             }
-                stop_chassis();
-                //Deliver particle from the side
+            stop_chassis();
         }
     }
 }

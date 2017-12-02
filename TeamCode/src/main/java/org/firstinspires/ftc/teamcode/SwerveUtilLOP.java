@@ -1120,7 +1120,13 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
+<<<<<<< Updated upstream
             driveDistance = 22 + (19.5 * targetColumn); // 19.5cm between columns
+=======
+            driveDistance = 14 + (19 * targetColumn); // 19cm between columns
+
+
+>>>>>>> Stashed changes
             robot.runtime.reset();
             double cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
             driveTT(-1 * power, -1 * power); // Drives to the right
