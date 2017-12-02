@@ -46,7 +46,6 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
 
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
-
             try {
                 doPlatformMission(true);
                 //sleep(2000);
@@ -54,7 +53,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
                 telemetry.update();
                 StraightIn(0.2, 22); // Drive off the balance stone
                 //turnToColumn(robot.targetColumn, 0.2, true, true);
-                go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
+                go_to_distance_from(0.3, robot.targetColumn, true, true); // Drive to cryptobox.
                 TurnLeftD(0.4, 90);
                 StraightIn(0.5, 5);
             }
