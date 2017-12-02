@@ -97,10 +97,25 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void glyph_grabber_auto_close() { // close the down/up grabber depend on upside down
         if (robot.is_gg_upside_down) { // close up grabber
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
+            sleep(500);
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
+            sleep(700);
+            driveTT(-0.2, -0.2);
+            sleep(200);
+            driveTT(0,0);
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
             robot.gg_top_close = true;
         } else {
             robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
+            sleep(500);
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED);
+            sleep(700);
+            driveTT(-0.2, -0.2);
+            sleep(200);
+            driveTT(0,0);
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
             robot.gg_bottom_close = true;
+
         }
     }
     public void glyph_grabber_all_close() { // close the down/up grabber depend on upside down
@@ -135,14 +150,18 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void glyph_grabber_auto_rotate(double power) {
         // if grabber is close and at ladder 0, need to slide up a little bit before rotation
         boolean need_slide_up = false;
+        stop_chassis();
         if (robot.gg_layer==0) {
             if ((robot.is_gg_upside_down && robot.gg_top_close) ||
                     (!robot.is_gg_upside_down && robot.gg_bottom_close)   ) {
                 need_slide_up = true;
             }
         }
+        if (robot.mt_glyph_rotator.getCurrentPosition()>500) {
+            need_slide_up = false;
+        }
         if (need_slide_up) {
-            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 2);
+            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 3);
             sleep(300);
         }
         // rotate 180 degrees back and forth
@@ -1468,6 +1487,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.outsideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) + robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
                     (robot.r_Value));
             if (robot.enoughToSnake) {
+                robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 if (robot.isSnakingLeft) {
                     robot.motorPowerLeft = robot.insideWheelsMod;
                     robot.motorPowerRight = robot.outsideWheelsMod;
@@ -1476,14 +1497,24 @@ public class SwerveUtilLOP extends LinearOpMode {
                     robot.motorPowerRight = robot.insideWheelsMod;
                 }
             } else {
+                robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
                 robot.motorPowerLeft = left_stick;
                 robot.motorPowerRight = left_stick;
             }
 
+
             robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
             robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
-            robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
-            robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+            if(robot.enoughToSnake){
+                robot.motorBackLeft.setPower(0);
+                robot.motorBackRight.setPower(0);
+            }
+            else {
+                robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+            }
 
         } else if (robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
             robot.motorPowerTurn = x_stick;
