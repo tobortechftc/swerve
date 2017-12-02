@@ -28,7 +28,7 @@ import static java.lang.Thread.sleep;
 public class SwerveUtilLOP extends LinearOpMode {
 
     /* Declare OpMode members. */
-    SwerveDriveHardware robot           = new SwerveDriveHardware();
+      SwerveDriveHardware robot           = new SwerveDriveHardware();
 
     /**
      * Is used for checking or determining a color based on an alliance
@@ -1012,7 +1012,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         //assuming sensing the right jewel
         //Handles if one sensor is unknown and other thinks red
         if ((rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.UNKNOWN) ||
-                (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.RED)) {
+                (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.RED) ||
+                (rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.RED)) {
             if (IsBlueAlliance) {
                 arm_right();
             }
@@ -1022,7 +1023,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         //Handles if one sensor is unknown and the other thinks blue
         else if ((rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.UNKNOWN) ||
-                (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.BLUE)) {
+                (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.BLUE) ||
+                (rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.BLUE) ) {
             if (IsBlueAlliance){
                 arm_left();
             }

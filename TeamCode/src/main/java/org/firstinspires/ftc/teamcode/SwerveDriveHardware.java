@@ -95,7 +95,7 @@ public class SwerveDriveHardware {
 
 
     final static int RED_BALL_MIN = -300;
-    final static int RED_BALL_MAX = -36;
+    final static int RED_BALL_MAX = -12;
     final static int BLUE_BALL_MIN = 12;
     final static int BLUE_BALL_MAX = 300;
 
