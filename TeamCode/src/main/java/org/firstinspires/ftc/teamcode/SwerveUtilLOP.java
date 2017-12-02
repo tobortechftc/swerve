@@ -1587,13 +1587,23 @@ public class SwerveUtilLOP extends LinearOpMode {
             int[] pixels = new int[source.getHeight() * source.getWidth()];
 
             int whitestPixel = 0;
+            int whitestPixelColorAvg = 0;
 
-            source.getPixels(pixels, 0, 1, 0, 0, source.getWidth(), source.getHeight());
+            source.getPixels(pixels, 0, source.getWidth(), 0, 0, source.getWidth(), source.getHeight());
 
-            Arrays.sort(pixels);
+            for(int pixeli = 0; pixeli < pixels.length; pixeli++){
 
-            pixels[pixels.length] = whitestPixel;
+                int pixelRed = Color.red(pixels[pixeli]);
+                int pixelGreen = Color.green(pixels[pixeli]);
+                int pixelBlue = Color.blue(pixels[pixeli]);
 
+                int pixeliColorAvg = (pixelRed + pixelGreen + pixelBlue) / 3;
+
+                if(pixeliColorAvg > whitestPixelColorAvg){
+                    whitestPixel = pixeliColorAvg;
+                    whitestPixelColorAvg = pixeliColorAvg;
+                }
+            }
             return whitestPixel;
         }
 
@@ -1605,9 +1615,9 @@ public class SwerveUtilLOP extends LinearOpMode {
          */
         Bitmap applyWhiteBalance(Bitmap source, int whitestPixel) {
             if (Color.red(whitestPixel) != 0 && Color.green(whitestPixel) != 0 && Color.red(whitestPixel) != 0) {
-                double rComp = 255 / Color.red(whitestPixel);
-                double gComp = 255 / Color.green(whitestPixel);
-                double bComp = 255 / Color.blue(whitestPixel);
+                double rComp = 255.0 / Color.red(whitestPixel);
+                double gComp = 255.0 / Color.green(whitestPixel);
+                double bComp = 255.0 / Color.blue(whitestPixel);
 
                 int w = source.getWidth();
                 int h = source.getHeight();
