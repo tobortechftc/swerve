@@ -66,9 +66,9 @@ public class VuMarkId extends SwerveUtilLOP {
 
     //Constants:
     //(Assuming portrait) Top left is (0,0), Top right (0,1), Bottom left is (1,0), Bottom right is (1,1)
-    double IMAGE_WIDTH_CROP = 0.25;
-    double IMAGE_HEIGHT_CROP = 0.33;
-    double IMAGE_OFFSET_X = 0.75; // Cannot be 1, make sure take the respective crop into consideration
+    double IMAGE_WIDTH_CROP = 1;
+    double IMAGE_HEIGHT_CROP = 1;
+    double IMAGE_OFFSET_X = 0; // Cannot be 1, make sure take the respective crop into consideration
     double IMAGE_OFFSET_Y = 0; // Cannot be 1, make sure take the respective crop into consideration
 
 
@@ -120,6 +120,7 @@ public class VuMarkId extends SwerveUtilLOP {
                 }
             } else if (state == 1) {
                 bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+
                 if (bitmap == null) {
                     telemetry.addData("Couldn't get a bitmap", robot.camera.getLastError());
                     if (this.time - stepStart > 5) {
@@ -127,16 +128,16 @@ public class VuMarkId extends SwerveUtilLOP {
                         continue;
                     }
                 }
-
                 if (bitmap != null) {
+                    int whitestPixel = robot.camera.getWhitestPixel(bitmap);
+                    robot.camera.applyWhiteBalance(bitmap, whitestPixel);
                     state = 2;
                     stepStart = this.time;
                 }
             }
 
             else if (state == 2) {
-                int whitestPixel = robot.camera.getWhitestPixel(bitmap);
-                robot.camera.applyWhiteBalance(bitmap, whitestPixel);
+
 //                OutputStream output = new FileOutputStream("Phone/DCIM/Camera/Bitmap.bmp");
 //                bitmap.compress(Bitmap.CompressFormat.PNG, 90, output);
 

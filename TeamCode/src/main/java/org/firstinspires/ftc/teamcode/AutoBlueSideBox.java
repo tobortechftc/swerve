@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * Created by carlw on 11/4/2017.
  */
@@ -44,17 +47,30 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
 
-            doPlatformMission(true);
-            //sleep(2000);
-            telemetry.addData("Column", robot.targetColumn);
-            telemetry.update();
-            StraightIn(0.2, 22); // Drive off the balance stone
-            //turnToColumn(robot.targetColumn, 0.2, true, true);
-            go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
-            TurnLeftD(0.4, 90);
-            StraightIn(0.5, 5);
-            stop_chassis();
-            //Deliver particle from the side
+            try {
+                doPlatformMission(true);
+                //sleep(2000);
+                telemetry.addData("Column", robot.targetColumn);
+                telemetry.update();
+                StraightIn(0.2, 22); // Drive off the balance stone
+                //turnToColumn(robot.targetColumn, 0.2, true, true);
+                go_to_distance_from(0.3, robot.targetColumn, true); // Drive to cryptobox.
+                TurnLeftD(0.4, 90);
+                StraightIn(0.5, 5);
+            }
+            catch (Exception e){
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+
+                telemetry.log().add(sw.toString());
+                stop_chassis();
+                while(true) {
+                    sleep(1000);
+                }
+            }
+                stop_chassis();
+                //Deliver particle from the side
         }
     }
 }

@@ -948,6 +948,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     double calcDelta() throws InterruptedException {
+        if(!robot.use_color_sensor) {
+            return 0;
+        }
         robot.blue = robot.colorSensor.blue();
         robot.red = robot.colorSensor.red();
         return (robot.blue - robot.red);
@@ -967,7 +970,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         double IMAGE_WIDTH_CROP = 0.2;
         double IMAGE_HEIGHT_CROP = 0.2;
         double IMAGE_OFFSET_X = 0.5; // Cannot be 1, make sure take the respective crop into consideration
-        double IMAGE_OFFSET_Y = 0.15; // Cannot be 1, make sure take the respective crop into consideration
+        double IMAGE_OFFSET_Y = 0.2; // Cannot be 1, make sure take the respective crop into consideration
 
 
         robot.targetColumn = get_cryptobox_column();
@@ -1664,7 +1667,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         int[] pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
 
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() / 3, bitmap.getWidth(), 1);
         int redTotal = 0;
         int blueTotal = 0;
         int redValue = 0;
@@ -1682,30 +1685,49 @@ public class SwerveUtilLOP extends LinearOpMode {
 //                telemetry.addData("PixelBL", String.format("%x", pixelBL));
 //                telemetry.addData("PixelM", String.format("%x", pixelM));
 
-        for (int pixelI = 0; pixelI < pixels.length; pixelI++) {
-            int b = Color.blue(pixels[pixelI]);
-            int r = Color.red(pixels[pixelI]);
+        for (int pixelI = 0; pixelI < pixels.length; pixelI++){
+            TeamColor tc;
 
-            if (r > b) {
-                redTotal++;
-                redValue += r;
+            int pixelRed = Color.red(pixels[pixelI]);
+            int pixelGreen = Color.green(pixels[pixelI]);
+            int pixelBlue = Color.blue(pixels[pixelI]);
+
+            if(pixelRed > pixelGreen * 1.4 && pixelRed > pixelBlue * 1.4){
+                tc = TeamColor.RED;
+            }
+            else if (pixelBlue > pixelRed * 1.4 && pixelBlue > pixelGreen * 1.4){
+                tc = TeamColor.BLUE;
             }
             else {
-                blueTotal++;
-                blueValue += b;
+                tc = TeamColor.UNKNOWN;
             }
         }
-        if (redTotal > 1.3 * blueTotal) {
-            return TeamColor.RED;
+        return TeamColor.UNKNOWN;
 
-        }
-        else if (blueTotal > 1.3 * redTotal){
-            return TeamColor.BLUE;
-
-        }
-        else {
-            return TeamColor.UNKNOWN;
-        }
+//        for (int pixelI = 0; pixelI < pixels.length; pixelI++) {
+//            int b = Color.blue(pixels[pixelI]);
+//            int r = Color.red(pixels[pixelI]);
+//
+//            if (r > b) {
+//                redTotal++;
+//                redValue += r;
+//            }
+//            else {
+//                blueTotal++;
+//                blueValue += b;
+//            }
+//        }
+//        if (redTotal > 1.3 * blueTotal) {
+//            return TeamColor.RED;
+//
+//        }
+//        else if (blueTotal > 1.3 * redTotal){
+//            return TeamColor.BLUE;
+//
+//        }
+//        else {
+//            return TeamColor.UNKNOWN;
+//        }
 //        telemetry.addData("Red Total", redTotal);
 //        telemetry.addData("Blue Total", blueTotal);
 //        telemetry.addData("Red Value AVG", redTotal > 0 ? redValue/redTotal : 0);

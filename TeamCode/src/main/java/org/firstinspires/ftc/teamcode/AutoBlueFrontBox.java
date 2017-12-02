@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * Created by carlw on 11/4/2017.
  */
@@ -35,12 +38,25 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
 
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
-            doPlatformMission(true);
-            StraightIn(0.2, 24); // Drive off the balance stone
-            go_to_distance_from(0.3, get_cryptobox_column(), false); // Drive to cryptobox. Values are negative because driveTT goes backwards
-            StraightIn(.2, 9); // Drives into cryptobox
-            glyph_grabber_auto_open();
-            StraightIn(-.2, 9);
+            try {
+                doPlatformMission(true);
+                StraightIn(0.2, 24); // Drive off the balance stone
+                go_to_distance_from(0.3, get_cryptobox_column(), false); // Drive to cryptobox. Values are negative because driveTT goes backwards
+                StraightIn(.2, 9); // Drives into cryptobox
+                glyph_grabber_auto_open();
+                StraightIn(-.2, 9);
+            }
+            catch(Exception e) {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+
+                telemetry.log().add(sw.toString());
+                stop_chassis();
+                while(true) {
+                    sleep(1000);
+                }
+            }
         }
     }
 }
