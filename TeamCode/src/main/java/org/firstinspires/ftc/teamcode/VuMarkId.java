@@ -129,19 +129,28 @@ public class VuMarkId extends SwerveUtilLOP {
                     }
                 }
                 if (bitmap != null) {
+                    //Save
+
                     int whitestPixel = robot.camera.getWhitestPixel(bitmap);
                     robot.camera.applyWhiteBalance(bitmap, whitestPixel);
+                    //Save again
+
+
                     state = 2;
                     stepStart = this.time;
                 }
             }
 
             else if (state == 2) {
+                telemetry.addData("Color", determineJewelColor(bitmap));
+                state++;
 
 //                OutputStream output = new FileOutputStream("Phone/DCIM/Camera/Bitmap.bmp");
 //                bitmap.compress(Bitmap.CompressFormat.PNG, 90, output);
 
-                telemetry.addData("Color", determineJewelColor(bitmap));
+            }
+            else if (state == 3){
+                telemetry.addData("Done!", null);
             }
 
             if (state < 0) {

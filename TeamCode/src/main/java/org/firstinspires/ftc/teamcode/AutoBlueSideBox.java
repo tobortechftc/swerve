@@ -73,9 +73,9 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
                 e.printStackTrace(pw);
                 telemetry.log().add(sw.toString());
                 stop_chassis();
-                while (true) {
-                    sleep(1000);
-                }
+//                while (true) {
+//                    sleep(1000);
+//                }
             }
             stop_chassis();
         }

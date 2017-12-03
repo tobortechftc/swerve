@@ -1641,7 +1641,13 @@ public class SwerveUtilLOP extends LinearOpMode {
                     whitestPixelColorAvg = pixeliColorAvg;
                 }
             }
-            return whitestPixel;
+            if (Color.WHITE / whitestPixel > .8){
+                return whitestPixel;
+            }
+            else{
+                whitestPixel = 2;
+                return whitestPixel;
+            }
         }
 
         /**
@@ -1651,37 +1657,42 @@ public class SwerveUtilLOP extends LinearOpMode {
          * @return
          */
         Bitmap applyWhiteBalance(Bitmap source, int whitestPixel) {
-            if (Color.red(whitestPixel) != 0 && Color.green(whitestPixel) != 0 && Color.red(whitestPixel) != 0) {
-                double rComp = 255.0 / Color.red(whitestPixel);
-                double gComp = 255.0 / Color.green(whitestPixel);
-                double bComp = 255.0 / Color.blue(whitestPixel);
+            if (whitestPixel == 2){
+                return source;
+            }
+            else {
+                if (Color.red(whitestPixel) != 0 && Color.green(whitestPixel) != 0 && Color.red(whitestPixel) != 0) {
+                    double rComp = 255.0 / Color.red(whitestPixel);
+                    double gComp = 255.0 / Color.green(whitestPixel);
+                    double bComp = 255.0 / Color.blue(whitestPixel);
 
-                int w = source.getWidth();
-                int h = source.getHeight();
+                    int w = source.getWidth();
+                    int h = source.getHeight();
 
-                for (int i = 0; i < w; i++) {
-                    for (int j = 0; j < h; j++) {
-                        int pixColor = source.getPixel(i, j);
+                    for (int i = 0; i < w; i++) {
+                        for (int j = 0; j < h; j++) {
+                            int pixColor = source.getPixel(i, j);
 
-                        int inR = Color.red(pixColor);
-                        int inG = Color.green(pixColor);
-                        int inB = Color.blue(pixColor);
+                            int inR = Color.red(pixColor);
+                            int inG = Color.green(pixColor);
+                            int inB = Color.blue(pixColor);
 
-                        double rDoub = inR * rComp;
-                        double gDoub = inG * gComp;
-                        double bDoub = inB * bComp;
+                            double rDoub = inR * rComp;
+                            double gDoub = inG * gComp;
+                            double bDoub = inB * bComp;
 
-                        source.setPixel(i, j, Color.argb(255, (int) rDoub, (int) gDoub, (int) bDoub));
+                            source.setPixel(i, j, Color.argb(255, (int) rDoub, (int) gDoub, (int) bDoub));
 
-                        if(source.getConfig() != Bitmap.Config.RGB_565) {
-                         source.setConfig(Bitmap.Config.RGB_565);
+                            if (source.getConfig() != Bitmap.Config.RGB_565) {
+                                source.setConfig(Bitmap.Config.RGB_565);
+                            }
                         }
                     }
                 }
+                return source;
             }
-            return source;
         }
-
+    }
 
 //      Needs refinement of Array logic to get true gray int (-7829368)
 //        int getGrayestPixel(Bitmap source){
@@ -1703,7 +1714,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 //            Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
 //            this.vuforia.setFrameQueueCapacity(0);
 //        }
-    }
+
 
     /**
      * Determines if jewel color is blue, red, or other/unsure.
@@ -1716,13 +1727,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         int height = bitmap.getHeight();
         int width = bitmap.getWidth();
 
-        int[] pixels = new int[bitmap.getHeight() * bitmap.getWidth()];
+        int[] pixels = new int[bitmap.getWidth()];
 
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() / 3, bitmap.getWidth(), 1);
-        int redTotal = 0;
-        int blueTotal = 0;
-        int redValue = 0;
-        int blueValue = 0;
+//        int redTotal = 0;
+//        int blueTotal = 0;
+//        int redValue = 0;
+//        int blueValue = 0;
 
 //        int pixelTR = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
 //                int pixelBR = bitmap.getPixel(bitmap.getWidth() * 3 / 4,bitmap.getHeight() / 4);
@@ -1736,24 +1747,51 @@ public class SwerveUtilLOP extends LinearOpMode {
 //                telemetry.addData("PixelBL", String.format("%x", pixelBL));
 //                telemetry.addData("PixelM", String.format("%x", pixelM));
 
-        for (int pixelI = 0; pixelI < pixels.length; pixelI++){
-            TeamColor tc;
+        int redCount = 0;
+        int blueCount = 0;
+        int unknownCount = 0;
 
+        int redStart = -1;
+        int blueStart = -1;
+
+        for (int pixelI = 0; pixelI < pixels.length; pixelI++){
             int pixelRed = Color.red(pixels[pixelI]);
             int pixelGreen = Color.green(pixels[pixelI]);
             int pixelBlue = Color.blue(pixels[pixelI]);
 
+            double greenToBlueRatio = (double)pixelGreen / (double)pixelBlue;
+
             if(pixelRed > pixelGreen * 1.4 && pixelRed > pixelBlue * 1.4){
-                tc = TeamColor.RED;
+                redCount++;
+                if (redStart == -1){
+                    redStart = pixelI;
+                }
             }
-            else if (pixelBlue > pixelRed * 1.4 && pixelBlue > pixelGreen * 1.4){
-                tc = TeamColor.BLUE;
+            else if (pixelBlue > pixelRed * 1.4 && greenToBlueRatio > .65 && greenToBlueRatio < 1){
+                blueCount++;
+                if (blueStart == -1){
+                    blueStart = pixelI;
+                }
             }
             else {
-                tc = TeamColor.UNKNOWN;
+                unknownCount++;
             }
         }
-        return TeamColor.UNKNOWN;
+
+        telemetry.addData("Red Count", redCount).setRetained(true);
+        telemetry.addData("Blue Count", blueCount).setRetained(true);
+        telemetry.addData("Unknown Count", unknownCount).setRetained(true);
+        telemetry.addData("Red Start", redStart).setRetained(true);
+        telemetry.addData("Blue Start", blueStart).setRetained(true);
+
+        if(redStart < blueStart && redStart != -1 && blueStart != -1){
+            return TeamColor.RED;
+        }
+        else if (blueStart < redStart && blueStart != -1 && redStart != -1){
+            return TeamColor.BLUE;
+        } else {
+            return TeamColor.UNKNOWN;
+        }
 
 //        for (int pixelI = 0; pixelI < pixels.length; pixelI++) {
 //            int b = Color.blue(pixels[pixelI]);
