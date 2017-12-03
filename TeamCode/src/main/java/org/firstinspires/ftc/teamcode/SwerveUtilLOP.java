@@ -854,6 +854,25 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
+    void StraightCm(double power, double cm) throws InterruptedException {
+        if (robot.use_imu) {
+            robot.target_heading = imu_heading();
+        }
+        if (robot.use_encoder) {
+            double numberR = cm / (robot.INCHES_PER_ROTATION * 2.54);
+            StraightR(-power, numberR);
+        } else { // using timer
+            double cm_per_ms = 0.014 * power / 0.8;
+            if (cm_per_ms < 0) cm_per_ms *= -1.0;
+            long msec = (long) (cm / cm_per_ms);
+            if (msec < 100) msec = 100;
+            if (msec > 6000) msec = 6000; // limit to 6 sec
+            driveTT(power, power);
+            sleep(msec);
+            driveTT(0, 0);
+        }
+    }
+
     void TurnRightD(double power, double degree) throws InterruptedException {
 
         double adjust_degree_imu = robot.IMU_ROTATION_RATIO_R * degree;
