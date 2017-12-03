@@ -1641,7 +1641,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                     whitestPixelColorAvg = pixeliColorAvg;
                 }
             }
-            if (Color.WHITE / whitestPixel > .8){
+            if (whitestPixel / Color.WHITE > .8){
                 return whitestPixel;
             }
             else{
