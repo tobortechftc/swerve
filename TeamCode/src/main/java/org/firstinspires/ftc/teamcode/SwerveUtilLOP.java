@@ -166,6 +166,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(100);
         driveTT(0,0);
     }
+    public void glyph_grabber_auto_init() {
+        if (robot.is_gg_upside_down) {
+            glyph_grabber_auto_rotate(0.5);
+        }
+        glyph_slider_back_init();
+    }
 
     public void glyph_grabber_auto_rotate(double power) {
         // if grabber is close and at ladder 0, need to slide up a little bit before rotation
@@ -284,7 +290,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     void glyph_slider_init() {
         robot.target_gg_slider_pos = (int)(robot.GG_SLIDE_INIT);
         slide_to_target(.5);
+        robot.gg_layer = 0;
     }
+
     void glyph_slider_position(int pos) {
         robot.target_gg_slider_pos = pos;
         slide_to_target(.5);
