@@ -1172,18 +1172,20 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
-            driveDistance = 14 + (19 * targetColumn); // 19cm between columns
+            driveDistance = 19 + (19 * targetColumn); // 19cm between columns
 
             robot.runtime.reset();
             double cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
             driveTT(-1 * power, -1 * power); // Drives to the right
-            while (cur_dist <= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
+            while (cur_dist <= driveDistance - 7 && robot.runtime.seconds() < 4) { // Waits until it has reached distance
                 cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
             }
-//            driveTT(power /2, power /2); // Drives to the left, slower
-//            while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
-//               cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
-//           }
+            if(cur_dist <= driveDistance && robot.runtime.seconds() < 4) {
+                driveTT(power / 2, power / 2); // Drives to the left, slower
+                while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
+                    cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                }
+            }
             if (isBlue) {
                 // Turn left 90 degrees
             }
