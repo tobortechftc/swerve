@@ -859,7 +859,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.target_heading = imu_heading();
         }
         if (robot.use_encoder) {
-            double numberR = cm / (robot.INCHES_PER_ROTATION * 2.54);
+            double WHEEL_DIAMETER = 102.18; // In millimeters
+            double WHEEL_RADIUS = WHEEL_DIAMETER / 2; // Still in millimeters
+            double CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI; // Also is mm per rotation
+
+            double numberR = cm / (CIRCUMFERENCE / 10);
             StraightR(-power, numberR);
         } else { // using timer
             double cm_per_ms = 0.014 * power / 0.8;
