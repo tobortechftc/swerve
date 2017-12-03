@@ -146,6 +146,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
+    public void glyph_grabber_half_close_both() {
+        robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
+        robot.gg_top_close = true;
+        robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED);
+        robot.gg_bottom_close = true;
+    }
+
     public void glyph_grabber_auto_open() { // open both grabbers
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
         robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
@@ -155,6 +162,22 @@ public class SwerveUtilLOP extends LinearOpMode {
         // sleep(500);
         //if (robot.is_gg_upside_down)
         //    glyph_grabber_auto_rotate(0.3);
+    }
+
+    public void glyph_grabber_open_top() { // open top grabber
+        if (robot.is_gg_upside_down) {
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
+        } else {
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
+        }
+    }
+
+    public void glyph_grabber_open_bottom() { // open top grabber
+        if (robot.is_gg_upside_down) {
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
+        } else {
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
+        }
     }
 
     public void glyph_grabber_open_and_push() { // open both grabbers
@@ -177,13 +200,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         // if grabber is close and at ladder 0, need to slide up a little bit before rotation
         boolean need_slide_up = false;
         stop_chassis();
-        if (robot.gg_layer==0) {
-            if ((robot.is_gg_upside_down && robot.gg_top_close) ||
-                    (!robot.is_gg_upside_down && robot.gg_bottom_close)   ) {
-                need_slide_up = true;
-            }
-        }
         int orig_slide_pos = robot.mt_glyph_rotator.getCurrentPosition();
+        if (robot.gg_layer==0 && orig_slide_pos<800) {
+            need_slide_up = true;
+        }
         if (orig_slide_pos>1200) { // more than 4.5 inches above the ground
             need_slide_up = false;
         }
@@ -207,7 +227,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.is_gg_upside_down && robot.gg_bottom_close)
             need_slide_back = false;
         if (need_slide_back) {
-            glyph_slider_position(orig_slide_pos);
+            glyph_slider_position(orig_slide_pos+200);
             sleep(500);
         }
     }
