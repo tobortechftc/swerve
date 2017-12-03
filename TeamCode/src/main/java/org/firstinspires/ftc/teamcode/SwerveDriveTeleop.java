@@ -238,10 +238,13 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
             if (robot.use_glyph_grabber) {
                 if (gamepad2.back && gamepad2.x) { //set glyph grabber to original open position
                     glyph_slider_init();
-                robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
-                robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
-            }
-                if (gamepad2.left_bumper && gamepad2.b) {
+                    robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
+                    robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
+                }
+                if (gamepad2.right_bumper && gamepad2.left_bumper) {
+                    glyph_grabber_auto_init();
+                }
+                else if (gamepad2.left_bumper && gamepad2.b) {
                     glyph_grabber_open_and_push();
                 } else if (gamepad2.left_bumper) {
                     glyph_grabber_auto_open();
