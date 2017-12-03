@@ -94,12 +94,21 @@ public class SwerveUtilLOP extends LinearOpMode {
         return robot.angles.firstAngle;
     }
 
+    public void glyph_grabber_close() {
+        if (robot.is_gg_upside_down) { // close up grabber
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
+        } else {
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
+        }
+    }
+
     public void glyph_grabber_auto_close() { // close the down/up grabber depend on upside down
         if (robot.is_gg_upside_down) { // close up grabber
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
-            sleep(500);
+            sleep(300);
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
-            sleep(700);
+            sleep(300);
+            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
             driveTT(-0.2, -0.2);
             sleep(200);
             driveTT(0,0);
@@ -107,9 +116,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.gg_top_close = true;
         } else {
             robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
-            sleep(500);
+            sleep(300);
             robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED);
-            sleep(700);
+            sleep(300);
+            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
             driveTT(-0.2, -0.2);
             sleep(200);
             driveTT(0,0);
@@ -147,6 +157,16 @@ public class SwerveUtilLOP extends LinearOpMode {
         //    glyph_grabber_auto_rotate(0.3);
     }
 
+    public void glyph_grabber_open_and_push() { // open both grabbers
+        glyph_grabber_auto_open();
+        sleep(500);
+        driveTT(-0.2,-0.2);
+        sleep(500);
+        driveTT(0.6,0.6);
+        sleep(100);
+        driveTT(0,0);
+    }
+
     public void glyph_grabber_auto_rotate(double power) {
         // if grabber is close and at ladder 0, need to slide up a little bit before rotation
         boolean need_slide_up = false;
@@ -157,11 +177,12 @@ public class SwerveUtilLOP extends LinearOpMode {
                 need_slide_up = true;
             }
         }
-        if (robot.mt_glyph_rotator.getCurrentPosition()>500) {
+        int orig_slide_pos = robot.mt_glyph_rotator.getCurrentPosition();
+        if (orig_slide_pos>1200) { // more than 4.5 inches above the ground
             need_slide_up = false;
         }
         if (need_slide_up) {
-            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 3);
+            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 5);
             sleep(300);
         }
         // rotate 180 degrees back and forth
@@ -174,13 +195,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         rotate_to_target(power);
         robot.is_gg_upside_down = !robot.is_gg_upside_down;
-        boolean need_slide_down = need_slide_up;
+        boolean need_slide_back = need_slide_up;
         if (robot.is_gg_upside_down && robot.gg_top_close)
-            need_slide_down = false;
+            need_slide_back = false;
         if (!robot.is_gg_upside_down && robot.gg_bottom_close)
-            need_slide_down = false;
-        if (need_slide_down) {
-            glyph_slider_init();
+            need_slide_back = false;
+        if (need_slide_back) {
+            glyph_slider_position(orig_slide_pos);
             sleep(500);
         }
     }
@@ -262,6 +283,10 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void glyph_slider_init() {
         robot.target_gg_slider_pos = (int)(robot.GG_SLIDE_INIT);
+        slide_to_target(.5);
+    }
+    void glyph_slider_position(int pos) {
+        robot.target_gg_slider_pos = pos;
         slide_to_target(.5);
     }
 
@@ -1011,12 +1036,12 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
 
-        arm_down();
         if (robot.use_glyph_grabber) {
-            glyph_grabber_auto_close();
+            glyph_grabber_close();
             sleep(100);
             glyph_slider_up_inches(.5, 4);
         }
+        arm_down();
         sleep(1000);
 
         TeamColor rightJewelColorCS = checkBallColor();
