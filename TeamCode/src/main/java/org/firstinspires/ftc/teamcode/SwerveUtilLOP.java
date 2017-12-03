@@ -1179,12 +1179,20 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
     void arm_left() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN_HIT);
-        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_1);
+        sleep(500);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_2);
+        sleep(500);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_3);
     }
 
     void arm_right() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN_HIT);
-        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_1);
+        sleep(500);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_2);
+        sleep(500);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3);
     }
     void go_to_distance_from(double power, int targetColumn, boolean isBlue, boolean isSideBox) { // Go until a certain distance from a target depending on the cryptobox and the column
         double driveDistance;
