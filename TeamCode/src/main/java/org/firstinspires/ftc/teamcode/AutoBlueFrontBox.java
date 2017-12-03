@@ -45,6 +45,10 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
                 StraightIn(.2, 9); // Drives into cryptobox
                 glyph_grabber_auto_open();
                 StraightIn(-.2, 9);
+                sleep(500);
+                StraightIn(.2, 9); // Drives into cryptobox
+                sleep(500);
+                StraightIn(-.2, 9);
             }
             catch(Exception e) {
                 StringWriter sw = new StringWriter();
