@@ -121,6 +121,8 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.5;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.35;
     final static double SV_RELIC_GRABBER_INIT = 0.76;
+    final static double SV_RELIC_GRABBER_CLOSE = 0.46;
+    final static double SV_RELIC_GRABBER_OPEN = 0.76;
     final static double SV_RELIC_ARM_INIT = 0.5;
     final static double SV_RELIC_ARM_UP = 0.5;
     final static double SV_RELIC_ARM_DOWN = 0.5;
@@ -310,7 +312,7 @@ public class SwerveDriveHardware {
             sv_relic_arm.setPosition(SV_RELIC_ARM_INIT);
             sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
             sv_relic_grabber.setPosition(SV_RELIC_GRABBER_INIT);
-            // mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
+            mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
         }
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");

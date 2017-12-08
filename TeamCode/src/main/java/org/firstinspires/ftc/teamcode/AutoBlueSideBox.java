@@ -54,7 +54,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
                 StraightIn(0.2, 22); // Drive off the balance stone
                 sleep(500);
                 //turnToColumn(robot.targetColumn, 0.2, true, true);
-                go_to_distance_from(0.3, robot.targetColumn, true, true); // Drive to cryptobox.
+                go_to_distance_from(0.3, robot.targetColumn, true, true, true); // Drive to cryptobox.
                 TurnLeftD(0.3, 80);
                 StraightIn(0.5, 5);
                 glyph_grabber_auto_open();
