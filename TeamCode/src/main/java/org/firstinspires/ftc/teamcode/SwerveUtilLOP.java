@@ -1146,7 +1146,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         TeamColor rightJewelColorCS = checkBallColor(isBlueAlliance);
 
-        //Comparing of sensor data begins here. Don't this this is needed?
+        // Comparing of sensor data
         boolean isRedBall = (rightJewelColorCS == TeamColor.RED);
         boolean isBlueBall = (rightJewelColorCS == TeamColor.BLUE);
 
@@ -1154,7 +1154,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.update();
 
 
-        //Determines if right jewel is red
+        // Determines if right jewel is red
         int directionI = calcArmDirection(rightJewelColorCS, rightJewelColorCamera, isBlueAlliance);
         if (isBlueAlliance) {
             if (directionI == 1) { // Right jewel is our color
@@ -1287,6 +1287,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         // Go until a certain distance from a target depending on the cryptobox and the column
         // use_encoder is true will use Motor encoder for the driving distance
         //                false will use range sensor for the driving distance
+        // IMPORTANT NOTE: This program does not work on front red box without encoders.
 
         double driveDistance;
 
@@ -1317,7 +1318,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         } else { // Front box
             if (isBlue) {
                 if (use_encoder) {
-                    driveDistance = 8 + (19 * targetColumn); // 19cm between columns
+                    driveDistance = 6 + (19 * targetColumn); // 19cm between columns
                 } else {
                     driveDistance = 52 + (19 * targetColumn); // 19cm between columns
                 }
@@ -1350,6 +1351,20 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
             else { // Front red box
+                power *= -1; // Reverses power input, all other code is pretty much the same
+                if (use_encoder) {
+                    driveDistance = 25 + (19 * (2 - targetColumn)); // 19cm between columns
+                } else {
+                    driveDistance = 52 + (19 * (2 - targetColumn)); // 19cm between columns
+                }
+                robot.runtime.reset();
+                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                sleep(500);
+                if (use_encoder) {
+                    StraightCm(power, driveDistance);
+                } else {
+                    // Do nothing, there is no range sensor for this side.
+                }
             }
         }
         driveTT(0, 0); // Stops
