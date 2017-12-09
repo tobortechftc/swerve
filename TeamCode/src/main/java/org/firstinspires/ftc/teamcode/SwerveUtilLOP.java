@@ -1260,7 +1260,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         } else { // Front box
             if (isBlue) {
-                driveDistance = 52 + (19 * targetColumn); // 19cm between columns
+                if (use_encoder) {
+                    driveDistance = 8 + (19 * targetColumn); // 19cm between columns
+                } else {
+                    driveDistance = 52 + (19 * targetColumn); // 19cm between columns
+                }
                 robot.runtime.reset();
                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                 sleep(500);

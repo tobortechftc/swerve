@@ -99,8 +99,8 @@ public class SwerveDriveHardware {
     final static int BLUE_BALL_MIN = 12;
     final static int BLUE_BALL_MAX = 300;
 
-    final static double SV_SHOULDER_INIT = 0.4978;
-    final static double SV_SHOULDER_DOWN = 0.4889;
+    final static double SV_SHOULDER_INIT = 0.47;
+    final static double SV_SHOULDER_DOWN = 0.47 ;
     final static double SV_SHOULDER_LEFT_3 = 0.6294;
     final static double SV_SHOULDER_LEFT_2 = 0.585;
     final static double SV_SHOULDER_LEFT_1 = 0.535;
