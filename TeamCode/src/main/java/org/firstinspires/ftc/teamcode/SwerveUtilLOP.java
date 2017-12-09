@@ -1861,7 +1861,17 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         int[] pixels = new int[bitmap.getWidth()];
 
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() / 6, bitmap.getWidth(), 1);
+        if (robot.allianceColor == TeamColor.BLUE){
+            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() / 6, bitmap.getWidth(), 1);
+        }
+        else if (robot.allianceColor == TeamColor.RED){
+            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() / 6, bitmap.getWidth(), 1);
+        }
+        else if (robot.allianceColor == TeamColor.UNKNOWN){
+            throw new IllegalStateException("Variable allianceColor is set to Unknown");
+        } else {
+            throw new IllegalStateException("There is something wrong with variable allianceColor");
+        }
 //        int redTotal = 0;
 //        int blueTotal = 0;
 //        int redValue = 0;

@@ -28,6 +28,8 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.use_glyph_grabber = true;
         robot.use_arm = true;
 
+        robot.allianceColor = TeamColor.BLUE;
+
 
         int loops = 1;
 

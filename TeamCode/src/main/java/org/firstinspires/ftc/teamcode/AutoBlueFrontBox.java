@@ -25,6 +25,8 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         robot.use_arm = true;
         robot.use_glyph_grabber = true;
 
+        robot.allianceColor = TeamColor.BLUE;
+
         init_and_test();
 
         // Send telemetry message to signify robot waiting;
