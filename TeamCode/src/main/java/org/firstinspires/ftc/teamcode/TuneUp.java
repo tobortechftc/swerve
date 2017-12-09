@@ -22,10 +22,10 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_color_sensor = false;
         robot.use_arm = true;
         robot.use_glyph_grabber = false;
-        robot.use_relic_grabber = false;
+        robot.use_relic_grabber = true;
         robot.use_test_servo = false;
         robot.use_test_motor = false;
-        robot.use_range_sensor = true;
+        robot.use_range_sensor = false;
 
         init_and_test();
 
@@ -110,10 +110,11 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
             }
             if (gamepad2.x) {
-                robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT);
+                robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_3);
             }
             if (gamepad2.b) {
-                robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
+                robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3
+                );
             }
             if (gamepad2.left_bumper) {
                 robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);

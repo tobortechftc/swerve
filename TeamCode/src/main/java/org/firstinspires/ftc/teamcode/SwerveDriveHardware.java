@@ -101,22 +101,28 @@ public class SwerveDriveHardware {
 
     final static double SV_SHOULDER_INIT = 0.4978;
     final static double SV_SHOULDER_DOWN = 0.4889;
-    final static double SV_SHOULDER_LEFT = 0.6294;
-    final static double SV_SHOULDER_RIGHT = 0.15;
+    final static double SV_SHOULDER_LEFT_3 = 0.6294;
+    final static double SV_SHOULDER_LEFT_2 = 0.585;
+    final static double SV_SHOULDER_LEFT_1 = 0.535;
+    final static double SV_SHOULDER_RIGHT_3 = 0.30;
+    final static double SV_SHOULDER_RIGHT_2 = 0.40;
+    final static double SV_SHOULDER_RIGHT_1 = 0.45;
 
-    final static double SV_ELBOW_UP = 0.95;
-    final static double SV_ELBOW_DOWN = 0.4234;
-    final static double SV_ELBOW_DOWN_HIT = 0.4;
+    final static double SV_ELBOW_UP = 0.9973;
+    final static double SV_ELBOW_DOWN = 0.42;
+    final static double SV_ELBOW_DOWN_HIT = 0.42;
 
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.25;
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.35;
-    final static double SV_GLYPH_GRABBER_TOP_HALF_CLOSED = 0.5;
+    final static double SV_GLYPH_GRABBER_TOP_HALF_CLOSED = 0.45;
     final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.55;
     final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.74;
     final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.65;
     final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.5;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.35;
     final static double SV_RELIC_GRABBER_INIT = 0.76;
+    final static double SV_RELIC_GRABBER_CLOSE = 0.46;
+    final static double SV_RELIC_GRABBER_OPEN = 0.76;
     final static double SV_RELIC_ARM_INIT = 0.5;
     final static double SV_RELIC_ARM_UP = 0.5;
     final static double SV_RELIC_ARM_DOWN = 0.5;
@@ -127,7 +133,7 @@ public class SwerveDriveHardware {
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
-    double drivePowerRatio = 0.8;
+    double drivePowerRatio = 0.5;
 
     double servoPosFL;
     double servoPosFR;
@@ -306,7 +312,7 @@ public class SwerveDriveHardware {
             sv_relic_arm.setPosition(SV_RELIC_ARM_INIT);
             sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
             sv_relic_grabber.setPosition(SV_RELIC_GRABBER_INIT);
-            // mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
+            mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
         }
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");

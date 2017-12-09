@@ -146,6 +146,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
+    public void glyph_grabber_half_close_both() {
+        robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
+        robot.gg_top_close = true;
+        robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED);
+        robot.gg_bottom_close = true;
+    }
+
     public void glyph_grabber_auto_open() { // open both grabbers
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
         robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
@@ -155,6 +162,22 @@ public class SwerveUtilLOP extends LinearOpMode {
         // sleep(500);
         //if (robot.is_gg_upside_down)
         //    glyph_grabber_auto_rotate(0.3);
+    }
+
+    public void glyph_grabber_open_top() { // open top grabber
+        if (robot.is_gg_upside_down) {
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
+        } else {
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
+        }
+    }
+
+    public void glyph_grabber_open_bottom() { // open top grabber
+        if (robot.is_gg_upside_down) {
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
+        } else {
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
+        }
     }
 
     public void glyph_grabber_open_and_push() { // open both grabbers
@@ -177,13 +200,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         // if grabber is close and at ladder 0, need to slide up a little bit before rotation
         boolean need_slide_up = false;
         stop_chassis();
-        if (robot.gg_layer==0) {
-            if ((robot.is_gg_upside_down && robot.gg_top_close) ||
-                    (!robot.is_gg_upside_down && robot.gg_bottom_close)   ) {
-                need_slide_up = true;
-            }
-        }
         int orig_slide_pos = robot.mt_glyph_rotator.getCurrentPosition();
+        if (robot.gg_layer==0 && orig_slide_pos<800) {
+            need_slide_up = true;
+        }
         if (orig_slide_pos>1200) { // more than 4.5 inches above the ground
             need_slide_up = false;
         }
@@ -207,13 +227,21 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.is_gg_upside_down && robot.gg_bottom_close)
             need_slide_back = false;
         if (need_slide_back) {
-            glyph_slider_position(orig_slide_pos);
+            glyph_slider_position(orig_slide_pos+200);
             sleep(500);
         }
     }
 
     public void rotate_refine() {
         rotate_to_target(0.2);
+    }
+
+    public void relic_grabber_close() {
+       robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE);
+    }
+
+    public void relic_grabber_open() {
+        robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
     }
 
     public void test_rotate(double power) {
@@ -854,6 +882,29 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
+    void StraightCm(double power, double cm) throws InterruptedException {
+        if (robot.use_imu) {
+            robot.target_heading = imu_heading();
+        }
+        if (robot.use_encoder) {
+            double WHEEL_DIAMETER = 102.18; // In millimeters
+            double WHEEL_RADIUS = WHEEL_DIAMETER / 2; // Still in millimeters
+            double CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI; // Also is mm per rotation
+
+            double numberR = cm / (CIRCUMFERENCE / 10);
+            StraightR(-power, numberR);
+        } else { // using timer
+            double cm_per_ms = 0.014 * power / 0.8;
+            if (cm_per_ms < 0) cm_per_ms *= -1.0;
+            long msec = (long) (cm / cm_per_ms);
+            if (msec < 100) msec = 100;
+            if (msec > 6000) msec = 6000; // limit to 6 sec
+            driveTT(power, power);
+            sleep(msec);
+            driveTT(0, 0);
+        }
+    }
+
     void TurnRightD(double power, double degree) throws InterruptedException {
 
         double adjust_degree_imu = robot.IMU_ROTATION_RATIO_R * degree;
@@ -1160,66 +1211,80 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
     void arm_left() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN_HIT);
-        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_1);
+        sleep(500);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_2);
+        sleep(500);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_3);
     }
 
     void arm_right() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN_HIT);
-        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_1);
+        sleep(500);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_2);
+        sleep(500);
+        robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3);
     }
-    void go_to_distance_from(double power, int targetColumn, boolean isBlue, boolean isSideBox) throws InterruptedException{ // Go until a certain distance from a target depending on the cryptobox and the column
+    void go_to_distance_from(double power, int targetColumn, boolean isBlue, boolean isSideBox, boolean use_encoder)
+            throws InterruptedException {
+        // Go until a certain distance from a target depending on the cryptobox and the column
+        // use_encoder is true will use Motor encoder for the driving distance
+        //                false will use range sensor for the driving distance
+
         double driveDistance;
 
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
-            driveDistance = 14 + (19 * targetColumn); // 19cm between columns
-
+            driveDistance = 19 + (19 * targetColumn); // 19cm between columns
             robot.runtime.reset();
-            double cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
-            driveTT(-1 * power, -1 * power); // Drives to the right
-            while (cur_dist <= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
-                cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+            if (use_encoder) {
+                StraightCm(power, driveDistance);
+            } else {
+                double cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                driveTT(-1 * power, -1 * power); // Drives to the right
+                while ((cur_dist <= driveDistance - 7) && robot.runtime.seconds() < 4) { // Waits until it has reached distance
+                    cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                }
+                if (cur_dist <= driveDistance && robot.runtime.seconds() < 4) {
+                    driveTT(power / 2, power / 2); // Drives to the left, slower
+                    while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
+                        cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                    }
+                }
             }
-//            driveTT(power /2, power /2); // Drives to the left, slower
-//            while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
-//               cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
-//           }
         } else { // Front box
             if (isBlue) {
-                driveDistance = 52 + (19 * targetColumn); // 19.5cm between columns
+                driveDistance = 52 + (19 * targetColumn); // 19cm between columns
                 robot.runtime.reset();
                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                 sleep(500);
-                double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                driveTT(-1 * power, -1 * power); // Drives to the right
-                while ((cur_dist <= driveDistance - 20) && (robot.runtime.seconds() < 6)) { // Waits until within 10 cm
-                    cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                }
-                cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                if (cur_dist < driveDistance) {
+                if (use_encoder) {
+                    StraightCm(power, driveDistance);
+                } else {
+                    double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+                    driveTT(-1 * power, -1 * power); // Drives to the right
+                    while ((cur_dist <= driveDistance - 20) && (robot.runtime.seconds() < 6)) { // Waits until within 10 cm
+                        cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+                    }
                     driveTT(0, 0);
                     sleep(500);
                     driveTT(-1 * power / 2, -1 * power / 2); // Slows to half speed
                     while (cur_dist <= driveDistance - 5 && robot.runtime.seconds() < 6) { // Waits until within 4 cm
                         cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     }
-                }
-                cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                if (cur_dist < driveDistance) {
                     driveTT(0, 0);
                     sleep(500);
-                    driveTT(-1 * power / 3, -1 * power / 3); // Slows to third speed
-                    while (cur_dist <= driveDistance && robot.runtime.seconds() < 7) { // Waits until it has reached distance
-                        cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                    }
+                    cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+                    if (cur_dist < driveDistance) {
+                       driveTT(-1 * power / 3, -1 * power / 3); // Slows to third speed
+                       while (cur_dist <= driveDistance && robot.runtime.seconds() < 7) { // Waits until it has reached distance
+                           cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+                       }
+		            }
                 }
-//                driveTT(power / 2, power / 2); // Drives to the left, slower
-//                while (cur_dist >= driveDistance && robot.runtime.seconds() < 7) { // Waits until it has reached distance
-//                    cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-//                }
             }
-            else {
-                // Front red box
+            else { // Front red box
             }
         }
         driveTT(0, 0); // Stops
@@ -1871,7 +1936,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (robot.use_range_sensor) {
             telemetry.addData("4.2 rangeBack = ", "%.2f cm",robot.rangeSensorBack.getDistance(DistanceUnit.CM));
-            //telemetry.addData("4.3 rangeLeft = ", "%.2f cm", robot.rangeSensorLeft.getDistance(DistanceUnit.CM));
+            telemetry.addData("4.3 rangeLeft = ", "%.2f cm", robot.rangeSensorLeft.getDistance(DistanceUnit.CM));
         }
         if (robot.use_Vuforia) {
             telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
@@ -1901,6 +1966,12 @@ public class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("8. gg-rot pwr/cur/tar = ","%3.2f/%d/%d(%s)",
                     robot.mt_test.getPower(),robot.mt_test.getCurrentPosition(),robot.target_rot_pos,
                     (robot.is_gg_upside_down ?"dw":"up"));
+        }
+        if (robot.use_relic_grabber) {
+            telemetry.addData("9.1 relic gr/arm = ","%3.2f/%3.2f",
+                    robot.sv_relic_grabber.getPosition(),robot.sv_relic_arm.getPosition());
+            telemetry.addData("9.2 re-sli pwr/enc = ","%3.2f/%d",
+                    robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition());
         }
         telemetry.update();
     }
