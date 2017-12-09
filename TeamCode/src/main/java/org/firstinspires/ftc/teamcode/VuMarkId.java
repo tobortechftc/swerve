@@ -71,7 +71,6 @@ public class VuMarkId extends SwerveUtilLOP {
     double IMAGE_OFFSET_X = 0; // Cannot be 1, make sure take the respective crop into consideration
     double IMAGE_OFFSET_Y = 0; // Cannot be 1, make sure take the respective crop into consideration
 
-
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
@@ -85,6 +84,8 @@ public class VuMarkId extends SwerveUtilLOP {
         robot.use_relic_grabber = false;
         robot.use_Vuforia = true;
         robot.use_camera = true;
+
+        robot.allianceColor = TeamColor.BLUE;
 
         robot.init(hardwareMap);
 
@@ -131,8 +132,8 @@ public class VuMarkId extends SwerveUtilLOP {
                 if (bitmap != null) {
                     //Save
 
-                    int whitestPixel = robot.camera.getWhitestPixel(bitmap);
-                    robot.camera.applyWhiteBalance(bitmap, whitestPixel);
+                    //int whitestPixel = robot.camera.getWhitestPixel(bitmap);
+                    //robot.camera.applyWhiteBalance(bitmap, whitestPixel);
                     //Save again
 
 

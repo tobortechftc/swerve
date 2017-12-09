@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
@@ -1065,6 +1066,36 @@ public class SwerveUtilLOP extends LinearOpMode {
         return (robot.blue - robot.red);
     }
 
+    enum RangeSensor{
+        BACK, LEFT
+    }
+
+    /**
+     * Function to prevent range sensor from returning an error
+     * If this returns 6666666, it failed to get the right range in under .1 seconds
+     * @param direction
+     * @return
+     */
+    double getRange(RangeSensor direction){
+        ElapsedTime elapsedTime = new ElapsedTime();
+        double distance = 6666666;
+
+        if(direction == RangeSensor.BACK){
+            while(distance > 365 && elapsedTime.seconds() < 0.1){
+                distance = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+            }
+        }
+        else if(direction == RangeSensor.LEFT){
+            while(distance > 365 && elapsedTime.seconds() < 0.1){
+                distance = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Direction not specified!");
+        }
+        return distance;
+    }
+
     /**
      * doPlatformMission is meant to execute everything that needs to be done on the starting platform, including
      * determining what the bonus column is for the cryptobox from the pictograph, determining the jewel colors and
@@ -1076,9 +1107,9 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         //These constants are for setting a selected portion of the image from Camera
         //(Assuming portrait) Top left is (0,0), Top right (0,1), Bottom left is (1,0), Bottom right is (1,1)
-        double IMAGE_WIDTH_CROP = 0.2;
-        double IMAGE_HEIGHT_CROP = 0.2;
-        double IMAGE_OFFSET_X = 0.5; // Cannot be 1, make sure take the respective crop into consideration
+        double IMAGE_WIDTH_CROP = 1;
+        double IMAGE_HEIGHT_CROP = 0.33;
+        double IMAGE_OFFSET_X = 0; // Cannot be 1, make sure take the respective crop into consideration
         double IMAGE_OFFSET_Y = 0.2; // Cannot be 1, make sure take the respective crop into consideration
 
 
@@ -1740,10 +1771,11 @@ public class SwerveUtilLOP extends LinearOpMode {
 
             }
             //White Balance applied here
-            int whitestPixel = getWhitestPixel(bitmapTemp);
-            applyWhiteBalance(bitmapTemp, whitestPixel);
+            //int whitestPixel = getWhitestPixel(bitmapTemp);
+            //applyWhiteBalance(bitmapTemp, whitestPixel);
 
-            Bitmap bitmap = cropBitmap(bitmapTemp, xOffsetF, yOffsetF, widthF, heightF);
+            //Bitmap bitmap = cropBitmap(bitmapTemp, xOffsetF, yOffsetF, widthF, heightF);
+            Bitmap bitmap = bitmapTemp;
             return bitmap;
         }
 
@@ -1862,10 +1894,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         int[] pixels = new int[bitmap.getWidth()];
 
         if (robot.allianceColor == TeamColor.BLUE){
-            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() / 6, bitmap.getWidth(), 1);
+            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() * 5 / 6, bitmap.getWidth(), 1);
         }
         else if (robot.allianceColor == TeamColor.RED){
-            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() / 6, bitmap.getWidth(), 1);
+            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() * 5 / 6, bitmap.getWidth(), 1);
         }
         else if (robot.allianceColor == TeamColor.UNKNOWN){
             throw new IllegalStateException("Variable allianceColor is set to Unknown");

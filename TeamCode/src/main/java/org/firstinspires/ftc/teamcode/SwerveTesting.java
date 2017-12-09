@@ -82,10 +82,10 @@ public class SwerveTesting extends SwerveUtilLOP{
                 }
 
                 if(gamepad1.a){
-                    double startRangeDis = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                    double startRangeDis = getRange(RangeSensor.BACK);
                     StraightCm(desiredPower, desiredDistanceCm);
                     sleep(1000);
-                    double endRangeDis = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                    double endRangeDis = getRange(RangeSensor.BACK);
 
                     telemetry.addData("Range Start", startRangeDis).setRetained(true);
                     telemetry.addData("Range End", endRangeDis).setRetained(true);
