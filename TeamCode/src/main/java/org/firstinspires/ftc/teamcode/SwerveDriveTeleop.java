@@ -19,7 +19,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
         robot.use_encoder = true;
         robot.use_minibot = false;
         robot.use_range_sensor = false;
-        robot.use_color_sensor = false;
+        robot.use_color_sensor = true;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = true;
         robot.use_arm = true;

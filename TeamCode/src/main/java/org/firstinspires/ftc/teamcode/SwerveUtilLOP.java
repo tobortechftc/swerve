@@ -1348,8 +1348,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     void calc_snake(float left_t, float right_t){
         float stick_x = 0;
         if (left_t > 0.1)
-            stick_x = -1 * left_t;
-        else stick_x = right_t;
+            stick_x = -1 * left_t / 2;
+        else stick_x = right_t / 2;
         if(stick_x > 0.1){
             robot.isSnakingLeft = false;
         }
