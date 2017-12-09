@@ -1236,7 +1236,12 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
-            driveDistance = 19 + (19 * targetColumn); // 19cm between columns
+            if(isBlue) {
+                driveDistance = 7 + (19 * targetColumn); // 19cm between columns
+            }
+            else{
+                driveDistance = 7 + (19 * (2 - targetColumn)); // 19cm between columns
+            }
             robot.runtime.reset();
             if (use_encoder) {
                 StraightCm(power, driveDistance);
