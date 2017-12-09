@@ -43,6 +43,7 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.servoBackRight,
                 robot.sv_shoulder,
                 robot.sv_elbow,
+                robot.sv_right_arm,
                 robot.sv_glyph_grabber_bottom,
                 robot.sv_glyph_grabber_top,
                 robot.sv_relic_grabber,

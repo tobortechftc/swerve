@@ -112,6 +112,9 @@ public class SwerveDriveHardware {
     final static double SV_ELBOW_DOWN = 0.42;
     final static double SV_ELBOW_DOWN_HIT = 0.42;
 
+    final static double SV_RIGHT_ARM_UP = 0.11;
+    final static double SV_RIGHT_ARM_DOWN = 0.73;
+
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.25;
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.35;
     final static double SV_GLYPH_GRABBER_TOP_HALF_CLOSED = 0.45;
@@ -186,6 +189,7 @@ public class SwerveDriveHardware {
 
     public Servo sv_shoulder;
     public Servo sv_elbow;
+    public Servo sv_right_arm;
 
     public Servo sv_glyph_grabber_top = null;
     public Servo sv_glyph_grabber_bottom = null;
@@ -195,6 +199,8 @@ public class SwerveDriveHardware {
     public Servo sv_test = null;
 
     public ColorSensor colorSensor = null;
+    public ColorSensor r_colorSensor = null;
+
     public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
     public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
     public SwerveUtilLOP.Camera camera = null;
@@ -293,6 +299,8 @@ public class SwerveDriveHardware {
         if (use_color_sensor) {
             colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
             colorSensor.enableLed(true);
+            r_colorSensor = hwMap.get(ColorSensor.class, "rcolor");
+            r_colorSensor.enableLed(true);
         }
         if (use_range_sensor) {
             rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorBack");
@@ -401,8 +409,10 @@ public class SwerveDriveHardware {
         if (use_arm) {
             sv_elbow = hwMap.servo.get("sv_elbow");
             sv_shoulder = hwMap.servo.get("sv_shoulder");
+            sv_right_arm = hwMap.servo.get("sv_right_arm");
             sv_elbow.setPosition(SV_ELBOW_UP);
             sv_shoulder.setPosition(SV_SHOULDER_INIT);
+            sv_right_arm.setPosition(SV_RIGHT_ARM_UP);
         }
 
     }

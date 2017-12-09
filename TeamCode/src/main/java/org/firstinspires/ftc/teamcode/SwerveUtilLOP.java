@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeoutException;
 
 import static java.lang.Thread.sleep;
 
@@ -1050,12 +1051,17 @@ public class SwerveUtilLOP extends LinearOpMode {
         return column;
     }
 
-    double calcDelta() throws InterruptedException {
+    double calcDelta(boolean isBlueAlliance) throws InterruptedException {
         if(!robot.use_color_sensor) {
             return 0;
         }
-        robot.blue = robot.colorSensor.blue();
-        robot.red = robot.colorSensor.red();
+        if (isBlueAlliance) {
+            robot.blue = robot.colorSensor.blue();
+            robot.red = robot.colorSensor.red();
+        } else {
+            robot.blue = robot.r_colorSensor.blue();
+            robot.red = robot.r_colorSensor.red();
+        }
         return (robot.blue - robot.red);
     }
 
@@ -1063,10 +1069,10 @@ public class SwerveUtilLOP extends LinearOpMode {
      * doPlatformMission is meant to execute everything that needs to be done on the starting platform, including
      * determining what the bonus column is for the cryptobox from the pictograph, determining the jewel colors and
      * knocking off the opposing alliance ball based on the colors from the color class.
-     * @param IsBlueAlliance
+     * @param isBlueAlliance
      * @throws InterruptedException
      */
-    public void doPlatformMission(boolean IsBlueAlliance) throws InterruptedException {
+    public void doPlatformMission(boolean isBlueAlliance) throws InterruptedException {
 
         //These constants are for setting a selected portion of the image from Camera
         //(Assuming portrait) Top left is (0,0), Top right (0,1), Bottom left is (1,0), Bottom right is (1,1)
@@ -1100,56 +1106,63 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(100);
             glyph_slider_up_inches(.5, 4);
         }
-        arm_down();
+        if (isBlueAlliance) {
+            arm_down();
+        } else {
+            r_arm_down();
+        }
         sleep(1000);
 
-        TeamColor rightJewelColorCS = checkBallColor();
+        TeamColor rightJewelColorCS = checkBallColor(isBlueAlliance);
 
-        //Comparing of sensor data begins here
-        robot.isRedBall = (rightJewelColorCS == TeamColor.RED);
-        robot.isBlueBall = (rightJewelColorCS == TeamColor.BLUE);
+        //Comparing of sensor data begins here. Don't this this is needed?
+        boolean isRedBall = (rightJewelColorCS == TeamColor.RED);
+        boolean isBlueBall = (rightJewelColorCS == TeamColor.BLUE);
 
-        telemetry.addData("isBlueBall/isRedBall", "%s/%s",robot.isBlueBall,robot.isRedBall);
+        telemetry.addData("isBlueBall/isRedBall", "%s/%s", isBlueBall, isRedBall);
         telemetry.update();
 
-        //assuming sensing the right jewel
-        //Handles if one sensor is unknown and other thinks red
-        if ((rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.UNKNOWN) ||
-                (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.RED) ||
-                (rightJewelColorCamera == TeamColor.RED && rightJewelColorCS == TeamColor.RED)) {
-            if (IsBlueAlliance) {
-                arm_right();
-            }
-            else {
-                arm_left();
-            }
-        }
-        //Handles if one sensor is unknown and the other thinks blue
-        else if ((rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.UNKNOWN) ||
-                (rightJewelColorCamera == TeamColor.UNKNOWN && rightJewelColorCS == TeamColor.BLUE) ||
-                (rightJewelColorCamera == TeamColor.BLUE && rightJewelColorCS == TeamColor.BLUE) ) {
-            if (IsBlueAlliance){
-                arm_left();
-            }
-            else {
-                arm_right();
-            }
-        }
-        //Checks if they both "know" but disagree
-        else if ((rightJewelColorCamera == rightJewelColorCS ||
-                (rightJewelColorCamera != TeamColor.UNKNOWN && rightJewelColorCS != TeamColor.UNKNOWN && rightJewelColorCamera != rightJewelColorCS))) {
 
+        //Determines if right jewel is red
+        int directionI = calcArmDirection(rightJewelColorCS, rightJewelColorCamera, isBlueAlliance);
+        if (isBlueAlliance) {
+            if (directionI == 1) { // Right jewel is our color
+                arm_left();
+            } else if (directionI == -1) { // Right jewel is their color
+                arm_right();
+            }
+            // if directionI 0, then color is unknown
+        } else {
+            StraightCm(.1 * directionI, 5); // Drives forward if right jewel is red, backwards if blue
+            sleep(100);
+            StraightCm(-.1 * directionI, 5); // Drives forward if right jewel is blue, backwards if red
         }
+
         sleep(1000);
-        arm_up();
+        if (isBlueAlliance) {
+            arm_up();
+        } else {
+            r_arm_up();
+        }
         //robot.camera.stopCamera();
     }
 
-    TeamColor checkBallColor() throws InterruptedException {
+    // Provided two colors guesses and team color, determines if the right ball is the same color as our team.
+    // if sum = 1, then it is our color. if sum == 0, then it is unknown. if sum = -1, then it is their color.
+    // Ex. sensor is red, camera is unknown, team is red. It will return 1.
+    public int calcArmDirection(TeamColor sensor, TeamColor camera, boolean isBlueAlliance) {
+        int sum = 0;
+        if (sensor == TeamColor.RED || camera == TeamColor.RED) sum += 1;
+        if (sensor == TeamColor.BLUE || camera == TeamColor.BLUE) sum -= 1;
+        if (isBlueAlliance) sum *= -1;
+        return sum;
+    }
+
+    TeamColor checkBallColor(boolean isBlueAlliance) throws InterruptedException {
         boolean isBlueBall = false;
         boolean isRedBall = false;
         robot.runtime.reset();
-        double d = calcDelta();
+        double d = calcDelta(isBlueAlliance);
         TeamColor result = TeamColor.UNKNOWN;
 
         while (!isBlueBall && !isRedBall && (robot.runtime.seconds()<1.0)) {
@@ -1164,7 +1177,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 isRedBall = false;
             }
 
-            d = calcDelta();
+            d = calcDelta(isBlueAlliance);
         }
 //        telemetry.addData("delta/isBlueBall/isRedBall=", "%3.1f/%s/%s",d,robot.isBlueBall,robot.isRedBall);
 //        telemetry.update();
@@ -1209,6 +1222,18 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);
     }
+
+    void r_arm_up() {
+        robot.sv_right_arm.setPosition(robot.SV_RIGHT_ARM_UP);
+        sleep(200);
+    }
+
+    void r_arm_down() {
+        robot.sv_right_arm.setPosition(robot.SV_RIGHT_ARM_DOWN);
+        sleep(200);
+    }
+
+
     void arm_left() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN_HIT);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_1);
