@@ -35,12 +35,13 @@ public class SwerveTesting extends SwerveUtilLOP{
         waitForStart();
 
         start_init();
-
+        
+        double desiredPower = .2;
+        int desiredDistanceCm = 10;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             try{
-                double desiredPower = .2;
-                int desiredDistanceCm = 10;
+
 
                 if(gamepad1.back && gamepad1.a){
                     if(!(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT)){// If in any other mode, switch to snake
@@ -52,16 +53,32 @@ public class SwerveTesting extends SwerveUtilLOP{
                     sleep(400);
                 }
                 if (gamepad1.dpad_up){
-                    desiredDistanceCm = desiredDistanceCm + 10;
+                    desiredDistanceCm += 10;
+                    telemetry.addData("Set Distance", desiredDistanceCm).setRetained(true);
+                    telemetry.addData("Set Power", desiredPower).setRetained(true);
+                    telemetry.update();
+                    sleep(100);
                 }
                 if (gamepad1.dpad_down){
-                    desiredDistanceCm = desiredDistanceCm - 10;
+                    desiredDistanceCm -= 10;
+                    telemetry.addData("Set Distance", desiredDistanceCm).setRetained(true);
+                    telemetry.addData("Set Power", desiredPower).setRetained(true);
+                    telemetry.update();
+                    sleep(100);
                 }
                 if (gamepad1.dpad_right){
-                    desiredPower = desiredPower + 0.1;
+                    desiredPower += 0.1;
+                    telemetry.addData("Set Distance", desiredDistanceCm).setRetained(true);
+                    telemetry.addData("Set Power", desiredPower).setRetained(true);
+                    telemetry.update();
+                    sleep(100);
                 }
                 if (gamepad1.dpad_left){
-                    desiredPower = desiredPower - 0.1;
+                    desiredPower -= 0.1;
+                    telemetry.addData("Set Distance", desiredDistanceCm).setRetained(true);
+                    telemetry.addData("Set Power", desiredPower).setRetained(true);
+                    telemetry.update();
+                    sleep(100);
                 }
 
                 if(gamepad1.a){
@@ -78,7 +95,7 @@ public class SwerveTesting extends SwerveUtilLOP{
                     telemetry.update();
                 }
                 if(gamepad1.y){
-                    StraightCm(desiredPower * -1, desiredDistanceCm);
+                    StraightCm(-desiredPower, desiredDistanceCm);
                 }
 
             } catch (Exception e){

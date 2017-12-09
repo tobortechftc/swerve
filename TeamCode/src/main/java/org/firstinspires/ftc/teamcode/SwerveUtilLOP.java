@@ -1827,7 +1827,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         int[] pixels = new int[bitmap.getWidth()];
 
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() / 3, bitmap.getWidth(), 1);
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() / 6, bitmap.getWidth(), 1);
 //        int redTotal = 0;
 //        int blueTotal = 0;
 //        int redValue = 0;
