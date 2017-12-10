@@ -49,17 +49,10 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 doPlatformMission(false);
-                /*
                 StraightIn(0.2, 24); // Drive off the balance stone
-                go_to_distance_from(0.3, get_cryptobox_column(), true, false, true); // Drive to cryptobox
-                StraightIn(.2, 9); // Drives into cryptobox
-                glyph_grabber_auto_open();
-                StraightIn(-.2, 9);
-                sleep(500);
-                StraightIn(.2, 9); // Drives into cryptobox
-                sleep(500);
-                StraightIn(-.2, 9);
-                */
+                go_to_distance_from(0.3, get_cryptobox_column(), false, false, true); // Drive to cryptobox
+                deliverGlyph();
+                stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);

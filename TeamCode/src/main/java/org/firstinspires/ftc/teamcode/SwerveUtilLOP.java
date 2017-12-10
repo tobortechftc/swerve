@@ -1079,7 +1079,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     double getRange(RangeSensor direction){
         ElapsedTime elapsedTime = new ElapsedTime();
         double distance = 6666666;
-
+        if (!robot.use_range_sensor)
+            return 0.0;
         if(direction == RangeSensor.BACK){
             while(distance > 365 && elapsedTime.seconds() < 0.1){
                 distance = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
@@ -1146,7 +1147,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         TeamColor rightJewelColorCS = checkBallColor(isBlueAlliance);
 
-        //Comparing of sensor data begins here. Don't this this is needed?
+        // Comparing of sensor data
         boolean isRedBall = (rightJewelColorCS == TeamColor.RED);
         boolean isBlueBall = (rightJewelColorCS == TeamColor.BLUE);
 
@@ -1154,7 +1155,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.update();
 
 
-        //Determines if right jewel is red
+        // Determines if right jewel is red
         int directionI = calcArmDirection(rightJewelColorCS, rightJewelColorCamera, isBlueAlliance);
         if (isBlueAlliance) {
             if (directionI == 1) { // Right jewel is our color
@@ -1187,6 +1188,19 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (sensor == TeamColor.BLUE || camera == TeamColor.BLUE) sum -= 1;
         if (isBlueAlliance) sum *= -1;
         return sum;
+    }
+
+    public void deliverGlyph() throws InterruptedException{
+        StraightIn(0.5, 7);
+        glyph_grabber_auto_open();
+        StraightIn(-0.4, 7);
+        glyph_slider_back_init();
+        glyph_grabber_close();
+        sleep(500);
+        StraightIn(0.4, 10);
+        sleep(100);
+        StraightIn(-0.4, 3);
+        glyph_grabber_auto_open();
     }
 
     TeamColor checkBallColor(boolean isBlueAlliance) throws InterruptedException {
@@ -1287,6 +1301,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         // Go until a certain distance from a target depending on the cryptobox and the column
         // use_encoder is true will use Motor encoder for the driving distance
         //                false will use range sensor for the driving distance
+        // IMPORTANT NOTE: This program does not work on front red box without encoders.
 
         double driveDistance;
 
@@ -1317,7 +1332,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         } else { // Front box
             if (isBlue) {
                 if (use_encoder) {
-                    driveDistance = 8 + (19 * targetColumn); // 19cm between columns
+                    driveDistance = 6 + (19 * targetColumn); // 19cm between columns
                 } else {
                     driveDistance = 52 + (19 * targetColumn); // 19cm between columns
                 }
@@ -1350,6 +1365,20 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
             else { // Front red box
+                power *= -1; // Reverses power input, all other code is pretty much the same
+                if (use_encoder) {
+                    driveDistance = 25 + (19 * (2 - targetColumn)); // 19cm between columns
+                } else {
+                    driveDistance = 52 + (19 * (2 - targetColumn)); // 19cm between columns
+                }
+                robot.runtime.reset();
+                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                sleep(500);
+                if (use_encoder) {
+                    StraightCm(power, driveDistance);
+                } else {
+                    // Do nothing, there is no range sensor for this side.
+                }
             }
         }
         driveTT(0, 0); // Stops
@@ -1449,6 +1478,23 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.servoFrontRight.setPosition(robot.servoPosFR);
             robot.servoBackLeft.setPosition(robot.servoPosBL);
             robot.servoBackRight.setPosition(robot.servoPosBR);
+        }
+        else{
+            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+        }
+    }
+
+    void car_servo_adj(double joy_stick_x){
+        double degree = joy_stick_x * 25.0 / 180.0; // maximum 25 degree each way
+        if(Math.abs(degree)>0.01) {
+
+            robot.servoPosFL = robot.SERVO_FL_FORWARD_POSITION - degree;
+            robot.servoPosFR = robot.SERVO_FR_FORWARD_POSITION - degree;
+            robot.servoFrontLeft.setPosition(robot.servoPosFL);
+            robot.servoFrontRight.setPosition(robot.servoPosFR);
         }
         else{
             robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
@@ -1999,57 +2045,54 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
     void show_telemetry() throws InterruptedException {
-        telemetry.addData("1. Sw/Imu/Vu/GG =", "%s/%s/%s/%s",
-                (robot.use_swerve ?"Y":"N"), (robot.use_imu?"Y":"N"),
+        telemetry.addData("1. Team", " %s sw/IMU/Vu/GG = %s/%s/%s/%s",
+                robot.allianceColor, (robot.use_swerve ?"Y":"N"), (robot.use_imu?"Y":"N"),
                 (robot.use_Vuforia ?"Y":"N"), (robot.use_glyph_grabber ?"Y":"N"));
-        telemetry.addData("2. PW R/L/R/Rot-En/Sl-En =", "%.2f,%.2f/%.2f/%s/%s",
+        telemetry.addData("2. PW-r/L/R/Rot-En/Sl-En =", "%.2f,%.2f/%.2f/%s/%s",
                 robot.drivePowerRatio, robot.motorPowerLeft,robot.motorPowerRight,
                 (robot.gg_rotator_encoder_ok ?"Y":"N"),(robot.gg_slider_encoder_ok ?"Y":"N"));
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
+        double range_back = getRange(RangeSensor.BACK);
+        double range_left = getRange(RangeSensor.LEFT);
         if (robot.use_imu) {
-            telemetry.addData("4.1 IMU Heading = ", "%.2f", imu_heading());
+            telemetry.addData("4.1 IMU/r-Bk/r-Lf = ", "%.2f/%.2f/%.2f (cm)",
+                    imu_heading(),range_back,range_left);
         }
-        if (robot.use_range_sensor) {
-            telemetry.addData("4.2 rangeBack = ", "%.2f cm",robot.rangeSensorBack.getDistance(DistanceUnit.CM));
-            telemetry.addData("4.3 rangeLeft = ", "%.2f cm", robot.rangeSensorLeft.getDistance(DistanceUnit.CM));
-        }
+
         if (robot.use_Vuforia) {
             telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
         }
-        if (robot.use_swerve) {
-            if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
-                telemetry.addLine("6. Currently in: Car Mode");
-            } else if (robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
-                telemetry.addLine("6. Currently in: Quick Turn Mode");
-            } else if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT) {
-                telemetry.addLine("6. Currently in: Standard Mode");
-            } else {
-                telemetry.addLine("6. Currently in: Strafe Mode");
-            }
-            telemetry.addData("7. Encoder values FL/FR/BL/BR = ", "%d/%d/%d/%d",
-                    robot.motorFrontLeft.getCurrentPosition(), robot.motorFrontRight.getCurrentPosition(), robot.motorBackLeft.getCurrentPosition(), robot.motorBackRight.getCurrentPosition());
-
+        if (robot.use_swerve && !robot.servo_tune_up) {
+            telemetry.addData("6. Drive Mode = ", "%s", robot.cur_mode);
+            telemetry.addData("6.1 SW-Enc FL/FR/BL/BR = ", "%d/%d/%d/%d",
+                    robot.motorFrontLeft.getCurrentPosition(),
+                    robot.motorFrontRight.getCurrentPosition(),
+                    robot.motorBackLeft.getCurrentPosition(),
+                    robot.motorBackRight.getCurrentPosition());
         }
         if (robot.use_glyph_grabber)  {
-            telemetry.addData("8.1 gg-rot pwr/cur/tar = ","%3.2f/%d/%d (%s)",
+            telemetry.addData("8.1 g-rot pw/cur/tar = ","%3.2f/%d/%d (%s)",
                     robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),
                     robot.target_rot_pos, (robot.is_gg_upside_down ?"dw":"up"));
-            telemetry.addData("8.2 gg-sli pwr/cur/tar = ","%3.2f/%d/%d (%d)",
+            telemetry.addData("8.2 g-slider pw/cur/tar = ","%3.2f/%d/%d (%d)",
                     robot.mt_glyph_slider.getPower(),robot.mt_glyph_slider.getCurrentPosition(),
                     robot.target_gg_slider_pos, robot.gg_layer);
+            telemetry.addData("8.3 gg top/bottom = ","%4.3f/%4.3f (%s)",
+                    robot.sv_glyph_grabber_top.getPosition(),
+                    robot.sv_glyph_grabber_bottom.getPosition(),
+                    (robot.is_gg_upside_down ?"dw":"up"));
         } else if (robot.use_test_motor) {
-            telemetry.addData("8. gg-rot pwr/cur/tar = ","%3.2f/%d/%d(%s)",
+            telemetry.addData("8. gg-rot pw/cur/tar = ","%3.2f/%d/%d(%s)",
                     robot.mt_test.getPower(),robot.mt_test.getCurrentPosition(),robot.target_rot_pos,
                     (robot.is_gg_upside_down ?"dw":"up"));
         }
         if (robot.use_relic_grabber) {
-            telemetry.addData("9.1 relic gr/arm = ","%3.2f/%3.2f",
+            telemetry.addData("9.1 relic gr/arm = ","%4.4f/%4.3f",
                     robot.sv_relic_grabber.getPosition(),robot.sv_relic_arm.getPosition());
-            telemetry.addData("9.2 re-sli pwr/enc = ","%3.2f/%d",
+            telemetry.addData("9.2 r-slider pwr/enc = ","%3.2f/%d",
                     robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition());
         }
         telemetry.update();
     }
 }
-

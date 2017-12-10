@@ -37,8 +37,9 @@ public class SwerveDriveHardware {
     public boolean use_arm = false;
     public boolean use_test_servo = false;
     public boolean use_test_motor = false;
+    public boolean servo_tune_up = false;
 
-    public SwerveUtilLOP.TeamColor allianceColor = SwerveUtilLOP.TeamColor.UNKNOWN;
+    public SwerveUtilLOP.TeamColor allianceColor = SwerveUtilLOP.TeamColor.BLUE; // default blue team
 
     public boolean fast_mode = true;
     public boolean straight_mode = false;

@@ -15,7 +15,7 @@ public class TuneUp extends SwerveUtilLOP {
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        boolean serve_tune_up = true; // enable servo tune up
+        robot.servo_tune_up = true; // enable servo tune up
         robot.use_swerve = false;
         robot.use_imu = false;
         robot.use_Vuforia = false;
@@ -48,6 +48,19 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.sv_glyph_grabber_top,
                 robot.sv_relic_grabber,
                 robot.sv_relic_arm
+        };
+        String [] sv_names = {
+                "FrontLeft",
+                "FrontRight",
+                "BackLeft",
+                "BackRight",
+                "sv_shoulder",
+                "sv_elbow",
+                "sv_right_arm",
+                "sv_gg_bottom",
+                "sv_gg_top",
+                "sv_relic_grabber",
+                "sv_relic_arm"
         };
 
         num_servos = sv_list.length;
@@ -87,14 +100,12 @@ public class TuneUp extends SwerveUtilLOP {
                 double pos = robot.sv_elbow.getPosition();
                 if (pos >= INCREMENT) {
                     robot.sv_elbow.setPosition(pos - INCREMENT);
-
                 }
             }
             if (gamepad1.dpad_down) {
                 double pos = robot.sv_glyph_grabber_bottom.getPosition();
                 if (pos >= INCREMENT) {
                     robot.sv_glyph_grabber_bottom.setPosition(pos - INCREMENT);
-
                 }
             }
             if (gamepad1.dpad_up) {
@@ -114,8 +125,7 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_3);
             }
             if (gamepad2.b) {
-                robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3
-                );
+                robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3);
             }
             if (gamepad2.left_bumper) {
                 robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);
@@ -164,7 +174,7 @@ public class TuneUp extends SwerveUtilLOP {
                     glyph_grabber_auto_rotate(0.4);
                 }
             }
-            if (serve_tune_up) {
+            if (robot.servo_tune_up) {
                 if (gamepad1.back && gamepad1.a) {
                     show_all = !show_all;
                     sleep(50);
@@ -173,11 +183,13 @@ public class TuneUp extends SwerveUtilLOP {
                     if (pos <= (1 - INCREMENT)) {
                         sv_list[cur_sv_ix].setPosition(pos + INCREMENT);
                     }
+                    sleep(100);
                 } else if (gamepad1.y && (sv_list[cur_sv_ix] != null)) {
                     double pos = sv_list[cur_sv_ix].getPosition();
                     if (pos >= INCREMENT) {
                         sv_list[cur_sv_ix].setPosition(pos - INCREMENT);
                     }
+                    sleep(100);
                 }
                 if (gamepad1.x) {
                     cur_sv_ix--;
@@ -189,7 +201,7 @@ public class TuneUp extends SwerveUtilLOP {
                         count++;
                     }
                     gamepad1.reset();
-                    sleep(10);
+                    sleep(400);
                 } else if (gamepad1.b) {
                     cur_sv_ix++;
                     if (cur_sv_ix >= num_servos) cur_sv_ix = 0;
@@ -200,19 +212,20 @@ public class TuneUp extends SwerveUtilLOP {
                         count++;
                     }
                     gamepad1.reset();
-                    sleep(10);
+                    sleep(400);
                 }
             }
-            telemetry.addData("0. GP1:", "X/B:sv sel, Y/A:+/-%4.3f(ix=%d)", INCREMENT, cur_sv_ix);
+            telemetry.addData("0. GP1:", "x/b:sv sel, y/a:+/-%4.3f(ix=%d)", INCREMENT, cur_sv_ix);
             if (show_all) {
                 for (int i = 0; i < num_servos; i++) {
                     if (sv_list[i] != null) {
-                        telemetry.addData("6.", "%d. Servo port %d = %5.4f", i, sv_list[i].getPortNumber(), sv_list[i].getPosition());
+                        telemetry.addData("6.", "%d: %s sv-port %d = %5.4f",
+                                i, sv_names[i], sv_list[i].getPortNumber(), sv_list[i].getPosition());
                     }
                 }
             } else if (sv_list[cur_sv_ix] != null) {
-                telemetry.addData("7. Tune-up servo", "%s (ix=%d)", cur_sv_ix, sv_list[cur_sv_ix].getDeviceName());
-                telemetry.addData("7.1. servo value = ", "%5.4f", sv_list[cur_sv_ix].getPosition());
+                telemetry.addData("7. Tune-up servo", " %s (ix=%d) = %5.4f",
+                        sv_names[cur_sv_ix], cur_sv_ix, sv_list[cur_sv_ix].getPosition());
             } else {
                 telemetry.addLine("7. No active servo to tune-up.");
             }

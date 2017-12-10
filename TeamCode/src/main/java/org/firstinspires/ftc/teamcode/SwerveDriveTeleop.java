@@ -112,9 +112,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     //if (gamepad1.right_trigger > 0.1) {
                     if (gamepad1.right_stick_x > 0.1) {
                         change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
-
                         sleep(200);
-
                         //while (gamepad1.right_trigger > 0.1) {
                         while (gamepad1.right_stick_x > 0.1) {
                             robot.motorFrontLeft.setPower(-1*robot.drivePowerRatio);
@@ -205,7 +203,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
 
                     if (gamepad1.x) { //Cycle through non-snake drive modes
-                        if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT) {
+                        if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT ||
+                                robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
 
                             change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
 
@@ -233,6 +232,11 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 //set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.right_stick_x);
                 set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
 
+                if (robot.cur_mode==SwerveDriveHardware.CarMode.CAR ||
+                    robot.cur_mode==SwerveDriveHardware.CarMode.STRAIGHT) {
+                    // use gamepad1.joy_stick_x to turn like Car
+                    car_servo_adj(gamepad1.left_stick_x);
+                }
             } // end use_swerve
 
             if (robot.use_relic_grabber) {
