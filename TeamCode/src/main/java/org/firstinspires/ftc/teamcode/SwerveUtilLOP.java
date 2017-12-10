@@ -1137,7 +1137,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(100);
             glyph_slider_up_inches(.5, 4);
         }
-        if (isBlueAlliance) {
+        if (robot.allianceColor == TeamColor.BLUE) {
             arm_down();
         } else {
             r_arm_down();

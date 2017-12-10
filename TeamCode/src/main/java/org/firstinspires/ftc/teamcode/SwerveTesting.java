@@ -82,10 +82,25 @@ public class SwerveTesting extends SwerveUtilLOP{
                 }
 
                 if(gamepad1.a){
-                    double startRangeDis = getRange(RangeSensor.BACK);
+                    double startRangeDis = -1;
+                    double endRangeDis = -1;
+
+                    if(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT){
+                        startRangeDis = getRange(RangeSensor.BACK);
+                    }
+                    else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){
+                        startRangeDis = getRange(RangeSensor.LEFT);
+                    }
+
                     StraightCm(desiredPower, desiredDistanceCm);
                     sleep(1000);
-                    double endRangeDis = getRange(RangeSensor.BACK);
+
+                    if(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT){
+                        endRangeDis = getRange(RangeSensor.BACK);
+                    }
+                    else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){
+                        endRangeDis = getRange(RangeSensor.LEFT);
+                    }
 
                     telemetry.addData("Range Start", startRangeDis).setRetained(true);
                     telemetry.addData("Range End", endRangeDis).setRetained(true);
@@ -96,6 +111,13 @@ public class SwerveTesting extends SwerveUtilLOP{
                 }
                 if(gamepad1.y){
                     StraightCm(-desiredPower, desiredDistanceCm);
+                }
+
+                if(gamepad1.right_bumper){
+                    change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                }
+                if(gamepad1.left_bumper){
+                    change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
                 }
 
             } catch (Exception e){
