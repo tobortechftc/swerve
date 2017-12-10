@@ -11,6 +11,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
     @Override
     public void runOpMode() throws InterruptedException{
+        int adj_count = 0; // count to smooth out car turn
+
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
@@ -235,7 +237,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 if (robot.cur_mode==SwerveDriveHardware.CarMode.CAR ||
                     robot.cur_mode==SwerveDriveHardware.CarMode.STRAIGHT) {
                     // use gamepad1.joy_stick_x to turn like Car
-                    car_servo_adj(gamepad1.left_stick_x);
+                    if ((adj_count++)%20==0)
+                       car_servo_adj(gamepad1.left_stick_x);
                 }
             } // end use_swerve
 
