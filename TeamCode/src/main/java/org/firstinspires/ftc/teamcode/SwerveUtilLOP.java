@@ -1197,7 +1197,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         glyph_slider_back_init();
         glyph_grabber_close();
         sleep(500);
-        StraightIn(0.4, 10);
+        // 0.4 will break the arms
+        StraightIn(0.2, 10);
         sleep(100);
         StraightIn(-0.4, 3);
         glyph_grabber_auto_open();
@@ -1308,10 +1309,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
             if(isBlue) {
-                driveDistance = 7 + (19 * targetColumn); // 19cm between columns
+                driveDistance = 7 + (18 * targetColumn); // 19cm between columns
             }
             else{
-                driveDistance = 7 + (19 * (2 - targetColumn)); // 19cm between columns
+                driveDistance = 7 + (18 * (2 - targetColumn)); // 19cm between columns
             }
             robot.runtime.reset();
             if (use_encoder) {
