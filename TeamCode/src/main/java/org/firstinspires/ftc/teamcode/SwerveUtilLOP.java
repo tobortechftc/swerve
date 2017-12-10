@@ -1109,9 +1109,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         //These constants are for setting a selected portion of the image from Camera
         //(Assuming portrait) Top left is (0,0), Top right (0,1), Bottom left is (1,0), Bottom right is (1,1)
         double IMAGE_WIDTH_CROP = 1;
-        double IMAGE_HEIGHT_CROP = 0.33;
+        double IMAGE_HEIGHT_CROP = 1;
         double IMAGE_OFFSET_X = 0; // Cannot be 1, make sure take the respective crop into consideration
-        double IMAGE_OFFSET_Y = 0.2; // Cannot be 1, make sure take the respective crop into consideration
+        double IMAGE_OFFSET_Y = 0; // Cannot be 1, make sure take the respective crop into consideration
 
 
         robot.targetColumn = get_cryptobox_column();
@@ -1122,7 +1122,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         if(robot.use_camera) {
             Bitmap bitmap = null;
-
+            robot.camera.activate();
             while (runTime.seconds() < 0.5) {
                 bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
                 if (bitmap != null) {
@@ -1130,7 +1130,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
             if (bitmap == null) {
-                telemetry.log().add("Warning!", null);
+                telemetry.addData("Warning!", robot.camera.getLastError()).setRetained(true);
                 telemetry.update();
 
                 //while (opModeIsActive());
@@ -1187,7 +1187,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         } else {
             r_arm_up();
         }
-        //robot.camera.stopCamera();
     }
 
     // Provided two colors guesses and team color, determines if the right ball is the same color as our team.
