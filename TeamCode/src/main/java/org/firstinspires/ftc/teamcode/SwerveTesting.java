@@ -56,14 +56,14 @@ public class SwerveTesting extends SwerveUtilLOP{
                     else{ //Return from snake to previous drive mode
                         change_swerve_pos(robot.old_mode);
                     }
-                    sleep(400);
+                    sleep(500);
                 }
                 if (gamepad1.dpad_up){
                     desiredDistanceCm += 10;
                     telemetry.addData("Set Distance", desiredDistanceCm).setRetained(true);
                     telemetry.addData("Set Power", desiredPower).setRetained(true);
                     telemetry.update();
-                    sleep(100);
+                    sleep(500);
                 }
                 if (gamepad1.dpad_down){
                     desiredDistanceCm -= 10;
@@ -117,13 +117,6 @@ public class SwerveTesting extends SwerveUtilLOP{
                 }
                 if(gamepad1.y){
                     StraightCm(-desiredPower, desiredDistanceCm);
-                }
-
-                if(gamepad1.right_bumper){
-                    change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                }
-                if(gamepad1.left_bumper){
-                    change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
                 }
 
             } catch (Exception e){
