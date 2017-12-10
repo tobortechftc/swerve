@@ -191,6 +191,16 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(100);
         driveTT(0,0);
     }
+
+    public void glyph_grabber_open_and_push_auto() { // open both grabbers
+        glyph_grabber_auto_open();
+        driveTT(-0.2,-0.2);
+        sleep(500);
+        driveTT(0.6,0.6);
+        sleep(100);
+        driveTT(0,0);
+    }
+
     public void glyph_grabber_auto_init() {
         if (robot.is_gg_upside_down) {
             glyph_grabber_auto_rotate(0.5);
@@ -1208,12 +1218,14 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void deliverGlyph() throws InterruptedException{
-        StraightIn(0.5, 7);
-        glyph_grabber_auto_open();
+        StraightIn(0.3, 7);
+        glyph_grabber_open_and_push_auto();
+        // glyph_grabber_half_close();
         StraightIn(-0.4, 7);
+        rotate_refine(); // ensure grabber back straight
         glyph_slider_back_init();
-        glyph_grabber_close();
-        sleep(500);
+        // glyph_grabber_close();
+        // sleep(500);
         // 0.4 will break the arms
         StraightIn(0.2, 10);
         sleep(100);
