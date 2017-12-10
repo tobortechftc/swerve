@@ -94,7 +94,7 @@ public class SwerveDriveHardware {
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4150; // ~14 inches
-    final static int GG_SLIDE_INIT = 100;
+    final static int GG_SLIDE_INIT = 300;
 
 
     final static int RED_BALL_MIN = -300;

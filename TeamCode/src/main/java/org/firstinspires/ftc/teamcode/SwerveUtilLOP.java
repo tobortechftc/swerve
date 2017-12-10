@@ -203,14 +203,15 @@ public class SwerveUtilLOP extends LinearOpMode {
         boolean need_slide_up = false;
         stop_chassis();
         int orig_slide_pos = robot.mt_glyph_rotator.getCurrentPosition();
-        if (robot.gg_layer==0 && orig_slide_pos<800) {
+        if (robot.gg_layer==0 && (orig_slide_pos<800 || robot.is_gg_upside_down==true)) {
             need_slide_up = true;
         }
-        if (orig_slide_pos>1200) { // more than 4.5 inches above the ground
+        if (orig_slide_pos>1000) { // more than 4.5 inches above the ground
             need_slide_up = false;
         }
-        if (need_slide_up) {
-            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, 5);
+        double up_inches = (1200-orig_slide_pos) / 300.0;
+        if (need_slide_up && (up_inches>0)) {
+            glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, up_inches);
             sleep(300);
         }
         // rotate 180 degrees back and forth
@@ -229,7 +230,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.is_gg_upside_down && robot.gg_bottom_close)
             need_slide_back = false;
         if (need_slide_back) {
-            glyph_slider_position(orig_slide_pos+200);
+            int back_pos = orig_slide_pos;
+            if (back_pos<robot.init_gg_slider_pos+50) {
+                back_pos += 100;
+                if (robot.is_gg_upside_down)
+                    back_pos += 150;
+            }
+            glyph_slider_position(back_pos);
             sleep(500);
         }
     }
@@ -1349,7 +1356,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
                 robot.runtime.reset();
                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                sleep(500);
+                sleep(1000);
                 if (use_encoder) {
                     StraightCm(power, driveDistance);
                 } else {
@@ -1394,6 +1401,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         driveTT(0, 0); // Stops
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+        sleep(300);
     }
 
 
@@ -1507,7 +1515,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.servoFrontLeft.setPosition(robot.servoPosFL);
             robot.servoFrontRight.setPosition(robot.servoPosFR);
         }
-        else{
+        else {
             robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
             robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
             robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
