@@ -1117,21 +1117,32 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.targetColumn = get_cryptobox_column();
         TeamColor rightJewelColorCamera = TeamColor.UNKNOWN;
 
+        ElapsedTime runTime = new ElapsedTime();
+
+
         if(robot.use_camera) {
-            Bitmap bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+            Bitmap bitmap = null;
+
+            while (runTime.seconds() < 0.5) {
+                bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+                if (bitmap != null) {
+                    break;
+                }
+            }
             if (bitmap == null) {
-                telemetry.log().add("ERROR!", (robot.camera.getLastError()==null?"":robot.camera.getLastError()));
+                telemetry.log().add("Warning!", null);
                 telemetry.update();
 
                 //while (opModeIsActive());
-            }
-            else {
+            } else {
                 TeamColor leftJewelColorCamera = determineJewelColor(bitmap);
+                telemetry.addData("Left Jewel Color", leftJewelColorCamera);
                 //Mirrors to allow checking of right jewel
                 rightJewelColorCamera = leftJewelColorCamera.getOpposingColor();
                 //Current mounting solution only allows camera to check the left jewel color
             }
         }
+
 
         if (robot.use_glyph_grabber) {
             glyph_grabber_close();

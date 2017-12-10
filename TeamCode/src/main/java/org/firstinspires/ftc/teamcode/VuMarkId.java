@@ -124,7 +124,7 @@ public class VuMarkId extends SwerveUtilLOP {
 
                 if (bitmap == null) {
                     telemetry.addData("Couldn't get a bitmap", robot.camera.getLastError());
-                    if (this.time - stepStart > 5) {
+                    if (this.time - stepStart > 0.5) {
                         state = -1;
                         continue;
                     }
