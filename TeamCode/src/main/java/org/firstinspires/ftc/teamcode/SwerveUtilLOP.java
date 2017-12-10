@@ -1189,6 +1189,19 @@ public class SwerveUtilLOP extends LinearOpMode {
         return sum;
     }
 
+    public void deliverGlyph() throws InterruptedException{
+        StraightIn(0.5, 7);
+        glyph_grabber_auto_open();
+        StraightIn(-0.4, 7);
+        glyph_slider_back_init();
+        glyph_grabber_close();
+        sleep(500);
+        StraightIn(0.4, 10);
+        sleep(100);
+        StraightIn(-0.4, 3);
+        glyph_grabber_auto_open();
+    }
+
     TeamColor checkBallColor(boolean isBlueAlliance) throws InterruptedException {
         boolean isBlueBall = false;
         boolean isRedBall = false;

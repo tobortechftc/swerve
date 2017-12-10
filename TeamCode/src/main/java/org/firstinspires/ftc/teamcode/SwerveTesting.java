@@ -41,8 +41,14 @@ public class SwerveTesting extends SwerveUtilLOP{
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             try{
-
-
+                if (gamepad1.x) { // switch driving mode between CAR and CRAB
+                    if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
+                        change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                    } else {
+                        change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+                    }
+                    sleep(500);
+                }
                 if(gamepad1.back && gamepad1.a){
                     if(!(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT)){// If in any other mode, switch to snake
                         change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
@@ -64,21 +70,21 @@ public class SwerveTesting extends SwerveUtilLOP{
                     telemetry.addData("Set Distance", desiredDistanceCm).setRetained(true);
                     telemetry.addData("Set Power", desiredPower).setRetained(true);
                     telemetry.update();
-                    sleep(100);
+                    sleep(500);
                 }
                 if (gamepad1.dpad_right){
                     desiredPower += 0.1;
                     telemetry.addData("Set Distance", desiredDistanceCm).setRetained(true);
                     telemetry.addData("Set Power", desiredPower).setRetained(true);
                     telemetry.update();
-                    sleep(100);
+                    sleep(500);
                 }
                 if (gamepad1.dpad_left){
                     desiredPower -= 0.1;
                     telemetry.addData("Set Distance", desiredDistanceCm).setRetained(true);
                     telemetry.addData("Set Power", desiredPower).setRetained(true);
                     telemetry.update();
-                    sleep(100);
+                    sleep(500);
                 }
 
                 if(gamepad1.a){
