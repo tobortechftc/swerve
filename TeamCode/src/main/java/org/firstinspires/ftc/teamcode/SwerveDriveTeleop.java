@@ -90,6 +90,15 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
                 }
                 else { //If not allowed to test servo positions, triggers do teleop spot turn
+                    if (gamepad1.back){
+                        if(robot.cur_mode != SwerveDriveHardware.CarMode.CRAB){// If in any other mode, switch to crab
+                            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                        }
+                        else{ //Return from snake to previous drive mode
+                            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+                        }
+                        sleep(400);
+                    }
                     //if (gamepad1.left_trigger > 0.1) {
                     if (gamepad1.right_stick_x < -0.1) {
                         change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
@@ -192,13 +201,19 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
                 }
 
-
-
-
                 if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) { //If in snake drive, calculate and change servo angles
 
                     //calc_snake(gamepad1.right_stick_x);
-                    calc_snake(gamepad1.left_trigger, gamepad1.right_trigger);
+                    if (gamepad1.left_trigger > 0.1 || gamepad1.right_trigger > 0.1) {
+                        calc_snake(gamepad1.left_trigger, gamepad1.right_trigger);
+                    } else {
+                        float left_x = 0, right_x=0;
+                        if (gamepad1.left_stick_x < 0)
+                            left_x = Math.abs(gamepad1.left_stick_x);
+                        if (gamepad1.left_stick_x > 0)
+                            right_x = Math.abs(gamepad1.left_stick_x);
+                        calc_snake(left_x, right_x);
+                    }
                     snake_servo_adj();
                 }
                 else { //
@@ -292,10 +307,13 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     // glyph_slider_init();
                 } else if (gamepad2.back && (gamepad2.left_trigger > 0.1)) { // half close
                     glyph_grabber_half_close();
+                    sleep(400);
                 } else if (gamepad2.dpad_up && (gamepad2.left_trigger > 0.1)) { // half close
                     glyph_grabber_half_close_both();
+                    sleep(400);
                 } else if (gamepad2.b && (gamepad2.left_trigger > 0.1)) { // close both
                     glyph_grabber_all_close();
+                    sleep(400);
                 } else if (gamepad2.a && (gamepad2.left_trigger > 0.1)) { // close one + rotate
                     // 1. glyph grabber auto close down grabber
                     // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
@@ -303,6 +321,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     if (!robot.is_gg_upside_down) {
                         sleep(1000);
                         glyph_grabber_auto_rotate(1.0);
+                    } else {
+                        sleep(400);
                     }
                 } else if (gamepad2.left_trigger > 0.1) {
                     glyph_grabber_auto_close();

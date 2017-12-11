@@ -333,6 +333,7 @@ public class SwerveDriveHardware {
             sv_glyph_grabber_top.setPosition(SV_GLYPH_GRABBER_TOP_INIT);
 
             mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
+            mt_glyph_rotator.setDirection(DcMotor.Direction.REVERSE);
             mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mt_glyph_rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             mt_glyph_rotator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
