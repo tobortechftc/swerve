@@ -2119,8 +2119,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                     (robot.is_gg_upside_down ?"dw":"up"));
         }
         if (robot.use_relic_grabber) {
-            telemetry.addData("9.1 relic gr/arm = ","%4.4f/%4.3f",
-                    robot.sv_relic_grabber.getPosition(),robot.sv_relic_arm.getPosition());
+            telemetry.addData("9.1 relic gr/arm = ", "%4.4f/%4.3f",
+                    robot.sv_relic_grabber.getPosition(), robot.sv_relic_arm.getPosition());
+        }
+        if (robot.use_relic_slider) {
             telemetry.addData("9.2 r-slider pwr/enc = ","%3.2f/%d",
                     robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition());
         }

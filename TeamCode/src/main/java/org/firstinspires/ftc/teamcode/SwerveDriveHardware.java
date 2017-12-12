@@ -33,6 +33,7 @@ public class SwerveDriveHardware {
     public boolean use_color_sensor = false;
     public boolean use_range_sensor = false;
     public boolean use_relic_grabber = false;
+    public boolean use_relic_slider = false;
     public boolean use_glyph_grabber = false;
     public boolean use_arm = false;
     public boolean use_test_servo = false;
@@ -323,6 +324,8 @@ public class SwerveDriveHardware {
             sv_relic_arm.setPosition(SV_RELIC_ARM_INIT);
             sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
             sv_relic_grabber.setPosition(SV_RELIC_GRABBER_INIT);
+        }
+        if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
         }
         if (use_glyph_grabber) {

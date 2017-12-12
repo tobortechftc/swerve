@@ -24,6 +24,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
         robot.use_color_sensor = true;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = true;
+        robot.use_relic_grabber = true;
+        robot.use_relic_slider = true;
         robot.use_arm = true;
 
         init_and_test();
@@ -43,15 +45,6 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
             // The left stick up/down moves the wheels forward and backwards, while the right stick left/right should rotate the wheels
 
-            if(gamepad1.back && gamepad1.a){
-                if(!(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT)){// If in any other mode, switch to snake
-                    change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
-                }
-                else{ //Return from snake to previous drive mode
-                    change_swerve_pos(robot.old_mode);
-                }
-                sleep(400);
-            }
             if(gamepad1.back && gamepad1.start){ // swap test/normalglyph_grabber_auto_open mode
                 robot.isTesting = !robot.isTesting;
                 sleep(100);
@@ -90,7 +83,15 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
                 }
                 else { //If not allowed to test servo positions, triggers do teleop spot turn
-                    if (gamepad1.back){
+                    if (gamepad1.back && gamepad1.a){
+                        if(!(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT)){// If in any other mode, switch to snake
+                            change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
+                        }
+                        else{ //Return from snake to previous drive mode
+                            change_swerve_pos(robot.old_mode);
+                        }
+                        sleep(400);
+                    } else if (gamepad1.back){
                         if(robot.cur_mode != SwerveDriveHardware.CarMode.CRAB){// If in any other mode, switch to crab
                             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                         }
@@ -99,6 +100,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         }
                         sleep(400);
                     }
+
                     //if (gamepad1.left_trigger > 0.1) {
                     if (gamepad1.right_stick_x < -0.1) {
                         change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
@@ -140,19 +142,17 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorBackRight.setPower(0);
                     }
                     if (gamepad1.left_bumper) {
-                        change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-
-                        sleep(200);
-
-                        while (gamepad1.left_bumper) {
-                            robot.motorFrontLeft.setPower(-0.3);
-                            robot.motorFrontRight.setPower(0.3);
-                            robot.motorBackLeft.setPower(0.3);
-                            robot.motorBackRight.setPower(-0.3);
+                        if (robot.cur_mode != SwerveDriveHardware.CarMode.CRAB) {
+                            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                            sleep(200);
                         }
-
-                        change_swerve_pos(robot.old_mode);
-
+                        while (gamepad1.left_bumper) {
+                            robot.motorFrontLeft.setPower(-robot.drivePowerRatio);
+                            robot.motorFrontRight.setPower(robot.drivePowerRatio);
+                            robot.motorBackLeft.setPower(robot.drivePowerRatio);
+                            robot.motorBackRight.setPower(-robot.drivePowerRatio);
+                        }
+                        // change_swerve_pos(robot.old_mode);
                         robot.motorFrontLeft.setPower(0);
                         robot.motorFrontRight.setPower(0);
                         robot.motorBackLeft.setPower(0);
@@ -160,19 +160,17 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
 
                     if (gamepad1.right_bumper) {
-                        change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-
-                        sleep(200);
-
-                        while (gamepad1.right_bumper) {
-                            robot.motorFrontLeft.setPower(0.3);
-                            robot.motorFrontRight.setPower(-0.3);
-                            robot.motorBackLeft.setPower(-0.3);
-                            robot.motorBackRight.setPower(0.3);
+                        if (robot.cur_mode != SwerveDriveHardware.CarMode.CRAB) {
+                            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                            sleep(200);
                         }
-
-                        change_swerve_pos(robot.old_mode);
-
+                        while (gamepad1.right_bumper) {
+                            robot.motorFrontLeft.setPower(robot.drivePowerRatio);
+                            robot.motorFrontRight.setPower(-robot.drivePowerRatio);
+                            robot.motorBackLeft.setPower(-robot.drivePowerRatio);
+                            robot.motorBackRight.setPower(robot.drivePowerRatio);
+                        }
+                        // change_swerve_pos(robot.old_mode);
                         robot.motorFrontLeft.setPower(0);
                         robot.motorFrontRight.setPower(0);
                         robot.motorBackLeft.setPower(0);
@@ -246,6 +244,12 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
                 correct_swerve_servos();
 
+                if (Math.abs(gamepad1.left_stick_y)>0.1) {
+                    if (robot.cur_mode != SwerveDriveHardware.CarMode.CAR) {
+                        change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+                        sleep(200);
+                    }
+                }
                 //set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.right_stick_x);
                 set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
 
@@ -257,15 +261,17 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 }
             } // end use_swerve
 
-            if (robot.use_relic_grabber) {
+            if (robot.use_relic_slider) {
                 // relic slider
-               if (gamepad2.left_stick_y>0.1) {
-                   robot.mt_relic_slider.setPower(-0.5);
-               } else if (gamepad2.left_stick_y<-0.1) {
+                if (gamepad2.left_stick_y > 0.1) {
+                    robot.mt_relic_slider.setPower(-0.5);
+                } else if (gamepad2.left_stick_y < -0.1) {
                     robot.mt_relic_slider.setPower(0.5);
-               } else {
+                } else {
                     robot.mt_relic_slider.setPower(0);
-               }
+                }
+            }
+            if (robot.use_relic_grabber) {
 
                 // relic arm
                 if (gamepad2.right_stick_y>0.1) {
