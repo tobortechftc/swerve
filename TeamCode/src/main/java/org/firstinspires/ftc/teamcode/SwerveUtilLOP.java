@@ -1157,6 +1157,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 //Mirrors to allow checking of right jewel
                 rightJewelColorCamera = leftJewelColorCamera.getOpposingColor();
                 //Current mounting solution only allows camera to check the left jewel color
+                robot.camera.stopCamera();
             }
         }
 
@@ -1933,6 +1934,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                 return source;
             }
         }
+        void stopCamera(){
+            Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
+            this.vuforia.setFrameQueueCapacity(0);
+        }
     }
 
 //      Needs refinement of Array logic to get true gray int (-7829368)
@@ -1951,10 +1956,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
 
-//        void stopCamera(){
-//            Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
-//            this.vuforia.setFrameQueueCapacity(0);
-//        }
+
 
 
     /**
