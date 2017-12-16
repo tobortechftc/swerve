@@ -1520,13 +1520,11 @@ public class SwerveUtilLOP extends LinearOpMode {
                         cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     }
                     driveTT(0, 0);
-                    sleep(500);
                     driveTT(-1 * power / 2, -1 * power / 2); // Slows to half speed
                     while (cur_dist <= driveDistance - 5 && robot.runtime.seconds() < 15) { // Waits until within 4 cm
                         cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     }
                     driveTT(0, 0);
-                    sleep(500);
                     cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     if (cur_dist < driveDistance) {
                        driveTT(-1 * power / 3, -1 * power / 3); // Slows to third speed
