@@ -54,7 +54,8 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
                 telemetry.addData("Column", robot.targetColumn);
                 telemetry.update();
                 StraightIn(0.2, 22); // Drive off the balance stone
-                sleep(500);
+                sleep(300);
+
                 //turnToColumn(robot.targetColumn, 0.2, true, true);
                 go_to_distance_from(0.3, robot.targetColumn, true, true, true); // Drive to cryptobox.
                 TurnLeftD(0.3, 80);
