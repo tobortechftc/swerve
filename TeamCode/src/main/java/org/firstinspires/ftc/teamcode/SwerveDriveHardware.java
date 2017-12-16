@@ -211,10 +211,10 @@ public class SwerveDriveHardware {
 
     ElapsedTime runtime = new ElapsedTime();
 
-    final static double SERVO_FL_FORWARD_POSITION = 0.48;
-    final static double SERVO_FR_FORWARD_POSITION = 0.48;
-    final static double SERVO_BL_FORWARD_POSITION = 0.48;
-    final static double SERVO_BR_FORWARD_POSITION = 0.5;
+    final static double SERVO_FL_FORWARD_POSITION = 0.5; //.5
+    final static double SERVO_FR_FORWARD_POSITION = 0.51; //.45
+    final static double SERVO_BL_FORWARD_POSITION = 0.48; //.47
+    final static double SERVO_BR_FORWARD_POSITION = 0.49;  //.49
 
     final static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + 0.475;
     final static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - 0.475;
