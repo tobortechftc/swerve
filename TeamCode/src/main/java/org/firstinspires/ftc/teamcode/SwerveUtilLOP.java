@@ -202,9 +202,6 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_auto_init() {
-        if (robot.is_gg_upside_down) {
-            glyph_grabber_auto_rotate(0.5);
-        }
         glyph_slider_back_init();
     }
 
@@ -1605,8 +1602,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     void calc_snake(float left_t, float right_t){
         float stick_x = 0;
         if (left_t > 0.1)
-            stick_x = -1 * left_t / 2;
-        else stick_x = right_t / 2;
+            stick_x = -1 * (float)(left_t / 1.5);
+        else stick_x = (float)(right_t / 1.5);
         if(stick_x > 0.1){
             robot.isSnakingLeft = false;
         }

@@ -113,7 +113,7 @@ public class SwerveDriveHardware {
     final static double SV_SHOULDER_RIGHT_1 = 0.45;
 
     final static double SV_ELBOW_UP = 0.9973;
-    final static double SV_ELBOW_DOWN = 0.42;
+    final static double SV_ELBOW_DOWN = 0.435;
     final static double SV_ELBOW_DOWN_HIT = 0.42;
 
     final static double SV_RIGHT_ARM_UP = 0.11;
@@ -133,8 +133,8 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ARM_INIT = 0.5;
     final static double SV_RELIC_ARM_UP = 0.5;
     final static double SV_RELIC_ARM_DOWN = 0.5;
-    final static double GG_SLIDE_UP_POWER = 0.8;
-    final static double GG_SLIDE_DOWN_POWER = -0.5;
+    final static double GG_SLIDE_UP_POWER = 0.95;
+    final static double GG_SLIDE_DOWN_POWER = -0.8;
 
 
     double motorPowerLeft;
