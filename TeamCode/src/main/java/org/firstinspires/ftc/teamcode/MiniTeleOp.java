@@ -5,6 +5,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 
 @TeleOp(name = "Mini-TeleOp", group = "Swerve")
+@Disabled
 public class MiniTeleOp extends SwerveUtilLOP {
     static double JOY_THRESHOLD = 0.03;
     static final double INCREMENT   = 1.0/256.0;

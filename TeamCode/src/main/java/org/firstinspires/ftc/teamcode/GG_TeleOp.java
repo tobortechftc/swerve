@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="GG-TeleOp", group="SwerveDrive")
+@Disabled
 public class GG_TeleOp extends SwerveUtilLOP {
 
     /* Declare OpMode members. */
