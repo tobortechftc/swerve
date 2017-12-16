@@ -17,8 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-import java.security.InvalidParameterException;
-
 import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
@@ -113,7 +111,7 @@ public class SwerveDriveHardware {
     final static double SV_SHOULDER_RIGHT_1 = 0.45;
 
     final static double SV_ELBOW_UP = 0.9973;
-    final static double SV_ELBOW_DOWN = 0.42;
+    final static double SV_ELBOW_DOWN = 0.435;
     final static double SV_ELBOW_DOWN_HIT = 0.42;
 
     final static double SV_RIGHT_ARM_UP = 0.11;
@@ -133,8 +131,8 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ARM_INIT = 0.5;
     final static double SV_RELIC_ARM_UP = 0.5;
     final static double SV_RELIC_ARM_DOWN = 0.5;
-    final static double GG_SLIDE_UP_POWER = 0.8;
-    final static double GG_SLIDE_DOWN_POWER = -0.5;
+    final static double GG_SLIDE_UP_POWER = 0.95;
+    final static double GG_SLIDE_DOWN_POWER = -0.8;
 
 
     double motorPowerLeft;
@@ -208,13 +206,14 @@ public class SwerveDriveHardware {
     public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
     public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
     public SwerveUtilLOP.Camera camera = null;
+    public MB1202 mb_ultra = null;
 
     ElapsedTime runtime = new ElapsedTime();
 
-    final static double SERVO_FL_FORWARD_POSITION = 0.48;
-    final static double SERVO_FR_FORWARD_POSITION = 0.48;
-    final static double SERVO_BL_FORWARD_POSITION = 0.48;
-    final static double SERVO_BR_FORWARD_POSITION = 0.5;
+    final static double SERVO_FL_FORWARD_POSITION = 0.5; //.5
+    final static double SERVO_FR_FORWARD_POSITION = 0.51; //.45
+    final static double SERVO_BL_FORWARD_POSITION = 0.48; //.47
+    final static double SERVO_BR_FORWARD_POSITION = 0.49;  //.49
 
     final static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + 0.475;
     final static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - 0.475;

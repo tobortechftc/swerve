@@ -50,6 +50,7 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
             try {
                 doPlatformMission(false);
                 StraightIn(0.2, 24); // Drive off the balance stone
+                alignUsingIMU();
                 go_to_distance_from(0.3, get_cryptobox_column(), false, false, true); // Drive to cryptobox
                 deliverGlyph();
                 stop_chassis();

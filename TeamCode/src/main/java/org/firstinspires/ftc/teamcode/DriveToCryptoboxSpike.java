@@ -7,6 +7,7 @@ This isn't the final design, just an idea.
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Created by Nick on 9/29/2017.
  */
 @TeleOp(name = "Swerve GoToCryptoSpike", group = "Swerve")
+@Disabled
 public class DriveToCryptoboxSpike extends SwerveUtilLOP {
 
 
