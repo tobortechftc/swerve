@@ -280,6 +280,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void rotate_to_target(double power) {
         if (!robot.gg_rotator_encoder_ok)
             return;
+        stop_chassis(); // ensure chassis stops
         robot.mt_glyph_rotator.setTargetPosition(robot.target_rot_pos);
         robot.mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.runtime.reset();
@@ -337,7 +338,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void glyph_slider_init() {
         robot.target_gg_slider_pos = (int)(robot.GG_SLIDE_INIT);
-        slide_to_target(.5);
+        slide_to_target(.8);
         robot.gg_layer = 0;
     }
 
@@ -443,6 +444,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void slide_to_target(double power) {
         if (!robot.gg_slider_encoder_ok)
             return;
+
+        stop_chassis(); // ensure chassis stops
 
         if (power<0) power=-1.0*power;
         robot.mt_glyph_slider.setTargetPosition(robot.target_gg_slider_pos);

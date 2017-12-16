@@ -124,8 +124,10 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
                     //if (gamepad1.right_trigger > 0.1) {
                     if (gamepad1.right_stick_x > 0.1) {
-                        change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
-                        sleep(200);
+                        if (robot.cur_mode!=SwerveDriveHardware.CarMode.TURN) {
+                            change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
+                            sleep(200);
+                        }
                         //while (gamepad1.right_trigger > 0.1) {
                         while (gamepad1.right_stick_x > 0.1) {
                             robot.motorFrontLeft.setPower(-1*robot.drivePowerRatio);
@@ -134,7 +136,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                             robot.motorBackRight.setPower(robot.drivePowerRatio);
                         }
 
-                        change_swerve_pos(robot.old_mode);
+                        // change_swerve_pos(robot.old_mode);
 
                         robot.motorFrontLeft.setPower(0);
                         robot.motorFrontRight.setPower(0);
@@ -216,7 +218,6 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 }
                 else { //
 
-
                     if (gamepad1.x) { //Cycle through non-snake drive modes
                         if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT ||
                                 robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
@@ -272,7 +273,6 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 }
             }
             if (robot.use_relic_grabber) {
-
                 // relic arm
                 if (gamepad2.right_stick_y>0.1) {
                     double cur_pos = robot.sv_relic_arm.getPosition();
