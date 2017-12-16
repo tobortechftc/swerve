@@ -46,7 +46,7 @@ public class AutoRedSideBox extends SwerveUtilLOP{
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             try {
-                doPlatformMission(true);
+                doPlatformMission(false);
                 //sleep(2000);
                 telemetry.addData("Column", robot.targetColumn);
                 telemetry.update();
