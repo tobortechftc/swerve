@@ -72,7 +72,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
-    public void init_and_test() {
+    public void init_and_test() throws InterruptedException {
         robot.init(hardwareMap);
 
         if (robot.use_glyph_grabber) {
@@ -80,6 +80,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.gg_rotator_encoder_ok = true;
             // test_glyph_slider_encoder();
             robot.gg_slider_encoder_ok = true;
+        }
+        if (robot.use_Vuforia) {
+            robot.targetColumn = get_cryptobox_column();
+            telemetry.addData("0: Crypto Column =", robot.targetColumn);
         }
     }
 
@@ -1263,7 +1267,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         double IMAGE_OFFSET_Y = 0; // Cannot be 1, make sure take the respective crop into consideration
 
 
-        robot.targetColumn = get_cryptobox_column();
+        if (robot.targetColumn<0) {
+            robot.targetColumn = get_cryptobox_column();
+        }
         TeamColor rightJewelColorCamera = TeamColor.UNKNOWN;
 
         ElapsedTime runTime = new ElapsedTime();
