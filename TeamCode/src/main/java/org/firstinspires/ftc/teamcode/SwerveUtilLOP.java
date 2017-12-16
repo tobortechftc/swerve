@@ -561,6 +561,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
+
     void stop_chassis() {
         robot.motorFrontLeft.setPower(0);
         robot.motorFrontRight.setPower(0);
@@ -1370,7 +1371,12 @@ public class SwerveUtilLOP extends LinearOpMode {
                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                 sleep(1000);
                 if (use_encoder) {
-                    StraightCm(power, driveDistance);
+                    if(isBlue){
+                        StraightCm(power, driveDistance);
+                    }
+                    else{
+                        StraightCm(-power, driveDistance);
+                    }
                 } else {
                     double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     driveTT(-1 * power, -1 * power); // Drives to the right
