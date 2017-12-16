@@ -17,8 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-import java.security.InvalidParameterException;
-
 import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
@@ -208,6 +206,7 @@ public class SwerveDriveHardware {
     public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
     public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
     public SwerveUtilLOP.Camera camera = null;
+    public MB1202 mb_ultra = null;
 
     ElapsedTime runtime = new ElapsedTime();
 

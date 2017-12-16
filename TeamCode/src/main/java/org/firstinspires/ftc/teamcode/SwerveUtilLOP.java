@@ -1352,6 +1352,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     public void deliverGlyph() throws InterruptedException{
         StraightIn(0.3, 7);
+
         glyph_grabber_open_and_push_auto();
         // glyph_grabber_half_close();
         StraightIn(-0.4, 7);
@@ -1470,13 +1471,13 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
-            if(isBlue) {
+            if(isBlue) { // Side Blue
                 driveDistance = 7 + (18 * targetColumn); // 19cm between columns
             }
-            else{
+            else { // Side Red
                 driveDistance = 7 + (18 * (2 - targetColumn)); // 19cm between columns
             }
-            robot.runtime.reset();
+            robot.runtime.reset(); // Rest of side
             if (use_encoder) {
                 StraightCm(power, driveDistance);
             } else {
@@ -1493,7 +1494,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         } else { // Front box
-            if (isBlue) {
+            if (isBlue) { // Front Blue
                 if (use_encoder) {
                     driveDistance = 6 + (19 * targetColumn); // 19cm between columns
                 } else {
@@ -1512,21 +1513,19 @@ public class SwerveUtilLOP extends LinearOpMode {
                 } else {
                     double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     driveTT(-1 * power, -1 * power); // Drives to the right
-                    while ((cur_dist <= driveDistance - 20) && (robot.runtime.seconds() < 6)) { // Waits until within 10 cm
+                    while ((cur_dist <= driveDistance - 20) && (robot.runtime.seconds() < 15)) { // Waits until within 10 cm
                         cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     }
                     driveTT(0, 0);
-                    sleep(500);
                     driveTT(-1 * power / 2, -1 * power / 2); // Slows to half speed
-                    while (cur_dist <= driveDistance - 5 && robot.runtime.seconds() < 6) { // Waits until within 4 cm
+                    while (cur_dist <= driveDistance - 5 && robot.runtime.seconds() < 15) { // Waits until within 4 cm
                         cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     }
                     driveTT(0, 0);
-                    sleep(500);
                     cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     if (cur_dist < driveDistance) {
                        driveTT(-1 * power / 3, -1 * power / 3); // Slows to third speed
-                       while (cur_dist <= driveDistance && robot.runtime.seconds() < 7) { // Waits until it has reached distance
+                       while (cur_dist <= driveDistance && robot.runtime.seconds() < 20) { // Waits until it has reached distance
                            cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                        }
 		            }
@@ -1627,6 +1626,16 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         robot.thetaOneCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) - (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1
         robot.thetaTwoCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) + (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2
+    }
+
+    void alignUsingIMU() throws InterruptedException {
+        double imu = imu_heading();
+        if (imu < -0.5) {
+            TurnLeftD(.1, Math.abs(imu));
+        }
+        else if (imu > 0.5) {
+            TurnRightD(.1, Math.abs(imu));
+        }
     }
 
     void snake_servo_adj(){

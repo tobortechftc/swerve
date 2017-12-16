@@ -3,34 +3,34 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.I2cAddrConfig;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.I2cWaitControl;
 import com.qualcomm.robotcore.hardware.configuration.I2cSensor;
-import com.qualcomm.robotcore.hardware.usb.RobotUsbDevice;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.TypeConversion;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
 
-@SuppressWarnings("WeakerAccess")
-@I2cSensor(name = "MB Ultrasonic", description = "an ultrasonic sensor", xmlTag = "MaxBotixI2cUltrasonicSensor")
-public class MBUltrasonic extends I2cDeviceSynchDevice<I2cDeviceSynch> implements DistanceSensor, I2cAddrConfig
+@SuppressWarnings({"WeakerAccess", "unused"})
+@I2cSensor(name = "MB1202 Ultrasonic", description = "MaxBotix Ultrasonic Sensor", xmlTag = "MB1202")
+public class MB1202 extends I2cDeviceSynchDevice<I2cDeviceSynch>
 {
     //----------------------------------------------------------------------------------------------
     // Constants
     //----------------------------------------------------------------------------------------------
 
-    public final static I2cAddr ADDRESS_I2C_DEFAULT = I2cAddr.create8bit(224);
-
+    public final static I2cAddr ADDRESS_I2C_DEFAULT_8B_W = I2cAddr.create8bit(224);
+    public final static I2cAddr ADDRESS_I2C_DEFAULT_8B_R = I2cAddr.create8bit(225);
+    public final static I2cAddr ADDRESS_I2C_DEFAULT_7B = I2cAddr.create7bit(112);
+    ElapsedTime runtime;
     public enum Register
     {
         FIRST(0),
-        WRITE(0x70),
-        READ(0x71),
+        WRITE(0x00),
+        READ(0x00),
         LAST(READ.bVal),
         UNKNOWN(-1);
 
@@ -48,13 +48,12 @@ public class MBUltrasonic extends I2cDeviceSynchDevice<I2cDeviceSynch> implement
     // Construction
     //----------------------------------------------------------------------------------------------
 
-    public MBUltrasonic(I2cDeviceSynch deviceClient)
+    public MB1202(I2cDeviceSynch deviceClient)
     {
         super(deviceClient, true);
 
-        // this.setOptimalReadWindow();
-        this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
-
+        this.setOptimalReadWindow();
+        this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT_8B_W);
         super.registerArmingStateCallback(false);
         this.deviceClient.engage();
     }
@@ -71,10 +70,17 @@ public class MBUltrasonic extends I2cDeviceSynchDevice<I2cDeviceSynch> implement
     @Override
     protected synchronized boolean doInitialize()
     {
-        return true;    // nothing to do
+        // write8(Register.WRITE, (byte) 0x51);
+        runtime = new ElapsedTime();
+        //this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT_8B_W);
+        write8(Register.WRITE, (byte) 0x51);
+        write8(Register.WRITE, (byte) 0x00);
+        //this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT_8B_R);
+        runtime.reset();
+        return true;
     }
 
-    @Override public double getDistance(DistanceUnit unit)
+    public double getDistance(DistanceUnit unit)
     {
         double cm = cmUltrasonic();
         if (cm == cmUltrasonicMax)
@@ -93,12 +99,15 @@ public class MBUltrasonic extends I2cDeviceSynchDevice<I2cDeviceSynch> implement
      * @return the raw reading on the ultrasonic sensor
      */
     public double cmUltrasonic() {
-        write8(Register.WRITE, (byte) 0x51);
-
-        for (int i=0; i<1000; i++) ; // no-op just wait
-            
+        if (runtime.milliseconds()>100.0) { // write every 100 ms
+            //this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT_8B_W);
+            write8(Register.WRITE, (byte) 0x51);
+            write8(Register.WRITE, (byte) 0x00);
+            runtime.reset();
+            //this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT_8B_R);
+        }
         short range_word = readShort(Register.READ); //Read 2-bytes
-        double range =  (range_word >> 8) & 0xff | (range_word & 0xff);
+        double range =  (range_word >> 8) * 256 + (range_word & 0xff);
         return range;
     }
 
@@ -107,12 +116,12 @@ public class MBUltrasonic extends I2cDeviceSynchDevice<I2cDeviceSynch> implement
     // I2cAddressConfig
     //----------------------------------------------------------------------------------------------
 
-    @Override public void setI2cAddress(I2cAddr newAddress)
+    public void setI2cAddress(I2cAddr newAddress)
     {
         this.deviceClient.setI2cAddress(newAddress);
     }
 
-    @Override public I2cAddr getI2cAddress()
+    public I2cAddr getI2cAddress()
     {
         return this.deviceClient.getI2cAddress();
     }
@@ -124,12 +133,14 @@ public class MBUltrasonic extends I2cDeviceSynchDevice<I2cDeviceSynch> implement
     @Override
     public Manufacturer getManufacturer()
     {
-        return Manufacturer.ModernRobotics;
+        return Manufacturer.Other;
     }
 
     @Override public String getDeviceName()
     {
-        return String.format(Locale.getDefault(), "MaxBotix Ultrasonic Sensor");
+        // return String.format(Locale.getDefault(), "MaxBotix Ultrasonic Sensor");
+        return "MaxBotix MB1202 Ultrasonic Sensor";
+        //return "mb_ultra";
     }
 
     //----------------------------------------------------------------------------------------------
