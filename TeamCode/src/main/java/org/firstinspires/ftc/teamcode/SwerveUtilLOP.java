@@ -2013,8 +2013,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             int pixelBlue = Color.blue(pixels[pixelI]);
 
             double greenToBlueRatio = (double)pixelGreen / (double)pixelBlue;
+            double greenToRedRatio = (double)pixelGreen / (double)pixelRed;
 
-            if(pixelRed > pixelGreen * 1.4 && pixelRed > pixelBlue * 1.4){
+            if(pixelRed > pixelGreen * 1.4 && pixelRed > pixelBlue * 1.4 && greenToRedRatio < .3){
                 redCount++;
                 if (redStart == -1){
                     redStart = pixelI;
