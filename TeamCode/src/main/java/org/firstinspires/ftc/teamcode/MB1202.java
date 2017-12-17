@@ -73,8 +73,8 @@ public class MB1202 extends I2cDeviceSynchDevice<I2cDeviceSynch>
         // write8(Register.WRITE, (byte) 0x51);
         runtime = new ElapsedTime();
         //this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT_8B_W);
-        write8(Register.WRITE, (byte) 0x51);
-        write8(Register.WRITE, (byte) 0x00);
+        //write8(Register.WRITE, (byte) 0x51);
+        //write8(Register.WRITE, (byte) 0x00);
         //this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT_8B_R);
         runtime.reset();
         return true;
@@ -99,6 +99,7 @@ public class MB1202 extends I2cDeviceSynchDevice<I2cDeviceSynch>
      * @return the raw reading on the ultrasonic sensor
      */
     public double cmUltrasonic() {
+        /*
         if (runtime.milliseconds()>100.0) { // write every 100 ms
             //this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT_8B_W);
             write8(Register.WRITE, (byte) 0x51);
@@ -106,6 +107,7 @@ public class MB1202 extends I2cDeviceSynchDevice<I2cDeviceSynch>
             runtime.reset();
             //this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT_8B_R);
         }
+        */
         short range_word = readShort(Register.READ); //Read 2-bytes
         double range =  (range_word >> 8) * 256 + (range_word & 0xff);
         return range;

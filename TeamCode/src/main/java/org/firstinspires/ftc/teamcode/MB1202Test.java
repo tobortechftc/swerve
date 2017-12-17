@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -45,7 +46,10 @@ public class MB1202Test extends LinearOpMode {
     private MB1202 mb_ultra;
     private Wire mb2;
     boolean use_wire = false;
+    boolean use_mb = true;
+    boolean use_digit = true;
 
+    DigitalChannel dSen;  // Hardware Device Object
     //private ModernRoboticsI2cRangeSensor mb_ultra;
     private ModernRoboticsI2cRangeSensor mr_range;
 
@@ -53,6 +57,7 @@ public class MB1202Test extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
         int box_column = -1;
+        boolean dSen_st = false;
         /*
         robot.use_swerve = false;
         robot.use_imu = false;
@@ -70,7 +75,7 @@ public class MB1202Test extends LinearOpMode {
             if (use_wire) {
                 mb2 = hardwareMap.get(Wire.class, "mb_ultra");
                 mb2.setAddress(0xE0);
-            } else {
+            } else if (use_mb) {
                 mb_ultra = hardwareMap.get(MB1202.class, "mb_ultra");
             }
         }  catch (Exception e) {
@@ -84,7 +89,12 @@ public class MB1202Test extends LinearOpMode {
         }
         //mb_ultra.setI2cAddress(MBUltrasonic.ADDRESS_I2C_DEFAULT);
         mr_range = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "mr_range");
-
+        // get a reference to our digitalTouch object.
+        if (use_digit) {
+            dSen = hardwareMap.get(DigitalChannel.class, "10cm_prox");
+            // set the digital channel to input.
+            dSen.setMode(DigitalChannel.Mode.INPUT);
+        }
         if (use_wire) {
             mb2.beginWrite(0x51);
             mb2.write(0);
@@ -125,6 +135,11 @@ public class MB1202Test extends LinearOpMode {
                 dist_cm2 = mr_range.getDistance(DistanceUnit.CM);
                 telemetry.addData("2. MR Range =", "%3.1f cm (Time %3.2f sec)",
                         dist_cm2, (System.currentTimeMillis()-begin_time)/1000.0);
+            }
+            if (dSen!=null) {
+                dSen_st = dSen.getState();
+                telemetry.addData("2. Priximity Sensor =", " %s (Time %3.2f sec)",
+                        (dSen_st?"Off":"On"), (System.currentTimeMillis()-begin_time)/1000.0);
             }
             telemetry.update();
             // sleep(40);
