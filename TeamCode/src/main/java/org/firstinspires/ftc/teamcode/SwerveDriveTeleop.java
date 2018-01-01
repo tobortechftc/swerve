@@ -24,7 +24,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
         robot.use_color_sensor = true;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = true;
-        robot.use_relic_grabber = true;
+        robot.use_relic_grabber = false;
         robot.use_relic_slider = true;
         robot.use_arm = true;
 
@@ -335,10 +335,13 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 } else if (gamepad2.dpad_up) {
                     glyph_slider_up_auto();
                 } else if (gamepad2.dpad_left) {
-                    glyph_grabber_auto_rotate(0.7);
+                    glyph_grabber_auto_rotate(1.0);
+                } else if (gamepad2.dpad_right && gamepad2.b) {
+                    rotate_refine_up();
+                } else if (gamepad2.dpad_right && gamepad2.x) {
+                    rotate_refine_down();
                 } else if (gamepad2.dpad_right) {
                     rotate_refine();
-                    // glyph_grabber_auto_rotate(0.7);
                 } else if (gamepad2.right_bumper) { // manual up
                     glyph_slider_up();
                 } else if (gamepad2.back && gamepad2.right_trigger > 0.1) { // down and reset
@@ -353,7 +356,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
             show_telemetry();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
-            robot.waitForTick(40);
+            // robot.waitForTick(40);
         }
     }
 }

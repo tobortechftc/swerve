@@ -93,7 +93,7 @@ public class SwerveDriveHardware {
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4150; // ~14 inches
-    final static int GG_SLIDE_INIT = 450;
+    final static int GG_SLIDE_INIT = 220;
 
 
     final static int RED_BALL_MIN = -300;
@@ -119,11 +119,11 @@ public class SwerveDriveHardware {
 
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.25;
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.35;
-    final static double SV_GLYPH_GRABBER_TOP_HALF_CLOSED = 0.45;
+    final static double SV_GLYPH_GRABBER_TOP_HALF_CLOSED = 0.43;
     final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.54;
     final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.74;
     final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.65;
-    final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.52;
+    final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.56;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.39;
     final static double SV_RELIC_GRABBER_INIT = 0.76;
     final static double SV_RELIC_GRABBER_CLOSE = 0.46;
@@ -131,8 +131,8 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ARM_INIT = 0.5;
     final static double SV_RELIC_ARM_UP = 0.5;
     final static double SV_RELIC_ARM_DOWN = 0.5;
-    final static double GG_SLIDE_UP_POWER = 0.95;
-    final static double GG_SLIDE_DOWN_POWER = -0.8;
+    final static double GG_SLIDE_UP_POWER = 1.0;
+    final static double GG_SLIDE_DOWN_POWER = -0.9;
 
 
     double motorPowerLeft;

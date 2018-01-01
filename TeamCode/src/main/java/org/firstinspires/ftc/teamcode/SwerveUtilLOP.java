@@ -111,23 +111,23 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void glyph_grabber_auto_close() { // close the down/up grabber depend on upside down
         if (robot.is_gg_upside_down) { // close up grabber
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
-            sleep(300);
-            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
-            sleep(300);
-            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
-            driveTT(-0.2, -0.2);
             sleep(200);
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
+            sleep(200);
+            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+            driveTT(-0.4, -0.4);
+            sleep(100);
             driveTT(0,0);
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
             robot.gg_top_close = true;
         } else {
             robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
-            sleep(300);
-            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED);
-            sleep(300);
-            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
-            driveTT(-0.2, -0.2);
             sleep(200);
+            robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED);
+            sleep(200);
+            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+            driveTT(-0.4, -0.4);
+            sleep(100);
             driveTT(0,0);
             robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
             robot.gg_bottom_close = true;
@@ -214,13 +214,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         boolean need_slide_up = false;
         stop_chassis();
         int orig_slide_pos = robot.mt_glyph_rotator.getCurrentPosition();
-        if (robot.gg_layer==0 && (orig_slide_pos<800 || robot.is_gg_upside_down==true)) {
+        if (robot.gg_layer==0 && orig_slide_pos<600) {
             need_slide_up = true;
         }
         if (orig_slide_pos>1000) { // more than 4.5 inches above the ground
             need_slide_up = false;
         }
-        double up_inches = (1200-orig_slide_pos) / 300.0;
+        double up_inches = (1000-orig_slide_pos) / 300.0;
         if (need_slide_up && (up_inches>0)) {
             glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, up_inches);
             sleep(300);
@@ -247,12 +247,24 @@ public class SwerveUtilLOP extends LinearOpMode {
                 if (robot.is_gg_upside_down)
                     back_pos += 150;
             }
-            glyph_slider_position(back_pos);
-            sleep(500);
+            if (back_pos>orig_slide_pos) {
+                glyph_slider_position(back_pos);
+                sleep(500);
+            }
         }
     }
 
     public void rotate_refine() {
+        rotate_to_target(0.2);
+    }
+
+    public void rotate_refine_up() {
+        robot.target_rot_pos = robot.target_rot_pos + 20;
+        rotate_to_target(0.2);
+    }
+
+    public void rotate_refine_down() {
+        robot.target_rot_pos = robot.target_rot_pos - 20;
         rotate_to_target(0.2);
     }
 
