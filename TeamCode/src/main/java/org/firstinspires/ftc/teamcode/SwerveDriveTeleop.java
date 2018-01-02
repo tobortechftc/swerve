@@ -24,7 +24,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
         robot.use_color_sensor = true;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = true;
-        robot.use_relic_grabber = false;
+        robot.use_relic_grabber = true;
         robot.use_relic_slider = true;
         robot.use_arm = true;
 
@@ -261,25 +261,29 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
             if (robot.use_relic_slider) {
                 // relic slider
                 if (gamepad2.left_stick_y > 0.1) {
-                    robot.mt_relic_slider.setPower(-0.5);
-                } else if (gamepad2.left_stick_y < -0.1) {
                     robot.mt_relic_slider.setPower(0.5);
+                } else if (gamepad2.left_stick_y < -0.1) {
+                    robot.mt_relic_slider.setPower(-0.5);
                 } else {
                     robot.mt_relic_slider.setPower(0);
                 }
             }
             if (robot.use_relic_grabber) {
                 // relic arm
-                if (gamepad2.right_stick_y>0.1) {
+                if (gamepad2.right_stick_y<-0.1) {
                     double cur_pos = robot.sv_relic_arm.getPosition();
-                    if (cur_pos<0.95) {
+                    if (cur_pos<0.99) {
                         robot.sv_relic_arm.setPosition(cur_pos + 0.01);
                     }
-                } else if (gamepad2.right_stick_y<-0.1) {
+                } else if (gamepad2.right_stick_y>0.1) {
                     double cur_pos = robot.sv_relic_arm.getPosition();
-                    if (cur_pos>0.05) {
+                    if (cur_pos>0.01) {
                         robot.sv_relic_arm.setPosition(cur_pos - 0.01);
                     }
+                } else if (gamepad2.y) {
+                    relic_arm_up();
+                } else if (gamepad2.a) {
+                    relic_arm_down();
                 }
 
                 // relic grabber open/close
