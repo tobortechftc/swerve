@@ -287,7 +287,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 }
 
                 // relic grabber open/close
-                if (gamepad2.x && gamepad2.back) {
+                if (gamepad2.b && !gamepad2.start) {
                     relic_grabber_close();
                 } else if (gamepad2.x) {
                     relic_grabber_open();
