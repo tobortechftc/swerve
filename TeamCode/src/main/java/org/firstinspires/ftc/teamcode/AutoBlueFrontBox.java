@@ -46,6 +46,7 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
                 alignUsingIMU();
                 go_to_distance_from(0.3, get_cryptobox_column(), true, false, true); // Drive to cryptobox
                 deliverGlyph();
+                turnToCenter(true, false, robot.targetColumn);
                 stop_chassis();
             }
             catch(Exception e) {

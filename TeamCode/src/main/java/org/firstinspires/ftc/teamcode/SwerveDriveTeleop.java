@@ -52,7 +52,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
             if (robot.use_swerve) {
 
-                if(robot.isTesting){ //Allow to test individual servo positions
+                if(robot.isTesting){ //Allow to test individual movement
 
                     if (gamepad1.left_trigger > 0.1) {
 
@@ -178,6 +178,43 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorBackLeft.setPower(0);
                         robot.motorBackRight.setPower(0);
                     }
+
+                    if (gamepad1.x){
+                        if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
+                            change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
+                            sleep(200);
+                        }
+                        while (gamepad1.x) {
+                            robot.motorFrontLeft.setPower(-robot.drivePowerRatio);
+                            robot.motorFrontRight.setPower(robot.drivePowerRatio);
+                            robot.motorBackLeft.setPower(-robot.drivePowerRatio);
+                            robot.motorBackRight.setPower(robot.drivePowerRatio);
+                        }
+                        // change_swerve_pos(robot.old_mode);
+                        robot.motorFrontLeft.setPower(0);
+                        robot.motorFrontRight.setPower(0);
+                        robot.motorBackLeft.setPower(0);
+                        robot.motorBackRight.setPower(0);
+                    }
+
+                    if (gamepad1.b){
+                        if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
+                            change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
+                            sleep(200);
+                        }
+                        while (gamepad1.b) {
+                            robot.motorFrontLeft.setPower(robot.drivePowerRatio);
+                            robot.motorFrontRight.setPower(-robot.drivePowerRatio);
+                            robot.motorBackLeft.setPower(robot.drivePowerRatio);
+                            robot.motorBackRight.setPower(-robot.drivePowerRatio);
+                        }
+                        // change_swerve_pos(robot.old_mode);
+                        robot.motorFrontLeft.setPower(0);
+                        robot.motorFrontRight.setPower(0);
+                        robot.motorBackLeft.setPower(0);
+                        robot.motorBackRight.setPower(0);
+                    }
+
                     if (gamepad1.a && gamepad1.y) {
                         robot.drivePowerRatio = 0.7;
                         sleep(20);

@@ -61,6 +61,7 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
                 alignUsingIMU();
                 go_to_distance_from(0.3, get_cryptobox_column(), false, false, true); // Drive to cryptobox
                 deliverGlyph();
+                turnToCenter(false, false, robot.targetColumn);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

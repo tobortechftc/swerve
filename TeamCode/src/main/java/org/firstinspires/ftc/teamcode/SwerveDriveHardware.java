@@ -88,8 +88,11 @@ public class SwerveDriveHardware {
 
     final static double WIDTH_BETWEEN_WHEELS = 12;
     final static double LENGTH_BETWEEN_WHEELS = 12;
+    final static double DISTANCE_TO_CENTER_OF_GLYPH = 5.9;
     final static double MIN_TURNING_RADIUS = 13;
     final static double MAX_TURNING_RADIUS = 100;
+    final static double THETA_FRONT = (Math.atan(DISTANCE_TO_CENTER_OF_GLYPH / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
+    final static double THETA_BACK = (Math.atan((DISTANCE_TO_CENTER_OF_GLYPH + LENGTH_BETWEEN_WHEELS) / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4150; // ~14 inches
@@ -226,11 +229,17 @@ public class SwerveDriveHardware {
     final static double SERVO_BL_TURN_POSITION = SERVO_BL_FORWARD_POSITION + (0.475/2);
     final static double SERVO_BR_TURN_POSITION = SERVO_BR_FORWARD_POSITION - (0.475/2);
 
+    final static double SERVO_FL_ORBIT_POSITION = SERVO_FL_FORWARD_POSITION + (THETA_FRONT / 180);
+    final static double SERVO_FR_ORBIT_POSITION = SERVO_FR_FORWARD_POSITION - (THETA_FRONT / 180);
+    final static double SERVO_BL_ORBIT_POSITION = SERVO_BL_FORWARD_POSITION + (THETA_BACK / 180);
+    final static double SERVO_BR_ORBIT_POSITION = SERVO_BR_FORWARD_POSITION - (THETA_BACK / 180);
+
     enum CarMode {
         CAR,
         STRAIGHT,
         CRAB,
-        TURN
+        TURN,
+        ORBIT
     }
     CarMode cur_mode = CarMode.CAR;
     CarMode old_mode = CarMode.STRAIGHT;

@@ -1414,6 +1414,46 @@ public class SwerveUtilLOP extends LinearOpMode {
         glyph_grabber_auto_open();
     }
 
+    public void turnToCenter(boolean isBlue, boolean isSide, int curColumn) throws InterruptedException{
+        StraightCm(-0.3, 6);
+        if(isSide){
+            if(isBlue){
+                TurnRightD(0.4, 170);
+            }
+            else{
+                TurnLeftD(0.4, 170);
+            }
+        }
+        else{
+            if(isBlue){
+                if (curColumn == 0){
+                    TurnRightD(0.4, 120);
+                }
+                else if(curColumn == 1){
+                    TurnRightD(0.4, 135);
+                }
+                else if(curColumn == 2){
+                    TurnRightD(0.4, 155);
+                }
+            }
+            else{
+                if (curColumn == 0){
+                    TurnLeftD(0.4, 155);
+                }
+                else if(curColumn == 1){
+                    TurnLeftD(0.4, 135);
+                }
+                else if(curColumn == 2){
+                    TurnLeftD(0.4, 120);
+                }
+            }
+        }
+        if((isSide && isBlue && curColumn == 0) || (isSide && !isBlue && curColumn == 2));
+        else{
+            StraightCm(-0.3, 6);
+        }
+    }
+
     TeamColor checkBallColor(boolean isBlueAlliance) throws InterruptedException {
         boolean isBlueBall = false;
         boolean isRedBall = false;
@@ -1892,6 +1932,17 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.servoPosFR = robot.SERVO_FR_FORWARD_POSITION;
             robot.servoPosBL = robot.SERVO_BL_FORWARD_POSITION;
             robot.servoPosBR = robot.SERVO_BR_FORWARD_POSITION;
+        }
+        else if(new_mode == SwerveDriveHardware.CarMode.ORBIT){
+            robot.servoFrontLeft.setPosition(robot.SERVO_FL_ORBIT_POSITION);
+            robot.servoFrontRight.setPosition(robot.SERVO_FR_ORBIT_POSITION);
+            robot.servoBackLeft.setPosition(robot.SERVO_BL_ORBIT_POSITION);
+            robot.servoBackRight.setPosition(robot.SERVO_BR_ORBIT_POSITION);
+
+            robot.servoPosFL = robot.SERVO_FL_ORBIT_POSITION;
+            robot.servoPosFR = robot.SERVO_FR_ORBIT_POSITION;
+            robot.servoPosBL = robot.SERVO_BL_ORBIT_POSITION;
+            robot.servoPosBR = robot.SERVO_BR_ORBIT_POSITION;
         }
         robot.old_mode = robot.cur_mode;
         robot.cur_mode = new_mode;
