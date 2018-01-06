@@ -90,8 +90,10 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void start_init() {
         glyph_grabber_auto_open();
         glyph_slider_init();
-        relic_grabber_open();
-        relic_arm_down();
+        if (robot.use_relic_grabber) {
+            relic_grabber_open();
+            relic_arm_down();
+        }
     }
 
     public double imu_heading() {
@@ -278,7 +280,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
     }
 
-    public void relic_arm_down() {
+    public void relic_grabber_release() {
+        robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_DOWN_R);
+        robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
+    }
+
+    public void relic_arm_down()
+    {
         robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_DOWN);
     }
 
