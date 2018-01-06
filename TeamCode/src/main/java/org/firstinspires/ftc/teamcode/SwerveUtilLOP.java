@@ -1365,9 +1365,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             // if directionI 0, then color is unknown
         } else {
-            StraightCm(.1 * directionI, 5); // Drives forward if right jewel is red, backwards if blue
+            StraightCm(.1 * directionI, 6); // Drives forward if right jewel is red, backwards if blue
             sleep(100);
-            StraightCm(-.1 * directionI, 5); // Drives forward if right jewel is blue, backwards if red
+            StraightCm(-.1 * directionI, 7); // Drives forward if right jewel is blue, backwards if red
         }
 
         sleep(1000);
