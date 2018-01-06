@@ -281,7 +281,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void relic_grabber_release() {
-        robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_DOWN_R);
+        // robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_DOWN_R);
         robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
     }
 
@@ -1336,7 +1336,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_glyph_grabber) {
             glyph_grabber_close();
             sleep(100);
-            glyph_slider_up_inches(.5, 4);
+            glyph_slider_up_inches(.5, 3);
         }
         if (robot.allianceColor == TeamColor.BLUE) {
             arm_down();

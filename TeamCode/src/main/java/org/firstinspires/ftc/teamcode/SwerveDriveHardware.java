@@ -30,8 +30,8 @@ public class SwerveDriveHardware {
     public boolean use_encoder = true;
     public boolean use_color_sensor = false;
     public boolean use_range_sensor = false;
-    public boolean use_relic_grabber = false;
-    public boolean use_relic_slider = false;
+    public boolean use_relic_grabber = true;
+    public boolean use_relic_slider = true;
     public boolean use_glyph_grabber = false;
     public boolean use_arm = false;
     public boolean use_test_servo = false;
@@ -93,7 +93,7 @@ public class SwerveDriveHardware {
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4150; // ~14 inches
-    final static int GG_SLIDE_INIT = 220;
+    final static int GG_SLIDE_INIT = 10;
 
 
     final static int RED_BALL_MIN = -300;
