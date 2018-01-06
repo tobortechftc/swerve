@@ -1382,11 +1382,19 @@ public class SwerveUtilLOP extends LinearOpMode {
     // if sum = 1, then it is our color. if sum == 0, then it is unknown. if sum = -1, then it is their color.
     // Ex. sensor is red, camera is unknown, team is red. It will return 1.
     public int calcArmDirection(TeamColor sensor, TeamColor camera, boolean isBlueAlliance) {
-        int sum = 0;
-        if (sensor == TeamColor.RED || camera == TeamColor.RED) sum += 1;
-        if (sensor == TeamColor.BLUE || camera == TeamColor.BLUE) sum -= 1;
-        if (isBlueAlliance) sum *= -1;
-        return sum;
+        int result = 0;
+        if (sensor == TeamColor.RED) result = 1;
+        else if (sensor == TeamColor.BLUE) result = -1;
+        else { // Sensor trumps camera, only use camera when sensor is unknown
+            if (camera == TeamColor.RED) result = 1;
+            else if (camera == TeamColor.BLUE) result = -1;
+        }
+
+//        if (sensor == TeamColor.RED || camera == TeamColor.RED) sum += 1;
+//        if (sensor == TeamColor.BLUE || camera == TeamColor.BLUE) sum -= 1;
+
+        if (isBlueAlliance) result *= -1;
+        return result;
     }
 
     public void deliverGlyph() throws InterruptedException{
@@ -1533,7 +1541,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         } else { // Front box
-            if (isBlue) { // Front Blue
+            if (isBlue) { // Front blue
                 if (use_encoder) {
                     driveDistance = 6 + (19 * targetColumn); // 19cm between columns
                 } else {
@@ -1570,10 +1578,11 @@ public class SwerveUtilLOP extends LinearOpMode {
 		            }
                 }
             }
-            else { // Front red box
+            else { // Front red
                 power *= -1; // Reverses power input, all other code is pretty much the same
                 if (use_encoder) {
-                    driveDistance = 25 + (19 * (2 - targetColumn)); // 19cm between columns
+                    driveDistance = 6 + (19 * (2 - targetColumn)); // 19cm between columns
+                    // Middle and right are too short
                 } else {
                     driveDistance = 52 + (19 * (2 - targetColumn)); // 19cm between columns
                 }
@@ -1582,9 +1591,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 sleep(500);
                 if (use_encoder) {
                     StraightCm(power, driveDistance);
-                } else {
-                    // Do nothing, there is no range sensor for this side.
-                }
+                } // Note - requires encoder, as there is no distance sensor
             }
         }
         driveTT(0, 0); // Stops

@@ -26,7 +26,6 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
         robot.use_Vuforia = true;
         robot.use_camera = true;
         robot.use_glyph_grabber = true;
-        robot.use_arm = true;
 
         robot.allianceColor = TeamColor.RED;
 
@@ -42,7 +41,16 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
         robot.runtime.reset();
         waitForStart();
 
+        try {
         start_init();
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            telemetry.log().add(sw.toString());
+            sleep(15000);
+            requestOpModeStop();
+        }
 
 
         // run until the end of the match (driver presses STOP)
