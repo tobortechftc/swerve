@@ -151,8 +151,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         while (gamepad1.left_bumper) {
                             robot.motorFrontLeft.setPower(-robot.drivePowerRatio);
                             robot.motorFrontRight.setPower(robot.drivePowerRatio);
-                            robot.motorBackLeft.setPower(robot.drivePowerRatio);
-                            robot.motorBackRight.setPower(-robot.drivePowerRatio);
+                            robot.motorBackLeft.setPower(-robot.drivePowerRatio);
+                            robot.motorBackRight.setPower(robot.drivePowerRatio);
                         }
                         // change_swerve_pos(robot.old_mode);
                         robot.motorFrontLeft.setPower(0);
@@ -169,8 +169,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         while (gamepad1.right_bumper) {
                             robot.motorFrontLeft.setPower(robot.drivePowerRatio);
                             robot.motorFrontRight.setPower(-robot.drivePowerRatio);
-                            robot.motorBackLeft.setPower(-robot.drivePowerRatio);
-                            robot.motorBackRight.setPower(robot.drivePowerRatio);
+                            robot.motorBackLeft.setPower(robot.drivePowerRatio);
+                            robot.motorBackRight.setPower(-robot.drivePowerRatio);
                         }
                         // change_swerve_pos(robot.old_mode);
                         robot.motorFrontLeft.setPower(0);

@@ -558,8 +558,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(-rp);
-                robot.motorBackLeft.setPower(lp);
-                robot.motorBackRight.setPower(-lp);
+                robot.motorBackLeft.setPower(-lp);
+                robot.motorBackRight.setPower(lp);
             }
             else if(robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
                 robot.motorFrontRight.setPower(rp);
@@ -669,12 +669,12 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(0);
                 robot.motorBackLeft.setPower(0);
-                robot.motorBackRight.setPower(-lp);
+                robot.motorBackRight.setPower(lp);
             }
             else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && !strafeRight) {
                 robot.motorFrontRight.setPower(0);
                 robot.motorFrontLeft.setPower(-rp);
-                robot.motorBackLeft.setPower(lp);
+                robot.motorBackLeft.setPower(-lp);
                 robot.motorBackRight.setPower(0);
             }
             else if(robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
@@ -846,7 +846,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if(strafeRight) {
                 if (rightTC0 > 0 || leftTC0 > 0) {
                     targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC0);
-                    targetPosBackRight = curPosBackRight + ((int) -rightPowerSign * rightTC0);
+                    targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC0);
                     robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                     robot.motorBackRight.setTargetPosition(targetPosBackRight);
 
@@ -861,7 +861,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 curPosBackRight = robot.motorBackRight.getCurrentPosition();
 
                 targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC1);
-                targetPosBackRight = curPosBackRight + ((int) -rightPowerSign * rightTC1);
+                targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC1);
 
                 robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                 robot.motorBackRight.setTargetPosition(targetPosBackRight);
@@ -876,7 +876,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                     curPosBackRight = robot.motorBackRight.getCurrentPosition();
 
                     targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC2);
-                    targetPosBackRight = curPosBackRight + ((int) -rightPowerSign * rightTC2);
+                    targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC2);
 
                     robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                     robot.motorBackRight.setTargetPosition(targetPosBackRight);
@@ -889,7 +889,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             else{
                 if (rightTC0 > 0 || leftTC0 > 0) {
                     targetPosFrontLeft = curPosFrontLeft + ((int) -leftPowerSign * leftTC0);
-                    targetPosBackLeft = curPosBackLeft + ((int) rightPowerSign * rightTC0);
+                    targetPosBackLeft = curPosBackLeft + ((int) -rightPowerSign * rightTC0);
                     robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                     robot.motorBackLeft.setTargetPosition(targetPosBackLeft);
 
@@ -904,7 +904,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 curPosBackLeft = robot.motorBackLeft.getCurrentPosition();
 
                 targetPosFrontLeft = curPosFrontLeft + ((int) -leftPowerSign * leftTC1);
-                targetPosBackLeft = curPosBackLeft + ((int) rightPowerSign * rightTC1);
+                targetPosBackLeft = curPosBackLeft + ((int) -rightPowerSign * rightTC1);
 
                 robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                 robot.motorBackLeft.setTargetPosition(targetPosBackLeft);
@@ -919,7 +919,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                     curPosBackLeft = robot.motorBackLeft.getCurrentPosition();
 
                     targetPosFrontLeft = curPosFrontLeft + ((int) -leftPowerSign * leftTC2);
-                    targetPosBackLeft = curPosBackLeft + ((int) rightPowerSign * rightTC2);
+                    targetPosBackLeft = curPosBackLeft + ((int) -rightPowerSign * rightTC2);
 
                     robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                     robot.motorBackLeft.setTargetPosition(targetPosBackLeft);
