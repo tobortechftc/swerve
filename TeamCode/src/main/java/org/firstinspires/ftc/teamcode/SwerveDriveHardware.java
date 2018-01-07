@@ -115,7 +115,7 @@ public class SwerveDriveHardware {
     final static double SV_SHOULDER_RIGHT_2 = 0.40;
     final static double SV_SHOULDER_RIGHT_1 = 0.45;
 
-    final static double SV_ELBOW_UP = 0.9973;
+    final static double SV_ELBOW_UP = 0.987;
     final static double SV_ELBOW_DOWN = 0.435;
     final static double SV_ELBOW_DOWN_HIT = 0.42;
 
