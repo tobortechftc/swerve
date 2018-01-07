@@ -97,6 +97,8 @@ public class SwerveDriveHardware {
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4150; // ~14 inches
     final static int GG_SLIDE_INIT = 10;
+    final static int RELIC_SLIDE_MAX = -8800;
+
 
 
     final static int RED_BALL_MIN = -300;
@@ -166,6 +168,7 @@ public class SwerveDriveHardware {
     int target_rot_pos = 0;
     int init_gg_slider_pos = GG_SLIDE_INIT;
     int target_gg_slider_pos = 0;
+    int target_relic_slider_pos = 0;
     int gg_layer = 0;
     int max_gg_layer = 2;
     int [] layer_positions = {GG_SLIDE_INIT, ONE_ROTATION_60+GG_SLIDE_INIT, 2*ONE_ROTATION_60+GG_SLIDE_INIT};
@@ -214,20 +217,22 @@ public class SwerveDriveHardware {
 
     ElapsedTime runtime = new ElapsedTime();
 
-    final static double SERVO_FL_FORWARD_POSITION = 0.5;
-    final static double SERVO_FR_FORWARD_POSITION = 0.49;
-    final static double SERVO_BL_FORWARD_POSITION = 0.48;
-    final static double SERVO_BR_FORWARD_POSITION = 0.49;
+     static double SERVO_90_DEGREE = 0.479;
 
-    final static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + 0.475;
-    final static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - 0.475;
-    final static double SERVO_BL_STRAFE_POSITION = SERVO_BL_FORWARD_POSITION + 0.475;
-    final static double SERVO_BR_STRAFE_POSITION = SERVO_BR_FORWARD_POSITION - 0.475;
+    final static double SERVO_FL_FORWARD_POSITION = 0.48;
+    final static double SERVO_FR_FORWARD_POSITION = 0.52;
+    final static double SERVO_BL_FORWARD_POSITION = 0.46;
+    final static double SERVO_BR_FORWARD_POSITION = 0.5;
 
-    final static double SERVO_FL_TURN_POSITION = SERVO_FL_FORWARD_POSITION - (0.475/2);
-    final static double SERVO_FR_TURN_POSITION = SERVO_FR_FORWARD_POSITION + (0.475/2);
-    final static double SERVO_BL_TURN_POSITION = SERVO_BL_FORWARD_POSITION + (0.475/2);
-    final static double SERVO_BR_TURN_POSITION = SERVO_BR_FORWARD_POSITION - (0.475/2);
+     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + SERVO_90_DEGREE;
+     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - SERVO_90_DEGREE;
+     static double SERVO_BL_STRAFE_POSITION = SERVO_BL_FORWARD_POSITION + SERVO_90_DEGREE;
+     static double SERVO_BR_STRAFE_POSITION = SERVO_BR_FORWARD_POSITION - SERVO_90_DEGREE;
+
+    final static double SERVO_FL_TURN_POSITION = SERVO_FL_FORWARD_POSITION - (SERVO_90_DEGREE/2);
+    final static double SERVO_FR_TURN_POSITION = SERVO_FR_FORWARD_POSITION + (SERVO_90_DEGREE/2);
+    final static double SERVO_BL_TURN_POSITION = SERVO_BL_FORWARD_POSITION + (SERVO_90_DEGREE/2);
+    final static double SERVO_BR_TURN_POSITION = SERVO_BR_FORWARD_POSITION - (SERVO_90_DEGREE/2);
 
     final static double SERVO_FL_ORBIT_POSITION = SERVO_FL_FORWARD_POSITION + (THETA_FRONT / 180);
     final static double SERVO_FR_ORBIT_POSITION = SERVO_FR_FORWARD_POSITION - (THETA_FRONT / 180);

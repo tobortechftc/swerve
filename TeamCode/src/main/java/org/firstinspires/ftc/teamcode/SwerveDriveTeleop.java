@@ -297,7 +297,11 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
             if (robot.use_relic_slider) {
                 // relic slider
-                if (gamepad2.left_stick_y > 0.1) {
+                if (gamepad2.y && gamepad2.back) {
+                    relic_slider_out_max();
+                } else if (gamepad2.a & gamepad2.back) {
+                    relice_slider_back_auto();
+                } else if (gamepad2.left_stick_y > 0.1) {
                     robot.mt_relic_slider.setPower(0.5);
                 } else if (gamepad2.left_stick_y < -0.1) {
                     robot.mt_relic_slider.setPower(-0.5);

@@ -294,6 +294,19 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_UP);
     }
 
+    public void relic_slider_out_max() {
+        robot.target_relic_slider_pos = robot.RELIC_SLIDE_MAX;
+        relic_slide_to_target(1.0);
+    }
+
+    public void relice_slider_back_auto() {
+        robot.target_relic_slider_pos = robot.RELIC_SLIDE_MAX/2;
+        relic_slide_to_target(1.0);
+        relic_arm_up();
+        robot.target_relic_slider_pos = 0;
+        relic_slide_to_target(1.0);
+    }
+
     public void test_rotate(double power) {
         // test rotation 180 degrees back and forth
         int cur_count = robot.orig_rot_pos; // robot.mt_test.getCurrentPosition();
@@ -469,6 +482,27 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.gg_slider_encoder_ok = true;
         else
             robot.gg_slider_encoder_ok = false;
+    }
+
+    public void relic_slide_to_target(double power) {
+        if (!robot.gg_slider_encoder_ok)
+            return;
+
+        stop_chassis(); // ensure chassis stops
+
+        if (power<0) power=-1.0*power;
+        robot.mt_relic_slider.setTargetPosition(robot.target_relic_slider_pos);
+        robot.mt_relic_slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.runtime.reset();
+        robot.mt_relic_slider.setPower(Math.abs(power));
+        while (robot.mt_relic_slider.isBusy() && (robot.runtime.seconds()<5) && opModeIsActive()) {
+            telemetry.addData("9.2 relic pwr/cur/tar = ","%3.2f/%d/%d",
+                    robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
+            telemetry.update();
+        }
+
+        robot.mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.mt_relic_slider.setPower(0);
     }
 
     public void slide_to_target(double power) {
@@ -1448,7 +1482,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         }
-        if((isSide && isBlue && curColumn == 0) || (isSide && !isBlue && curColumn == 2));
+        if((!isSide && isBlue && curColumn == 0) || (!isSide && !isBlue && curColumn == 2));
         else{
             StraightCm(-0.3, 6);
         }
@@ -2369,8 +2403,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                     robot.sv_relic_grabber.getPosition(), robot.sv_relic_arm.getPosition());
         }
         if (robot.use_relic_slider) {
-            telemetry.addData("9.2 r-slider pwr/enc = ","%3.2f/%d",
-                    robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition());
+            telemetry.addData("9.2 r-slider pwr/enc/tar = ","%3.2f/%d/%d",
+                    robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
         }
         telemetry.update();
     }

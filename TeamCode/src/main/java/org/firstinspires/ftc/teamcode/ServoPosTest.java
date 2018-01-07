@@ -61,6 +61,7 @@ public class ServoPosTest extends SwerveUtilLOP {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
             if (gamepad1.dpad_up) {
                 robot.isTestingFL = true;
                 robot.isTestingFR = false;
@@ -102,14 +103,21 @@ public class ServoPosTest extends SwerveUtilLOP {
                 sleep(100);
                 test_swerve_servo(false);
             }
-
-            if(gamepad1.y){
+            if (gamepad1.left_trigger>0.1) {
+                if (robot.cur_mode==SwerveDriveHardware.CarMode.CAR ||
+                        robot.cur_mode==SwerveDriveHardware.CarMode.STRAIGHT) {
+                    change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                    sleep(100);
+                } else {
+                    change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
+                }
+                sleep(200);
+            } else if(gamepad1.y){
                 while(gamepad1.y) {
                     test_swerve_motor(1, true);
                 }
                 stop_chassis();
-            }
-            if(gamepad1.a){
+            } else if(gamepad1.a){
                 while(gamepad1.a) {
                     test_swerve_motor(1, false);
                 }
@@ -127,8 +135,32 @@ public class ServoPosTest extends SwerveUtilLOP {
                 sleep(100);
                 TurnRightD(0.4, 90);
             }
+            if (Math.abs(gamepad1.left_stick_y)>0.1) {
+                if (gamepad1.left_stick_y>0.1) {
+                    robot.SERVO_90_DEGREE = robot.SERVO_90_DEGREE - 0.001;
+                }
+                else if (gamepad1.left_stick_y<-0.1) {
+                    robot.SERVO_90_DEGREE = robot.SERVO_90_DEGREE + 0.001;
+                }
+                robot.SERVO_FL_STRAFE_POSITION = robot.SERVO_FL_FORWARD_POSITION + robot.SERVO_90_DEGREE;
+                robot.SERVO_FR_STRAFE_POSITION = robot.SERVO_FR_FORWARD_POSITION - robot.SERVO_90_DEGREE;
+                robot.SERVO_BL_STRAFE_POSITION = robot.SERVO_BL_FORWARD_POSITION + robot.SERVO_90_DEGREE;
+                robot.SERVO_BR_STRAFE_POSITION = robot.SERVO_BR_FORWARD_POSITION - robot.SERVO_90_DEGREE;
 
-            telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
+                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+            }
+
+            if (robot.isTestingBL) {
+                telemetry.addData("2. Testing BL","");
+            } else if (robot.isTestingBR) {
+                telemetry.addData("2. Testing BR","");
+            } else if (robot.isTestingFL) {
+                    telemetry.addData("2. Testing FL","");
+            } else if (robot.isTestingFR) {
+                    telemetry.addData("2. Testing FR","");
+            }
+            telemetry.addData("1 Ch mode (90%) = ", "%s (%.3f)",robot.cur_mode.toString(),robot.SERVO_90_DEGREE);
+            telemetry.addData("3. W-sv FL/FR/BL/BR=", "%.3f/%.3f/%.3f/%.3f",
                     robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
             telemetry.addData("4.1 IMU Heading = ", "%.2f", imu_heading());
             telemetry.update();
