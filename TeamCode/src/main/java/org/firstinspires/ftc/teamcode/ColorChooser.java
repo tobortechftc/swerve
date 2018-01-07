@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 /**
  * Created by Nick on 9/16/2017.
  */
-@TeleOp(name = "Color-Test", group = "Test")
+@TeleOp(name = "TestColor", group = "Test")
 public class ColorChooser extends SwerveUtilLOP {
 
     TeamColor rightJewelColor = TeamColor.UNKNOWN;

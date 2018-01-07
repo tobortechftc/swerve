@@ -11,7 +11,7 @@ import java.io.StringWriter;
  * Created by Aurora on 12/3/17.
  */
 
-@TeleOp(name = "Swerve Testing", group = "SwerveDrive")
+@TeleOp(name = "TestSwerve", group = "Test")
 public class SwerveTesting extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {

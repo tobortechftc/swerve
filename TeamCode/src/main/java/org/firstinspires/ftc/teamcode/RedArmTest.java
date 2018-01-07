@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * Created by Nick on 9/16/2017.
  */
+@Disabled
 @Autonomous(name = "Test-Red", group = "Test")
 public class RedArmTest extends SwerveUtilLOP {
 

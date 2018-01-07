@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-@TeleOp(name="TuneUp", group="SwerveDrive")
+@TeleOp(name="TuneUp", group="Test")
 public class TuneUp extends SwerveUtilLOP {
 
     /* Declare OpMode members. */

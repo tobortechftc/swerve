@@ -33,6 +33,7 @@ import android.graphics.Color;
 import android.provider.MediaStore;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
@@ -60,7 +61,7 @@ import java.io.OutputStream;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained in {@link ConceptVuforiaNavigation}.
  */
-
+@Disabled
 @Autonomous(name="Vu-Test", group ="Test")
 public class VuMarkId extends SwerveUtilLOP {
 

@@ -7,7 +7,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="SwervePosTest", group="SwerveDrive")
+@TeleOp(name="TestSwervePos", group="Test")
 public class ServoPosTest extends SwerveUtilLOP {
     /* Declare OpMode members. */
     static final double INCREMENT = 0.001;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -8,7 +9,7 @@ import java.io.StringWriter;
 /**
  * Created by Aurora on 12/10/17.
  */
-
+    @Disabled
     @Autonomous(name = "Platform Testing", group = "SwerveDrive")
     public class PlatformTesting extends SwerveUtilLOP{
         @Override

@@ -1,10 +1,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-
+@Disabled
 @TeleOp(name="MiniBot: StraightTest", group="MiniBot")
 public class MiniBotStraightTest extends SwerveUtilLOP {
 
