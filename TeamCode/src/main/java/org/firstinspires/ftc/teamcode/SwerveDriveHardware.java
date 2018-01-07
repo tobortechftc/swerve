@@ -341,6 +341,7 @@ public class SwerveDriveHardware {
         }
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
+            mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
         }
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");
