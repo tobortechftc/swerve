@@ -325,7 +325,7 @@ public class SwerveDriveHardware {
             rangeSensorLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorLeft");
         }
         if (use_test_servo) {
-            // sv_test = hwMap.servo.get("sv_test");
+            sv_test = hwMap.servo.get("sv_test");
         }
         if (use_test_motor) {
             mt_test = hwMap.dcMotor.get("mt_test");

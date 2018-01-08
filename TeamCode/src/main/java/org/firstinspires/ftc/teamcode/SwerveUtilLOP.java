@@ -2398,6 +2398,9 @@ public class SwerveUtilLOP extends LinearOpMode {
                     robot.mt_test.getPower(),robot.mt_test.getCurrentPosition(),robot.target_rot_pos,
                     (robot.is_gg_upside_down ?"dw":"up"));
         }
+        if (robot.use_test_servo) {
+            telemetry.addData("10. test sv = ","%.3f",robot.sv_test.getPosition());
+        }
         if (robot.use_relic_grabber) {
             telemetry.addData("9.1 relic gr/arm = ", "%4.4f/%4.3f",
                     robot.sv_relic_grabber.getPosition(), robot.sv_relic_arm.getPosition());
