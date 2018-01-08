@@ -16,12 +16,12 @@ public class TuneUp extends SwerveUtilLOP {
          * The init() method of the hardware class does all the work here
          */
         robot.servo_tune_up = true; // enable servo tune up
-        robot.use_swerve = false;
+        robot.use_swerve = true;
         robot.use_imu = false;
         robot.use_Vuforia = false;
         robot.use_color_sensor = false;
         robot.use_arm = true;
-        robot.use_glyph_grabber = false;
+        robot.use_glyph_grabber = true;
         robot.use_relic_grabber = true;
         robot.use_test_servo = false;
         robot.use_test_motor = false;
