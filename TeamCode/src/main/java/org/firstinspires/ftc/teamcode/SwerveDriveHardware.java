@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -36,6 +37,7 @@ public class SwerveDriveHardware {
     public boolean use_arm = false;
     public boolean use_test_servo = false;
     public boolean use_test_motor = false;
+    public boolean use_proximity_sensor = false;
     public boolean servo_tune_up = false;
 
     public SwerveUtilLOP.TeamColor allianceColor = SwerveUtilLOP.TeamColor.BLUE; // default blue team
@@ -126,10 +128,10 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.35;
     final static double SV_GLYPH_GRABBER_TOP_HALF_CLOSED = 0.43;
     final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.54;
-    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.74;
-    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.65;
-    final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.56;
-    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.39;
+    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.68;
+    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.6;
+    final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.5;
+    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.35;
     final static double SV_RELIC_GRABBER_INIT = 0.54;
     final static double SV_RELIC_GRABBER_CLOSE = 0.46;
     final static double SV_RELIC_GRABBER_OPEN = 0.85;
@@ -212,8 +214,10 @@ public class SwerveDriveHardware {
 
     public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
     public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorRight = null;
     public SwerveUtilLOP.Camera camera = null;
     public MB1202 mb_ultra = null;
+    public DigitalChannel proxSensor = null;
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -314,6 +318,9 @@ public class SwerveDriveHardware {
             imu.initialize(imuParameters);
         }
 
+        if (use_proximity_sensor) {
+            proxSensor =  hwMap.get(DigitalChannel.class, "6in_prox");
+        }
         if (use_color_sensor) {
             colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
             colorSensor.enableLed(true);
@@ -323,6 +330,7 @@ public class SwerveDriveHardware {
         if (use_range_sensor) {
             rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorBack");
             rangeSensorLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorLeft");
+            rangeSensorRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorRight");
         }
         if (use_test_servo) {
             sv_test = hwMap.servo.get("sv_test");

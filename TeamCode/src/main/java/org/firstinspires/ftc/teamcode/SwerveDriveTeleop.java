@@ -302,9 +302,9 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 } else if (gamepad2.a & gamepad2.back) {
                     relice_slider_back_auto();
                 } else if (gamepad2.left_stick_y > 0.1) {
-                    robot.mt_relic_slider.setPower(0.5);
+                    robot.mt_relic_slider.setPower(1.0);
                 } else if (gamepad2.left_stick_y < -0.1) {
-                    robot.mt_relic_slider.setPower(-0.5);
+                    robot.mt_relic_slider.setPower(-1.0);
                 } else {
                     robot.mt_relic_slider.setPower(0);
                 }
@@ -336,14 +336,18 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
             }
 
             if (robot.use_glyph_grabber) {
-                if (gamepad2.back && gamepad2.b) { //set glyph grabber to original open position
+                if ((gamepad2.right_stick_x<-0.1) && (gamepad2.left_bumper)) {
+                    // top grabber inc. widen
+                    glyph_grabber_top_widen();
+                } else if ((gamepad2.right_stick_x>0.1) && (gamepad2.left_bumper)) {
+                    // bottom grabber inc. close
+                    glyph_grabber_top_closer();
+                } else if (gamepad2.back && gamepad2.b) { //set glyph grabber to original open position
                     glyph_grabber_auto_init();
                     robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
                     robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
                 } else if (gamepad2.right_bumper && gamepad2.left_bumper) {
                     glyph_grabber_auto_init();
-                } else if (gamepad2.left_bumper && gamepad2.b) {
-                    glyph_grabber_open_and_push();
                 } else if (gamepad2.left_bumper && gamepad2.y) {
                     glyph_grabber_open_top();
                 } else if (gamepad2.left_bumper && gamepad2.a) {
@@ -361,16 +365,12 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 } else if (gamepad2.b && (gamepad2.left_trigger > 0.1)) { // close both
                     glyph_grabber_all_close();
                     sleep(400);
-                } else if (gamepad2.a && (gamepad2.left_trigger > 0.1)) { // close one + rotate
-                    // 1. glyph grabber auto close down grabber
-                    // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
-                    glyph_grabber_auto_close();
-                    if (!robot.is_gg_upside_down) {
-                        sleep(1000);
-                        glyph_grabber_auto_rotate(1.0);
-                    } else {
-                        sleep(400);
-                    }
+                } else if (gamepad2.right_stick_x>0.1 && (gamepad2.left_trigger > 0.1)) {
+                    // bottom grabber inc. close
+                    glyph_grabber_bottom_closer();
+                } else if (gamepad2.right_stick_x<-0.1 && (gamepad2.left_trigger > 0.1)) {
+                    // bottom grabber inc. widen
+                    glyph_grabber_bottom_widen();
                 } else if (gamepad2.left_trigger > 0.1) {
                     glyph_grabber_auto_close();
                 } else if (gamepad2.a && gamepad2.dpad_down) {

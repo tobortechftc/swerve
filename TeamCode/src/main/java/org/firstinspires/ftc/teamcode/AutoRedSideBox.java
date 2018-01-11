@@ -55,7 +55,6 @@ public class AutoRedSideBox extends SwerveUtilLOP{
                 sleep(500);
                 //turnToColumn(robot.targetColumn, 0.2, true, true);
                 go_to_distance_from(0.3, robot.targetColumn, false, true, true); // Drive to cryptobox.
-                TurnRightD(0.3, 80);
                 deliverGlyph();
                 turnToCenter(false, true, robot.targetColumn);
                 stop_chassis();

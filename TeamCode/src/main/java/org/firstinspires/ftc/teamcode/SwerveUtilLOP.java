@@ -98,10 +98,65 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     public double imu_heading() {
         if (!robot.use_imu)
-            return -1.0;
+            return 999;
 
         robot.angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return robot.angles.firstAngle;
+    }
+
+    public void glyph_grabber_bottom_closer() {
+        if (robot.is_gg_upside_down) { // close up grabber a little bit
+            double cur_pos = robot.sv_glyph_grabber_top.getPosition();
+            if (cur_pos<0.9)
+                cur_pos += 0.01;
+            robot.sv_glyph_grabber_top.setPosition(cur_pos);
+        } else {
+            double cur_pos = robot.sv_glyph_grabber_bottom.getPosition();
+            if (cur_pos>0.1)
+                cur_pos -= 0.01;
+            robot.sv_glyph_grabber_bottom.setPosition(cur_pos);
+        }
+    }
+    public void glyph_grabber_bottom_widen() {
+        if (robot.is_gg_upside_down) { // widen up grabber a little bit
+            double cur_pos = robot.sv_glyph_grabber_top.getPosition();
+            if (cur_pos>0.1)
+                cur_pos -= 0.01;
+            robot.sv_glyph_grabber_top.setPosition(cur_pos);
+        } else {
+            double cur_pos = robot.sv_glyph_grabber_bottom.getPosition();
+            if (cur_pos<0.9)
+                cur_pos += 0.01;
+            robot.sv_glyph_grabber_bottom.setPosition(cur_pos);
+        }
+    }
+
+    public void glyph_grabber_top_closer() {
+        if (robot.is_gg_upside_down) { // close up grabber a little bit
+            double cur_pos = robot.sv_glyph_grabber_bottom.getPosition();
+            if (cur_pos>0.1)
+                cur_pos -= 0.01;
+            robot.sv_glyph_grabber_bottom.setPosition(cur_pos);
+        } else {
+            double cur_pos = robot.sv_glyph_grabber_top.getPosition();
+            if (cur_pos<0.9)
+                cur_pos += 0.01;
+            robot.sv_glyph_grabber_top.setPosition(cur_pos);
+        }
+    }
+
+    public void glyph_grabber_top_widen() {
+        if (robot.is_gg_upside_down) { // widen up grabber a little bit
+            double cur_pos = robot.sv_glyph_grabber_bottom.getPosition();
+            if (cur_pos<0.9)
+                cur_pos += 0.05;
+            robot.sv_glyph_grabber_bottom.setPosition(cur_pos);
+        } else {
+            double cur_pos = robot.sv_glyph_grabber_top.getPosition();
+            if (cur_pos>0.1)
+                cur_pos -= 0.05;
+            robot.sv_glyph_grabber_top.setPosition(cur_pos);
+        }
     }
 
     public void glyph_grabber_close() {
@@ -1287,7 +1342,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     enum RangeSensor{
-        BACK, LEFT
+        BACK, LEFT, RIGHT
     }
 
     /**
@@ -1298,7 +1353,7 @@ public class SwerveUtilLOP extends LinearOpMode {
      */
     double getRange(RangeSensor direction){
         ElapsedTime elapsedTime = new ElapsedTime();
-        double distance = 6666666;
+        double distance = 999;
         if (!robot.use_range_sensor)
             return 0.0;
         if(direction == RangeSensor.BACK){
@@ -1309,6 +1364,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         else if(direction == RangeSensor.LEFT){
             while(distance > 365 && elapsedTime.seconds() < 0.1){
                 distance = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
+            }
+        } else if(direction == RangeSensor.RIGHT){
+            while(distance > 365 && elapsedTime.seconds() < 0.1){
+                distance = robot.rangeSensorRight.getDistance(DistanceUnit.CM);
             }
         }
         else {
@@ -1399,9 +1458,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             // if directionI 0, then color is unknown
         } else {
-            StraightCm(.1 * directionI, 6); // Drives forward if right jewel is red, backwards if blue
+            int dist = (directionI>0?7:4);
+            StraightCm(.1 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
             sleep(100);
-            StraightCm(-.1 * directionI, 7); // Drives forward if right jewel is blue, backwards if red
+            StraightCm(-.1 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
         }
 
         sleep(1000);
@@ -1592,11 +1652,16 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
+            int init_dist = 7;
+            if (robot.use_proximity_sensor) {
+                // ensure under drive, for proximity sensor to be before the edge
+                init_dist -= 4;
+            }
             if(isBlue) { // Side Blue
-                driveDistance = 7 + (18 * targetColumn); // 19cm between columns
+                driveDistance = init_dist + (18 * targetColumn); // 19cm between columns
             }
             else { // Side Red
-                driveDistance = 7 + (18 * (2 - targetColumn)); // 19cm between columns
+                driveDistance = init_dist + (18 * (2 - targetColumn)); // 19cm between columns
             }
             robot.runtime.reset(); // Rest of side
             if (use_encoder) {
@@ -1614,16 +1679,30 @@ public class SwerveUtilLOP extends LinearOpMode {
                     }
                 }
             }
-        } else { // Front box
-            if (isBlue) { // Front blue
-                if (use_encoder) {
-                    driveDistance = 6 + (19 * targetColumn); // 19cm between columns
+            if (robot.use_proximity_sensor) {
+                if (isBlue) {
+                    TurnLeftD(0.3, 90);
                 } else {
-                    driveDistance = 52 + (19 * targetColumn); // 19cm between columns
+                    TurnRightD(0.3, 90);
                 }
+            } else { // turn with less than 90 degree on purpose
+                if (isBlue) {
+                    TurnLeftD(0.3, 80);
+                } else {
+                    TurnRightD(0.3, 80);
+                }
+            }
+        } else { // Front box
+            int init_dist = (use_encoder?6:52);
+            if (robot.use_proximity_sensor) {
+                // ensure under drive, for proximity sensor to be before the edge
+                init_dist -= 4;
+            }
+            if (isBlue) { // Front blue
+                driveDistance = init_dist + (19 * targetColumn); // 19cm between columns
                 robot.runtime.reset();
                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                sleep(1000);
+                sleep(500);
                 if (use_encoder) {
                     if(isBlue){
                         StraightCm(power, driveDistance);
@@ -1631,7 +1710,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                     else{
                         StraightCm(-power, driveDistance);
                     }
-                } else {
+                } else { // use range sensor
                     double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     driveTT(-1 * power, -1 * power); // Drives to the right
                     while ((cur_dist <= driveDistance - 20) && (robot.runtime.seconds() < 15)) { // Waits until within 10 cm
@@ -1654,18 +1733,31 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             else { // Front red
                 power *= -1; // Reverses power input, all other code is pretty much the same
-                if (use_encoder) {
-                    driveDistance = 6 + (19 * (2 - targetColumn)); // 19cm between columns
-                    // Middle and right are too short
-                } else {
-                    driveDistance = 52 + (19 * (2 - targetColumn)); // 19cm between columns
-                }
+                driveDistance = init_dist + (19 * (2 - targetColumn)); // 19cm between columns
                 robot.runtime.reset();
                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                 sleep(500);
                 if (use_encoder) {
                     StraightCm(power, driveDistance);
                 } // Note - requires encoder, as there is no distance sensor
+            }
+        }
+        if (robot.use_proximity_sensor) { // drive until proximity sensor is true
+            // To-do: forward using front range sensor, so it is close to cryptobox ridge
+
+            if (isSideBox) {
+                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                sleep(300);
+            }
+            if (isBlue) { // crab to right
+                driveTT(-0.15, -0.15); // Drives to the right
+            } else { // Red zone, crab to left
+                driveTT(0.15, 0.15); // Drives to the right
+            }
+            robot.runtime.reset();
+            boolean edge_detected = robot.proxSensor.getState();
+            while ((!edge_detected) && (robot.runtime.seconds() < 2)) { // run till reached edge
+                edge_detected = robot.proxSensor.getState();
             }
         }
         driveTT(0, 0); // Stops
@@ -2366,9 +2458,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
         double range_back = getRange(RangeSensor.BACK);
         double range_left = getRange(RangeSensor.LEFT);
-        if (robot.use_imu) {
-            telemetry.addData("4.1 IMU/r-Bk/r-Lf = ", "%.2f/%.2f/%.2f (cm)",
-                    imu_heading(),range_back,range_left);
+        double range_right = getRange(RangeSensor.RIGHT);
+        if (robot.use_imu||robot.use_range_sensor) {
+            telemetry.addData("4.1 IMU/r-B/r-L/r-R = ", "%.2f/%.1f/%.1f/%.1f cm",
+                    imu_heading(),range_back,range_left,range_right);
         }
 
         if (robot.use_Vuforia) {
