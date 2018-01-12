@@ -349,6 +349,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_UP);
     }
 
+    public void relic_arm_middle() {
+        robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_MIDDLE);
+    }
+
     public void relic_slider_out_max() {
         robot.target_relic_slider_pos = robot.RELIC_SLIDE_MAX;
         relic_slide_to_target(1.0);
@@ -1813,8 +1817,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     void calc_snake(float left_t, float right_t){
         float stick_x = 0;
         if (left_t > 0.1)
-            stick_x = -1 * (float)(left_t / 1.5);
-        else stick_x = (float)(right_t / 1.5);
+            stick_x = -1 * (float)(left_t / 1.2);
+        else stick_x = (float)(right_t / 1.2);
         if(stick_x > 0.1){
             robot.isSnakingLeft = false;
         }

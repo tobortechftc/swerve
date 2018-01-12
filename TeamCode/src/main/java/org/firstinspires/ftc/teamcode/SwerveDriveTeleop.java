@@ -321,6 +321,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     if (cur_pos>0.01) {
                         robot.sv_relic_arm.setPosition(cur_pos - 0.01);
                     }
+                } else if (gamepad2.a && gamepad2.y) {
+                    relic_arm_middle();
                 } else if (gamepad2.y) {
                     relic_arm_up();
                 } else if (gamepad2.a) {
