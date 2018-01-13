@@ -19,9 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
-import java.util.Arrays;
-import java.util.concurrent.TimeoutException;
-
 import static java.lang.Thread.sleep;
 
 
@@ -1346,7 +1343,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     enum RangeSensor{
-        BACK, LEFT, RIGHT
+        FRONT, LEFT, RIGHT
     }
 
     /**
@@ -1360,9 +1357,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         double distance = 999;
         if (!robot.use_range_sensor)
             return 0.0;
-        if(direction == RangeSensor.BACK){
+        if(direction == RangeSensor.FRONT){
             while(distance > 365 && elapsedTime.seconds() < 0.1){
-                distance = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                distance = robot.rangeSensorFront.getDistance(DistanceUnit.CM);
             }
         }
         else if(direction == RangeSensor.LEFT){
@@ -1671,15 +1668,15 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (use_encoder) {
                 StraightCm(power, driveDistance);
             } else {
-                double cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                double cur_dist = robot.rangeSensorRight.getDistance(DistanceUnit.CM);
                 driveTT(-1 * power, -1 * power); // Drives to the right
                 while ((cur_dist <= driveDistance - 7) && robot.runtime.seconds() < 4) { // Waits until it has reached distance
-                    cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                    cur_dist = robot.rangeSensorRight.getDistance(DistanceUnit.CM);
                 }
                 if (cur_dist <= driveDistance && robot.runtime.seconds() < 4) {
                     driveTT(power / 2, power / 2); // Drives to the left, slower
                     while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
-                        cur_dist = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
+                        cur_dist = robot.rangeSensorRight.getDistance(DistanceUnit.CM);
                     }
                 }
             }
@@ -2460,12 +2457,12 @@ public class SwerveUtilLOP extends LinearOpMode {
                 (robot.gg_rotator_encoder_ok ?"Y":"N"),(robot.gg_slider_encoder_ok ?"Y":"N"));
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
-        double range_back = getRange(RangeSensor.BACK);
+        double range_front = getRange(RangeSensor.FRONT);
         double range_left = getRange(RangeSensor.LEFT);
         double range_right = getRange(RangeSensor.RIGHT);
         if (robot.use_imu||robot.use_range_sensor) {
             telemetry.addData("4.1 IMU/r-B/r-L/r-R = ", "%.2f/%.1f/%.1f/%.1f cm",
-                    imu_heading(),range_back,range_left,range_right);
+                    imu_heading(),range_front,range_left,range_right);
         }
 
         if (robot.use_Vuforia) {

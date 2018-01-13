@@ -213,9 +213,9 @@ public class SwerveDriveHardware {
     public ColorSensor colorSensor = null;
     public ColorSensor r_colorSensor = null;
 
-    public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
-    public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
     public ModernRoboticsI2cRangeSensor rangeSensorRight = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorFront = null;
     public SwerveUtilLOP.Camera camera = null;
     public MB1202 mb_ultra = null;
     public DigitalChannel proxSensor = null;
@@ -334,9 +334,9 @@ public class SwerveDriveHardware {
             r_colorSensor.enableLed(true);
         }
         if (use_range_sensor) {
-            rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorBack");
+            rangeSensorRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorBack");
             rangeSensorLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorLeft");
-            rangeSensorRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorRight");
+            rangeSensorFront = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorRight");
         }
         if (use_test_servo) {
             sv_test = hwMap.servo.get("sv_test");
