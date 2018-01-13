@@ -64,28 +64,22 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
 
                     if(gamepad1.left_trigger > 0.1){
-                        robot.LEFT_SV_DIFF -= 0.005;
-                        if(robot.LEFT_SV_DIFF <= 0){
-                            robot.LEFT_SV_DIFF = 0;
-                        }
+                        robot.LEFT_SV_DIFF -= 0.001;
                         sleep(100);
                     }
 
                     if(gamepad1.left_bumper){
-                        robot.LEFT_SV_DIFF += 0.005;
+                        robot.LEFT_SV_DIFF += 0.001;
                         sleep(100);
                     }
 
                     if(gamepad1.right_trigger > 0.1){
-                        robot.RIGHT_SV_DIFF -= 0.005;
-                        if(robot.RIGHT_SV_DIFF <= 0){
-                            robot.RIGHT_SV_DIFF = 0;
-                        }
+                        robot.RIGHT_SV_DIFF -= 0.001;
                         sleep(100);
                     }
 
                     if(gamepad1.right_bumper){
-                        robot.RIGHT_SV_DIFF += 0.005;
+                        robot.RIGHT_SV_DIFF += 0.001;
                         sleep(100);
                     }
 
@@ -106,6 +100,10 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         }
                         sleep(400);
                     }
+                    robot.SERVO_FL_STRAFE_POSITION = robot.SERVO_FL_FORWARD_POSITION + robot.CRAB_DIFF_INC - robot.LEFT_SV_DIFF;
+                    robot.SERVO_FR_STRAFE_POSITION = robot.SERVO_FR_FORWARD_POSITION - robot.CRAB_DIFF_DEC + robot.RIGHT_SV_DIFF;
+                    robot.SERVO_BL_STRAFE_POSITION = robot.SERVO_BL_FORWARD_POSITION + robot.CRAB_DIFF_INC - robot.LEFT_SV_DIFF;
+                    robot.SERVO_BR_STRAFE_POSITION = robot.SERVO_BR_FORWARD_POSITION - robot.CRAB_DIFF_DEC + robot.RIGHT_SV_DIFF;
                 }
                 else { //If not allowed to test servo positions, triggers do teleop spot turn
                     if (gamepad1.back && gamepad1.a){

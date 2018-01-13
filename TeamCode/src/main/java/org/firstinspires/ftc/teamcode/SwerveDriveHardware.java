@@ -226,8 +226,8 @@ public class SwerveDriveHardware {
 
     static double CRAB_DIFF_INC = 0.4663;
     static double CRAB_DIFF_DEC = 0.4762;
-    static double LEFT_SV_DIFF = 0.01;
-    static double RIGHT_SV_DIFF = 0.01;
+    static double LEFT_SV_DIFF = 0.017;
+    static double RIGHT_SV_DIFF = 0.017;
 
     static double SERVO_FL_FORWARD_POSITION = 0.5;
     static double SERVO_FR_FORWARD_POSITION = 0.5;
