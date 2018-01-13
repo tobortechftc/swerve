@@ -117,7 +117,7 @@ public class SwerveDriveHardware {
     final static double SV_SHOULDER_RIGHT_2 = 0.40;
     final static double SV_SHOULDER_RIGHT_1 = 0.45;
 
-    final static double SV_ELBOW_UP = 0.987;
+    final static double SV_ELBOW_UP = 0.997;
     final static double SV_ELBOW_DOWN = 0.435;
     final static double SV_ELBOW_DOWN_HIT = 0.42;
 
@@ -133,12 +133,12 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.5;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.35;
     final static double SV_RELIC_GRABBER_INIT = 0.54;
-    final static double SV_RELIC_GRABBER_CLOSE = 0.46;
+    final static double SV_RELIC_GRABBER_CLOSE = 0.43;
     final static double SV_RELIC_GRABBER_OPEN = 0.85;
-    final static double SV_RELIC_ARM_INIT = 0.21;
-    final static double SV_RELIC_ARM_UP = 0.91;
+    final static double SV_RELIC_ARM_INIT = 0.2;
+    final static double SV_RELIC_ARM_UP = 0.8;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
-    final static double SV_RELIC_ARM_DOWN = 0.21;
+    final static double SV_RELIC_ARM_DOWN = 0.2;
     final static double SV_RELIC_ARM_DOWN_R = 0.3; // down and ready for releasing
     final static double GG_SLIDE_UP_POWER = 1.0;
     final static double GG_SLIDE_DOWN_POWER = -0.9;
