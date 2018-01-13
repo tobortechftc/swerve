@@ -27,13 +27,13 @@ public class DriveToCryptoboxSpike extends SwerveUtilLOP {
     int spikeCount = 0;
 
     public void detectSpike() {
-        if (robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE) {
+        if (robot.rangeSensorRight.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE) {
             spikeCount++;
             sleep(200);
         }
     }
     public boolean isSpike() {
-        return robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE;
+        return robot.rangeSensorRight.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class DriveToCryptoboxSpike extends SwerveUtilLOP {
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("Distance", robot.rangeSensorBack.getDistance(DistanceUnit.CM));
+            telemetry.addData("Distance", robot.rangeSensorRight.getDistance(DistanceUnit.CM));
             telemetry.addData("Spike Count", spikeCount);
             telemetry.addData("Is Spike? ", isSpike());
             telemetry.update();
@@ -69,7 +69,7 @@ public class DriveToCryptoboxSpike extends SwerveUtilLOP {
                 }
             }
             else if (mode == 3) {
-                if (robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE) {
+                if (robot.rangeSensorRight.getDistance(DistanceUnit.CM) <= SPIKE_DISTANCE) {
                     sleep(100);
                     driveTT(.0, .0);
                 }

@@ -24,7 +24,7 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
 
         @Override
         public String value() {
-            String str = String.format("%f / %f", robot.rangeSensorLeft.getDistance(DistanceUnit.CM), robot.rangeSensorBack.getDistance(DistanceUnit.CM));
+            String str = String.format("%f / %f", robot.rangeSensorLeft.getDistance(DistanceUnit.CM), robot.rangeSensorRight.getDistance(DistanceUnit.CM));
             return str;
         }
     }
@@ -89,19 +89,19 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
 //                driveTT(power, power);
 //                mode++;
 //            } else if (mode == 2) {   // Checks if it's gone far enough
-//                isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+//                isOverDistance = robot.rangeSensorRight.getDistance(DistanceUnit.CM) >= driveDistance;
 //                if (isOverDistance) {
 //                    driveTT(-1 * power, -1 * power);
 //                    mode++;
 //                }
 //            } else if (mode == 3) { // Drives backwards to compensate
-//                isUnderDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) <= driveDistance;
+//                isUnderDistance = robot.rangeSensorRight.getDistance(DistanceUnit.CM) <= driveDistance;
 //                if (isUnderDistance) {
 //                    driveTT(power / 2, power / 2);
 //                    mode++;
 //                }
 //            } else if (mode == 4) { // Drives forwards to compensate again (May not need this is robot is precise enough)
-//                isOverDistance = robot.rangeSensorBack.getDistance(DistanceUnit.CM) >= driveDistance;
+//                isOverDistance = robot.rangeSensorRight.getDistance(DistanceUnit.CM) >= driveDistance;
 //                if (isOverDistance) {
 //                    driveTT(.0, .0);
 //                    mode++;
