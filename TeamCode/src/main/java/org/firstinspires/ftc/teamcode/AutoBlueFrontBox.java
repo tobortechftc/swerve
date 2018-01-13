@@ -26,7 +26,7 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         robot.use_camera = true;
         robot.use_arm = true;
         robot.use_glyph_grabber = true;
-        robot.use_proximity_sensor = true;
+        robot.use_proximity_sensor = false;
 
         robot.allianceColor = TeamColor.BLUE;
 
@@ -50,8 +50,8 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
                 if (robot.use_proximity_sensor) StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
                 alignUsingIMU();
                 go_to_distance_from(0.3, get_cryptobox_column(), true, false, true); // Drive to cryptobox
-//                deliverGlyph();
-//                turnToCenter(true, false, robot.targetColumn);
+                deliverGlyph();
+                turnToCenter(true, false, robot.targetColumn);
                 robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
                 stop_chassis();
             }

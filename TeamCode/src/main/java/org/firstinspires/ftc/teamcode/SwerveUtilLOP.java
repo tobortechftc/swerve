@@ -1723,6 +1723,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         } else { // Front box
             int init_dist = (use_encoder?6:52);
+            if (!isBlue)
+                init_dist=8;
             if (robot.use_proximity_sensor) {
                 // ensure under drive, for proximity sensor to be before the edge
                 init_dist -= 4;
