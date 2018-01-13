@@ -26,7 +26,7 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
         robot.use_Vuforia = true;
         robot.use_camera = true;
         robot.use_glyph_grabber = true;
-        robot.use_proximity_sensor = true;
+        robot.use_proximity_sensor = false;
 
         robot.allianceColor = TeamColor.RED;
 
