@@ -54,14 +54,39 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
                 if(robot.isTesting){ //Allow to test individual movement
 
-                    if (gamepad1.left_trigger > 0.1) {
-
+                    if (gamepad1.dpad_left) {
                         sleep(100);
                         TurnLeftD(0.5, 90.0);
                     }
-                    if (gamepad1.right_trigger > 0.1) {
+                    if (gamepad1.dpad_right) {
                         sleep(100);
                         TurnRightD(0.5, 90.0);
+                    }
+
+                    if(gamepad1.left_trigger > 0.1){
+                        robot.LEFT_SV_DIFF -= 0.005;
+                        if(robot.LEFT_SV_DIFF <= 0){
+                            robot.LEFT_SV_DIFF = 0;
+                        }
+                        sleep(100);
+                    }
+
+                    if(gamepad1.left_bumper){
+                        robot.LEFT_SV_DIFF += 0.005;
+                        sleep(100);
+                    }
+
+                    if(gamepad1.right_trigger > 0.1){
+                        robot.RIGHT_SV_DIFF -= 0.005;
+                        if(robot.RIGHT_SV_DIFF <= 0){
+                            robot.RIGHT_SV_DIFF = 0;
+                        }
+                        sleep(100);
+                    }
+
+                    if(gamepad1.right_bumper){
+                        robot.RIGHT_SV_DIFF += 0.005;
+                        sleep(100);
                     }
 
                     if (gamepad1.b) {

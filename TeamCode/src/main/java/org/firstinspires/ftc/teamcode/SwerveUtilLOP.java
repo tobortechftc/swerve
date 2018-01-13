@@ -649,10 +649,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.motorBackRight.setPower(rp);
 
             } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) {
-                robot.motorFrontRight.setPower(rp);
-                robot.motorFrontLeft.setPower(-rp);
-                robot.motorBackLeft.setPower(-lp);
-                robot.motorBackRight.setPower(lp);
+                robot.motorFrontRight.setPower(lp);
+                robot.motorFrontLeft.setPower(-lp);
+                robot.motorBackLeft.setPower(-rp);
+                robot.motorBackRight.setPower(rp);
             }
             else if(robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
                 robot.motorFrontRight.setPower(rp);
@@ -2505,6 +2505,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_relic_slider) {
             telemetry.addData("9.2 r-slider pwr/enc/tar = ","%3.2f/%d/%d",
                     robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
+        }
+        if (robot.isTesting){
+            telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.LEFT_SV_DIFF, robot.RIGHT_SV_DIFF);
         }
         telemetry.update();
     }
