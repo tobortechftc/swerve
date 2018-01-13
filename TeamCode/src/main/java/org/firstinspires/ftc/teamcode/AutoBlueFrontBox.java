@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -24,6 +26,7 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         robot.use_camera = true;
         robot.use_arm = true;
         robot.use_glyph_grabber = true;
+        robot.use_proximity_sensor = true;
 
         robot.allianceColor = TeamColor.BLUE;
 
@@ -42,11 +45,14 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 doPlatformMission(true);
-                StraightIn(0.2, 24); // Drive off the balance stone
+                robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
+                StraightIn(.2, 24); // Drive off the balance stone
+                if (robot.use_proximity_sensor) StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
                 alignUsingIMU();
                 go_to_distance_from(0.3, get_cryptobox_column(), true, false, true); // Drive to cryptobox
-                deliverGlyph();
-                turnToCenter(true, false, robot.targetColumn);
+//                deliverGlyph();
+//                turnToCenter(true, false, robot.targetColumn);
+                robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
                 stop_chassis();
             }
             catch(Exception e) {

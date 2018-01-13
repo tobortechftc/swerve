@@ -26,10 +26,9 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
         robot.use_Vuforia = true;
         robot.use_camera = true;
         robot.use_glyph_grabber = true;
+        robot.use_proximity_sensor = true;
 
         robot.allianceColor = TeamColor.RED;
-
-        int loops = 1;
 
         init_and_test();
 
@@ -57,11 +56,15 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 doPlatformMission(false);
-                StraightIn(0.2, 24); // Drive off the balance stone
+                robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
+                StraightIn(.2, 24); // Drive off the balance stone
+                if (robot.use_proximity_sensor) StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
                 alignUsingIMU();
-                go_to_distance_from(0.3, get_cryptobox_column(), false, false, true); // Drive to cryptobox
+                go_to_distance_from(.3, get_cryptobox_column(), false, false, true); // Drive to cryptobox
+                
                 deliverGlyph();
                 turnToCenter(false, false, robot.targetColumn);
+                robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

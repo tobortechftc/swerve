@@ -1675,9 +1675,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         // Go until a certain distance from a target depending on the cryptobox and the column
         // use_encoder is true will use Motor encoder for the driving distance
         //                false will use range sensor for the driving distance
-        // IMPORTANT NOTE: This program does not work on front red box without encoders.
 
         double driveDistance;
+
+
 
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
@@ -1688,8 +1689,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             if(isBlue) { // Side Blue
                 driveDistance = init_dist + (18 * targetColumn); // 19cm between columns
-            }
-            else { // Side Red
+            } else { // Side Red
                 driveDistance = init_dist + (18 * (2 - targetColumn)); // 19cm between columns
             }
             robot.runtime.reset(); // Rest of side
@@ -1733,12 +1733,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                 sleep(500);
                 if (use_encoder) {
-                    if(isBlue){
                         StraightCm(power, driveDistance);
-                    }
-                    else{
-                        StraightCm(-power, driveDistance);
-                    }
                 } else { // use range sensor
                     double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
                     driveTT(-1 * power, -1 * power); // Drives to the right

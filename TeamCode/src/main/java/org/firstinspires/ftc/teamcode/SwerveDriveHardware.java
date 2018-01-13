@@ -325,7 +325,7 @@ public class SwerveDriveHardware {
         }
 
         if (use_proximity_sensor) {
-            proxSensor =  hwMap.get(DigitalChannel.class, "6in_prox");
+            proxSensor =  hwMap.get(DigitalChannel.class, "prox6in");
         }
         if (use_color_sensor) {
             colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
@@ -333,7 +333,7 @@ public class SwerveDriveHardware {
             r_colorSensor = hwMap.get(ColorSensor.class, "rcolor");
             r_colorSensor.enableLed(true);
         }
-        if (use_range_sensor) {
+            if (use_range_sensor) {
             rangeSensorRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorBack");
             rangeSensorLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorLeft");
             rangeSensorFront = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorRight");
