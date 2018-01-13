@@ -64,11 +64,12 @@ public class PositionDiagnostics extends SwerveUtilLOP {
                 }
                 if (robot.use_Vuforia) {
                     int pictograph = get_cryptobox_column();
-                    while (pictograph == -1)
+                    while (pictograph == -1) {
                         telemetry.addData("Pictograph Not Visible!", null);
-                    sleep(200);
-                    pictograph = get_cryptobox_column();
-                    sleep(100);
+                        sleep(200);
+                        pictograph = get_cryptobox_column();
+                        sleep(100);
+                    }
                     if (pictograph != -1) {
                         telemetry.addData("Pictograph visible", null);
                     }
