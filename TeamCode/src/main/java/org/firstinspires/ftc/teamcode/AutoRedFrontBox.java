@@ -58,10 +58,10 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
                 doPlatformMission(false);
                 robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
                 StraightIn(.2, 24); // Drive off the balance stone
+                alignUsingIMU();
                 if (robot.use_proximity_sensor) StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
                 alignUsingIMU();
                 go_to_distance_from(.3, get_cryptobox_column(), false, false, true); // Drive to cryptobox
-                
                 deliverGlyph();
                 turnToCenter(false, false, robot.targetColumn);
                 robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
