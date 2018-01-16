@@ -78,18 +78,19 @@ public class SwerveUtilLOP extends LinearOpMode {
             // test_glyph_slider_encoder();
             robot.gg_slider_encoder_ok = true;
         }
-        if (robot.use_Vuforia) {
-            robot.targetColumn = get_cryptobox_column();
-            telemetry.addData("0: Crypto Column =", robot.targetColumn);
-        }
     }
 
-    public void start_init() {
+    public void start_init() throws InterruptedException {
         glyph_grabber_auto_open();
         glyph_slider_init();
         if (robot.use_relic_grabber) {
             relic_grabber_open();
             relic_arm_down();
+        }
+        if (robot.use_Vuforia) {
+            robot.targetColumn = get_cryptobox_column();
+            telemetry.addData("0: Crypto Column =", robot.targetColumn);
+            telemetry.update();
         }
     }
 
@@ -1670,15 +1671,23 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(500);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3);
     }
-    void go_to_distance_from(double power, int targetColumn, boolean isBlue, boolean isSideBox, boolean use_encoder)
+    void go_to_distance_from(double power, int targetColumn, boolean isBlue, boolean isSideBox)
             throws InterruptedException {
+        if (robot.use_proximity_sensor) {
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
+        }
+        StraightIn(.2, (isSideBox?22:24)); // Drive off the balance stone
+        alignUsingIMU();
+        if (robot.use_proximity_sensor && !isSideBox) { // front box, drive until front range is 35 cm to wall
+            StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
+            alignUsingIMU();
+        }
+
         // Go until a certain distance from a target depending on the cryptobox and the column
         // use_encoder is true will use Motor encoder for the driving distance
         //                false will use range sensor for the driving distance
 
         double driveDistance;
-
-
 
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
@@ -1692,28 +1701,17 @@ public class SwerveUtilLOP extends LinearOpMode {
             } else { // Side Red
                 driveDistance = init_dist + (18 * (2 - targetColumn)); // 19cm between columns
             }
-            robot.runtime.reset(); // Rest of side
-            if (use_encoder) {
-                StraightCm(power, driveDistance);
-            } else {
-                double cur_dist = robot.rangeSensorRight.getDistance(DistanceUnit.CM);
-                driveTT(-1 * power, -1 * power); // Drives to the right
-                while ((cur_dist <= driveDistance - 7) && robot.runtime.seconds() < 4) { // Waits until it has reached distance
-                    cur_dist = robot.rangeSensorRight.getDistance(DistanceUnit.CM);
-                }
-                if (cur_dist <= driveDistance && robot.runtime.seconds() < 4) {
-                    driveTT(power / 2, power / 2); // Drives to the left, slower
-                    while (cur_dist >= driveDistance && robot.runtime.seconds() < 4) { // Waits until it has reached distance
-                        cur_dist = robot.rangeSensorRight.getDistance(DistanceUnit.CM);
-                    }
-                }
-            }
+            StraightCm(power, driveDistance);
             if (robot.use_proximity_sensor) {
                 if (isBlue) {
                     TurnLeftD(0.3, 90);
                 } else {
                     TurnRightD(0.3, 90);
                 }
+                // forward using front range sensor, so it is close to cryptobox ridge
+                StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
+                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                sleep(400);
             } else { // turn with less than 90 degree on purpose
                 if (isBlue) {
                     TurnLeftD(0.3, 80);
@@ -1722,69 +1720,35 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         } else { // Front box
-            int init_dist = (use_encoder?6:52);
-            if (!isBlue)
-                init_dist=8;
+            int init_dist = (isBlue?6:8);
+
             if (robot.use_proximity_sensor) {
                 // ensure under drive, for proximity sensor to be before the edge
                 init_dist -= 4;
             }
             if (isBlue) { // Front blue
                 driveDistance = init_dist + (19 * targetColumn); // 19cm between columns
-                robot.runtime.reset();
-                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                sleep(500);
-                if (use_encoder) {
-                        StraightCm(power, driveDistance);
-                } else { // use range sensor
-                    double cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                    driveTT(-1 * power, -1 * power); // Drives to the right
-                    while ((cur_dist <= driveDistance - 20) && (robot.runtime.seconds() < 15)) { // Waits until within 10 cm
-                        cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                    }
-                    driveTT(0, 0);
-                    driveTT(-1 * power / 2, -1 * power / 2); // Slows to half speed
-                    while (cur_dist <= driveDistance - 5 && robot.runtime.seconds() < 15) { // Waits until within 4 cm
-                        cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                    }
-                    driveTT(0, 0);
-                    cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                    if (cur_dist < driveDistance) {
-                       driveTT(-1 * power / 3, -1 * power / 3); // Slows to third speed
-                       while (cur_dist <= driveDistance && robot.runtime.seconds() < 20) { // Waits until it has reached distance
-                           cur_dist = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-                       }
-		            }
-                }
             }
             else { // Front red
                 power *= -1; // Reverses power input, all other code is pretty much the same
                 driveDistance = init_dist + (19 * (2 - targetColumn)); // 19cm between columns
-                robot.runtime.reset();
-                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                sleep(500);
-                if (use_encoder) {
-                    StraightCm(power, driveDistance);
-                } // Note - requires encoder, as there is no distance sensor
             }
+            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+            sleep(400);
+            StraightCm(power, driveDistance);
         }
         if (robot.use_proximity_sensor) { // drive until proximity sensor is true
-            // To-do: forward using front range sensor, so it is close to cryptobox ridge
-
-            if (isSideBox) {
-                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                sleep(300);
-            }
             if (isBlue) { // crab to right
-                driveTT(-0.15, -0.15); // Drives to the right
+                driveTT(0.1, 0.1); // Drives to the right
             } else { // Red zone, crab to left
-                driveTT(0.15, 0.15); // Drives to the right
+                driveTT(-0.1, -0.1); // Drives to the right
             }
             robot.runtime.reset();
             boolean edge_detected = robot.proxSensor.getState();
             while ((!edge_detected) && (robot.runtime.seconds() < 2)) { // run till reached edge
                 edge_detected = robot.proxSensor.getState();
             }
+            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
         }
         driveTT(0, 0); // Stops
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);

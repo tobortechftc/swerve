@@ -45,22 +45,9 @@ public class AutoBlueFrontBox extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 doPlatformMission(true);
-                robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
-                StraightIn(.2, 24); // Drive off the balance stone
-                alignUsingIMU();
-                if (robot.use_proximity_sensor) StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
-                alignUsingIMU();
-                go_to_distance_from(0.3, get_cryptobox_column(), true, false, true); // Drive to cryptobox
-                if (robot.use_proximity_sensor) {
-                    robot.runtime.reset();
-                    while (!robot.proxSensor.getState() && robot.runtime.seconds() < 5) {
-                        driveTT(.1, .1);
-                    }
-                }
-                stop_chassis();
+                go_to_distance_from(0.3, robot.targetColumn, true, false); // Drive to cryptobox
                 deliverGlyph();
                 turnToCenter(true, false, robot.targetColumn);
-                robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
                 stop_chassis();
             }
             catch(Exception e) {

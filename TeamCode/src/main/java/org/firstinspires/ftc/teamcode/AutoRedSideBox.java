@@ -25,6 +25,7 @@ public class AutoRedSideBox extends SwerveUtilLOP{
         robot.use_camera = true;
         robot.use_glyph_grabber = true;
         robot.use_arm = true;
+        robot.use_proximity_sensor = false;
 
         robot.allianceColor = TeamColor.RED;
 
@@ -47,14 +48,9 @@ public class AutoRedSideBox extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 doPlatformMission(false);
-                //sleep(2000);
-                telemetry.addData("Column", robot.targetColumn);
-                telemetry.update();
-                StraightIn(0.2, 22); // Drive off the balance stone
-                alignUsingIMU();
-                sleep(500);
-                //turnToColumn(robot.targetColumn, 0.2, true, true);
-                go_to_distance_from(0.3, robot.targetColumn, false, true, true); // Drive to cryptobox.
+                //telemetry.addData("Column", robot.targetColumn);
+                //telemetry.update();
+                go_to_distance_from(0.3, robot.targetColumn, false, true); // Drive to cryptobox.
                 deliverGlyph();
                 turnToCenter(false, true, robot.targetColumn);
                 stop_chassis();
