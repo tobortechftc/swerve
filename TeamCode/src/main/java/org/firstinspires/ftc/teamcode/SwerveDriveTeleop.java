@@ -106,32 +106,14 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     robot.SERVO_BR_STRAFE_POSITION = robot.SERVO_BR_FORWARD_POSITION - robot.CRAB_DIFF_DEC + robot.RIGHT_SV_DIFF;
                 }
                 else { //If not allowed to test servo positions, triggers do teleop spot turn
-                    if (gamepad1.back && gamepad1.a){
-                        if(!(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT)){// If in any other mode, switch to snake
-                            change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
-                        }
-                        else{ //Return from snake to previous drive mode
-                            change_swerve_pos(robot.old_mode);
-                        }
-                        sleep(400);
-                    } else if (gamepad1.back){
-                        if(robot.cur_mode != SwerveDriveHardware.CarMode.CRAB){// If in any other mode, switch to crab
-                            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                        }
-                        else{ //Return from snake to previous drive mode
-                            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
-                        }
-                        sleep(400);
-                    }
-
                     //if (gamepad1.left_trigger > 0.1) {
-                    if (gamepad1.right_stick_x < -0.1) {
+                    if (gamepad1.left_stick_x < -0.1) { // Swerve Turn
                         if(robot.cur_mode != SwerveDriveHardware.CarMode.TURN) {
                             change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
                             sleep(200);
                         }
                         // while (gamepad1.left_trigger > 0.1) {
-                        while (gamepad1.right_stick_x < -0.1) {
+                        while (gamepad1.left_stick_x < -0.1) {
                             robot.motorFrontLeft.setPower(robot.drivePowerRatio);
                             robot.motorFrontRight.setPower(-1*robot.drivePowerRatio);
                             robot.motorBackLeft.setPower(robot.drivePowerRatio);
@@ -146,14 +128,14 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorBackRight.setPower(0);
                     }
                     //if (gamepad1.right_trigger > 0.1) {
-                    if (gamepad1.right_stick_x > 0.1) {
+                    if (gamepad1.left_stick_x > 0.1) {
 
                         if(robot.cur_mode != SwerveDriveHardware.CarMode.TURN) {
                             change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
                             sleep(200);
                         }
                         //while (gamepad1.right_trigger > 0.1) {
-                        while (gamepad1.right_stick_x > 0.1) {
+                        while (gamepad1.left_stick_x > 0.1) {
                             robot.motorFrontLeft.setPower(-1*robot.drivePowerRatio);
                             robot.motorFrontRight.setPower(robot.drivePowerRatio);
                             robot.motorBackLeft.setPower(-1*robot.drivePowerRatio);
@@ -166,7 +148,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorBackLeft.setPower(0);
                         robot.motorBackRight.setPower(0);
                     }
-                    if (gamepad1.left_bumper) {
+                    if (gamepad1.left_bumper) { // crab move
                         if (robot.cur_mode != SwerveDriveHardware.CarMode.CRAB) {
                             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                             sleep(200);
@@ -182,9 +164,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorFrontRight.setPower(0);
                         robot.motorBackLeft.setPower(0);
                         robot.motorBackRight.setPower(0);
-                    }
-
-                    if (gamepad1.right_bumper) {
+                    } else if (gamepad1.right_bumper) {
                         if (robot.cur_mode != SwerveDriveHardware.CarMode.CRAB) {
                             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                             sleep(200);
@@ -202,12 +182,12 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorBackRight.setPower(0);
                     }
 
-                    if (gamepad1.x){
+                    if (gamepad1.left_trigger>0.1){
                         if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
                             change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
                             sleep(200);
                         }
-                        while (gamepad1.x) {
+                        while (gamepad1.left_trigger>0.1) {
                             robot.motorFrontLeft.setPower(-robot.drivePowerRatio);
                             robot.motorFrontRight.setPower(robot.drivePowerRatio);
                             robot.motorBackLeft.setPower(-robot.drivePowerRatio);
@@ -220,12 +200,12 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         robot.motorBackRight.setPower(0);
                     }
 
-                    if (gamepad1.b){
+                    if (gamepad1.right_trigger>0.1){
                         if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
                             change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
                             sleep(200);
                         }
-                        while (gamepad1.b) {
+                        while (gamepad1.right_trigger>0.1) {
                             robot.motorFrontLeft.setPower(robot.drivePowerRatio);
                             robot.motorFrontRight.setPower(-robot.drivePowerRatio);
                             robot.motorBackLeft.setPower(robot.drivePowerRatio);
@@ -261,43 +241,17 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
                 }
 
-                if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) { //If in snake drive, calculate and change servo angles
-
+                if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
+                    //If in snake drive, calculate and change servo angles
                     //calc_snake(gamepad1.right_stick_x);
-                    if (gamepad1.left_trigger > 0.1 || gamepad1.right_trigger > 0.1) {
-                        calc_snake(gamepad1.left_trigger, gamepad1.right_trigger);
+                    if (gamepad1.right_stick_x > 0.1 || gamepad1.right_stick_x < -0.1) {
+                        calc_snake(gamepad1.right_stick_x, -1*gamepad1.right_stick_x);
                     } else {
                         float left_x = 0, right_x = 0;
                         calc_snake(left_x, right_x);
                     }
                     snake_servo_adj();
                 }
-                else { //
-
-                    if (gamepad1.x) { //Cycle through non-snake drive modes
-                        if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT ||
-                                robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
-
-                            change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
-
-                        } else if (robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
-
-                            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-
-                        } else {
-
-                            change_swerve_pos(SwerveDriveHardware.CarMode.STRAIGHT);
-
-                        }
-                        sleep(400);
-                    }
-
-                }
-
-                // Possible idea where holding the left stick farther from the center makes it turn the servo farther. Not completed.
-//            while (-gamepad1.left_stick_y > .10 && -gamepad1.left_stick_y < -.10) {
-//                servoPos = -gamepad1.left_stick_y * .2;
-//            }
 
                 correct_swerve_servos();
 
@@ -308,7 +262,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
                 }
                 //set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.right_stick_x);
-                set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
+                set_swerve_power(gamepad1.left_stick_y, gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
 
                 if (robot.cur_mode==SwerveDriveHardware.CarMode.CAR ||
                     robot.cur_mode==SwerveDriveHardware.CarMode.STRAIGHT) {
@@ -377,7 +331,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     glyph_grabber_open_top();
                 } else if (gamepad2.left_bumper && gamepad2.a) {
                     glyph_grabber_open_bottom();
-                } else if (gamepad2.left_bumper) {
+                } else if (gamepad2.left_bumper || gamepad1.x) {
                     glyph_grabber_auto_open();
                     // should slide back to init
                     // glyph_slider_init();
@@ -387,7 +341,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 } else if (gamepad2.dpad_up && (gamepad2.left_trigger > 0.1)) { // half close
                     glyph_grabber_half_close_both();
                     sleep(400);
-                } else if (gamepad2.b && (gamepad2.left_trigger > 0.1)) { // close both
+                } else if ((gamepad2.b && (gamepad2.left_trigger > 0.1)) ||
+                        (gamepad1.back && gamepad1.b)) { // close both
                     glyph_grabber_all_close();
                     sleep(400);
                 } else if (gamepad2.right_stick_x>0.1 && (gamepad2.left_trigger > 0.1)) {
@@ -396,7 +351,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 } else if (gamepad2.right_stick_x<-0.1 && (gamepad2.left_trigger > 0.1)) {
                     // bottom grabber inc. widen
                     glyph_grabber_bottom_widen();
-                } else if (gamepad2.left_trigger > 0.1) {
+                } else if ((gamepad2.left_trigger > 0.1) || gamepad1.b) {
                     glyph_grabber_auto_close();
                 } else if (gamepad2.a && gamepad2.dpad_down) {
                     glyph_slider_init();

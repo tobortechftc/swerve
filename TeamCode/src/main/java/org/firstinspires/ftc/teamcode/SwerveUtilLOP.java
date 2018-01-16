@@ -338,14 +338,14 @@ public class SwerveUtilLOP extends LinearOpMode {
         double pos = robot.sv_relic_grabber.getPosition();
         if (pos < robot.SV_RELIC_GRABBER_OPEN) {
             robot.sv_relic_grabber.setPosition(pos+0.05);
-            sleep(200);
-            robot.sv_relic_grabber.setPosition(pos+0.05);
-            sleep(200);
+            sleep(250);
+            robot.sv_relic_grabber.setPosition(pos+0.1);
+            sleep(250);
         } else {
             robot.sv_relic_grabber.setPosition(pos-0.05);
-            sleep(200);
+            sleep(250);
             robot.sv_relic_grabber.setPosition(pos-0.1);
-            sleep(200);
+            sleep(250);
         }
         robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
     }
@@ -359,7 +359,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             pos = robot.SV_RELIC_ARM_DOWN + 0.2;
         }
         robot.sv_relic_arm.setPosition(pos);
-        sleep(300);
+        sleep(500);
         robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_DOWN);
     }
 
@@ -371,7 +371,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             pos = robot.SV_RELIC_ARM_UP + 0.2;
         }
         robot.sv_relic_arm.setPosition(pos);
-        sleep(200);
+        sleep(300);
         robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_UP);
     }
 
