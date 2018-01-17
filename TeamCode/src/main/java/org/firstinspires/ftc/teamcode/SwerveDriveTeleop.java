@@ -245,7 +245,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     //If in snake drive, calculate and change servo angles
                     //calc_snake(gamepad1.right_stick_x);
                     if (gamepad1.right_stick_x > 0.1 || gamepad1.right_stick_x < -0.1) {
-                        calc_snake(gamepad1.right_stick_x, -1*gamepad1.right_stick_x);
+                        calc_snake(-1*gamepad1.right_stick_x, gamepad1.right_stick_x);
                     } else {
                         float left_x = 0, right_x = 0;
                         calc_snake(left_x, right_x);
