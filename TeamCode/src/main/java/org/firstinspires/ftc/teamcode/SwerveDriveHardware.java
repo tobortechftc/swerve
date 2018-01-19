@@ -109,7 +109,7 @@ public class SwerveDriveHardware {
     final static int BLUE_BALL_MAX = 300;
 
     final static double SV_SHOULDER_INIT = 0.47;
-    final static double SV_SHOULDER_DOWN = 0.47 ;
+    final static double SV_SHOULDER_DOWN = 0.46;
     final static double SV_SHOULDER_LEFT_3 = 0.6294;
     final static double SV_SHOULDER_LEFT_2 = 0.585;
     final static double SV_SHOULDER_LEFT_1 = 0.535;
@@ -118,7 +118,7 @@ public class SwerveDriveHardware {
     final static double SV_SHOULDER_RIGHT_1 = 0.45;
 
     final static double SV_ELBOW_UP = 0.997;
-    final static double SV_ELBOW_DOWN = 0.435;
+    final static double SV_ELBOW_DOWN = 0.44;
     final static double SV_ELBOW_DOWN_HIT = 0.43;
 
     final static double SV_RIGHT_ARM_UP = 0.11;
@@ -326,6 +326,8 @@ public class SwerveDriveHardware {
 
         if (use_proximity_sensor) {
             proxSensor =  hwMap.get(DigitalChannel.class, "prox6in");
+            // set the digital channel to input.
+            proxSensor.setMode(DigitalChannel.Mode.INPUT);
         }
         if (use_color_sensor) {
             colorSensor = hwMap.get(ColorSensor.class, "colorSensor");

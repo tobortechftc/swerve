@@ -1678,9 +1678,15 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         StraightIn(.2, (isSideBox?22:24)); // Drive off the balance stone
         alignUsingIMU();
+        boolean range_fail = false;
         if (robot.use_proximity_sensor && !isSideBox) { // front box, drive until front range is 35 cm to wall
-            StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
-            alignUsingIMU();
+            double dist = (getRange(RangeSensor.FRONT) - 35);
+            if (dist>0) {
+                StraightCm(.1, dist);
+                alignUsingIMU();
+            } else {
+                range_fail = true;
+            }
         }
 
         // Go until a certain distance from a target depending on the cryptobox and the column
@@ -1692,7 +1698,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (targetColumn < 0) targetColumn = 1;
         if (isSideBox) {
             int init_dist = 7;
-            if (robot.use_proximity_sensor) {
+            if (robot.use_proximity_sensor && !range_fail) {
                 // ensure under drive, for proximity sensor to be before the edge
                 init_dist -= 4;
             }
@@ -1702,7 +1708,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 driveDistance = init_dist + (18 * (2 - targetColumn)); // 19cm between columns
             }
             StraightCm(power, driveDistance);
-            if (robot.use_proximity_sensor) {
+            if (robot.use_proximity_sensor && !range_fail) {
                 if (isBlue) {
                     TurnLeftD(0.3, 90);
                 } else {
@@ -1722,7 +1728,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         } else { // Front box
             int init_dist = (isBlue?6:7);
 
-            if (robot.use_proximity_sensor) {
+            if (robot.use_proximity_sensor && !range_fail) {
                 // ensure under drive, for proximity sensor to be before the edge
                 init_dist -= 4;
             }
@@ -1736,7 +1742,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(400);
             StraightCm(power, driveDistance);
-            if (!robot.use_proximity_sensor) {
+            if (!robot.use_proximity_sensor||range_fail) {
                 if (isBlue) {
                     TurnRightD(.15, 5);
                 } else {
@@ -1744,22 +1750,21 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         }
-        if (robot.use_proximity_sensor) { // drive until proximity sensor is true
-            sleep(1000);
-            boolean edge_detected = robot.proxSensor.getState();
-            telemetry.addData("ProxSensor =", edge_detected);
-            telemetry.update();
+        if (robot.use_proximity_sensor && !range_fail) { // drive until proximity sensor is true
+            //sleep(1000);
+            boolean edge_undetected = robot.proxSensor.getState();
+            //telemetry.addData("ProxSensor =", edge_undetected);
+            //telemetry.update();
 
             if (isBlue) { // crab to right
-                driveTT(0.1, 0.1); // Drives to the right
+                driveTT(-0.1, -0.1); // Drives to the right
             } else { // Red zone, crab to left
-                driveTT(-0.1, -0.1); // Drives to the left
+                driveTT(0.1, 0.1); // Drives to the left
             }
             robot.runtime.reset();
             // boolean edge_detected = robot.proxSensor.getState();
-            while ((!edge_detected) && (robot.runtime.seconds() < 3)) { // run till reached edge
-                edge_detected = robot.proxSensor.getState();
-                driveTT(0.1, 0.1);
+            while ((edge_undetected) && (robot.runtime.seconds() < 2)) { // run till reached edge
+                edge_undetected = robot.proxSensor.getState();
             }
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
         }
