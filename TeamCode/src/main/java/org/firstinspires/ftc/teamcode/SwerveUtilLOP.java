@@ -1488,7 +1488,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             // if directionI 0, then color is unknown
         } else {
-            int dist = (directionI>0?7:4);
+            int dist = (directionI>0?7:5);
             StraightCm(.1 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
             sleep(100);
             StraightCm(-.1 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
@@ -1720,7 +1720,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         } else { // Front box
-            int init_dist = (isBlue?6:8);
+            int init_dist = (isBlue?6:7);
 
             if (robot.use_proximity_sensor) {
                 // ensure under drive, for proximity sensor to be before the edge
@@ -1736,12 +1736,19 @@ public class SwerveUtilLOP extends LinearOpMode {
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(400);
             StraightCm(power, driveDistance);
+            if (!robot.use_proximity_sensor) {
+                if (isBlue) {
+                    TurnRightD(.15, 5);
+                } else {
+                    TurnLeftD(.15, 5);
+                }
+            }
         }
         if (robot.use_proximity_sensor) { // drive until proximity sensor is true
             if (isBlue) { // crab to right
                 driveTT(0.1, 0.1); // Drives to the right
             } else { // Red zone, crab to left
-                driveTT(-0.1, -0.1); // Drives to the right
+                driveTT(-0.1, -0.1); // Drives to the left
             }
             robot.runtime.reset();
             boolean edge_detected = robot.proxSensor.getState();
