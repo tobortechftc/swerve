@@ -1745,15 +1745,21 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
         if (robot.use_proximity_sensor) { // drive until proximity sensor is true
+            sleep(1000);
+            boolean edge_detected = robot.proxSensor.getState();
+            telemetry.addData("ProxSensor =", edge_detected);
+            telemetry.update();
+
             if (isBlue) { // crab to right
                 driveTT(0.1, 0.1); // Drives to the right
             } else { // Red zone, crab to left
                 driveTT(-0.1, -0.1); // Drives to the left
             }
             robot.runtime.reset();
-            boolean edge_detected = robot.proxSensor.getState();
-            while ((!edge_detected) && (robot.runtime.seconds() < 2)) { // run till reached edge
+            // boolean edge_detected = robot.proxSensor.getState();
+            while ((!edge_detected) && (robot.runtime.seconds() < 3)) { // run till reached edge
                 edge_detected = robot.proxSensor.getState();
+                driveTT(0.1, 0.1);
             }
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
         }
@@ -2459,6 +2465,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_imu||robot.use_range_sensor) {
             telemetry.addData("4.1 IMU/r-B/r-L/r-R = ", "%.2f/%.1f/%.1f/%.1f cm",
                     imu_heading(),range_front,range_left,range_right);
+        }
+        if (robot.use_proximity_sensor) {
+            telemetry.addData("4.2 ProxSensor =", robot.proxSensor.getState());
         }
 
         if (robot.use_Vuforia) {
