@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -11,8 +9,8 @@ import java.io.StringWriter;
  * Created by carlw on 11/4/2017.
  */
 
-@Autonomous(name = "BlueSideBox", group = "AutoSwerveDrive")
-public class AutoBlueSideBox extends SwerveUtilLOP{
+@Autonomous(name = "BlueSideBoxProximity", group = "Proximity")
+public class AutoBlueSideBoxProx extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -27,7 +25,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.use_camera = true;
         robot.use_glyph_grabber = true;
         robot.use_arm = true;
-        robot.use_proximity_sensor = false;
+        robot.use_proximity_sensor = true;
 
         robot.allianceColor = TeamColor.BLUE;
 

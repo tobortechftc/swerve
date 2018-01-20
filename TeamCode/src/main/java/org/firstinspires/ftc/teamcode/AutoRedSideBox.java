@@ -9,7 +9,7 @@ import java.io.StringWriter;
  * Created by carlw on 11/4/2017.
  */
 
-@Autonomous(name = "Swerve RedSideBox", group = "SwerveDrive")
+@Autonomous(name = "RedSideBox", group = "AutoSwerveDrive")
 public class AutoRedSideBox extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {

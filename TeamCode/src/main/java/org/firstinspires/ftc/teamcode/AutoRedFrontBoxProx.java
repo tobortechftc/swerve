@@ -2,17 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * Created by carlw on 11/4/2017.
+ * Created by Nick on 12/8/2017.
  */
 
-@Autonomous(name = "BlueSideBox", group = "AutoSwerveDrive")
-public class AutoBlueSideBox extends SwerveUtilLOP{
+@Autonomous(name = "RedFrontBoxProximity", group = "Proximity")
+public class AutoRedFrontBoxProx extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -26,13 +24,9 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.use_Vuforia = true;
         robot.use_camera = true;
         robot.use_glyph_grabber = true;
-        robot.use_arm = true;
-        robot.use_proximity_sensor = false;
+        robot.use_proximity_sensor = true;
 
-        robot.allianceColor = TeamColor.BLUE;
-
-
-        int loops = 1;
+        robot.allianceColor = TeamColor.RED;
 
         init_and_test();
 
@@ -44,19 +38,25 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.runtime.reset();
         waitForStart();
 
+        try {
         start_init();
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            telemetry.log().add(sw.toString());
+            sleep(15000);
+            requestOpModeStop();
+        }
 
 
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             try {
-                doPlatformMission(true);
-                //telemetry.addData("Column", robot.targetColumn);
-                //telemetry.update();
-                //turnToColumn(robot.targetColumn, 0.2, true, true);
-                go_to_distance_from(0.3, robot.targetColumn, true, true); // Drive to cryptobox.
+                doPlatformMission(false);
+                go_to_distance_from(.3, robot.targetColumn, false, false); // Drive to cryptobox
                 deliverGlyph();
-                turnToCenter(true,true,robot.targetColumn);
+                turnToCenter(false, false, robot.targetColumn);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

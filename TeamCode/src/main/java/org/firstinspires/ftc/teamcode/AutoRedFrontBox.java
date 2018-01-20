@@ -11,7 +11,7 @@ import java.io.StringWriter;
  * Created by Nick on 12/8/2017.
  */
 
-@Autonomous(name = "Swerve RedFrontBox", group = "SwerveDrive")
+@Autonomous(name = "RedFrontBox", group = "AutoSwerveDrive")
 public class AutoRedFrontBox extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {

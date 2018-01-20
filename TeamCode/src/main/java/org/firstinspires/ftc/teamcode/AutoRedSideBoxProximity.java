@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -11,8 +9,8 @@ import java.io.StringWriter;
  * Created by carlw on 11/4/2017.
  */
 
-@Autonomous(name = "BlueSideBox", group = "AutoSwerveDrive")
-public class AutoBlueSideBox extends SwerveUtilLOP{
+@Autonomous(name = "RedSideBoxProximity", group = "Proximity")
+public class AutoRedSideBoxProximity extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -29,8 +27,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         robot.use_arm = true;
         robot.use_proximity_sensor = false;
 
-        robot.allianceColor = TeamColor.BLUE;
-
+        robot.allianceColor = TeamColor.RED;
 
         int loops = 1;
 
@@ -50,13 +47,12 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             try {
-                doPlatformMission(true);
+                doPlatformMission(false);
                 //telemetry.addData("Column", robot.targetColumn);
                 //telemetry.update();
-                //turnToColumn(robot.targetColumn, 0.2, true, true);
-                go_to_distance_from(0.3, robot.targetColumn, true, true); // Drive to cryptobox.
+                go_to_distance_from(0.3, robot.targetColumn, false, true); // Drive to cryptobox.
                 deliverGlyph();
-                turnToCenter(true,true,robot.targetColumn);
+                turnToCenter(false, true, robot.targetColumn);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
