@@ -155,7 +155,7 @@ public class TuneUp extends SwerveUtilLOP {
                 } else if (gamepad1.left_trigger > 0.1) {
                     // 1. glyph grabber auto close down grabber
                     // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
-                    glyph_grabber_auto_close();
+                    glyph_grabber_auto_close(false);
                     if (!robot.is_gg_upside_down) {
                         sleep(1000);
                         glyph_grabber_auto_rotate(0.4);

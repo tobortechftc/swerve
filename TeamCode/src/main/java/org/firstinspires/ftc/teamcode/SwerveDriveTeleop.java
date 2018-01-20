@@ -338,7 +338,10 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 } else if (gamepad2.back && (gamepad2.left_trigger > 0.1)) { // half close
                     glyph_grabber_half_close();
                     sleep(400);
-                } else if (gamepad2.dpad_up && (gamepad2.left_trigger > 0.1)) { // half close
+                } else if (gamepad2.dpad_up && (gamepad2.left_trigger > 0.1)) { // close top
+                    glyph_grabber_auto_close(true);
+                    sleep(400);
+                } else if (gamepad2.dpad_down && (gamepad2.left_trigger > 0.1)) { // half close
                     glyph_grabber_half_close_both();
                     sleep(400);
                 } else if ((gamepad2.b && (gamepad2.left_trigger > 0.1)) ||
@@ -352,7 +355,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     // bottom grabber inc. widen
                     glyph_grabber_bottom_widen();
                 } else if ((gamepad2.left_trigger > 0.1) || gamepad1.b) {
-                    glyph_grabber_auto_close();
+                    glyph_grabber_auto_close(false);
                 } else if (gamepad2.a && gamepad2.dpad_down) {
                     glyph_slider_init();
                 } else if (gamepad2.dpad_down) {
@@ -367,11 +370,11 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     rotate_refine_down();
                 } else if (gamepad2.dpad_right) {
                     rotate_refine();
-                } else if (gamepad2.right_bumper) { // manual up
+                } else if (gamepad2.right_bumper || gamepad1.dpad_up) { // manual up
                     glyph_slider_up();
                 } else if (gamepad2.back && gamepad2.right_trigger > 0.1) { // down and reset
                     glyph_slider_down_and_reset();
-                }else if (gamepad2.right_trigger > 0.1) { // manual down
+                }else if ((gamepad2.right_trigger > 0.1) || gamepad1.dpad_down) { // manual down
                     glyph_slider_down();
                 } else {
                     glyph_slider_stop();

@@ -158,6 +158,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_close() {
+        stop_chassis();
         if (robot.is_gg_upside_down) { // close up grabber
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
         } else {
@@ -165,8 +166,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
-    public void glyph_grabber_auto_close() { // close the down/up grabber depend on upside down
-        if (robot.is_gg_upside_down) { // close up grabber
+    public void glyph_grabber_auto_close(boolean is_top) { // close the down/up grabber depend on upside down
+        stop_chassis();
+        boolean close_top = (robot.is_gg_upside_down && !is_top) ||
+                            (!robot.is_gg_upside_down && is_top);
+        if (close_top) { // close up grabber
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
             sleep(200);
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
@@ -191,7 +195,9 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         }
     }
+
     public void glyph_grabber_all_close() { // close the down/up grabber depend on upside down
+        stop_chassis();
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED);
         robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_CLOSED);
         robot.gg_top_close = true;
@@ -200,6 +206,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_half_close() {
+        stop_chassis();
         if (robot.is_gg_upside_down) { // close up grabber
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
             robot.gg_top_close = true;
@@ -210,6 +217,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_half_close_both() {
+        stop_chassis();
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_HALF_CLOSED);
         robot.gg_top_close = true;
         robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED);
@@ -217,6 +225,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_auto_open() { // open both grabbers
+        stop_chassis();
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
         robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
         robot.gg_top_close = false;
@@ -228,6 +237,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_open_top() { // open top grabber
+        stop_chassis();
         if (robot.is_gg_upside_down) {
             robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
         } else {
@@ -236,6 +246,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_open_bottom() { // open top grabber
+        stop_chassis();
         if (robot.is_gg_upside_down) {
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
         } else {
@@ -244,6 +255,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_open_and_push() { // open both grabbers
+        stop_chassis();
         glyph_grabber_auto_open();
         sleep(500);
         driveTT(-0.2,-0.2);
@@ -254,6 +266,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_open_and_push_auto() { // open both grabbers
+        stop_chassis();
         glyph_grabber_auto_open();
         driveTT(-0.2,-0.2);
         sleep(500);
@@ -267,10 +280,22 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void glyph_grabber_auto_rotate(double power) {
+        stop_chassis();
         // if grabber is close and at ladder 0, need to slide up a little bit before rotation
         boolean need_slide_up = false;
         stop_chassis();
+
         int orig_slide_pos = robot.mt_glyph_rotator.getCurrentPosition();
+        int orig_slide_pos2 = robot.mt_glyph_rotator.getCurrentPosition();
+        int count = 0;
+        while (Math.abs(orig_slide_pos-orig_slide_pos2)>10 && count<5) {
+            orig_slide_pos = robot.mt_glyph_rotator.getCurrentPosition();
+            orig_slide_pos2 = robot.mt_glyph_rotator.getCurrentPosition();
+            count ++;
+        }
+        if (count==5) {
+            return; // encoder error, abort the mission
+        }
         if (robot.gg_layer==0 && orig_slide_pos<600) {
             need_slide_up = true;
         }
@@ -291,6 +316,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.target_rot_pos = cur_count + (int) (180.0 / 360.0 * robot.ONE_ROTATION_60);
         }
         rotate_to_target(power);
+        int new_slide_pos = robot.mt_glyph_rotator.getCurrentPosition();
+        if (Math.abs(new_slide_pos-orig_slide_pos)<100) { // don't rotate correctly
+            return;
+        }
         robot.is_gg_upside_down = !robot.is_gg_upside_down;
         boolean need_slide_back = need_slide_up;
         if (robot.is_gg_upside_down && robot.gg_top_close)
@@ -316,11 +345,13 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void rotate_refine_up() {
+        stop_chassis();
         robot.target_rot_pos = robot.target_rot_pos + 20;
         rotate_to_target(0.2);
     }
 
     public void rotate_refine_down() {
+        stop_chassis();
         robot.target_rot_pos = robot.target_rot_pos - 20;
         rotate_to_target(0.2);
     }

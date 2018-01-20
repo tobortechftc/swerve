@@ -46,13 +46,13 @@ public class GG_TeleOp extends SwerveUtilLOP {
                 } else if (gamepad2.a && (gamepad2.left_trigger > 0.1)) { // close one + rotate
                     // 1. glyph grabber auto close down grabber
                     // 2. if not upside down yet, glyph grabber auto rotates 180 degrees
-                    glyph_grabber_auto_close();
+                    glyph_grabber_auto_close(false);
                     if (!robot.is_gg_upside_down) {
                         sleep(1000);
                         glyph_grabber_auto_rotate(0.4);
                     }
                 } else if (gamepad2.left_trigger > 0.1) {
-                    glyph_grabber_auto_close();
+                    glyph_grabber_auto_close(false);
                 }
                 if (gamepad2.a && gamepad2.dpad_down) {
                     glyph_slider_init();
