@@ -400,7 +400,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     public void relic_arm_up() {
         double pos = robot.sv_relic_arm.getPosition();
-        if (Math.abs(pos-robot.SV_RELIC_ARM_UP)>0.1) {
+        if (Math.abs(pos-robot.SV_RELIC_ARM_UP)>0.15) {
             if (pos < robot.SV_RELIC_ARM_UP) {
                 pos = robot.SV_RELIC_ARM_UP - 0.2;
             } else {
@@ -408,8 +408,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             robot.sv_relic_arm.setPosition(pos);
             sleep(300);
+            robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_UP);
+        } else {
+            robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_UP+0.12);
         }
-        robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_UP);
     }
 
     public void relic_arm_middle() {
