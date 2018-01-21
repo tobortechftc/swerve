@@ -541,7 +541,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     void glyph_slider_up() {
-        robot.mt_glyph_slider_pw = 0.7;
+        robot.mt_glyph_slider_pw = 1.0;
         // never exceed GG_SLIDE_MAX_COUNT
         int cur_pos = robot.mt_glyph_slider.getCurrentPosition();
         if (cur_pos>robot.GG_SLIDE_MAX_COUNT)
@@ -554,12 +554,23 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
     }
     void glyph_slider_down() {
-        robot.mt_glyph_slider_pw = -0.4;
+        robot.mt_glyph_slider_pw = -0.9;
         // never lower than 0
         int cur_pos = robot.mt_glyph_slider.getCurrentPosition();
         if (cur_pos<=0)
             robot.mt_glyph_slider_pw = 0.0;
         for (int i=0; i<robot.max_gg_layer; i++) {
+            if (cur_pos < robot.layer_positions[i])
+                break;
+            robot.gg_layer = i;
+        }
+        robot.mt_glyph_slider.setPower(robot.mt_glyph_slider_pw);
+    }
+
+    void glyph_slider_up_force() { // force to go negative and reset encode
+        robot.mt_glyph_slider_pw = 0.7;
+        int cur_pos = robot.mt_glyph_slider.getCurrentPosition();
+        for (int i=robot.max_gg_layer; i>=0; i--) {
             if (cur_pos < robot.layer_positions[i])
                 break;
             robot.gg_layer = i;
@@ -1581,16 +1592,16 @@ public class SwerveUtilLOP extends LinearOpMode {
         StraightCm(-0.3, 6);
         if(isSide){
             if(isBlue){
-                TurnRightD(0.4, 170);
+                TurnRightD(0.4, 175);
             }
             else{
-                TurnLeftD(0.4, 170);
+                TurnLeftD(0.4, 175);
             }
         }
         else{
             if(isBlue){
                 if (curColumn == 0){
-                    TurnRightD(0.4, 120);
+                    TurnRightD(0.4, 125);
                 }
                 else if(curColumn == 1){
                     TurnRightD(0.4, 135);
@@ -1607,13 +1618,15 @@ public class SwerveUtilLOP extends LinearOpMode {
                     TurnLeftD(0.4, 135);
                 }
                 else if(curColumn == 2){
-                    TurnLeftD(0.4, 120);
+                    TurnLeftD(0.4, 125);
                 }
             }
         }
-        if((!isSide && isBlue && curColumn == 0) || (!isSide && !isBlue && curColumn == 2));
+        if((!isSide && isBlue && curColumn == 0) || (!isSide && !isBlue && curColumn == 2)) {
+            StraightCm(-0.3, 3);
+        }
         else{
-            StraightCm(-0.3, 6);
+            StraightCm(-0.3, 8);
         }
     }
 

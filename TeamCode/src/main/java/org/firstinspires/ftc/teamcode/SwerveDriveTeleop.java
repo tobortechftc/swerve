@@ -358,6 +358,8 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     glyph_grabber_auto_close(false);
                 } else if (gamepad2.a && gamepad2.dpad_down) {
                     glyph_slider_init();
+                } else if (gamepad2.back && gamepad2.right_bumper) { // force up
+                    glyph_slider_up_force();
                 } else if (gamepad2.dpad_down) {
                     glyph_slider_down_auto();
                 } else if (gamepad2.dpad_up) {
