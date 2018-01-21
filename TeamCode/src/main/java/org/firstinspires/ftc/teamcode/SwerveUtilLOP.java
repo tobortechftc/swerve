@@ -302,6 +302,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (orig_slide_pos>1000) { // more than 4.5 inches above the ground
             need_slide_up = false;
         }
+        need_slide_up = false;
         double up_inches = (1000-orig_slide_pos) / 300.0;
         if (need_slide_up && (up_inches>0)) {
             glyph_slider_up_inches(robot.GG_SLIDE_UP_POWER, up_inches);
@@ -321,7 +322,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             return;
         }
         robot.is_gg_upside_down = !robot.is_gg_upside_down;
-        boolean need_slide_back = need_slide_up;
+        // boolean need_slide_back = need_slide_up;
+        boolean need_slide_back = false;
         if (robot.is_gg_upside_down && robot.gg_top_close)
             need_slide_back = false;
         if (!robot.is_gg_upside_down && robot.gg_bottom_close)
@@ -384,25 +386,29 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void relic_arm_down()
     {
         double pos = robot.sv_relic_arm.getPosition();
-        if (pos<robot.SV_RELIC_ARM_DOWN) {
-            pos = robot.SV_RELIC_ARM_DOWN - 0.2;
-        } else {
-            pos = robot.SV_RELIC_ARM_DOWN + 0.2;
+        if (Math.abs(pos-robot.SV_RELIC_ARM_DOWN)>0.1) {
+            if (pos < robot.SV_RELIC_ARM_DOWN) {
+                pos = robot.SV_RELIC_ARM_DOWN - 0.2;
+            } else {
+                pos = robot.SV_RELIC_ARM_DOWN + 0.2;
+            }
+            robot.sv_relic_arm.setPosition(pos);
+            sleep(500);
         }
-        robot.sv_relic_arm.setPosition(pos);
-        sleep(500);
         robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_DOWN);
     }
 
     public void relic_arm_up() {
         double pos = robot.sv_relic_arm.getPosition();
-        if (pos<robot.SV_RELIC_ARM_UP) {
-            pos = robot.SV_RELIC_ARM_UP - 0.2;
-        } else {
-            pos = robot.SV_RELIC_ARM_UP + 0.2;
+        if (Math.abs(pos-robot.SV_RELIC_ARM_UP)>0.1) {
+            if (pos < robot.SV_RELIC_ARM_UP) {
+                pos = robot.SV_RELIC_ARM_UP - 0.2;
+            } else {
+                pos = robot.SV_RELIC_ARM_UP + 0.2;
+            }
+            robot.sv_relic_arm.setPosition(pos);
+            sleep(300);
         }
-        robot.sv_relic_arm.setPosition(pos);
-        sleep(300);
         robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_UP);
     }
 
