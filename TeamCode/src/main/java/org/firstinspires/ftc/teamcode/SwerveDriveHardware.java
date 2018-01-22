@@ -373,7 +373,7 @@ public class SwerveDriveHardware {
             mt_glyph_rotator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
-            mt_glyph_slider.setDirection(DcMotor.Direction.REVERSE);
+            // mt_glyph_slider.setDirection(DcMotor.Direction.REVERSE);
             mt_glyph_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             mt_glyph_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mt_glyph_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
