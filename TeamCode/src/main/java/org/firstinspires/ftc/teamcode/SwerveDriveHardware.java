@@ -97,16 +97,16 @@ public class SwerveDriveHardware {
     final static double THETA_BACK = (Math.atan((DISTANCE_TO_CENTER_OF_GLYPH + LENGTH_BETWEEN_WHEELS) / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
-    final static double GG_SLIDE_MAX_COUNT = 4150; // ~14 inches
+    final static double GG_SLIDE_MAX_COUNT = 4700; // ~14 inches
     final static int GG_SLIDE_INIT = 10;
     final static int RELIC_SLIDE_MAX = -8800;
 
 
 
-    final static int RED_BALL_MIN = -300;
-    final static int RED_BALL_MAX = -12;
+    final static int RED_BALL_MIN = -600;
+    final static int RED_BALL_MAX = -15;
     final static int BLUE_BALL_MIN = 12;
-    final static int BLUE_BALL_MAX = 300;
+    final static int BLUE_BALL_MAX = 600;
 
     final static double SV_SHOULDER_INIT = 0.47;
     final static double SV_SHOULDER_DOWN = 0.46;

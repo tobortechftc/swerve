@@ -19,7 +19,7 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_swerve = true;
         robot.use_imu = false;
         robot.use_Vuforia = false;
-        robot.use_color_sensor = false;
+        robot.use_color_sensor = true;
         robot.use_arm = true;
         robot.use_glyph_grabber = true;
         robot.use_relic_grabber = true;
@@ -229,6 +229,11 @@ public class TuneUp extends SwerveUtilLOP {
                         sv_names[cur_sv_ix], cur_sv_ix, sv_list[cur_sv_ix].getPosition());
             } else {
                 telemetry.addLine("7. No active servo to tune-up.");
+            }
+            if (robot.use_color_sensor) {
+                double l_d = calcDelta(true);
+                double r_d = calcDelta(false);
+                telemetry.addData("5.1 Color sen", "l_d=%1.0f, r_d=%1.0f", l_d,r_d);
             }
             show_telemetry();
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
