@@ -139,7 +139,7 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
     final static double SV_RELIC_ARM_DOWN = 0.2;
-    final static double SV_RELIC_ARM_DOWN_R = 0.259; // down and ready for releasing
+    final static double SV_RELIC_ARM_DOWN_R = 0.25; // down and ready for releasing
     final static double GG_SLIDE_UP_POWER = 1.0;
     final static double GG_SLIDE_DOWN_POWER = -0.9;
 
