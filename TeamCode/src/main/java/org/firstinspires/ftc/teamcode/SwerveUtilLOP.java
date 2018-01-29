@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
@@ -1731,14 +1732,13 @@ public class SwerveUtilLOP extends LinearOpMode {
             throws InterruptedException {
         if (robot.use_proximity_sensor) {
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
-        }
+    }
         StraightIn(.2, (isSideBox?22:24)); // Drive off the balance stone
         alignUsingIMU();
         boolean range_fail = false;
         if (robot.use_proximity_sensor && !isSideBox) { // front box, drive until front range is 35 cm to wall
-            double dist = (getRange(RangeSensor.FRONT) - 35);
-            if (dist>0) {
-                StraightCm(.1, dist);
+            if (getRange(RangeSensor.FRONT) >= 35) {
+                StraightCm(.1, getRange(RangeSensor.FRONT)-35);
                 alignUsingIMU();
             } else {
                 range_fail = true;
@@ -1798,7 +1798,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(400);
             StraightCm(power, driveDistance);
-            if (!robot.use_proximity_sensor||range_fail) {
+            if (!robot.use_proximity_sensor || range_fail) {
                 if (isBlue) {
                     TurnRightD(.15, 5);
                 } else {
@@ -1828,6 +1828,74 @@ public class SwerveUtilLOP extends LinearOpMode {
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);
     }
+
+
+    // Does go_to_distance_from, using only proximity sensor. Makes for much cleaner code.
+        throws InterruptedException {
+
+        robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
+
+        StraightIn(.2, (isSideBox?22:24)); // Drive off the balance stone
+        alignUsingIMU();
+
+        double driveDistance;
+        if (targetColumn < 0) targetColumn = 1;
+        if (isSideBox) {
+            if(isBlue) { // Side Blue
+                driveDistance = 3 + (18 * targetColumn); // 19cm between columns
+            } else { // Side Red
+                driveDistance = 3 + (18 * (2 - targetColumn)); // 19cm between columns
+            }
+            StraightCm(power, driveDistance);
+                if (isBlue) {
+                    TurnLeftD(0.3, 90);
+                } else {
+                    TurnRightD(0.3, 90);
+                }
+                // forward using front range sensor, so it is close to cryptobox
+                StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
+                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                sleep(400);
+
+        } else { // Front box
+            if (isBlue) { // Front Blue
+                driveDistance = isBlue?2:3 + (19 * targetColumn); // 19cm between columns
+            }
+            else { // Front Red
+                power *= -1; // Reverses power input
+                driveDistance = isBlue?2:3 + (19 * (2 - targetColumn)); // 19cm between columns
+            }
+
+            if (getRange(RangeSensor.FRONT) > 35) {
+                StraightCm(.1, getRange(RangeSensor.FRONT) - 35);
+                alignUsingIMU();
+            }
+            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+            sleep(400);
+            StraightCm(power, driveDistance);
+        }
+
+        boolean edge_undetected = robot.proxSensor.getState(); // false = something within proximity
+        //telemetry.addData("proxSensor:", edge_undetected);
+        //telemetry.update();
+
+        if (isBlue) {
+            driveTT(-0.1, -0.1); // Crabs to the right
+        } else { // Red zone, crab to left
+            driveTT(0.1, 0.1); // Crabs to the left
+        }
+        robot.runtime.reset();
+        while (edge_undetected && robot.runtime.seconds() < 2.5) { // Goes until detects edge or times out
+            edge_undetected = robot.proxSensor.getState();
+        }
+        robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
+        driveTT(0, 0); // Stops
+        change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+        sleep(300);
+    }
+
+
+
 
 
     void turnToColumn (int targetColumn, double power, boolean isBlueSide, boolean isSideBox) throws InterruptedException{
