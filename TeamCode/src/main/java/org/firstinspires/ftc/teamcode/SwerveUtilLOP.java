@@ -383,7 +383,19 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
     }
-
+    public void auto_relic_release() {
+        double cur_pos = robot.sv_relic_arm.getPosition();
+        relic_arm_down();
+        sleep(500);
+        relic_arm_down();
+        sleep(1000);
+        relic_grabber_release();
+        sleep(250);
+        robot.mt_relic_slider.setPower(1.0);
+        sleep(1000);
+        robot.mt_relic_slider.setPower(0);
+        relic_arm_up();
+    }
     public void relic_arm_down()
     {
         double pos = robot.sv_relic_arm.getPosition();
@@ -428,7 +440,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         relic_slide_to_target(1.0);
     }
 
-    public void relice_slider_back_auto() {
+    public void relic_slider_back_auto() {
         robot.target_relic_slider_pos = robot.RELIC_SLIDE_MAX/2;
         relic_slide_to_target(1.0);
         relic_arm_up();

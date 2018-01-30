@@ -233,11 +233,11 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 if (gamepad2.y && gamepad2.back) {
                     relic_slider_out_max();
                 } else if (gamepad2.a & gamepad2.back) {
-                    relice_slider_back_auto();
+                    relic_slider_back_auto();
                 } else if (gamepad2.left_stick_y > 0.1) {
-                    robot.mt_relic_slider.setPower(1.0);
+                    robot.mt_relic_slider.setPower(1.0); // retract relic slider
                 } else if (gamepad2.left_stick_y < -0.1) {
-                    robot.mt_relic_slider.setPower(-1.0);
+                    robot.mt_relic_slider.setPower(-1.0); // extend relic slider
                 } else {
                     robot.mt_relic_slider.setPower(0);
                 }
@@ -254,19 +254,20 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     if (cur_pos>0.01) {
                         robot.sv_relic_arm.setPosition(cur_pos - 0.02);
                     }
+                } // relic grabber open/close
+                 else if (gamepad2.b && !gamepad2.start) {
+                    relic_grabber_close();
+                } else if (gamepad2.x && gamepad2.back) {
+                    relic_grabber_release();
+                } else if (gamepad2.x) {
+                     // relic_grabber_release();
+                    auto_relic_release();
                 } else if (gamepad2.a && gamepad2.y) {
                     relic_arm_middle();
                 } else if (gamepad2.y) {
                     relic_arm_up();
                 } else if (gamepad2.a) {
                     relic_arm_down();
-                }
-
-                // relic grabber open/close
-                if (gamepad2.b && !gamepad2.start) {
-                    relic_grabber_close();
-                } else if (gamepad2.x) {
-                    relic_grabber_release();
                 }
             }
 
