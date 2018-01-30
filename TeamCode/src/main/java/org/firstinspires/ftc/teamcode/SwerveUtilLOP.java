@@ -1831,7 +1831,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
     // Does go_to_distance_from, using only proximity sensor. Makes for much cleaner code.
-        throws InterruptedException {
+    void go_to_distance_from_prox(double power, int targetColumn, boolean isBlue, boolean isSideBox)throws InterruptedException {
 
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
 

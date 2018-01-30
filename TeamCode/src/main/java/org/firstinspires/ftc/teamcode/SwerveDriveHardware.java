@@ -42,8 +42,9 @@ public class SwerveDriveHardware {
 
     public SwerveUtilLOP.TeamColor allianceColor = SwerveUtilLOP.TeamColor.BLUE; // default blue team
 
-    public boolean fast_mode = true;
+    public boolean fast_mode = true; //Controls how "rushed" autonomous actions are
     public boolean straight_mode = false;
+    public boolean deliver_mode = false; //Affects gamepad1's controls, switches the function of the sticks
 
     boolean isTesting = false;
 
