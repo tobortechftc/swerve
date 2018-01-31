@@ -148,7 +148,8 @@ public class SwerveDriveHardware {
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
-    double drivePowerRatio = 0.5;
+    double drivePowerRatio = 0.5; //Controls the upper cap on drive speed
+    float drivePower = 0; //Controls the throttling of the drive
 
     double servoPosFL;
     double servoPosFR;

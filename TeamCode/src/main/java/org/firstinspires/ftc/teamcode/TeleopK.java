@@ -259,7 +259,7 @@ public class TeleopK extends SwerveUtilLOP {
                     }
                 }
                 //set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.right_stick_x);
-                set_swerve_power(gamepad1.left_stick_y, gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
+                set_swerve_power(gamepad1.left_stick_y, gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger, true);
 
                 if (robot.cur_mode==SwerveDriveHardware.CarMode.CAR ||
                     robot.cur_mode==SwerveDriveHardware.CarMode.STRAIGHT) {

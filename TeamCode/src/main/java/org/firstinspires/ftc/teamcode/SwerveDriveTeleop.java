@@ -51,12 +51,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                  //If not allowed to test servo positions, triggers do teleop spot turn
                     //if (gamepad1.left_trigger > 0.1) {
 
-                    if(gamepad1.left_trigger > 0.1){ //Toggle speed and slow modes
-                        robot.drivePowerRatio = 0.5;
-                    }
-                    else{
-                        robot.drivePowerRatio = 0.2;
-                    }
+                    toggleDriveSpeed(gamepad1.left_trigger > 0.1);
 
                     if(gamepad1.right_trigger > 0.1){ //Toggle deliver and maneuver controls
                         robot.deliver_mode = true;
@@ -66,12 +61,13 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     }
 
                     if(!robot.deliver_mode){ //Standard drive for maneuvering around the glyph pile
-                        if (gamepad1.left_stick_x < -0.4) { // Swerve Strafe to the right
+                        if (gamepad1.left_stick_x > 0.4) { // Swerve Strafe to the right
                             if (robot.cur_mode != SwerveDriveHardware.CarMode.CRAB) {
                                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                                 sleep(200);
                             }
-                            while (gamepad1.left_stick_x < -0.4 && (!robot.deliver_mode)) {
+                            while (gamepad1.left_stick_x > 0.4 && (!robot.deliver_mode)) {
+                                toggleDriveSpeed(gamepad1.left_trigger > 0.1);
                                 robot.motorFrontLeft.setPower(robot.drivePowerRatio);
                                 robot.motorFrontRight.setPower(-robot.drivePowerRatio);
                                 robot.motorBackLeft.setPower(robot.drivePowerRatio);
@@ -83,12 +79,13 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                             robot.motorBackLeft.setPower(0);
                             robot.motorBackRight.setPower(0);
                         }
-                        else if (gamepad1.left_stick_x > 0.4) { // Swerve Strafe to the left
+                        else if (gamepad1.left_stick_x < -0.4) { // Swerve Strafe to the left
                             if (robot.cur_mode != SwerveDriveHardware.CarMode.CRAB) {
                                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                                 sleep(200);
                             }
                             while (gamepad1.left_stick_x < -0.4 && (!robot.deliver_mode)) {
+                                toggleDriveSpeed(gamepad1.left_trigger > 0.1);
                                 robot.motorFrontLeft.setPower(-robot.drivePowerRatio);
                                 robot.motorFrontRight.setPower(robot.drivePowerRatio);
                                 robot.motorBackLeft.setPower(-robot.drivePowerRatio);
@@ -116,12 +113,13 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         correct_swerve_servos();
                     }
                     else{ //Altered controls for delivery oriented movement
-                        if (gamepad1.left_stick_x < -0.4) { // Swerve Strafe to the right
+                        if (gamepad1.left_stick_x > 0.4) { // Swerve Strafe to the right
                             if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
                                 change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
                                 sleep(200);
                             }
-                            while (gamepad1.left_stick_x < -0.4 && (robot.deliver_mode)) {
+                            while (gamepad1.left_stick_x > 0.4 && (robot.deliver_mode)) {
+                                toggleDriveSpeed(gamepad1.left_trigger > 0.1);
                                 robot.motorFrontLeft.setPower(robot.drivePowerRatio);
                                 robot.motorFrontRight.setPower(-robot.drivePowerRatio);
                                 robot.motorBackLeft.setPower(robot.drivePowerRatio);
@@ -133,12 +131,13 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                             robot.motorBackLeft.setPower(0);
                             robot.motorBackRight.setPower(0);
                         }
-                        else if (gamepad1.left_stick_x > 0.4) { // Swerve Strafe to the left
+                        else if (gamepad1.left_stick_x < -0.4) { // Swerve Strafe to the left
                             if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
                                 change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
                                 sleep(200);
                             }
                             while (gamepad1.left_stick_x < -0.4 && (robot.deliver_mode)) {
+                                toggleDriveSpeed(gamepad1.left_trigger > 0.1);
                                 robot.motorFrontLeft.setPower(-robot.drivePowerRatio);
                                 robot.motorFrontRight.setPower(robot.drivePowerRatio);
                                 robot.motorBackLeft.setPower(-robot.drivePowerRatio);
@@ -150,16 +149,31 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                             robot.motorBackLeft.setPower(0);
                             robot.motorBackRight.setPower(0);
                         }
+
+                        if(robot.cur_mode == SwerveDriveHardware.CarMode.CAR){ //Diagonal drive
+                            if(Math.abs(gamepad1.right_stick_x) > 0.2){
+                                robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION - (gamepad1.right_stick_x/3));
+                                robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION - (gamepad1.right_stick_x/3));
+                                robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION - (gamepad1.right_stick_x/3));
+                                robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION - (gamepad1.right_stick_x/3));
+
+                                robot.servoPosFL = robot.SERVO_FL_FORWARD_POSITION + (gamepad1.right_stick_x/3);
+                                robot.servoPosFR = robot.SERVO_FR_FORWARD_POSITION + (gamepad1.right_stick_x/3);
+                                robot.servoPosBL = robot.SERVO_BL_FORWARD_POSITION + (gamepad1.right_stick_x/3);
+                                robot.servoPosBR = robot.SERVO_BR_FORWARD_POSITION + (gamepad1.right_stick_x/3);
+                            }
+                        }
                     }
                 //The below controls are constant, regardless of drive mode
-                if (gamepad1.right_bumper) { // Swerve turn to the right
+                if (gamepad1.left_bumper) { // Swerve turn to the right
 
                     if(robot.cur_mode != SwerveDriveHardware.CarMode.TURN) {
                         change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
                         sleep(200);
                     }
                     //while (gamepad1.right_trigger > 0.1) {
-                    while (gamepad1.right_bumper && (!robot.deliver_mode)) {
+                    while (gamepad1.left_bumper) {
+                        toggleDriveSpeed(gamepad1.left_trigger > 0.1);
                         robot.motorFrontLeft.setPower(robot.drivePowerRatio);
                         robot.motorFrontRight.setPower(-robot.drivePowerRatio);
                         robot.motorBackLeft.setPower(robot.drivePowerRatio);
@@ -172,14 +186,15 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     robot.motorBackLeft.setPower(0);
                     robot.motorBackRight.setPower(0);
                 }
-                else if (gamepad1.left_bumper) { // Swerve turn to the left
+                else if (gamepad1.right_bumper) { // Swerve turn to the left
 
                     if(robot.cur_mode != SwerveDriveHardware.CarMode.TURN) {
                         change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
                         sleep(200);
                     }
                     //while (gamepad1.right_trigger > 0.1) {
-                    while (gamepad1.left_bumper && (!robot.deliver_mode)) {
+                    while (gamepad1.right_bumper) {
+                        toggleDriveSpeed(gamepad1.left_trigger > 0.1);
                         robot.motorFrontLeft.setPower(-robot.drivePowerRatio);
                         robot.motorFrontRight.setPower(robot.drivePowerRatio);
                         robot.motorBackLeft.setPower(-robot.drivePowerRatio);
@@ -193,20 +208,6 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     robot.motorBackRight.setPower(0);
                 }
 
-                // \/ These controls are not yet changed \/
-                
-                if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
-                    //If in snake drive, calculate and change servo angles
-                    //calc_snake(gamepad1.right_stick_x);
-                    if (gamepad1.right_stick_x > 0.1 || gamepad1.right_stick_x < -0.1) {
-                        calc_snake(-1*gamepad1.right_stick_x, gamepad1.right_stick_x);
-                    } else {
-                        float left_x = 0, right_x = 0;
-                        calc_snake(left_x, right_x);
-                    }
-                    snake_servo_adj();
-                }
-
                 correct_swerve_servos();
 
                 if (Math.abs(gamepad1.left_stick_y)>0.1) {
@@ -215,8 +216,21 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         sleep(200);
                     }
                 }
+
+                if((Math.abs(gamepad1.left_stick_y) > 0.4) && (Math.abs(gamepad1.left_stick_x) < 0.4)){
+                    robot.drivePower = (Math.abs(gamepad1.left_stick_y)/gamepad1.left_stick_y)* (float) robot.drivePowerRatio;
+                }
+                else{
+                    robot.drivePower = 0;
+                }
+                if(robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
+                    set_swerve_power(robot.drivePower, robot.drivePower, gamepad1.left_trigger, gamepad1.right_trigger, false);
+                }
+
+                // \/ These controls are not yet changed \/
+
+
                 //set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.right_stick_x);
-                set_swerve_power(gamepad1.left_stick_y, gamepad1.left_stick_y, gamepad1.left_trigger, gamepad1.right_trigger);
 
                 if (robot.cur_mode==SwerveDriveHardware.CarMode.CAR ||
                     robot.cur_mode==SwerveDriveHardware.CarMode.STRAIGHT) {

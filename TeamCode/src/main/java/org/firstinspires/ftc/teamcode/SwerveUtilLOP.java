@@ -2224,7 +2224,17 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     // void set_swerve_power(float right_stick, float left_stick, float x_stick){
-    void set_swerve_power(float right_stick, float left_stick, float left_t, float right_t){
+
+    void toggleDriveSpeed(boolean isToggled){
+        if(isToggled){
+            robot.drivePowerRatio = 0.5;
+        }
+        else{
+            robot.drivePowerRatio = 0.2;
+        }
+    }
+
+    void set_swerve_power(float right_stick, float left_stick, float left_t, float right_t, boolean isK){
         float x_stick = 0;
         if (left_t > 0.1)
             x_stick = -1 * left_t;
@@ -2253,16 +2263,32 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.motorPowerRight = left_stick;
             }
 
+            if(isK) {
 
-            robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
-            robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
-            if(robot.enoughToSnake){
-                robot.motorBackLeft.setPower(0);
-                robot.motorBackRight.setPower(0);
+                if (robot.enoughToSnake) {
+                    robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                    robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                    robot.motorBackLeft.setPower(0);
+                    robot.motorBackRight.setPower(0);
+                } else {
+                    robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                    robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                    robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                    robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                }
             }
-            else {
-                robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
-                robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+            else{
+                if (robot.enoughToSnake) {
+                    robot.motorFrontLeft.setPower(robot.motorPowerLeft);
+                    robot.motorFrontRight.setPower(robot.motorPowerRight);
+                    robot.motorBackLeft.setPower(0);
+                    robot.motorBackRight.setPower(0);
+                } else {
+                    robot.motorFrontLeft.setPower(robot.motorPowerLeft);
+                    robot.motorFrontRight.setPower(robot.motorPowerRight);
+                    robot.motorBackLeft.setPower(robot.motorPowerLeft);
+                    robot.motorBackRight.setPower(robot.motorPowerRight);
+                }
             }
 
         } else if (robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
