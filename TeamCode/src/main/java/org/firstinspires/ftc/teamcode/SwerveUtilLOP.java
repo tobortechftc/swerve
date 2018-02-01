@@ -383,7 +383,19 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
     }
-
+    public void auto_relic_release() {
+        double cur_pos = robot.sv_relic_arm.getPosition();
+        relic_arm_down();
+        sleep(500);
+        relic_arm_down();
+        sleep(1000);
+        relic_grabber_release();
+        sleep(250);
+        robot.mt_relic_slider.setPower(1.0);
+        sleep(1000);
+        robot.mt_relic_slider.setPower(0);
+        relic_arm_up();
+    }
     public void relic_arm_down()
     {
         double pos = robot.sv_relic_arm.getPosition();
@@ -428,7 +440,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         relic_slide_to_target(1.0);
     }
 
-    public void relice_slider_back_auto() {
+    public void relic_slider_back_auto() {
         robot.target_relic_slider_pos = robot.RELIC_SLIDE_MAX/2;
         relic_slide_to_target(1.0);
         relic_arm_up();
@@ -1830,9 +1842,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
 
-    // Does go_to_crypto, using only proximity sensor. Makes for much cleaner code.
-    void go_to_crypto_prox(double power, int targetColumn, boolean isBlue, boolean isSideBox)
-            throws InterruptedException {
+
+    // Does go_to_distance_from, using only proximity sensor. Makes for much cleaner code.
+    void go_to_crypto_prox(double power, int targetColumn, boolean isBlue, boolean isSideBox)throws InterruptedException {
 
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
 
@@ -2216,7 +2228,17 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     // void set_swerve_power(float right_stick, float left_stick, float x_stick){
-    void set_swerve_power(float right_stick, float left_stick, float left_t, float right_t){
+
+    void toggleDriveSpeed(boolean isToggled){
+        if(isToggled){
+            robot.drivePowerRatio = 0.5;
+        }
+        else{
+            robot.drivePowerRatio = 0.2;
+        }
+    }
+
+    void set_swerve_power(float right_stick, float left_stick, float left_t, float right_t, boolean isK){
         float x_stick = 0;
         if (left_t > 0.1)
             x_stick = -1 * left_t;
@@ -2245,16 +2267,32 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.motorPowerRight = left_stick;
             }
 
+            if(isK) {
 
-            robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
-            robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
-            if(robot.enoughToSnake){
-                robot.motorBackLeft.setPower(0);
-                robot.motorBackRight.setPower(0);
+                if (robot.enoughToSnake) {
+                    robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                    robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                    robot.motorBackLeft.setPower(0);
+                    robot.motorBackRight.setPower(0);
+                } else {
+                    robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                    robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                    robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                    robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                }
             }
-            else {
-                robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
-                robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+            else{
+                if (robot.enoughToSnake) {
+                    robot.motorFrontLeft.setPower(robot.motorPowerLeft);
+                    robot.motorFrontRight.setPower(robot.motorPowerRight);
+                    robot.motorBackLeft.setPower(0);
+                    robot.motorBackRight.setPower(0);
+                } else {
+                    robot.motorFrontLeft.setPower(robot.motorPowerLeft);
+                    robot.motorFrontRight.setPower(robot.motorPowerRight);
+                    robot.motorBackLeft.setPower(robot.motorPowerLeft);
+                    robot.motorBackRight.setPower(robot.motorPowerRight);
+                }
             }
 
         } else if (robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {

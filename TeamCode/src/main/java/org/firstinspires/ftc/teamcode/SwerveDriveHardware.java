@@ -42,8 +42,9 @@ public class SwerveDriveHardware {
 
     public SwerveUtilLOP.TeamColor allianceColor = SwerveUtilLOP.TeamColor.BLUE; // default blue team
 
-    public boolean fast_mode = true;
+    public boolean fast_mode = true; //Controls how "rushed" autonomous actions are
     public boolean straight_mode = false;
+    public boolean deliver_mode = false; //Affects gamepad1's controls, switches the function of the sticks
 
     boolean isTesting = false;
 
@@ -139,7 +140,7 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
     final static double SV_RELIC_ARM_DOWN = 0.2;
-    final static double SV_RELIC_ARM_DOWN_R = 0.25; // down and ready for releasing
+    final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
     final static double GG_SLIDE_UP_POWER = 1.0;
     final static double GG_SLIDE_DOWN_POWER = -0.9;
 
@@ -147,7 +148,8 @@ public class SwerveDriveHardware {
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
-    double drivePowerRatio = 0.5;
+    double drivePowerRatio = 0.5; //Controls the upper cap on drive speed
+    float drivePower = 0; //Controls the throttling of the drive
 
     double servoPosFL;
     double servoPosFR;
