@@ -50,7 +50,7 @@ public class AutoRedSideBoxProximity extends SwerveUtilLOP{
                 doPlatformMission(false);
                 //telemetry.addData("Column", robot.targetColumn);
                 //telemetry.update();
-                go_to_crypto(0.3, robot.targetColumn, false, true); // Drive to cryptobox.
+                go_to_crypto_prox(0.3, robot.targetColumn, false, true); // Drive to cryptobox.
                 deliverGlyph();
                 turnToCenter(false, true, robot.targetColumn);
                 stop_chassis();
