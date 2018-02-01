@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -56,7 +54,7 @@ public class AutoRedFrontBox extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 doPlatformMission(false);
-                go_to_distance_from(.3, robot.targetColumn, false, false); // Drive to cryptobox
+                go_to_crypto(.3, robot.targetColumn, false, false); // Drive to cryptobox
                 deliverGlyph();
                 turnToCenter(false, false, robot.targetColumn);
                 stop_chassis();

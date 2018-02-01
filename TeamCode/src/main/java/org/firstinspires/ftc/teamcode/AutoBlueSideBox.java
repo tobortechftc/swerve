@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -54,7 +52,7 @@ public class AutoBlueSideBox extends SwerveUtilLOP{
                 //telemetry.addData("Column", robot.targetColumn);
                 //telemetry.update();
                 //turnToColumn(robot.targetColumn, 0.2, true, true);
-                go_to_distance_from(0.3, robot.targetColumn, true, true); // Drive to cryptobox.
+                go_to_crypto(0.3, robot.targetColumn, true, true); // Drive to cryptobox.
                 deliverGlyph();
                 turnToCenter(true,true,robot.targetColumn);
                 stop_chassis();

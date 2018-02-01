@@ -54,7 +54,7 @@ public class AutoRedFrontBoxProx extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 doPlatformMission(false);
-                go_to_distance_from(.3, robot.targetColumn, false, false); // Drive to cryptobox
+                go_to_crypto_prox(.3, robot.targetColumn, false, false); // Drive to cryptobox
                 deliverGlyph();
                 turnToCenter(false, false, robot.targetColumn);
                 stop_chassis();
