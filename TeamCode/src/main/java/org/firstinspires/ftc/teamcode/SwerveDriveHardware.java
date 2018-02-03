@@ -96,6 +96,7 @@ public class SwerveDriveHardware {
     final static double MAX_TURNING_RADIUS = 100;
     final static double THETA_FRONT = (Math.atan(DISTANCE_TO_CENTER_OF_GLYPH / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
     final static double THETA_BACK = (Math.atan((DISTANCE_TO_CENTER_OF_GLYPH + LENGTH_BETWEEN_WHEELS) / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
+    final static long SERVO_TURN_TIME = 150;
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4700; // ~14 inches
@@ -128,11 +129,11 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.275;
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.375;
     final static double SV_GLYPH_GRABBER_TOP_HALF_CLOSED = 0.445;
-    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.55;
-    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.655;
-    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.543;
-    final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.493;
-    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.368; // 0.405 0.037
+    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.57;
+    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.688;
+    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.576;
+    final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.526;
+    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.401; // 0.405 0.037
     final static double SV_RELIC_GRABBER_INIT = 0.332;
     final static double SV_RELIC_GRABBER_CLOSE = 0.34;
     final static double SV_RELIC_GRABBER_OPEN = 0.65;
@@ -228,8 +229,8 @@ public class SwerveDriveHardware {
 
     static double CRAB_DIFF_INC = 0.4663;
     static double CRAB_DIFF_DEC = 0.4762;
-    static double LEFT_SV_DIFF = 0.017;
-    static double RIGHT_SV_DIFF = 0.017;
+    static double LEFT_SV_DIFF = 0.004;
+    static double RIGHT_SV_DIFF = 0.004;
 
     static double SERVO_FL_FORWARD_POSITION = 0.5;
     static double SERVO_FR_FORWARD_POSITION = 0.5;
@@ -359,7 +360,7 @@ public class SwerveDriveHardware {
         }
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
-            mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+            //mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
         }
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");

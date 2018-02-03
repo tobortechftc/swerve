@@ -64,7 +64,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         if (gamepad1.left_stick_x > 0.4) { // Swerve Strafe to the right
                             if (robot.cur_mode != SwerveDriveHardware.CarMode.CRAB) {
                                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                                sleep(200);
+                                sleep(robot.SERVO_TURN_TIME);
                             }
                             while (gamepad1.left_stick_x > 0.4 && (!robot.deliver_mode)) {
                                 toggleDriveSpeed(gamepad1.left_trigger > 0.1);
@@ -82,7 +82,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         else if (gamepad1.left_stick_x < -0.4) { // Swerve Strafe to the left
                             if (robot.cur_mode != SwerveDriveHardware.CarMode.CRAB) {
                                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                                sleep(200);
+                                sleep(robot.SERVO_TURN_TIME);
                             }
                             while (gamepad1.left_stick_x < -0.4 && (!robot.deliver_mode)) {
                                 toggleDriveSpeed(gamepad1.left_trigger > 0.1);
@@ -116,7 +116,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         if (gamepad1.left_stick_x > 0.4) { // Swerve Strafe to the right
                             if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
                                 change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
-                                sleep(200);
+                                sleep(robot.SERVO_TURN_TIME);
                             }
                             while (gamepad1.left_stick_x > 0.4 && (robot.deliver_mode)) {
                                 toggleDriveSpeed(gamepad1.left_trigger > 0.1);
@@ -134,7 +134,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                         else if (gamepad1.left_stick_x < -0.4) { // Swerve Strafe to the left
                             if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
                                 change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
-                                sleep(200);
+                                sleep(robot.SERVO_TURN_TIME);
                             }
                             while (gamepad1.left_stick_x < -0.4 && (robot.deliver_mode)) {
                                 toggleDriveSpeed(gamepad1.left_trigger > 0.1);
@@ -169,7 +169,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
                     if(robot.cur_mode != SwerveDriveHardware.CarMode.TURN) {
                         change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
-                        sleep(200);
+                        sleep(robot.SERVO_TURN_TIME);
                     }
                     //while (gamepad1.right_trigger > 0.1) {
                     while (gamepad1.left_bumper) {
@@ -190,7 +190,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
 
                     if(robot.cur_mode != SwerveDriveHardware.CarMode.TURN) {
                         change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
-                        sleep(200);
+                        sleep(robot.SERVO_TURN_TIME);
                     }
                     //while (gamepad1.right_trigger > 0.1) {
                     while (gamepad1.right_bumper) {
@@ -213,7 +213,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                 if (Math.abs(gamepad1.left_stick_y)>0.1) {
                     if (robot.cur_mode != SwerveDriveHardware.CarMode.CAR) {
                         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
-                        sleep(200);
+                        sleep(robot.SERVO_TURN_TIME);
                     }
                 }
 
@@ -273,7 +273,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     relic_grabber_close();
                 } else if (gamepad2.x && gamepad2.back) {
                     relic_grabber_release();
-                } else if (gamepad2.x) {
+                } else if (gamepad2.x && !gamepad2.dpad_right) {
                      // relic_grabber_release();
                     auto_relic_release();
                 } else if (gamepad2.a && gamepad2.y) {

@@ -2231,10 +2231,10 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void toggleDriveSpeed(boolean isToggled){
         if(isToggled){
-            robot.drivePowerRatio = 0.5;
+            robot.drivePowerRatio = 0.2;
         }
         else{
-            robot.drivePowerRatio = 0.2;
+            robot.drivePowerRatio = 0.5;
         }
     }
 
