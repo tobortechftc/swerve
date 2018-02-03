@@ -1831,7 +1831,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             robot.runtime.reset();
             // boolean edge_detected = robot.proxSensor.getState();
-            while ((edge_undetected) && (robot.runtime.seconds() < 2)) { // run till reached edge
+            while (edge_undetected && robot.runtime.seconds() < 2) { // run till reached edge
                 edge_undetected = robot.proxSensor.getState();
             }
             robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
@@ -1900,11 +1900,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             driveTT(0.1, 0.1); // Crabs to the left
         }
         robot.runtime.reset();
-        while (!edge_undetected && robot.runtime.seconds() < 2.5) { // Goes until detects edge or times out
+        while (edge_undetected && robot.runtime.seconds() < 2.5) { // Goes until detects edge or times out
             edge_undetected = robot.proxSensor.getState();
         }
         robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
-        sleep(100); // slight delay so it doesn't stop at edge of platform
+        //StraightCm(.1, 1);
         driveTT(0, 0); // Stops
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);

@@ -10,7 +10,7 @@ import java.io.StringWriter;
  */
 
 @Autonomous(name = "RedSideBoxProximity", group = "Proximity")
-public class AutoRedSideBoxProximity extends SwerveUtilLOP{
+public class AutoRedSideBoxProx extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
 
