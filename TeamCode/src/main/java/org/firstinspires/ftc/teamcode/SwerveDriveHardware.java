@@ -233,7 +233,7 @@ public class SwerveDriveHardware {
     static double RIGHT_SV_DIFF = 0.004;
 
     static double SERVO_FL_FORWARD_POSITION = 0.5;
-    static double SERVO_FR_FORWARD_POSITION = 0.5;
+    static double SERVO_FR_FORWARD_POSITION = 0.4533;
     static double SERVO_BL_FORWARD_POSITION = 0.48;
     static double SERVO_BR_FORWARD_POSITION = 0.49;
 
