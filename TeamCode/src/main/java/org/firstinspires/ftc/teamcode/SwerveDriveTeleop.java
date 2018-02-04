@@ -272,10 +272,11 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                  else if (gamepad2.b && !gamepad2.start) {
                     relic_grabber_close();
                 } else if (gamepad2.x && gamepad2.back) {
-                    relic_grabber_release();
-                } else if (gamepad2.x && !gamepad2.dpad_right) {
-                     // relic_grabber_release();
+                    // relic_grabber_release();
                     auto_relic_release();
+                } else if (gamepad2.x && !gamepad2.dpad_right) {
+                    relic_grabber_release();
+                    // auto_relic_release();
                 } else if (gamepad2.a && gamepad2.y) {
                     relic_arm_middle();
                 } else if (gamepad2.y) {

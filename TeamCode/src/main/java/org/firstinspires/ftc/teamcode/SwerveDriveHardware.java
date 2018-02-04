@@ -96,7 +96,7 @@ public class SwerveDriveHardware {
     final static double MAX_TURNING_RADIUS = 100;
     final static double THETA_FRONT = (Math.atan(DISTANCE_TO_CENTER_OF_GLYPH / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
     final static double THETA_BACK = (Math.atan((DISTANCE_TO_CENTER_OF_GLYPH + LENGTH_BETWEEN_WHEELS) / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
-    final static long SERVO_TURN_TIME = 150;
+    final static long SERVO_TURN_TIME = 200;
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4700; // ~14 inches
@@ -361,6 +361,8 @@ public class SwerveDriveHardware {
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
             //mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+            mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         }
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");

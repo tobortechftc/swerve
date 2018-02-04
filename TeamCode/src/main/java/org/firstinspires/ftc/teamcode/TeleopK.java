@@ -301,7 +301,7 @@ public class TeleopK extends SwerveUtilLOP {
                     glyph_grabber_open_top();
                 } else if (gamepad2.left_bumper && gamepad2.a) {
                     glyph_grabber_open_bottom();
-                } else if (gamepad2.left_bumper || gamepad1.dpad_left) {
+                } else if ((gamepad2.left_bumper&&!gamepad2.y&&!gamepad2.a) || gamepad1.dpad_left) {
                     glyph_grabber_auto_open();
                     // should slide back to init
                     // glyph_slider_init();
@@ -367,17 +367,26 @@ public class TeleopK extends SwerveUtilLOP {
                     }
                 } else if (gamepad2.a && gamepad2.y) {
                     relic_arm_middle();
+                } else if (gamepad2.y && !gamepad2.left_bumper) {
+                    relic_arm_up();
+                } else if (gamepad2.a && !gamepad2.left_bumper) {
+                    relic_arm_down();
+                }
+                // relic grabber open/close
+                if (gamepad2.b && !gamepad2.start) {
+                    relic_grabber_close();
+                } else if (gamepad2.x && gamepad2.back) {
+                    // relic_grabber_release();
+                    auto_relic_release();
+                }  else if (gamepad2.x && !gamepad2.dpad_right) {
+                    relic_grabber_release();
+                    // auto_relic_release();
+                } else if (gamepad2.a && gamepad2.y) {
+                    relic_arm_middle();
                 } else if (gamepad2.y) {
                     relic_arm_up();
                 } else if (gamepad2.a) {
                     relic_arm_down();
-                }
-
-                // relic grabber open/close
-                if (gamepad2.b && !gamepad2.start) {
-                    relic_grabber_close();
-                } else if (gamepad2.x) {
-                    relic_grabber_release();
                 }
             }
             show_telemetry();
