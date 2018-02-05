@@ -2676,11 +2676,14 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
         double range_front = getRange(RangeSensor.FRONT);
+        if (range_front>365) range_front=0;
         double range_left = getRange(RangeSensor.LEFT);
+        if (range_left>365) range_left=0;
         double range_right = getRange(RangeSensor.RIGHT);
+        if (range_right>365) range_right=0;
         if (robot.use_imu||robot.use_range_sensor) {
-            telemetry.addData("4.1 IMU/r-B/r-L/r-R = ", "%.2f/%.1f/%.1f/%.1f cm",
-                    imu_heading(),range_front,range_left,range_right);
+            telemetry.addData("4.1 IMU/r-F/r-R/r-L = ", "%.2f/%.1f/%.1f/%.1f cm",
+                    imu_heading(),range_front,range_right,range_left);
         }
         if (robot.use_proximity_sensor) {
             telemetry.addData("4.2 ProxSensor =", robot.proxSensor.getState());
