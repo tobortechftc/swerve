@@ -1866,12 +1866,12 @@ public class SwerveUtilLOP extends LinearOpMode {
                 TurnRightD(0.3, 90);
              }
 
-            double dist=(isBlue?(getRange(RangeSensor.FRONT) - 35):(getRange(RangeSensor.RIGHT) - 34));
+            double dist=(isBlue?(getRange(RangeSensor.FRONT) - 34):(getRange(RangeSensor.RIGHT) - 33));
             if (dist>0) {
                 StraightCm(.1, dist); // forward using front range sensor, so it is close to cryptobox
             }
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-            sleep(400);
+            sleep(200);
 
         } else { // Front box
             if (isBlue) { // Front Blue
@@ -1888,7 +1888,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
             //alignUsingIMU();
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-            sleep(400);
+            sleep(200);
             StraightCm(power, driveDistance);
         }
 

@@ -130,10 +130,10 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.375;
     final static double SV_GLYPH_GRABBER_TOP_HALF_CLOSED = 0.445;
     final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.57;
-    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.688;
-    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.576;
-    final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.526;
-    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.401; // 0.405 0.037
+    final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.65;
+    final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.538;
+    final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.49;
+    final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.363; // 0.405 0.037
     final static double SV_RELIC_GRABBER_INIT = 0.332;
     final static double SV_RELIC_GRABBER_CLOSE = 0.34;
     final static double SV_RELIC_GRABBER_OPEN = 0.65;
