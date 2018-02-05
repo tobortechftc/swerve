@@ -1454,16 +1454,16 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.use_range_sensor)
             return 0.0;
         if(direction == RangeSensor.FRONT){
-            while(distance > 365 && elapsedTime.seconds() < 0.1){
+            while(distance > 365 && elapsedTime.seconds() < 0.5){
                 distance = robot.rangeSensorFront.getDistance(DistanceUnit.CM);
             }
         }
         else if(direction == RangeSensor.LEFT){
-            while(distance > 365 && elapsedTime.seconds() < 0.1){
+            while(distance > 365 && elapsedTime.seconds() < 0.5){
                 distance = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
             }
         } else if(direction == RangeSensor.RIGHT){
-            while(distance > 365 && elapsedTime.seconds() < 0.1){
+            while(distance > 365 && elapsedTime.seconds() < 0.5){
                 distance = robot.rangeSensorRight.getDistance(DistanceUnit.CM);
             }
         }
@@ -1558,7 +1558,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             int dist = (directionI>0?7:5);
             StraightCm(.1 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
             sleep(100);
-            StraightCm(-.1 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
+            StraightCm(-.1 * directionI, dist-1); // Drives forward if right jewel is blue, backwards if red
         }
 
         sleep(1000);
@@ -1570,7 +1570,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     // Provided two colors guesses and team color, determines if the right ball is the same color as our team.
-    // if sum = 1, then it is our color. if sum == 0, then it is unknown. if sum = -1, then it is their color.
+    // if sum = 1, then it is our color. if sum = 0, then it is unknown. if sum = -1, then it is their color.
     // Ex. sensor is red, camera is unknown, team is red. It will return 1.
     public int calcArmDirection(TeamColor sensor, TeamColor camera, boolean isBlueAlliance) {
         int result = 0;
@@ -1580,10 +1580,6 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (camera == TeamColor.RED) result = 1;
             else if (camera == TeamColor.BLUE) result = -1;
         }
-
-//        if (sensor == TeamColor.RED || camera == TeamColor.RED) sum += 1;
-//        if (sensor == TeamColor.BLUE || camera == TeamColor.BLUE) sum -= 1;
-
         if (isBlueAlliance) result *= -1;
         return result;
     }
@@ -1593,15 +1589,15 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         glyph_grabber_open_and_push_auto();
         // glyph_grabber_half_close();
-        StraightIn(-0.4, 7);
+        StraightIn(-0.7, 7);
         rotate_refine(); // ensure grabber back straight
         glyph_slider_back_init();
         // glyph_grabber_close();
         // sleep(500);
         // 0.4 will break the arms
-        StraightIn(0.2, 10);
-        sleep(100);
-        StraightIn(-0.4, 3);
+        StraightIn(0.3, 10);
+        //sleep(100);
+        StraightIn(-0.7, 3);
         glyph_grabber_auto_open();
     }
 
@@ -1609,42 +1605,44 @@ public class SwerveUtilLOP extends LinearOpMode {
         StraightCm(-0.3, 6);
         if(isSide){
             if(isBlue){
-                TurnRightD(0.4, 175);
+                TurnRightD(0.6, 175);
             }
             else{
-                TurnLeftD(0.4, 175);
+                TurnLeftD(0.6, 175);
             }
         }
         else{
             if(isBlue){
                 if (curColumn == 0){
-                    TurnRightD(0.4, 125);
+                    TurnRightD(0.6, 125);
                 }
                 else if(curColumn == 1){
-                    TurnRightD(0.4, 135);
+                    TurnRightD(0.6, 135);
                 }
                 else if(curColumn == 2){
-                    TurnRightD(0.4, 155);
+                    TurnRightD(0.6, 155);
                 }
             }
             else{
                 if (curColumn == 0){
-                    TurnLeftD(0.4, 155);
+                    TurnLeftD(0.6, 155);
                 }
                 else if(curColumn == 1){
-                    TurnLeftD(0.4, 135);
+                    TurnLeftD(0.6, 135);
                 }
                 else if(curColumn == 2){
-                    TurnLeftD(0.4, 125);
+                    TurnLeftD(0.6, 125);
                 }
             }
         }
+        /*
         if((!isSide && isBlue && curColumn == 0) || (!isSide && !isBlue && curColumn == 2)) {
-            StraightCm(-0.3, 3);
+            StraightCm(-0.6, 3);
         }
         else{
-            StraightCm(-0.3, 8);
+            StraightCm(-0.6, 8);
         }
+        */
     }
 
     TeamColor checkBallColor(boolean isBlueAlliance) throws InterruptedException {
@@ -1865,9 +1863,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             } else {
                 TurnRightD(0.3, 90);
              }
-
-            double dist=(isBlue?(getRange(RangeSensor.FRONT) - 34):(getRange(RangeSensor.RIGHT) - 33));
-            if (dist>0) {
+            double dist=(isBlue?(getRange(RangeSensor.FRONT) - 35):(getRange(RangeSensor.RIGHT) - 34));
+            if (dist>100) {
+               // use default distance
+                StraightCm(.1, 10);
+            } else if (dist>0) {
                 StraightCm(.1, dist); // forward using front range sensor, so it is close to cryptobox
             }
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
@@ -1882,7 +1882,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
 
             double dist=(isBlue?(getRange(RangeSensor.FRONT) - 35):(getRange(RangeSensor.RIGHT) - 34));
-            if (dist>0) {
+            if (dist>100) {
+                // use default distance
+                StraightCm(.1, 10);
+            } else if (dist>0) {
                 StraightCm(.1, dist); // forward using front range sensor, so it is close to cryptobox
             }
 
