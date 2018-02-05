@@ -24,6 +24,7 @@ public class SwerveDriveHardware {
 
     // define all switches to turn on/off hardware each component
     public boolean use_swerve = true;   // use four motors and four servos for chassis
+    public boolean use_newbot = true;   // use four motors and four servos for new chassis
     public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight only for chassis
     public boolean use_Vuforia = true;
     public boolean use_camera = false;
@@ -226,16 +227,25 @@ public class SwerveDriveHardware {
     ElapsedTime runtime = new ElapsedTime();
 
     static double SERVO_90_DEGREE = 0.479;
-
     static double CRAB_DIFF_INC = 0.4663;
     static double CRAB_DIFF_DEC = 0.4762;
     static double LEFT_SV_DIFF = 0.004;
     static double RIGHT_SV_DIFF = 0.004;
-
     static double SERVO_FL_FORWARD_POSITION = 0.5;
     static double SERVO_FR_FORWARD_POSITION = 0.4533;
     static double SERVO_BL_FORWARD_POSITION = 0.48;
     static double SERVO_BR_FORWARD_POSITION = 0.49;
+
+    /* variables for newbot */
+    static double NB_SERVO_90_DEGREE = 0.479;
+    static double NB_CRAB_DIFF_INC = 0.4663;
+    static double NB_CRAB_DIFF_DEC = 0.4762;
+    static double NB_LEFT_SV_DIFF = 0.004;
+    static double NB_RIGHT_SV_DIFF = 0.004;
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.5;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.48;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.49;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;
@@ -403,7 +413,7 @@ public class SwerveDriveHardware {
             motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             use_swerve = false;
         }
-        else if (use_swerve) {
+        else if (use_swerve || use_newbot) {
             // Define and Initialize Motors
             motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
             motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
@@ -448,6 +458,9 @@ public class SwerveDriveHardware {
             motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            if (use_newbot) {
+                initialize_newbot();
+            }
         }
         if (use_arm) {
             sv_elbow = hwMap.servo.get("sv_elbow");
@@ -485,5 +498,20 @@ public class SwerveDriveHardware {
         period.reset();
     }
 
+    void initialize_newbot() {
+        SERVO_FL_STRAFE_POSITION = NB_SERVO_FL_FORWARD_POSITION + NB_CRAB_DIFF_INC - NB_LEFT_SV_DIFF;
+        SERVO_FR_STRAFE_POSITION = NB_SERVO_FR_FORWARD_POSITION - NB_CRAB_DIFF_DEC + NB_RIGHT_SV_DIFF;
+        SERVO_BL_STRAFE_POSITION = NB_SERVO_BL_FORWARD_POSITION + NB_CRAB_DIFF_INC - NB_LEFT_SV_DIFF;
+        SERVO_BR_STRAFE_POSITION = NB_SERVO_BR_FORWARD_POSITION - NB_CRAB_DIFF_DEC + NB_RIGHT_SV_DIFF;
 
+        SERVO_FL_TURN_POSITION = NB_SERVO_FL_FORWARD_POSITION - (NB_CRAB_DIFF_DEC/2);
+        SERVO_FR_TURN_POSITION = NB_SERVO_FR_FORWARD_POSITION + (NB_CRAB_DIFF_INC/2);
+        SERVO_BL_TURN_POSITION = NB_SERVO_BL_FORWARD_POSITION + (NB_CRAB_DIFF_INC/2);
+        SERVO_BR_TURN_POSITION = NB_SERVO_BR_FORWARD_POSITION - (NB_CRAB_DIFF_DEC/2);
+
+        SERVO_FL_ORBIT_POSITION = NB_SERVO_FL_FORWARD_POSITION + (THETA_FRONT / 180);
+        SERVO_FR_ORBIT_POSITION = NB_SERVO_FR_FORWARD_POSITION - (THETA_FRONT / 180);
+        SERVO_BL_ORBIT_POSITION = NB_SERVO_BL_FORWARD_POSITION + (THETA_BACK / 180);
+        SERVO_BR_ORBIT_POSITION = NB_SERVO_BR_FORWARD_POSITION - (THETA_BACK / 180);
+    }
 }

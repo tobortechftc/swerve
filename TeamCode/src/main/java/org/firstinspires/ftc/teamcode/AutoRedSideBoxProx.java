@@ -25,7 +25,7 @@ public class AutoRedSideBoxProx extends SwerveUtilLOP{
         robot.use_camera = true;
         robot.use_glyph_grabber = true;
         robot.use_arm = true;
-        robot.use_proximity_sensor = false;
+        robot.use_proximity_sensor = true;
 
         robot.allianceColor = TeamColor.RED;
 
