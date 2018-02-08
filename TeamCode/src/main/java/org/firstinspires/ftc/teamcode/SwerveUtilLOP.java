@@ -82,8 +82,10 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void start_init() throws InterruptedException {
-        glyph_grabber_auto_open();
-        glyph_slider_init();
+        if (robot.use_glyph_grabber) {
+            glyph_grabber_auto_open();
+            glyph_slider_init();
+        }
         if (robot.use_relic_grabber) {
             relic_grabber_open();
             relic_arm_down();
@@ -688,10 +690,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (robot.use_imu) {
                 double cur_heading = imu_heading();
                 double heading_off_by = ((cur_heading - robot.target_heading) / 360);
-                if(robot.use_swerve) {
+                if(robot.use_swerve|| robot.use_newbot) {
                     if(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT || robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
                         if(rp > 0 && lp > 0) { //When going forward
-                            if(true) {
+                            if(robot.use_swerve) {
                                 if (cur_heading - robot.target_heading > 0.7) {
                                     robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION - heading_off_by);
                                     robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION - heading_off_by);
@@ -699,16 +701,33 @@ public class SwerveUtilLOP extends LinearOpMode {
                                     robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION + heading_off_by);
                                     robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION + heading_off_by);
                                 }
+                            } else if (robot.use_newbot) {
+                                if (cur_heading - robot.target_heading > 0.7) {
+                                    robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION - heading_off_by);
+                                    robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION - heading_off_by);
+                                } else if (cur_heading - robot.target_heading < -0.7) {
+                                    robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION + heading_off_by);
+                                    robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION + heading_off_by);
+                                }
                             }
+
                         }
                         else{ // When going backward
-                            if(true) {
+                            if(robot.use_swerve) {
                                 if (cur_heading - robot.target_heading > 0.7) { //Drifting to the left
                                     robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION + heading_off_by); //Turn Front servos to the right
                                     robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION + heading_off_by);
                                 } else if (cur_heading - robot.target_heading < -0.7) { //Drifting to the right
                                     robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION - heading_off_by); //Turn Front servos to the left
                                     robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION - heading_off_by);
+                                }
+                            } if (robot.use_newbot) {
+                                if (cur_heading - robot.target_heading > 0.7) { //Drifting to the left
+                                    robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION + heading_off_by); //Turn Front servos to the right
+                                    robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION + heading_off_by);
+                                } else if (cur_heading - robot.target_heading < -0.7) { //Drifting to the right
+                                    robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION - heading_off_by); //Turn Front servos to the left
+                                    robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION - heading_off_by);
                                 }
                             }
                         }
@@ -734,38 +753,44 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         }
-        if(robot.use_swerve) {
+        if(robot.use_swerve || robot.use_newbot) {
             if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT || robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(lp);
-                robot.motorBackLeft.setPower(lp);
-                robot.motorBackRight.setPower(rp);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setPower(lp);
+                    robot.motorBackRight.setPower(rp);
+                }
 
             } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) {
                 robot.motorFrontRight.setPower(lp);
                 robot.motorFrontLeft.setPower(-lp);
-                robot.motorBackLeft.setPower(-rp);
-                robot.motorBackRight.setPower(rp);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setPower(-rp);
+                    robot.motorBackRight.setPower(rp);
+                }
             }
             else if(robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(lp);
-                robot.motorBackLeft.setPower(lp);
-                robot.motorBackRight.setPower(rp);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setPower(lp);
+                    robot.motorBackRight.setPower(rp);
+                }
             }
         }
-        else{
+        else if (robot.use_minibot) {
             if (Math.abs(rp) > 0.3 && Math.abs(lp) > 0.3) {
                 robot.motorFrontRight.setPower(rp * robot.DRIVE_RATIO_FR);
                 robot.motorFrontLeft.setPower(lp * robot.DRIVE_RATIO_FL);
-                if (!robot.use_minibot) {
+                if (!robot.use_minibot && !robot.use_front_drive_only) {
                     robot.motorBackLeft.setPower(lp * robot.DRIVE_RATIO_BL);
                     robot.motorBackRight.setPower(rp * robot.DRIVE_RATIO_BR);
                 }
             } else {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(lp);
-                if (!robot.use_minibot) {
+                if (!robot.use_minibot && !robot.use_front_drive_only) {
                     robot.motorBackLeft.setPower(lp);
                     robot.motorBackRight.setPower(rp);
                 }
@@ -782,26 +807,32 @@ public class SwerveUtilLOP extends LinearOpMode {
             strafeRight = false;
         }
         if(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT || robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
-            robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            if (!robot.use_front_drive_only) {
+                robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            }
         }
         else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && strafeRight){
-            robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            if (!robot.use_front_drive_only) {
+                robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            }
             robot.motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
         else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && !strafeRight){
             robot.motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            if (!robot.use_front_drive_only) {
+                robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            }
         }
 
         if(!robot.fast_mode && robot.straight_mode) { // expect to go straight
             if (robot.use_imu) {
                 double cur_heading = imu_heading();
                 double heading_off_by = ((cur_heading - robot.target_heading) / 360);
-                if(robot.use_swerve) {
+                if(robot.use_swerve || robot.use_newbot) {
                     if(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT || robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
                         if(rp > 0 && lp > 0) { //When going forward
-                            if(true) {
+                            if(robot.use_swerve) {
                                 if (cur_heading - robot.target_heading > 0.7) {
                                     robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION - heading_off_by);
                                     robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION - heading_off_by);
@@ -809,16 +840,32 @@ public class SwerveUtilLOP extends LinearOpMode {
                                     robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION + heading_off_by);
                                     robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION + heading_off_by);
                                 }
+                            } else if(robot.use_newbot) {
+                                if (cur_heading - robot.target_heading > 0.7) {
+                                    robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION - heading_off_by);
+                                    robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION - heading_off_by);
+                                } else if (cur_heading - robot.target_heading < -0.7) {
+                                    robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION + heading_off_by);
+                                    robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION + heading_off_by);
+                                }
                             }
                         }
                         else{ // When going backward
-                            if(true) {
+                            if(robot.use_swerve) {
                                 if (cur_heading - robot.target_heading > 0.7) { //Drifting to the left
                                     robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION + heading_off_by); //Turn Front servos to the right
                                     robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION + heading_off_by);
                                 } else if (cur_heading - robot.target_heading < -0.7) { //Drifting to the right
                                     robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION - heading_off_by); //Turn Front servos to the left
                                     robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION - heading_off_by);
+                                }
+                            } else if (robot.use_newbot) {
+                                if (cur_heading - robot.target_heading > 0.7) { //Drifting to the left
+                                    robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION + heading_off_by); //Turn Front servos to the right
+                                    robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION + heading_off_by);
+                                } else if (cur_heading - robot.target_heading < -0.7) { //Drifting to the right
+                                    robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION - heading_off_by); //Turn Front servos to the left
+                                    robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION - heading_off_by);
                                 }
                             }
                         }
@@ -844,44 +891,52 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         }
-        if(robot.use_swerve) {
+        if(robot.use_swerve || robot.use_newbot) {
             if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT || robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(lp);
-                robot.motorBackLeft.setPower(0);
-                robot.motorBackRight.setPower(0);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setPower(0);
+                    robot.motorBackRight.setPower(0);
+                }
 
             } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && strafeRight) {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(0);
-                robot.motorBackLeft.setPower(0);
-                robot.motorBackRight.setPower(lp);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setPower(0);
+                    robot.motorBackRight.setPower(lp);
+                }
             }
             else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && !strafeRight) {
                 robot.motorFrontRight.setPower(0);
                 robot.motorFrontLeft.setPower(-rp);
-                robot.motorBackLeft.setPower(-lp);
-                robot.motorBackRight.setPower(0);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setPower(-lp);
+                    robot.motorBackRight.setPower(0);
+                }
             }
             else if(robot.cur_mode == SwerveDriveHardware.CarMode.TURN) {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(lp);
-                robot.motorBackLeft.setPower(lp);
-                robot.motorBackRight.setPower(rp);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setPower(lp);
+                    robot.motorBackRight.setPower(rp);
+                }
             }
         }
-        else{
+        else if (robot.use_minibot){
             if (Math.abs(rp) > 0.3 && Math.abs(lp) > 0.3) {
                 robot.motorFrontRight.setPower(rp * robot.DRIVE_RATIO_FR);
                 robot.motorFrontLeft.setPower(lp * robot.DRIVE_RATIO_FL);
-                if (!robot.use_minibot) {
+                if (!robot.use_minibot && !robot.use_front_drive_only) {
                     robot.motorBackLeft.setPower(lp * robot.DRIVE_RATIO_BL);
                     robot.motorBackRight.setPower(rp * robot.DRIVE_RATIO_BR);
                 }
             } else {
                 robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(lp);
-                if (!robot.use_minibot) {
+                if (!robot.use_minibot && !robot.use_front_drive_only) {
                     robot.motorBackLeft.setPower(lp);
                     robot.motorBackRight.setPower(rp);
                 }
@@ -892,7 +947,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     void stop_chassis() {
         robot.motorFrontLeft.setPower(0);
         robot.motorFrontRight.setPower(0);
-        if (!robot.use_minibot) {
+        if (!robot.use_minibot && !robot.use_front_drive_only) {
             robot.motorBackLeft.setPower(0);
             robot.motorBackRight.setPower(0);
         }
@@ -901,7 +956,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     void reset_chassis()  {
         robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        if (!robot.use_minibot) {
+        if (!robot.use_minibot && !robot.use_front_drive_only) {
             robot.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
@@ -909,7 +964,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.rightCnt = 0;
         robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        if (!robot.use_minibot) {
+        if (!robot.use_minibot&& !robot.use_front_drive_only) {
             robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
@@ -932,7 +987,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     void stop_tobot() {
-        if (robot.use_swerve||robot.use_minibot)
+        if (robot.use_swerve||robot.use_minibot||robot.use_newbot)
             stop_chassis();
         if (robot.use_color_sensor) {
             robot.colorSensor.enableLed(false);
@@ -954,9 +1009,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         int targetPosFrontRight;
         int curPosFrontRight = robot.motorFrontRight.getCurrentPosition();
         int targetPosBackLeft;
-        int curPosBackLeft = robot.motorBackLeft.getCurrentPosition();
+        int curPosBackLeft = (robot.motorBackLeft!=null?robot.motorBackLeft.getCurrentPosition():0);
         int targetPosBackRight;
-        int curPosBackRight = robot.motorBackRight.getCurrentPosition();
+        int curPosBackRight = (robot.motorBackRight!=null?robot.motorBackRight.getCurrentPosition():0);
         double initLeftPower = leftPower;
         double initRightPower = rightPower;
         double leftPowerSign = leftPower/Math.abs(leftPower);
@@ -972,9 +1027,10 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+        if (!robot.use_front_drive_only) {
+            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
         if (Math.abs(leftPower) > 0.4 && leftTC1 > 600 && !robot.fast_mode) {
             leftTC2 = 150;
             leftTC0 = 75;
@@ -1028,7 +1084,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
             }
         }
-        else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){
+        else if((robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) && !robot.use_front_drive_only){
             if(strafeRight) {
                 if (rightTC0 > 0 || leftTC0 > 0) {
                     targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC0);
@@ -1118,21 +1174,24 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if (!robot.use_front_drive_only) {
+            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
         robot.motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        if (!robot.use_front_drive_only) {
+            robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
         stop_chassis();
         robot.runtime.reset();
     }
 
     boolean has_left_drive_encoder_reached(double p_count) {
         DcMotor mt = robot.motorFrontLeft;
-        if(robot.use_swerve){
+        if(robot.use_swerve||robot.use_newbot){
             if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){
                 if (-robot.leftPower < 0) {
                     //return (Math.abs(motorFL.getCurrentPosition()) < p_count);
@@ -1231,6 +1290,19 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
                 robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
                 robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+            }
+        } else if (robot.use_newbot) {
+            if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) {
+                robot.servoFrontLeft.setPosition(robot.SERVO_FL_STRAFE_POSITION);
+                robot.servoFrontRight.setPosition(robot.SERVO_FR_STRAFE_POSITION);
+                robot.servoBackLeft.setPosition(robot.SERVO_BL_STRAFE_POSITION);
+                robot.servoBackRight.setPosition(robot.SERVO_BR_STRAFE_POSITION);
+            }
+            else{
+                robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION);
+                robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION);
+                robot.servoBackLeft.setPosition(robot.NB_SERVO_BL_FORWARD_POSITION);
+                robot.servoBackRight.setPosition(robot.NB_SERVO_BR_FORWARD_POSITION);
             }
         }
         if (!robot.fast_mode)
@@ -1842,7 +1914,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         if (robot.use_proximity_sensor && !range_fail) { // drive until proximity sensor is true
             //sleep(1000);
-            boolean edge_undetected = robot.proxSensor.getState();
+            boolean edge_undetected = true; // robot.proxSensor.getState();
             //telemetry.addData("ProxSensor =", edge_undetected);
             //telemetry.update();
 
@@ -1917,7 +1989,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 driveDistance = 3 + (19 * (2 - targetColumn)); // 19cm between columns
             }
 
-            double dist=(isBlue?(getRange(RangeSensor.FRONT) - 34):(getRange(RangeSensor.RIGHT) - 34));
+            double dist=(isBlue?(getRange(RangeSensor.FRONT) - 35):(getRange(RangeSensor.RIGHT) - 35));
             if (dist>30 || dist<=0) {
                 // use default distance
                 StraightCm(.1, 10);
@@ -1931,8 +2003,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(200);
             StraightCm(power, driveDistance);
         }
-
-        boolean edge_undetected = robot.proxSensor.getState(); // false = something within proximity
+        sleep(500); // wait a little bit for proxSensor to clear out the status
+        boolean edge_undetected = true; // robot.proxSensor.getState(); // false = something within proximity
 
         if (isBlue) {
             driveTT(-0.1, -0.1); // Crabs to the right
@@ -2295,8 +2367,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.outsideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) + robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
                     (robot.r_Value));
             if (robot.enoughToSnake) {
-                robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                }
                 if (robot.isSnakingLeft) {
                     robot.motorPowerLeft = robot.insideWheelsMod;
                     robot.motorPowerRight = robot.outsideWheelsMod;
@@ -2305,9 +2379,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                     robot.motorPowerRight = robot.insideWheelsMod;
                 }
             } else {
-                robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                }
                 robot.motorPowerLeft = left_stick;
                 robot.motorPowerRight = left_stick;
             }
@@ -2317,26 +2392,34 @@ public class SwerveUtilLOP extends LinearOpMode {
                 if (robot.enoughToSnake) {
                     robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
                     robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
-                    robot.motorBackLeft.setPower(0);
-                    robot.motorBackRight.setPower(0);
+                    if (!robot.use_front_drive_only) {
+                        robot.motorBackLeft.setPower(0);
+                        robot.motorBackRight.setPower(0);
+                    }
                 } else {
                     robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
                     robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
-                    robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
-                    robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                    if (!robot.use_front_drive_only) {
+                        robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                        robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                    }
                 }
             }
             else{
                 if (robot.enoughToSnake) {
                     robot.motorFrontLeft.setPower(robot.motorPowerLeft);
                     robot.motorFrontRight.setPower(robot.motorPowerRight);
-                    robot.motorBackLeft.setPower(0);
-                    robot.motorBackRight.setPower(0);
+                    if (!robot.use_front_drive_only) {
+                        robot.motorBackLeft.setPower(0);
+                        robot.motorBackRight.setPower(0);
+                    }
                 } else {
                     robot.motorFrontLeft.setPower(robot.motorPowerLeft);
                     robot.motorFrontRight.setPower(robot.motorPowerRight);
-                    robot.motorBackLeft.setPower(robot.motorPowerLeft);
-                    robot.motorBackRight.setPower(robot.motorPowerRight);
+                    if (!robot.use_front_drive_only) {
+                        robot.motorBackLeft.setPower(robot.motorPowerLeft);
+                        robot.motorBackRight.setPower(robot.motorPowerRight);
+                    }
                 }
             }
 
@@ -2344,21 +2427,27 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.motorPowerTurn = x_stick;
             robot.motorFrontLeft.setPower(-robot.motorPowerTurn * robot.drivePowerRatio);
             robot.motorFrontRight.setPower(robot.motorPowerTurn * robot.drivePowerRatio);
-            robot.motorBackLeft.setPower(-robot.motorPowerTurn * robot.drivePowerRatio);
-            robot.motorBackRight.setPower(robot.motorPowerTurn * robot.drivePowerRatio);
+            if (!robot.use_front_drive_only) {
+                robot.motorBackLeft.setPower(-robot.motorPowerTurn * robot.drivePowerRatio);
+                robot.motorBackRight.setPower(robot.motorPowerTurn * robot.drivePowerRatio);
+            }
         } else {
             robot.motorPowerLeft = left_stick;
             robot.motorPowerRight = right_stick;
             if (robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT) {
                 robot.motorFrontLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
                 robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
-                robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
-                robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                    robot.motorBackRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
+                }
             } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) {
                 robot.motorFrontLeft.setPower(-robot.motorPowerRight * robot.drivePowerRatio);
                 robot.motorFrontRight.setPower(robot.motorPowerRight * robot.drivePowerRatio);
-                robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
-                robot.motorBackRight.setPower(-robot.motorPowerLeft * robot.drivePowerRatio);
+                if (!robot.use_front_drive_only) {
+                    robot.motorBackLeft.setPower(robot.motorPowerLeft * robot.drivePowerRatio);
+                    robot.motorBackRight.setPower(-robot.motorPowerLeft * robot.drivePowerRatio);
+                }
             }
         }
     }
@@ -2665,10 +2754,30 @@ public class SwerveUtilLOP extends LinearOpMode {
 //        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
     }
 
+    void intakeIn() {
+        if (!robot.use_intake)
+            return;
+        robot.mt_intake_left.setPower(1.0);
+        robot.mt_intake_right.setPower(1.0);
+    }
+
+    void intakeOut() {
+        if (!robot.use_intake)
+            return;
+        robot.mt_intake_left.setPower(-1.0);
+        robot.mt_intake_right.setPower(-1.0);
+    }
+
+    void intakeStop() {
+        if (!robot.use_intake)
+            return;
+        robot.mt_intake_left.setPower(0);
+        robot.mt_intake_right.setPower(0);
+    }
 
     void show_telemetry() throws InterruptedException {
         telemetry.addData("1. Team", " %s sw/IMU/Vu/GG = %s/%s/%s/%s",
-                robot.allianceColor, (robot.use_swerve ?"Y":"N"), (robot.use_imu?"Y":"N"),
+                robot.allianceColor, (robot.use_swerve||robot.use_newbot ?"Y":"N"), (robot.use_imu?"Y":"N"),
                 (robot.use_Vuforia ?"Y":"N"), (robot.use_glyph_grabber ?"Y":"N"));
         telemetry.addData("2. PW-r/L/R/Rot-En/Sl-En =", "%.2f,%.2f/%.2f/%s/%s",
                 robot.drivePowerRatio, robot.motorPowerLeft,robot.motorPowerRight,
@@ -2692,13 +2801,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_Vuforia) {
             telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
         }
-        if (robot.use_swerve && !robot.servo_tune_up) {
+        if ((robot.use_swerve || robot.use_newbot)&& !robot.servo_tune_up) {
             telemetry.addData("6. Drive Mode = ", "%s", robot.cur_mode);
             telemetry.addData("6.1 SW-Enc FL/FR/BL/BR = ", "%d/%d/%d/%d",
                     robot.motorFrontLeft.getCurrentPosition(),
                     robot.motorFrontRight.getCurrentPosition(),
-                    robot.motorBackLeft.getCurrentPosition(),
-                    robot.motorBackRight.getCurrentPosition());
+                    (robot.motorBackLeft!=null?robot.motorBackLeft.getCurrentPosition():0),
+                    (robot.motorBackRight!=null?robot.motorBackRight.getCurrentPosition():0));
         }
         if (robot.use_glyph_grabber)  {
             telemetry.addData("8.1 g-rot pw/cur/tar = ","%3.2f/%d/%d (%s)",

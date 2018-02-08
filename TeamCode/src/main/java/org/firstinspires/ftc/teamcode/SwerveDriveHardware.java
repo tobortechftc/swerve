@@ -24,7 +24,9 @@ public class SwerveDriveHardware {
 
     // define all switches to turn on/off hardware each component
     public boolean use_swerve = true;   // use four motors and four servos for chassis
-    public boolean use_newbot = true;   // use four motors and four servos for new chassis
+    public boolean use_newbot = false;   // use four motors and four servos for new chassis
+    public boolean use_front_drive_only = false;
+    public boolean use_intake = false;
     public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight only for chassis
     public boolean use_Vuforia = true;
     public boolean use_camera = false;
@@ -198,6 +200,9 @@ public class SwerveDriveHardware {
 
     public DcMotor mt_glyph_rotator = null;
     public DcMotor mt_glyph_slider = null;
+    public DcMotor mt_intake_left = null;
+    public DcMotor mt_intake_right = null;
+
     public Servo servoFrontLeft = null;
     public Servo servoFrontRight = null;
     public Servo servoBackLeft = null;
@@ -393,6 +398,15 @@ public class SwerveDriveHardware {
             mt_glyph_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mt_glyph_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
+        if (use_intake) {
+            mt_intake_left = hwMap.dcMotor.get("mtIntakeLeft");
+            mt_intake_left.setDirection(DcMotor.Direction.REVERSE);
+            mt_intake_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            mt_intake_right = hwMap.dcMotor.get("mtIntakeRight");
+            // mt_glyph_slider.setDirection(DcMotor.Direction.REVERSE);
+            mt_intake_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         if (use_minibot) {
             motorFrontLeft = hwMap.dcMotor.get("left_drive");
@@ -417,9 +431,10 @@ public class SwerveDriveHardware {
             // Define and Initialize Motors
             motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
             motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
-            motorBackLeft = hwMap.dcMotor.get("motorBackLeft");
-            motorBackRight = hwMap.dcMotor.get("motorBackRight");
-
+            if (!use_front_drive_only) {
+                motorBackLeft = hwMap.dcMotor.get("motorBackLeft");
+                motorBackRight = hwMap.dcMotor.get("motorBackRight");
+            }
             servoFrontRight = hwMap.servo.get("servoFrontRight");
             servoFrontLeft = hwMap.servo.get("servoFrontLeft");
             servoBackLeft = hwMap.servo.get("servoBackLeft");
@@ -427,9 +442,10 @@ public class SwerveDriveHardware {
 
             motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
             motorFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-            motorBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-            motorBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-
+            if (!use_front_drive_only) {
+                motorBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+                motorBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+            }
             // Set all motors to zero power and set all servos to central position
             // May want to change servo #'s to the value where all wheels are pointing forward.
             servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
@@ -444,20 +460,25 @@ public class SwerveDriveHardware {
 
             motorFrontLeft.setPower(0);
             motorFrontRight.setPower(0);
-            motorBackLeft.setPower(0);
-            motorBackRight.setPower(0);
+            if (!use_front_drive_only) {
+                motorBackLeft.setPower(0);
+                motorBackRight.setPower(0);
+            }
 
             // Set all motors to run with encoders.
             // May want to use RUN_USING_ENCODERS if encoders are installed.
             motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+            if (!use_front_drive_only) {
+                motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
             motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            if (!use_front_drive_only) {
+                motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
             if (use_newbot) {
                 initialize_newbot();
             }

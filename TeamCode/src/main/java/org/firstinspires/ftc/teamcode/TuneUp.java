@@ -16,16 +16,17 @@ public class TuneUp extends SwerveUtilLOP {
          * The init() method of the hardware class does all the work here
          */
         robot.servo_tune_up = true; // enable servo tune up
-        robot.use_swerve = true;
+        robot.use_swerve = false;
+        robot.use_newbot = true;
         robot.use_imu = false;
         robot.use_Vuforia = false;
-        robot.use_color_sensor = true;
-        robot.use_arm = true;
-        robot.use_glyph_grabber = true;
-        robot.use_relic_grabber = true;
+        robot.use_color_sensor = false;
+        robot.use_arm = false;
+        robot.use_glyph_grabber = false;
+        robot.use_relic_grabber = false;
         robot.use_test_servo = false;
         robot.use_test_motor = false;
-        robot.use_range_sensor = true;
+        robot.use_range_sensor = false;
         robot.use_proximity_sensor = true;
 
         init_and_test();
@@ -78,58 +79,61 @@ public class TuneUp extends SwerveUtilLOP {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            if (robot.use_arm) {
+                if (gamepad2.dpad_down) {
+                    double pos = robot.sv_shoulder.getPosition();
+                    if (pos >= INCREMENT) {
+                        robot.sv_shoulder.setPosition(pos - INCREMENT);
+                    }
+                }
+                if (gamepad2.dpad_up) {
+                    double pos = robot.sv_shoulder.getPosition();
+                    if (pos <= (1 - INCREMENT)) {
+                        robot.sv_shoulder.setPosition(pos + INCREMENT);
+                    }
+                }
+                if (gamepad2.dpad_right) {
+                    double pos = robot.sv_elbow.getPosition();
+                    if (pos <= (1 - INCREMENT)) {
+                        robot.sv_elbow.setPosition(pos + INCREMENT);
+                    }
+                }
+                if (gamepad2.dpad_left) {
+                    double pos = robot.sv_elbow.getPosition();
+                    if (pos >= INCREMENT) {
+                        robot.sv_elbow.setPosition(pos - INCREMENT);
+                    }
+                }
+                if (gamepad2.a) {
+                    robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
+                }
+                if (gamepad2.y) {
+                    robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
+                }
+                if (gamepad2.x) {
+                    robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_3);
+                }
+                if (gamepad2.b) {
+                    robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3);
+                }
+                if (gamepad2.left_bumper) {
+                    robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);
+                }
+            }
 
-            if (gamepad2.dpad_down) {
-                double pos = robot.sv_shoulder.getPosition();
-                if (pos >= INCREMENT) {
-                    robot.sv_shoulder.setPosition(pos - INCREMENT);
+            if (robot.use_glyph_grabber) {
+                if (gamepad1.dpad_down) {
+                    double pos = robot.sv_glyph_grabber_bottom.getPosition();
+                    if (pos >= INCREMENT) {
+                        robot.sv_glyph_grabber_bottom.setPosition(pos - INCREMENT);
+                    }
                 }
-            }
-            if (gamepad2.dpad_up) {
-                double pos = robot.sv_shoulder.getPosition();
-                if (pos <= (1 - INCREMENT)) {
-                    robot.sv_shoulder.setPosition(pos + INCREMENT);
+                if (gamepad1.dpad_up) {
+                    double pos = robot.sv_glyph_grabber_bottom.getPosition();
+                    if (pos <= (1 - INCREMENT)) {
+                        robot.sv_glyph_grabber_bottom.setPosition(pos + INCREMENT);
+                    }
                 }
-            }
-            if (gamepad2.dpad_right) {
-                double pos = robot.sv_elbow.getPosition();
-                if (pos <= (1 - INCREMENT)) {
-                    robot.sv_elbow.setPosition(pos + INCREMENT);
-                }
-            }
-            if (gamepad2.dpad_left) {
-                double pos = robot.sv_elbow.getPosition();
-                if (pos >= INCREMENT) {
-                    robot.sv_elbow.setPosition(pos - INCREMENT);
-                }
-            }
-            if (gamepad1.dpad_down) {
-                double pos = robot.sv_glyph_grabber_bottom.getPosition();
-                if (pos >= INCREMENT) {
-                    robot.sv_glyph_grabber_bottom.setPosition(pos - INCREMENT);
-                }
-            }
-            if (gamepad1.dpad_up) {
-                double pos = robot.sv_glyph_grabber_bottom.getPosition();
-                if (pos <= (1 - INCREMENT)) {
-                    robot.sv_glyph_grabber_bottom.setPosition(pos + INCREMENT);
-                }
-            }
-
-            if (gamepad2.a) {
-                robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
-            }
-            if (gamepad2.y) {
-                robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
-            }
-            if (gamepad2.x) {
-                robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_3);
-            }
-            if (gamepad2.b) {
-                robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3);
-            }
-            if (gamepad2.left_bumper) {
-                robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);
             }
 
 

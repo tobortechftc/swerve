@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
-@TeleOp(name="Teleop-BN", group="NewBot")
-@Disabled
+@TeleOp(name="TeleOp-NB", group="Test-NewBot")
 public class TeleopNB extends SwerveUtilLOP {
 
     /* Declare OpMode members. */
@@ -20,6 +19,8 @@ public class TeleopNB extends SwerveUtilLOP {
          */
         robot.use_swerve = false;
         robot.use_newbot = true;
+        robot.use_front_drive_only = true; // front drive only
+        robot.use_intake = true;
         robot.use_imu = true;
         robot.use_encoder = true;
         robot.use_minibot = false;
@@ -52,8 +53,18 @@ public class TeleopNB extends SwerveUtilLOP {
                 robot.isTesting = !robot.isTesting;
                 sleep(100);
             }
+            if (robot.use_intake) {
+                if (gamepad1.dpad_up) { // intake IN
+                    intakeIn();
+                } else if (gamepad1.dpad_down) { // intake IN
+                    intakeOut();
+                } else if (gamepad1.dpad_left) {
+                    intakeStop();
+                }
 
-            if (robot.use_swerve) {
+            }
+
+            if (robot.use_newbot) {
 
                 if(robot.isTesting){ //Allow to test individual movement
 
@@ -67,22 +78,22 @@ public class TeleopNB extends SwerveUtilLOP {
                     }
 
                     if(gamepad1.left_trigger > 0.1){
-                        robot.LEFT_SV_DIFF -= 0.001;
+                        robot.NB_LEFT_SV_DIFF -= 0.001;
                         sleep(100);
                     }
 
                     if(gamepad1.left_bumper){
-                        robot.LEFT_SV_DIFF += 0.001;
+                        robot.NB_LEFT_SV_DIFF += 0.001;
                         sleep(100);
                     }
 
                     if(gamepad1.right_trigger > 0.1){
-                        robot.RIGHT_SV_DIFF -= 0.001;
+                        robot.NB_RIGHT_SV_DIFF -= 0.001;
                         sleep(100);
                     }
 
                     if(gamepad1.right_bumper){
-                        robot.RIGHT_SV_DIFF += 0.001;
+                        robot.NB_RIGHT_SV_DIFF += 0.001;
                         sleep(100);
                     }
 
@@ -103,10 +114,9 @@ public class TeleopNB extends SwerveUtilLOP {
                         }
                         sleep(400);
                     }
-                    robot.SERVO_FL_STRAFE_POSITION = robot.SERVO_FL_FORWARD_POSITION + robot.CRAB_DIFF_INC - robot.LEFT_SV_DIFF;
-                    robot.SERVO_FR_STRAFE_POSITION = robot.SERVO_FR_FORWARD_POSITION - robot.CRAB_DIFF_DEC + robot.RIGHT_SV_DIFF;
-                    robot.SERVO_BL_STRAFE_POSITION = robot.SERVO_BL_FORWARD_POSITION + robot.CRAB_DIFF_INC - robot.LEFT_SV_DIFF;
-                    robot.SERVO_BR_STRAFE_POSITION = robot.SERVO_BR_FORWARD_POSITION - robot.CRAB_DIFF_DEC + robot.RIGHT_SV_DIFF;
+                    if (robot.use_newbot) {
+                        robot.initialize_newbot();
+                    }
                 }
                 else { //If not allowed to test servo positions, triggers do teleop spot turn
                     //if (gamepad1.left_trigger > 0.1) {
@@ -227,6 +237,7 @@ public class TeleopNB extends SwerveUtilLOP {
                     } else if (gamepad1.a) {
                         robot.drivePowerRatio = 0.2;
                     }
+                    /*
                     else if (gamepad1.dpad_down){
                         robot.drivePowerRatio -=0.01;
                         if(robot.drivePowerRatio < 0.1){
@@ -239,6 +250,7 @@ public class TeleopNB extends SwerveUtilLOP {
                             robot.drivePowerRatio = 1.0;
                         }
                     }
+                    */
                 }
 
                 if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
@@ -270,7 +282,7 @@ public class TeleopNB extends SwerveUtilLOP {
                     if ((adj_count++)%20==0)
                        car_servo_adj(gamepad1.left_stick_x);
                 }
-            } // end use_swerve
+            } // end use_newbot
 
             if (robot.use_relic_slider) {
                 // relic slider
