@@ -1959,7 +1959,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (isBlue) {
                 TurnLeftD(0.3, 90);
             } else {
-                TurnRightD(0.3, 90);
+                TurnRightD(0.3, 91);
              }
             if (!opModeIsActive()) return;
 
