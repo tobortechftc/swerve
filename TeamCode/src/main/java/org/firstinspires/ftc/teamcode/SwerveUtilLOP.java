@@ -1875,7 +1875,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 // forward using front range sensor, so it is close to cryptobox ridge
                 StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                sleep(400);
+                sleep(300);
             } else { // turn with less than 90 degree on purpose
                 if (isBlue) {
                     TurnLeftD(0.3, 80);
@@ -1899,9 +1899,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             if (!opModeIsActive()) return;
-
-            sleep(200);
+            sleep(300);
             StraightCm(power, driveDistance);
+            if (!opModeIsActive()) return;
             if (!robot.use_proximity_sensor || range_fail) {
                 if (isBlue) {
                     TurnRightD(.15, 5);
@@ -1934,7 +1934,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);
     }
-
 
 
     // Does go_to_distance_from, using only proximity sensor. Makes for much cleaner code.
@@ -1990,7 +1989,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
 
             double dist=(isBlue?(getRange(RangeSensor.FRONT) - 35):(getRange(RangeSensor.RIGHT) - 35));
-            if (dist>30 || dist<=0) {
+            if (dist>30 || dist<=5) {
                 // use default distance
                 StraightCm(.1, 10);
             } else if (dist>0) {
@@ -2018,18 +2017,21 @@ public class SwerveUtilLOP extends LinearOpMode {
             // Goes until detects edge or times out
             edge_undetected = robot.proxSensor.getState();
         }
-        robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
-        //StraightCm(.1, 1);
         driveTT(0, 0); // Stops
+        if (!opModeIsActive()) return;
+        robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
+        if (!opModeIsActive()) return;
+        if (isBlue) { // crab back 1cm to correct proximity over shoot
+            StraightCm(-.1, 1);
+        } else {
+            StraightCm(.1, 1);
+        }
         if (!opModeIsActive()) return;
 
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);
+        if (!opModeIsActive()) return;
     }
-
-
-
-
 
     void turnToColumn (int targetColumn, double power, boolean isBlueSide, boolean isSideBox) throws InterruptedException{
         if(isSideBox) {//Values are currently place holders, after every turn value add a forward for a fixed distance to deliver the glyph
