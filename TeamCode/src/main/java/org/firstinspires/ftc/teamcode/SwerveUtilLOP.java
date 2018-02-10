@@ -2785,8 +2785,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     void show_telemetry() throws InterruptedException {
-        telemetry.addData("1. Team", " %s sw/IMU/Vu/GG = %s/%s/%s/%s",
-                robot.allianceColor, (robot.use_swerve||robot.use_newbot ?"Y":"N"), (robot.use_imu?"Y":"N"),
+        telemetry.addData("1. Team", " %s sw/IMU/Vu/GG = %s%s/%s/%s/%s",
+                robot.allianceColor, (robot.use_swerve||robot.use_newbot ?"Y":"N"),
+                (robot.isTesting?"-T":""), (robot.use_imu?"Y":"N"),
                 (robot.use_Vuforia ?"Y":"N"), (robot.use_glyph_grabber ?"Y":"N"));
         telemetry.addData("2. PW-r/L/R/Rot-En/Sl-En =", "%.2f,%.2f/%.2f/%s/%s",
                 robot.drivePowerRatio, robot.motorPowerLeft,robot.motorPowerRight,
@@ -2800,8 +2801,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         double range_right = getRange(RangeSensor.RIGHT);
         if (range_right>365) range_right=0;
         if (robot.use_imu||robot.use_range_sensor) {
-            telemetry.addData("4.1 IMU/r-F/r-R/r-L = ", "%.2f/%.1f/%.1f/%.1f cm",
-                    imu_heading(),range_front,range_right,range_left);
+            telemetry.addData("4.1 IMU/Range", "%s=%.2f/F=%.1f/R=%.1f/L=%.1f cm",
+                    (robot.use_imu2?"i2":"i1"),imu_heading(),range_front,range_right,range_left);
         }
         if (robot.use_proximity_sensor) {
             telemetry.addData("4.2 ProxSensor =", robot.proxSensor.getState());

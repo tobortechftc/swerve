@@ -18,7 +18,7 @@ public class TuneUp extends SwerveUtilLOP {
         robot.servo_tune_up = true; // enable servo tune up
         robot.use_swerve = false;
         robot.use_newbot = true;
-        robot.use_imu = false;
+        robot.use_imu = true;
         robot.use_Vuforia = false;
         robot.use_color_sensor = false;
         robot.use_arm = false;
@@ -73,6 +73,9 @@ public class TuneUp extends SwerveUtilLOP {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+
+        start_init();
+
         if (robot.use_glyph_grabber) {
             glyph_grabber_auto_open();
         }
