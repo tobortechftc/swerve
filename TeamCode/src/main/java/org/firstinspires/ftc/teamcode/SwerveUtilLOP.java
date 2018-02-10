@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -95,13 +96,19 @@ public class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("0: Crypto Column =", robot.targetColumn);
             telemetry.update();
         }
+        if (robot.use_imu) {
+            if (robot.imu.getSystemStatus()== BNO055IMU.SystemStatus.SYSTEM_ERROR) {
+                robot.use_imu2 = true;
+            }
+        }
     }
 
     public double imu_heading() {
         if (!robot.use_imu)
             return 999;
 
-        robot.angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        robot.angles   = (robot.use_imu2?robot.imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES):
+                robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
         return robot.angles.firstAngle;
     }
 

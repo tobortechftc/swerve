@@ -31,6 +31,7 @@ public class SwerveDriveHardware {
     public boolean use_Vuforia = true;
     public boolean use_camera = false;
     public boolean use_imu = true;
+    public boolean use_imu2 = false;
     public boolean use_encoder = true;
     public boolean use_color_sensor = false;
     public boolean use_range_sensor = false;
@@ -278,7 +279,8 @@ public class SwerveDriveHardware {
     CarMode old_mode = CarMode.STRAIGHT;
 
     // The IMU sensor object
-    BNO055IMU imu;
+    BNO055IMU imu = null;
+    BNO055IMU imu2 = null;
 
     // State used for updating telemetry
     Orientation angles;
@@ -340,6 +342,9 @@ public class SwerveDriveHardware {
 
             imu = hwMap.get(BNO055IMU.class, "imu");
             imu.initialize(imuParameters);
+
+            imu2 = hwMap.get(BNO055IMU.class, "imu2");
+            imu2.initialize(imuParameters);
         }
 
         if (use_proximity_sensor) {
@@ -375,7 +380,7 @@ public class SwerveDriveHardware {
         }
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
-            //mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+            mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         }
