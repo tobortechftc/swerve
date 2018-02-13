@@ -311,7 +311,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     glyph_grabber_half_close();
                     sleep(400);
                 } else if (gamepad2.dpad_up && (gamepad2.left_trigger > 0.1)) { // close top
-                    glyph_grabber_auto_close(true);
+                    glyph_grabber_auto_close(true,false);
                     sleep(400);
                 } else if (gamepad2.dpad_down && (gamepad2.left_trigger > 0.1)) { // half close
                     glyph_grabber_half_close_both();
@@ -326,7 +326,7 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
                     // bottom grabber inc. widen
                     glyph_grabber_bottom_widen();
                 } else if ((gamepad2.left_trigger > 0.1)) {
-                    glyph_grabber_auto_close(false);
+                    glyph_grabber_auto_close(false,false);
                 } else if (gamepad2.a && gamepad2.dpad_down) {
                     glyph_slider_init();
                 } else if (gamepad2.back && gamepad2.right_bumper) { // force up

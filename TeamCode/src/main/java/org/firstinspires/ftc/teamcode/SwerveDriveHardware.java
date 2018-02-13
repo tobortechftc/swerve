@@ -27,6 +27,7 @@ public class SwerveDriveHardware {
     public boolean use_newbot = false;   // use four motors and four servos for new chassis
     public boolean use_front_drive_only = false;
     public boolean use_intake = false;
+    public boolean use_dumper = false;
     public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight only for chassis
     public boolean use_Vuforia = true;
     public boolean use_camera = false;
@@ -129,6 +130,10 @@ public class SwerveDriveHardware {
 
     final static double SV_RIGHT_ARM_UP = 0.11;
     final static double SV_RIGHT_ARM_DOWN = 0.73;
+    final static double SV_RIGHT_ARM_UP_NB = 0.11;
+    final static double SV_RIGHT_ARM_DOWN_NB = 0.73;
+    final static double SV_LEFT_ARM_UP_NB = 0.73;
+    final static double SV_LEFT_ARM_DOWN_NB = 0.11;
 
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.275;
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.38;
@@ -146,6 +151,12 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
     final static double SV_RELIC_ARM_DOWN = 0.2;
     final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
+    final static double SV_DUMPER_INIT = 0.7228;
+    final static double SV_DUMPER_DOWN = 0.7228;
+    final static double SV_DUMPER_HALF_UP = 0.5472;
+    final static double SV_DUMPER_UP = 0.28;
+    final static double SV_DUMPER_DUMP = 0.18;
+
     final static double GG_SLIDE_UP_POWER = 1.0;
     final static double GG_SLIDE_DOWN_POWER = -0.9;
 
@@ -154,6 +165,7 @@ public class SwerveDriveHardware {
     double motorPowerRight;
     double motorPowerTurn;
     double drivePowerRatio = 0.5; //Controls the upper cap on drive speed
+    double intakeRatio = 0.8;
     float drivePower = 0; //Controls the throttling of the drive
 
     double servoPosFL;
@@ -197,6 +209,7 @@ public class SwerveDriveHardware {
     public DcMotor motorBackRight = null;
 
     public DcMotor mt_relic_slider = null;
+    public DcMotor mt_lift = null;
     public DcMotor mt_test = null;
 
     public DcMotor mt_glyph_rotator = null;
@@ -218,7 +231,9 @@ public class SwerveDriveHardware {
 
     public Servo sv_relic_grabber = null;
     public Servo sv_relic_arm = null;
+    public Servo sv_relic_elbow = null;
     public Servo sv_test = null;
+    public Servo sv_dumper = null;
 
     public ColorSensor colorSensor = null;
     public ColorSensor r_colorSensor = null;
@@ -250,8 +265,8 @@ public class SwerveDriveHardware {
     static double NB_RIGHT_SV_DIFF = 0.004;
     static double NB_SERVO_FL_FORWARD_POSITION = 0.5;
     static double NB_SERVO_FR_FORWARD_POSITION = 0.5;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.48;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.49;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.5;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;
@@ -378,6 +393,15 @@ public class SwerveDriveHardware {
             sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
             sv_relic_grabber.setPosition(SV_RELIC_GRABBER_INIT);
         }
+        if (use_dumper) {
+            sv_dumper = hwMap.servo.get("sv_dumper");
+            sv_dumper.setPosition(SV_DUMPER_INIT);
+            mt_lift = hwMap.dcMotor.get("mtLift");
+            // mt_lift.setDirection(DcMotor.Direction.REVERSE);
+            mt_lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            mt_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mt_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
             mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
@@ -407,10 +431,13 @@ public class SwerveDriveHardware {
             mt_intake_left = hwMap.dcMotor.get("mtIntakeLeft");
             mt_intake_left.setDirection(DcMotor.Direction.REVERSE);
             mt_intake_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            mt_intake_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             mt_intake_right = hwMap.dcMotor.get("mtIntakeRight");
             // mt_glyph_slider.setDirection(DcMotor.Direction.REVERSE);
             mt_intake_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            mt_intake_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         }
 
         if (use_minibot) {
