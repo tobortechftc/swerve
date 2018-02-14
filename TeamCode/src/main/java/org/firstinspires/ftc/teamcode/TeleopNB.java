@@ -132,6 +132,13 @@ public class TeleopNB extends SwerveUtilLOP {
                         StraightIn(-0.5, 22);
                     }
 
+                    if(gamepad1.x){
+                        TurnLeftD(0.4, 90);
+                    }
+                    if(gamepad1.y){
+                        TurnRightD(0.4, 90);
+                    }
+
                     if(gamepad1.start){
                         if(!(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB)){// If in any other mode, switch to crab
                             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
@@ -144,7 +151,7 @@ public class TeleopNB extends SwerveUtilLOP {
                     if (robot.use_newbot) {
                         robot.initialize_newbot();
                     }
-                } // ens isTesting
+                } // end isTesting
                 else { //If not allowed to test servo positions, triggers do teleop spot turn
                     //if (gamepad1.left_trigger > 0.1) {
                     if (Math.abs(gamepad1.left_stick_y) > 0.2 &&

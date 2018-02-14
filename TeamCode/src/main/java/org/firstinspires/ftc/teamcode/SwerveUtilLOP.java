@@ -107,9 +107,21 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.use_imu)
             return 999;
 
-        robot.angles   = (robot.use_imu2?robot.imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES):
-                robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
-        return robot.angles.firstAngle;
+        if(!robot.use_newbot) {
+            robot.angles = (robot.use_imu2 ? robot.imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES) :
+                    robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
+            return robot.angles.firstAngle;
+        }
+        else{
+            if(!robot.use_imu2){
+                robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                return -robot.angles.firstAngle;
+            }
+            else{
+                robot.angles = robot.imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                return robot.angles.firstAngle;
+            }
+        }
     }
 
     public void dumper_up() {
