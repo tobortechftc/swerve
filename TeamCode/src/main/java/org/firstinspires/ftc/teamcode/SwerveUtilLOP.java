@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
@@ -1041,8 +1040,8 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void stop_auto() {
         if (robot.use_color_sensor) {
-            robot.colorSensor.enableLed(false);
-            //robot.colorSensor.close();
+            robot.l_colorSensor.enableLed(false);
+            //robot.l_colorSensor.close();
             //robot.use_color_sensor = false;
         }
         if (robot.use_Vuforia) {
@@ -1059,8 +1058,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_swerve||robot.use_minibot||robot.use_newbot)
             stop_chassis();
         if (robot.use_color_sensor) {
-            robot.colorSensor.enableLed(false);
-            robot.colorSensor.close();
+            robot.l_colorSensor.enableLed(false);
+            robot.l_colorSensor.close();
         }
         // stop all sensors
     }
@@ -1570,12 +1569,22 @@ public class SwerveUtilLOP extends LinearOpMode {
         if(!robot.use_color_sensor) {
             return 0;
         }
-        if (isBlueAlliance) {
-            robot.blue = robot.colorSensor.blue();
-            robot.red = robot.colorSensor.red();
+        if (robot.use_newbot) {
+            if (isBlueAlliance) {
+                robot.blue = robot.r_colorSensor.blue();
+                robot.red = robot.r_colorSensor.red();
+            } else {
+                robot.blue = robot.l_colorSensor.blue();
+                robot.red = robot.l_colorSensor.red();
+            }
         } else {
-            robot.blue = robot.r_colorSensor.blue();
-            robot.red = robot.r_colorSensor.red();
+            if (isBlueAlliance) {
+                robot.blue = robot.l_colorSensor.blue();
+                robot.red = robot.l_colorSensor.red();
+            } else {
+                robot.blue = robot.r_colorSensor.blue();
+                robot.red = robot.r_colorSensor.red();
+            }
         }
         return (robot.blue - robot.red);
     }
@@ -1697,16 +1706,20 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         telemetry.addData("isBlueBall/isRedBall", "%s/%s", isBlueBall, isRedBall);
         telemetry.update();
+        sleep(2000);
 
         // Determines if right jewel is red
         int directionI = calcArmDirection(rightJewelColorCS, rightJewelColorCamera, isBlueAlliance);
         if (!opModeIsActive()) return;
         if (robot.use_newbot) {
-            if (isBlueAlliance) {
-
-            } else { // red alliance
-
-            }
+            int dist = (directionI > 0 ? 7 : 5);
+            StraightCm(-.1 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
+            sleep(100);
+            if (isBlueAlliance)
+                r_arm_up(); // arm up to ensure the jewel is knocked out
+            else
+                l_arm_up(); // arm up to ensure the jewel is knocked out
+            StraightCm(.15 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
         } else { // oldBot
             if (isBlueAlliance) {
                 if (directionI == 1) { // Right jewel is our color
@@ -1875,7 +1888,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void l_arm_up() {
         if (robot.use_newbot) {
-            robot.sv_right_arm.setPosition(robot.SV_LEFT_ARM_UP_NB);
+            robot.sv_left_arm.setPosition(robot.SV_LEFT_ARM_UP_NB);
         } else {
             robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
             sleep(200);
@@ -1885,7 +1898,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void l_arm_down() {
         if (robot.use_newbot) {
-            robot.sv_right_arm.setPosition(robot.SV_LEFT_ARM_DOWN_NB);
+            robot.sv_left_arm.setPosition(robot.SV_LEFT_ARM_DOWN_NB);
         } else {
             robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
             robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);

@@ -130,10 +130,10 @@ public class SwerveDriveHardware {
 
     final static double SV_RIGHT_ARM_UP = 0.11;
     final static double SV_RIGHT_ARM_DOWN = 0.73;
-    final static double SV_RIGHT_ARM_UP_NB = 0.11;
-    final static double SV_RIGHT_ARM_DOWN_NB = 0.73;
-    final static double SV_LEFT_ARM_UP_NB = 0.73;
-    final static double SV_LEFT_ARM_DOWN_NB = 0.11;
+    final static double SV_RIGHT_ARM_UP_NB = 0.2;
+    final static double SV_RIGHT_ARM_DOWN_NB = 0.783;
+    final static double SV_LEFT_ARM_UP_NB = 0.943;
+    final static double SV_LEFT_ARM_DOWN_NB = 0.359;
 
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.275;
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.38;
@@ -224,6 +224,7 @@ public class SwerveDriveHardware {
 
     public Servo sv_shoulder;
     public Servo sv_elbow;
+    public Servo sv_left_arm;
     public Servo sv_right_arm;
 
     public Servo sv_glyph_grabber_top = null;
@@ -235,7 +236,7 @@ public class SwerveDriveHardware {
     public Servo sv_test = null;
     public Servo sv_dumper = null;
 
-    public ColorSensor colorSensor = null;
+    public ColorSensor l_colorSensor = null;
     public ColorSensor r_colorSensor = null;
 
     public ModernRoboticsI2cRangeSensor rangeSensorRight = null;
@@ -368,10 +369,18 @@ public class SwerveDriveHardware {
             proxSensor.setMode(DigitalChannel.Mode.INPUT);
         }
         if (use_color_sensor) {
-            colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
-            colorSensor.enableLed(true);
-            r_colorSensor = hwMap.get(ColorSensor.class, "rcolor");
-            r_colorSensor.enableLed(true);
+            if (use_newbot) {
+                l_colorSensor = hwMap.get(ColorSensor.class, "colorLeft");
+                l_colorSensor.enableLed(true);
+                r_colorSensor = hwMap.get(ColorSensor.class, "colorRight");
+                r_colorSensor.enableLed(true);
+            }
+            else {
+                l_colorSensor = hwMap.get(ColorSensor.class, "l_colorSensor");
+                l_colorSensor.enableLed(true);
+                r_colorSensor = hwMap.get(ColorSensor.class, "rcolor");
+                r_colorSensor.enableLed(true);
+            }
         }
             if (use_range_sensor) {
             rangeSensorRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorBack");
@@ -516,12 +525,21 @@ public class SwerveDriveHardware {
             }
         }
         if (use_arm) {
-            sv_elbow = hwMap.servo.get("sv_elbow");
-            sv_shoulder = hwMap.servo.get("sv_shoulder");
-            sv_right_arm = hwMap.servo.get("sv_right_arm");
-            sv_elbow.setPosition(SV_ELBOW_UP);
-            sv_shoulder.setPosition(SV_SHOULDER_INIT);
-            sv_right_arm.setPosition(SV_RIGHT_ARM_UP);
+            if (use_newbot) {
+                sv_left_arm = hwMap.servo.get("sv_left_arm");
+                sv_right_arm = hwMap.servo.get("sv_right_arm");
+                sv_left_arm.setPosition(SV_LEFT_ARM_UP_NB);
+                sv_right_arm.setPosition(SV_RIGHT_ARM_UP_NB);
+            }
+            else{
+                sv_elbow = hwMap.servo.get("sv_elbow");
+                sv_shoulder = hwMap.servo.get("sv_shoulder");
+                sv_right_arm = hwMap.servo.get("sv_right_arm");
+                sv_elbow.setPosition(SV_ELBOW_UP);
+                sv_shoulder.setPosition(SV_SHOULDER_INIT);
+                sv_right_arm.setPosition(SV_RIGHT_ARM_UP);
+            }
+
         }
 
     }

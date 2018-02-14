@@ -22,9 +22,10 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_imu = true;
         robot.use_Vuforia = false;
         robot.use_color_sensor = false;
-        robot.use_arm = false;
+        robot.use_arm = true;
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = false;
+        robot.use_relic_slider = false;
         robot.use_test_servo = false;
         robot.use_test_motor = false;
         robot.use_range_sensor = false;
@@ -36,7 +37,7 @@ public class TuneUp extends SwerveUtilLOP {
         telemetry.addData("My name is Tobot.", "Need tune-up?");
         telemetry.update();
 
-        int num_servos = 12;
+        int num_servos = 13;
         int cur_sv_ix = 0;
         boolean show_all = true;
         Servo[] sv_list = {
@@ -46,6 +47,7 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.servoBackRight,
                 robot.sv_shoulder,
                 robot.sv_elbow,
+                robot.sv_left_arm,
                 robot.sv_right_arm,
                 robot.sv_glyph_grabber_bottom,
                 robot.sv_glyph_grabber_top,
@@ -60,6 +62,7 @@ public class TuneUp extends SwerveUtilLOP {
                 "BackRight",
                 "sv_shoulder",
                 "sv_elbow",
+                "sv_left_arm",
                 "sv_right_arm",
                 "sv_gg_bottom",
                 "sv_gg_top",
@@ -85,7 +88,7 @@ public class TuneUp extends SwerveUtilLOP {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            if (robot.use_arm) {
+            if (robot.use_arm && !robot.use_newbot) {
                 if (gamepad2.dpad_down) {
                     double pos = robot.sv_shoulder.getPosition();
                     if (pos >= INCREMENT) {
@@ -212,7 +215,7 @@ public class TuneUp extends SwerveUtilLOP {
                         count++;
                     }
                     gamepad1.reset();
-                    sleep(100);
+                    sleep(400);
                 } else if (gamepad1.b) {
                     cur_sv_ix++;
                     if (cur_sv_ix >= num_servos) cur_sv_ix = 0;
@@ -223,7 +226,7 @@ public class TuneUp extends SwerveUtilLOP {
                         count++;
                     }
                     gamepad1.reset();
-                    sleep(100);
+                    sleep(400);
                 }
             }
             telemetry.addData("0. GP1:", "x/b:sv sel, y/a:+/-%4.3f(ix=%d)", INCREMENT, cur_sv_ix);

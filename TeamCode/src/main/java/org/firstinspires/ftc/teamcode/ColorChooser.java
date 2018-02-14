@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Bitmap;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
@@ -27,7 +24,7 @@ public class ColorChooser extends SwerveUtilLOP {
         robot.use_glyph_grabber = true;
         robot.use_test_motor = false;
         robot.init(hardwareMap);
-        robot.colorSensor.enableLed(true);
+        robot.l_colorSensor.enableLed(true);
         robot.camera.activate();
 
         robot.allianceColor = TeamColor.BLUE;

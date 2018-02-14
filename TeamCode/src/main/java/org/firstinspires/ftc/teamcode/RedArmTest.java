@@ -26,7 +26,7 @@ public class RedArmTest extends SwerveUtilLOP {
         robot.use_glyph_grabber = false;
         robot.use_test_motor = false;
         robot.init(hardwareMap);
-        robot.colorSensor.enableLed(true);
+        robot.l_colorSensor.enableLed(true);
         robot.camera.activate();
 
 
