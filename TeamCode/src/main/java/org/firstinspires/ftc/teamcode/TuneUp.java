@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class TuneUp extends SwerveUtilLOP {
 
     /* Declare OpMode members. */
-    static final double INCREMENT = 0.001;
+    static double INCREMENT = 0.001;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,7 +37,7 @@ public class TuneUp extends SwerveUtilLOP {
         telemetry.addData("My name is Tobot.", "Need tune-up?");
         telemetry.update();
 
-        int num_servos = 13;
+        int num_servos = 14;
         int cur_sv_ix = 0;
         boolean show_all = true;
         Servo[] sv_list = {
@@ -52,7 +52,8 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.sv_glyph_grabber_bottom,
                 robot.sv_glyph_grabber_top,
                 robot.sv_relic_grabber,
-                robot.sv_relic_arm,
+                robot.sv_relic_wrist,
+                robot.sv_relic_elbow,
                 robot.sv_dumper
         };
         String [] sv_names = {
@@ -67,7 +68,8 @@ public class TuneUp extends SwerveUtilLOP {
                 "sv_gg_bottom",
                 "sv_gg_top",
                 "sv_relic_grabber",
-                "sv_relic_arm",
+                "sv_relic_wrist",
+                "sv_relic_elbow",
                 "sv_dumper"
         };
 
@@ -197,13 +199,20 @@ public class TuneUp extends SwerveUtilLOP {
                     if (pos <= (1 - INCREMENT)) {
                         sv_list[cur_sv_ix].setPosition(pos + INCREMENT);
                     }
-                    sleep(20);
+                    sleep(50);
                 } else if (gamepad1.y && (sv_list[cur_sv_ix] != null)) {
                     double pos = sv_list[cur_sv_ix].getPosition();
                     if (pos >= INCREMENT) {
                         sv_list[cur_sv_ix].setPosition(pos - INCREMENT);
                     }
-                    sleep(20);
+                    sleep(50);
+                }
+                if (gamepad1.left_stick_y<-0.1) {
+                    INCREMENT += 0.001;
+                    if (INCREMENT>0.5) INCREMENT = 0.5;
+                } else if (gamepad1.left_stick_y>0.1) {
+                    INCREMENT -= 0.001;
+                    if (INCREMENT<0.001) INCREMENT = 0.001;
                 }
                 if (gamepad1.x) {
                     cur_sv_ix--;

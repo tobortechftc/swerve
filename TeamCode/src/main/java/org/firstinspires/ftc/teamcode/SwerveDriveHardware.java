@@ -151,6 +151,13 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
     final static double SV_RELIC_ARM_DOWN = 0.2;
     final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
+    final static double SV_RELIC_WRIST_INIT = 0.1;
+    final static double SV_RELIC_WRIST_UP = 0.7;
+    final static double SV_RELIC_WRIST_MIDDLE = 0.55;
+    final static double SV_RELIC_WRIST_DOWN = 0.2;
+    final static double SV_RELIC_ELBOW_INIT = 0.5;
+    final static double SV_RELIC_ELBOW_DOWN = 0.5;
+    final static double SV_RELIC_ELBOW_UP = 0.5;
     final static double SV_DUMPER_INIT = 0.7228;
     final static double SV_DUMPER_DOWN = 0.7228;
     final static double SV_DUMPER_HALF_UP = 0.5472;
@@ -231,7 +238,7 @@ public class SwerveDriveHardware {
     public Servo sv_glyph_grabber_bottom = null;
 
     public Servo sv_relic_grabber = null;
-    public Servo sv_relic_arm = null;
+    public Servo sv_relic_wrist = null;
     public Servo sv_relic_elbow = null;
     public Servo sv_test = null;
     public Servo sv_dumper = null;
@@ -239,9 +246,9 @@ public class SwerveDriveHardware {
     public ColorSensor l_colorSensor = null;
     public ColorSensor r_colorSensor = null;
 
-    public ModernRoboticsI2cRangeSensor rangeSensorRight = null;
-    public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
-    public ModernRoboticsI2cRangeSensor rangeSensorFront = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorFrontRight = null;
+    // public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorFrontLeft = null;
     public SwerveUtilLOP.Camera camera = null;
     public MB1202 mb_ultra = null;
     public DigitalChannel proxSensor = null;
@@ -383,9 +390,14 @@ public class SwerveDriveHardware {
             }
         }
             if (use_range_sensor) {
-            rangeSensorRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorBack");
-            rangeSensorLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorLeft");
-            rangeSensorFront = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorRight");
+                if (use_newbot) {
+                    rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
+                    rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
+                } else {
+                    rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
+                    //rangeSensorLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorLeft");
+                    rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
+                }
         }
         if (use_test_servo) {
             sv_test = hwMap.servo.get("sv_test");
@@ -397,8 +409,15 @@ public class SwerveDriveHardware {
             orig_rot_pos = mt_test.getCurrentPosition();
         }
         if (use_relic_grabber) {
-            sv_relic_arm = hwMap.servo.get("sv_relic_arm");
-            sv_relic_arm.setPosition(SV_RELIC_ARM_INIT);
+            if (use_newbot) {
+                sv_relic_wrist = hwMap.servo.get("sv_relic_wrist");
+                sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
+                sv_relic_elbow = hwMap.servo.get("sv_relic_elbow");
+                sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
+            } else {
+                sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
+                sv_relic_wrist.setPosition(SV_RELIC_ARM_INIT);
+            }
             sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
             sv_relic_grabber.setPosition(SV_RELIC_GRABBER_INIT);
         }

@@ -259,14 +259,14 @@ public class SwerveDriveTeleop extends SwerveUtilLOP {
             if (robot.use_relic_grabber) {
                 // relic arm
                 if (gamepad2.right_stick_y<-0.1) {
-                    double cur_pos = robot.sv_relic_arm.getPosition();
+                    double cur_pos = robot.sv_relic_wrist.getPosition();
                     if (cur_pos<0.99) {
-                        robot.sv_relic_arm.setPosition(cur_pos + 0.02);
+                        robot.sv_relic_wrist.setPosition(cur_pos + 0.02);
                     }
                 } else if (gamepad2.right_stick_y>0.1) {
-                    double cur_pos = robot.sv_relic_arm.getPosition();
+                    double cur_pos = robot.sv_relic_wrist.getPosition();
                     if (cur_pos>0.01) {
-                        robot.sv_relic_arm.setPosition(cur_pos - 0.02);
+                        robot.sv_relic_wrist.setPosition(cur_pos - 0.02);
                     }
                 } // relic grabber open/close
                  else if (gamepad2.b && !gamepad2.start) {

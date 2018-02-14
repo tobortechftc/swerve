@@ -79,9 +79,9 @@ public class PositionDiagnostics extends SwerveUtilLOP {
                     double idealDistance = 39;
                     double currentDistance = 0;
                     if (robot.allianceColor == TeamColor.BLUE) {
-                        currentDistance = getRange(RangeSensor.LEFT);
+                        currentDistance = getRange(RangeSensor.FRONT_LEFT);
                     } else if (robot.allianceColor == TeamColor.RED) {
-                        currentDistance = getRange(RangeSensor.RIGHT);
+                        currentDistance = getRange(RangeSensor.FRONT_RIGHT);
                     } else {
                         throw new IllegalArgumentException("allianceColor is not specified!");
                     }

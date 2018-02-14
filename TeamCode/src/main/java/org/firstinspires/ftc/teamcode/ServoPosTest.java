@@ -47,7 +47,7 @@ public class ServoPosTest extends SwerveUtilLOP {
                 robot.sv_glyph_grabber_bottom,
                 robot.sv_glyph_grabber_top,
                 robot.sv_relic_grabber,
-                robot.sv_relic_arm
+                robot.sv_relic_wrist
         };
 
         num_servos = sv_list.length;

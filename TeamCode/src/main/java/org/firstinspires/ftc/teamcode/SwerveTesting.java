@@ -92,20 +92,20 @@ public class SwerveTesting extends SwerveUtilLOP{
                     double endRangeDis = -1;
 
                     if(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT){
-                        startRangeDis = getRange(RangeSensor.RIGHT);
+                        startRangeDis = getRange(RangeSensor.FRONT_RIGHT);
                     }
                     else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){
-                        startRangeDis = getRange(RangeSensor.LEFT);
+                        startRangeDis = getRange(RangeSensor.FRONT_LEFT);
                     }
 
                     StraightCm(desiredPower, desiredDistanceCm);
                     sleep(1000);
 
                     if(robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT){
-                        endRangeDis = getRange(RangeSensor.RIGHT);
+                        endRangeDis = getRange(RangeSensor.FRONT_RIGHT);
                     }
                     else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){
-                        endRangeDis = getRange(RangeSensor.LEFT);
+                        endRangeDis = getRange(RangeSensor.FRONT_LEFT);
                     }
 
                     telemetry.addData("Range Start", startRangeDis).setRetained(true);

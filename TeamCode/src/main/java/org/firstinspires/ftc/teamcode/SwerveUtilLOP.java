@@ -412,7 +412,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void relic_grabber_release() {
-        // robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_DOWN_R);
+        // robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN_R);
         double pos = robot.sv_relic_grabber.getPosition();
         if (pos < robot.SV_RELIC_GRABBER_OPEN) {
             robot.sv_relic_grabber.setPosition(pos+0.05);
@@ -428,7 +428,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
     }
     public void auto_relic_release() {
-        double cur_pos = robot.sv_relic_arm.getPosition();
+        double cur_pos = robot.sv_relic_wrist.getPosition();
         relic_arm_down();
         sleep(500);
         relic_arm_down();
@@ -440,9 +440,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_relic_slider.setPower(0);
         relic_arm_up();
     }
+
     public void relic_arm_down()
     {
-        double pos = robot.sv_relic_arm.getPosition();
+        double pos = robot.sv_relic_wrist.getPosition();
         if (Math.abs(pos-robot.SV_RELIC_ARM_DOWN_R)>0.2) {
             while (Math.abs(pos-robot.SV_RELIC_ARM_DOWN_R)>0.1) {
                 if (pos < robot.SV_RELIC_ARM_DOWN_R) {
@@ -450,33 +451,33 @@ public class SwerveUtilLOP extends LinearOpMode {
                 } else {
                     pos = robot.SV_RELIC_ARM_DOWN_R + 0.1;
                 }
-                robot.sv_relic_arm.setPosition(pos);
+                robot.sv_relic_wrist.setPosition(pos);
                 sleep(350);
             }
-            robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_DOWN_R);
+            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN_R);
         } else {
-            robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_DOWN);
+            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN);
         }
     }
 
     public void relic_arm_up() {
-        double pos = robot.sv_relic_arm.getPosition();
+        double pos = robot.sv_relic_wrist.getPosition();
         if (Math.abs(pos-robot.SV_RELIC_ARM_UP)>0.15) {
             if (pos < robot.SV_RELIC_ARM_UP) {
                 pos = robot.SV_RELIC_ARM_UP - 0.2;
             } else {
                 pos = robot.SV_RELIC_ARM_UP + 0.2;
             }
-            robot.sv_relic_arm.setPosition(pos);
+            robot.sv_relic_wrist.setPosition(pos);
             sleep(300);
-            robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_UP);
+            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_UP);
         } else {
-            robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_UP+0.12);
+            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_UP+0.12);
         }
     }
 
     public void relic_arm_middle() {
-        robot.sv_relic_arm.setPosition(robot.SV_RELIC_ARM_MIDDLE);
+        robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_MIDDLE);
     }
 
     public void relic_slider_out_max() {
@@ -1590,7 +1591,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     enum RangeSensor{
-        FRONT, LEFT, RIGHT
+        FRONT_LEFT, FRONT_RIGHT
     }
 
     /**
@@ -1604,18 +1605,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         double distance = 999;
         if (!robot.use_range_sensor)
             return 0.0;
-        if(direction == RangeSensor.FRONT){
+        if(direction == RangeSensor.FRONT_LEFT){
             while(distance > 365 && elapsedTime.seconds() < 0.5){
-                distance = robot.rangeSensorFront.getDistance(DistanceUnit.CM);
+                distance = robot.rangeSensorFrontLeft.getDistance(DistanceUnit.CM);
             }
-        }
-        else if(direction == RangeSensor.LEFT){
+        } else if(direction == RangeSensor.FRONT_RIGHT){
             while(distance > 365 && elapsedTime.seconds() < 0.5){
-                distance = robot.rangeSensorLeft.getDistance(DistanceUnit.CM);
-            }
-        } else if(direction == RangeSensor.RIGHT){
-            while(distance > 365 && elapsedTime.seconds() < 0.5){
-                distance = robot.rangeSensorRight.getDistance(DistanceUnit.CM);
+                distance = robot.rangeSensorFrontRight.getDistance(DistanceUnit.CM);
             }
         }
         else {
@@ -1952,8 +1948,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!opModeIsActive()) return;
         boolean range_fail = false;
         if (robot.use_proximity_sensor && !isSideBox) { // front box, drive until front range is 35 cm to wall
-            if (getRange(RangeSensor.FRONT) >= 35) {
-                StraightCm(.1, getRange(RangeSensor.FRONT)-35);
+            if (getRange(RangeSensor.FRONT_LEFT) >= 35) {
+                StraightCm(.1, getRange(RangeSensor.FRONT_LEFT)-35);
                 alignUsingIMU();
             } else {
                 range_fail = true;
@@ -1988,7 +1984,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                     TurnRightD(0.3, 90);
                 }
                 // forward using front range sensor, so it is close to cryptobox ridge
-                StraightCm(.1, (getRange(RangeSensor.FRONT) - 35));
+                StraightCm(.1, (getRange(RangeSensor.FRONT_LEFT) - 35));
                 change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                 sleep(300);
             } else { // turn with less than 90 degree on purpose
@@ -2077,7 +2073,7 @@ public class SwerveUtilLOP extends LinearOpMode {
              }
             if (!opModeIsActive()) return;
 
-            double dist=Math.max(getRange(RangeSensor.FRONT), getRange(RangeSensor.RIGHT))-34;
+            double dist=Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT))-34;
             if (dist>30 || dist<=5) {
                // use default distance
                 StraightCm(.15, 7);
@@ -2085,7 +2081,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 StraightCm(.15, dist); // forward using front range sensor, so it is close to cryptobox
             }
             if (!opModeIsActive()) return;
-            dist=Math.max(getRange(RangeSensor.FRONT), getRange(RangeSensor.RIGHT))-34;
+            dist=Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT))-34;
             if (dist>0 && dist<15) {
                 StraightCm(.15, dist); // forward using front range sensor, so it is close to cryptobox
             }
@@ -2103,7 +2099,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 driveDistance = 3 + (19 * (2 - targetColumn)); // 19cm between columns
             }
 
-            double dist=(isBlue?(getRange(RangeSensor.FRONT) - 35):(getRange(RangeSensor.RIGHT) - 35));
+            double dist=(isBlue?(getRange(RangeSensor.FRONT_LEFT) - 35):(getRange(RangeSensor.FRONT_RIGHT) - 35));
             if (dist>30 || dist<=5) {
                 // use default distance
                 StraightCm(.1, 10);
@@ -2902,15 +2898,13 @@ public class SwerveUtilLOP extends LinearOpMode {
                 (robot.gg_rotator_encoder_ok ?"Y":"N"),(robot.gg_slider_encoder_ok ?"Y":"N"));
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
-        double range_front = getRange(RangeSensor.FRONT);
-        if (range_front>365) range_front=0;
-        double range_left = getRange(RangeSensor.LEFT);
-        if (range_left>365) range_left=0;
-        double range_right = getRange(RangeSensor.RIGHT);
-        if (range_right>365) range_right=0;
+        double range_front_left = getRange(RangeSensor.FRONT_LEFT);
+        if (range_front_left>365) range_front_left=0;
+        double range_front_right = getRange(RangeSensor.FRONT_RIGHT);
+        if (range_front_right>365) range_front_right=0;
         if (robot.use_imu||robot.use_range_sensor) {
-            telemetry.addData("4.1 IMU/Range", "%s=%.2f/F=%.1f/R=%.1f/L=%.1f cm",
-                    (robot.use_imu2?"i2":"i1"),imu_heading(),range_front,range_right,range_left);
+            telemetry.addData("4.1 IMU/Range", "%s=%.2f/L=%.1f/R=%.1f cm",
+                    (robot.use_imu2?"i2":"i1"),imu_heading(),range_front_left,range_front_right);
         }
         if (robot.use_proximity_sensor) {
             telemetry.addData("4.2 ProxSensor =", robot.proxSensor.getState());
@@ -2957,8 +2951,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("10. test sv = ","%.3f",robot.sv_test.getPosition());
         }
         if (robot.use_relic_grabber) {
-            telemetry.addData("9.1 relic gr/arm = ", "%4.4f/%4.3f",
-                    robot.sv_relic_grabber.getPosition(), robot.sv_relic_arm.getPosition());
+            telemetry.addData("9.1 relic gr/wrist/elbow = ", "%4.4f/%4.3f/%4.3f",
+                    robot.sv_relic_grabber.getPosition(), robot.sv_relic_wrist.getPosition(),
+                    (robot.sv_relic_elbow!=null?robot.sv_relic_elbow.getPosition():0));
         }
         if (robot.use_relic_slider) {
             telemetry.addData("9.2 r-slider pwr/enc/tar = ","%3.2f/%d/%d",
