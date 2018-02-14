@@ -22,8 +22,8 @@ public class AutoRedFrontBoxNB extends SwerveUtilLOP{
         robot.use_minibot = false;
         robot.use_range_sensor = false;
         robot.use_color_sensor = true;
-        robot.use_Vuforia = false;
-        robot.use_camera = false;
+        robot.use_Vuforia = true;
+        robot.use_camera = true;
         robot.use_glyph_grabber = false;
         robot.use_proximity_sensor = false;
         robot.use_relic_slider = false;
