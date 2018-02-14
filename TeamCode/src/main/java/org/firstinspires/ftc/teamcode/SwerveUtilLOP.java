@@ -2907,7 +2907,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
 
         if (robot.use_dumper)  {
-            telemetry.addData("8.1 dumper slide / pos = ","%3.2f/%3.3f",
+            telemetry.addData("8.1 dumper slide / pos = ","%d/%3.3f",
                     robot.mt_lift.getCurrentPosition(),
                     robot.sv_dumper.getPosition());
         }
