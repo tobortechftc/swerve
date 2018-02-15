@@ -383,7 +383,7 @@ public class SwerveDriveHardware {
                 r_colorSensor.enableLed(true);
             }
             else {
-                l_colorSensor = hwMap.get(ColorSensor.class, "l_colorSensor");
+                l_colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
                 l_colorSensor.enableLed(true);
                 r_colorSensor = hwMap.get(ColorSensor.class, "rcolor");
                 r_colorSensor.enableLed(true);
