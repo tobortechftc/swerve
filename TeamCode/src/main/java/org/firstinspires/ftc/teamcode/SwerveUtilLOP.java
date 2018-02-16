@@ -114,7 +114,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         else{
             if(!robot.use_imu2){
                 robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                return -robot.angles.firstAngle;
+                return robot.angles.firstAngle;
             }
             else{
                 robot.angles = robot.imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -1941,68 +1941,39 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(500);
         robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3);
     }
-    void go_to_crypto(double power, int targetColumn, boolean isBlue, boolean isSideBox)
-            throws InterruptedException {
-        if (robot.use_proximity_sensor) {
-            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_CLOSED); // Closes to prevent range interference
-    }
-        StraightIn(.2, (isSideBox?22:24)); // Drive off the balance stone
-        alignUsingIMU();
-        if (!opModeIsActive()) return;
-        boolean range_fail = false;
-        if (robot.use_proximity_sensor && !isSideBox) { // front box, drive until front range is 35 cm to wall
-            if (getRange(RangeSensor.FRONT_LEFT) >= 35) {
-                StraightCm(.1, getRange(RangeSensor.FRONT_LEFT)-35);
-                alignUsingIMU();
-            } else {
-                range_fail = true;
-            }
-        }
-        if (!opModeIsActive()) return;
 
-        // Go until a certain distance from a target depending on the cryptobox and the column
-        // use_encoder is true will use Motor encoder for the driving distance
-        //                false will use range sensor for the driving distance
+    // Go to target cryptobox column
+    // use_encoder is true will use Motor encoder for the driving distance
+    void go_to_crypto_NB(double power, int targetColumn, boolean isBlue, boolean isSideBox)
+            throws InterruptedException {
+        if (!robot.use_newbot) go_to_crypto(power, targetColumn, isBlue, isSideBox);
+
+        StraightIn(-.2, (isSideBox?22:24)); // Drive off the balance stone
+        //alignUsingIMU();
+        if (!opModeIsActive()) return;
 
         double driveDistance;
-
         if (targetColumn < 0) targetColumn = 1;
+
         if (isSideBox) {
             int init_dist = 7;
-            if (robot.use_proximity_sensor && !range_fail) {
-                // ensure under drive, for proximity sensor to be before the edge
-                init_dist -= 4;
-            }
-            if(isBlue) { // Side Blue
+
+            if (isBlue) { // Side Blue
                 driveDistance = init_dist + (18 * targetColumn); // 19cm between columns
             } else { // Side Red
                 driveDistance = init_dist + (18 * (2 - targetColumn)); // 19cm between columns
             }
-            StraightCm(power, driveDistance);
+
+            StraightCm(-1*power, driveDistance);
             if (!opModeIsActive()) return;
-            if (robot.use_proximity_sensor && !range_fail) {
-                if (isBlue) {
-                    TurnLeftD(0.3, 90);
-                } else {
-                    TurnRightD(0.3, 90);
-                }
-                // forward using front range sensor, so it is close to cryptobox ridge
-                StraightCm(.1, (getRange(RangeSensor.FRONT_LEFT) - 35));
-                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                sleep(300);
-            } else { // turn with less than 90 degree on purpose
-                if (isBlue) {
-                    TurnLeftD(0.3, 80);
-                } else {
-                    TurnRightD(0.3, 80);
-                }
+            if (isBlue) {
+                TurnLeftD(0.3, 80);
+            } else {
+                TurnRightD(0.3, 80);
             }
         } else { // Front box
-            int init_dist = (isBlue?6:7);
-            if (robot.use_proximity_sensor && !range_fail) {
-                // ensure under drive, for proximity sensor to be before the edge
-                init_dist -= 4;
-            }
+            int init_dist = (isBlue ? 6 : 7);
+
             if (isBlue) { // Front blue
                 driveDistance = init_dist + (19 * targetColumn); // 19cm between columns
             }
@@ -2010,47 +1981,79 @@ public class SwerveUtilLOP extends LinearOpMode {
                 power *= -1; // Reverses power input, all other code is pretty much the same
                 driveDistance = init_dist + (19 * (2 - targetColumn)); // 19cm between columns
             }
+
             if (!opModeIsActive()) return;
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-            if (!opModeIsActive()) return;
             sleep(300);
-            StraightCm(power, driveDistance);
+            StraightCm(-1*power, driveDistance);
             if (!opModeIsActive()) return;
-            if (!robot.use_proximity_sensor || range_fail) {
-                if (isBlue) {
-                    TurnRightD(.15, 5);
-                } else {
-                    TurnLeftD(.15, 5);
-                }
+            if (isBlue) {
+                TurnRightD(.15, 5);
+            } else {
+                TurnLeftD(.15, 5);
             }
         }
         if (!opModeIsActive()) return;
 
-        if (robot.use_proximity_sensor && !range_fail) { // drive until proximity sensor is true
-            //sleep(1000);
-            boolean edge_undetected = true; // robot.proxSensor.getState();
-            //telemetry.addData("ProxSensor =", edge_undetected);
-            //telemetry.update();
-
-            if (isBlue) { // crab to right
-                driveTT(-0.1, -0.1); // Drives to the right
-            } else { // Red zone, crab to left
-                driveTT(0.1, 0.1); // Drives to the left
-            }
-            robot.runtime.reset();
-            // boolean edge_detected = robot.proxSensor.getState();
-            while (edge_undetected && robot.runtime.seconds() < 2) { // run till reached edge
-                edge_undetected = robot.proxSensor.getState();
-            }
-            robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
-        }
         driveTT(0, 0); // Stops
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);
     }
 
+    void go_to_crypto(double power, int targetColumn, boolean isBlue, boolean isSideBox)
+            throws InterruptedException {
+        StraightIn(.2, (isSideBox?22:24)); // Drive off the balance stone
+        alignUsingIMU();
+        if (!opModeIsActive()) return;
 
-    // Does go_to_distance_from, using only proximity sensor. Makes for much cleaner code.
+        double driveDistance;
+        if (targetColumn < 0) targetColumn = 1;
+
+        if (isSideBox) {
+            int init_dist = 7;
+
+            if (isBlue) { // Side Blue
+                driveDistance = init_dist + (18 * targetColumn); // 19cm between columns
+            } else { // Side Red
+                driveDistance = init_dist + (18 * (2 - targetColumn)); // 19cm between columns
+            }
+
+            StraightCm(power, driveDistance);
+            if (!opModeIsActive()) return;
+            if (isBlue) {
+                TurnLeftD(0.3, 80);
+            } else {
+                TurnRightD(0.3, 80);
+            }
+        } else { // Front box
+            int init_dist = (isBlue ? 6 : 7);
+
+            if (isBlue) { // Front blue
+                driveDistance = init_dist + (19 * targetColumn); // 19cm between columns
+            }
+            else { // Front red
+                power *= -1; // Reverses power input, all other code is pretty much the same
+                driveDistance = init_dist + (19 * (2 - targetColumn)); // 19cm between columns
+            }
+
+            if (!opModeIsActive()) return;
+            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+            sleep(300);
+            StraightCm(power, driveDistance);
+            if (!opModeIsActive()) return;
+            if (isBlue) {
+                TurnRightD(.15, 5);
+            } else {
+                TurnLeftD(.15, 5);
+            }
+        }
+        if (!opModeIsActive()) return;
+
+        driveTT(0, 0); // Stops
+        change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+        sleep(300);
+    }
+    // Does go_to_crypto, using only proximity sensor. Makes for much cleaner code.
     void go_to_crypto_prox(double power, int targetColumn, boolean isBlue, boolean isSideBox)throws InterruptedException {
         if (!opModeIsActive()) return;
 
