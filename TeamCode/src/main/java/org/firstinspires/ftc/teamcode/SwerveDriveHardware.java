@@ -96,11 +96,16 @@ public class SwerveDriveHardware {
 
     final static double WIDTH_BETWEEN_WHEELS = 12;
     final static double LENGTH_BETWEEN_WHEELS = 12;
+    final static double NB_WIDTH_BETWEEN_WHEELS = 12;
+    final static double NB_LENGTH_BETWEEN_WHEELS = 11;
     final static double DISTANCE_TO_CENTER_OF_GLYPH = 5.9;
+    final static double NB_DISTANCE_FOR_ORBIT = 8;
     final static double MIN_TURNING_RADIUS = 13;
     final static double MAX_TURNING_RADIUS = 100;
     final static double THETA_FRONT = (Math.atan(DISTANCE_TO_CENTER_OF_GLYPH / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
     final static double THETA_BACK = (Math.atan((DISTANCE_TO_CENTER_OF_GLYPH + LENGTH_BETWEEN_WHEELS) / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
+    final static double NB_THETA_FRONT = (Math.atan(NB_DISTANCE_FOR_ORBIT / (0.5 * NB_WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
+    final static double NB_THETA_BACK = (Math.atan((NB_DISTANCE_FOR_ORBIT + NB_LENGTH_BETWEEN_WHEELS) / (0.5 * NB_WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
     final static long SERVO_TURN_TIME = 200;
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
@@ -508,16 +513,27 @@ public class SwerveDriveHardware {
             }
             // Set all motors to zero power and set all servos to central position
             // May want to change servo #'s to the value where all wheels are pointing forward.
-            servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
-            servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
-            servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
-            servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
+            if (use_newbot) {
+                servoFrontLeft.setPosition(NB_SERVO_FL_FORWARD_POSITION);
+                servoFrontRight.setPosition(NB_SERVO_FR_FORWARD_POSITION);
+                servoBackLeft.setPosition(NB_SERVO_BL_FORWARD_POSITION);
+                servoBackRight.setPosition(NB_SERVO_BR_FORWARD_POSITION);
 
-            servoPosFL = SERVO_FL_FORWARD_POSITION;
-            servoPosFR = SERVO_FR_FORWARD_POSITION;
-            servoPosBL = SERVO_BL_FORWARD_POSITION;
-            servoPosBR = SERVO_BR_FORWARD_POSITION;
+                servoPosFL = NB_SERVO_FL_FORWARD_POSITION;
+                servoPosFR = NB_SERVO_FR_FORWARD_POSITION;
+                servoPosBL = NB_SERVO_BL_FORWARD_POSITION;
+                servoPosBR = NB_SERVO_BR_FORWARD_POSITION;
+            } else {
+                servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
+                servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
+                servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
+                servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
 
+                servoPosFL = SERVO_FL_FORWARD_POSITION;
+                servoPosFR = SERVO_FR_FORWARD_POSITION;
+                servoPosBL = SERVO_BL_FORWARD_POSITION;
+                servoPosBR = SERVO_BR_FORWARD_POSITION;
+            }
             motorFrontLeft.setPower(0);
             motorFrontRight.setPower(0);
             if (!use_front_drive_only) {
@@ -599,9 +615,9 @@ public class SwerveDriveHardware {
         SERVO_BL_TURN_POSITION = NB_SERVO_BL_FORWARD_POSITION + (NB_CRAB_DIFF_INC/2);
         SERVO_BR_TURN_POSITION = NB_SERVO_BR_FORWARD_POSITION - (NB_CRAB_DIFF_DEC/2);
 
-        SERVO_FL_ORBIT_POSITION = NB_SERVO_FL_FORWARD_POSITION + (THETA_FRONT / 180);
-        SERVO_FR_ORBIT_POSITION = NB_SERVO_FR_FORWARD_POSITION - (THETA_FRONT / 180);
-        SERVO_BL_ORBIT_POSITION = NB_SERVO_BL_FORWARD_POSITION + (THETA_BACK / 180);
-        SERVO_BR_ORBIT_POSITION = NB_SERVO_BR_FORWARD_POSITION - (THETA_BACK / 180);
+        SERVO_FL_ORBIT_POSITION = NB_SERVO_FL_FORWARD_POSITION + (NB_THETA_FRONT / 180);
+        SERVO_FR_ORBIT_POSITION = NB_SERVO_FR_FORWARD_POSITION - (NB_THETA_FRONT / 180);
+        SERVO_BL_ORBIT_POSITION = NB_SERVO_BL_FORWARD_POSITION + (NB_THETA_BACK / 180);
+        SERVO_BR_ORBIT_POSITION = NB_SERVO_BR_FORWARD_POSITION - (NB_THETA_BACK / 180);
     }
 }

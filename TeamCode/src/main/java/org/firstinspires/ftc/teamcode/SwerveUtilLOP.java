@@ -2225,8 +2225,14 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.r_Value = robot.MAX_TURNING_RADIUS - (Math.abs(stick_x) * (robot.MAX_TURNING_RADIUS - robot.MIN_TURNING_RADIUS));
         }
 
-        robot.thetaOneCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) - (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1
-        robot.thetaTwoCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) + (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2
+        if(robot.use_newbot){
+            robot.thetaOneCalc = (Math.atan((0.5 * robot.NB_WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) - (0.5 * robot.NB_LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1
+            robot.thetaTwoCalc = (Math.atan((0.5 * robot.NB_WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) + (0.5 * robot.NB_LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2
+        }
+        else {
+            robot.thetaOneCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) - (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1
+            robot.thetaTwoCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) + (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2
+        }
     }
 
     void alignUsingIMU() throws InterruptedException {
@@ -2259,10 +2265,18 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.servoBackRight.setPosition(robot.servoPosBR);
         }
         else{
-            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
-            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
-            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
-            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+            if(robot.use_newbot){
+                robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION);
+                robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION);
+                robot.servoBackLeft.setPosition(robot.NB_SERVO_BL_FORWARD_POSITION);
+                robot.servoBackRight.setPosition(robot.NB_SERVO_BR_FORWARD_POSITION);
+            }
+            else {
+                robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+                robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+                robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+                robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+            }
         }
     }
 
@@ -2276,10 +2290,18 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.servoFrontRight.setPosition(robot.servoPosFR);
         }
         else {
-            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
-            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
-            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
-            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+            if(robot.use_newbot){
+                robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION);
+                robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION);
+                robot.servoBackLeft.setPosition(robot.NB_SERVO_BL_FORWARD_POSITION);
+                robot.servoBackRight.setPosition(robot.NB_SERVO_BR_FORWARD_POSITION);
+            }
+            else {
+                robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+                robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+                robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+                robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+            }
         }
     }
 
@@ -2426,27 +2448,28 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.servoPosBL = robot.SERVO_BL_STRAFE_POSITION;
             robot.servoPosBR = robot.SERVO_BR_STRAFE_POSITION;
         }
-        else if(new_mode == SwerveDriveHardware.CarMode.STRAIGHT){
-            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
-            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
-            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
-            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+        else if(new_mode == SwerveDriveHardware.CarMode.STRAIGHT || new_mode == SwerveDriveHardware.CarMode.CAR){
+            if (robot.use_newbot) {
+                robot.servoFrontLeft.setPosition(robot.NB_SERVO_FL_FORWARD_POSITION);
+                robot.servoFrontRight.setPosition(robot.NB_SERVO_FR_FORWARD_POSITION);
+                robot.servoBackLeft.setPosition(robot.NB_SERVO_BL_FORWARD_POSITION);
+                robot.servoBackRight.setPosition(robot.NB_SERVO_BR_FORWARD_POSITION);
 
-            robot.servoPosFL = robot.SERVO_FL_FORWARD_POSITION;
-            robot.servoPosFR = robot.SERVO_FR_FORWARD_POSITION;
-            robot.servoPosBL = robot.SERVO_BL_FORWARD_POSITION;
-            robot.servoPosBR = robot.SERVO_BR_FORWARD_POSITION;
-        }
-        else if(new_mode == SwerveDriveHardware.CarMode.CAR){
-            robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
-            robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
-            robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
-            robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
+                robot.servoPosFL = robot.NB_SERVO_FL_FORWARD_POSITION;
+                robot.servoPosFR = robot.NB_SERVO_FR_FORWARD_POSITION;
+                robot.servoPosBL = robot.NB_SERVO_BL_FORWARD_POSITION;
+                robot.servoPosBR = robot.NB_SERVO_BR_FORWARD_POSITION;
+            } else {
+                robot.servoFrontLeft.setPosition(robot.SERVO_FL_FORWARD_POSITION);
+                robot.servoFrontRight.setPosition(robot.SERVO_FR_FORWARD_POSITION);
+                robot.servoBackLeft.setPosition(robot.SERVO_BL_FORWARD_POSITION);
+                robot.servoBackRight.setPosition(robot.SERVO_BR_FORWARD_POSITION);
 
-            robot.servoPosFL = robot.SERVO_FL_FORWARD_POSITION;
-            robot.servoPosFR = robot.SERVO_FR_FORWARD_POSITION;
-            robot.servoPosBL = robot.SERVO_BL_FORWARD_POSITION;
-            robot.servoPosBR = robot.SERVO_BR_FORWARD_POSITION;
+                robot.servoPosFL = robot.SERVO_FL_FORWARD_POSITION;
+                robot.servoPosFR = robot.SERVO_FR_FORWARD_POSITION;
+                robot.servoPosBL = robot.SERVO_BL_FORWARD_POSITION;
+                robot.servoPosBR = robot.SERVO_BR_FORWARD_POSITION;
+            }
         }
         else if(new_mode == SwerveDriveHardware.CarMode.ORBIT){
             robot.servoFrontLeft.setPosition(robot.SERVO_FL_ORBIT_POSITION);
@@ -2486,10 +2509,18 @@ public class SwerveUtilLOP extends LinearOpMode {
         else x_stick = right_t;
 
         if(robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
-            robot.insideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) - robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
-                    (robot.r_Value));
-            robot.outsideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) + robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
-                    (robot.r_Value));
+            if(robot.use_newbot){
+                robot.insideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.NB_LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) - robot.NB_WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                        (robot.r_Value));
+                robot.outsideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.NB_LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) + robot.NB_WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                        (robot.r_Value));
+            }
+            else {
+                robot.insideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) - robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                        (robot.r_Value));
+                robot.outsideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * robot.LENGTH_BETWEEN_WHEELS, 2) + Math.pow((robot.r_Value) + robot.WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                        (robot.r_Value));
+            }
             if (robot.enoughToSnake) {
                 if (!robot.use_front_drive_only) {
                     robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
