@@ -1708,6 +1708,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         int directionI = calcArmDirection(rightJewelColorCS, rightJewelColorCamera, isBlueAlliance);
         if (!opModeIsActive()) return;
         if (robot.use_newbot) {
+            if (!isBlueAlliance)
+                directionI *= -1;
             int dist = (directionI > 0 ? 7 : 5);
             StraightCm(-.1 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
             sleep(100);
