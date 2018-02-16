@@ -9,7 +9,7 @@ import java.io.StringWriter;
  * Created by mason on 2/15/2018.
  */
 
-@Autonomous(name = "RedFront", group = "NewBot")
+@Autonomous(name = "BlueFront", group = "NewBot")
 public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,6 +27,7 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         robot.use_glyph_grabber = false;
         robot.use_proximity_sensor = false;
         robot.use_relic_slider = false;
+        robot.use_relic_grabber = false;
 
         robot.allianceColor = TeamColor.BLUE;
 

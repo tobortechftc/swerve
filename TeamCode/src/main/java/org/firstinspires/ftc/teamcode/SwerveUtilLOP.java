@@ -1752,6 +1752,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             else if (camera == TeamColor.BLUE) result = -1;
         }
         if (isBlueAlliance) result *= -1;
+        if (robot.use_newbot){
+            result *= -1;
+        }
         return result;
     }
 
@@ -2763,7 +2766,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         int[] pixels = new int[bitmap.getWidth()];
 
         if (robot.allianceColor == TeamColor.BLUE){
-            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() * 5 / 6, bitmap.getWidth(), 1);
+            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() * 7 / 8, bitmap.getWidth(), 1);
         }
         else if (robot.allianceColor == TeamColor.RED){
             bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, bitmap.getHeight() * 5 / 6, bitmap.getWidth(), 1);
