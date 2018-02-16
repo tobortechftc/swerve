@@ -513,27 +513,7 @@ public class SwerveDriveHardware {
             }
             // Set all motors to zero power and set all servos to central position
             // May want to change servo #'s to the value where all wheels are pointing forward.
-            if (use_newbot) {
-                servoFrontLeft.setPosition(NB_SERVO_FL_FORWARD_POSITION);
-                servoFrontRight.setPosition(NB_SERVO_FR_FORWARD_POSITION);
-                servoBackLeft.setPosition(NB_SERVO_BL_FORWARD_POSITION);
-                servoBackRight.setPosition(NB_SERVO_BR_FORWARD_POSITION);
-
-                servoPosFL = NB_SERVO_FL_FORWARD_POSITION;
-                servoPosFR = NB_SERVO_FR_FORWARD_POSITION;
-                servoPosBL = NB_SERVO_BL_FORWARD_POSITION;
-                servoPosBR = NB_SERVO_BR_FORWARD_POSITION;
-            } else {
-                servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
-                servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
-                servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
-                servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
-
-                servoPosFL = SERVO_FL_FORWARD_POSITION;
-                servoPosFR = SERVO_FR_FORWARD_POSITION;
-                servoPosBL = SERVO_BL_FORWARD_POSITION;
-                servoPosBR = SERVO_BR_FORWARD_POSITION;
-            }
+            set_chassis_forward_position();
             motorFrontLeft.setPower(0);
             motorFrontRight.setPower(0);
             if (!use_front_drive_only) {
@@ -577,6 +557,30 @@ public class SwerveDriveHardware {
 
         }
 
+    }
+
+    void set_chassis_forward_position() {
+        if (use_newbot) {
+            servoFrontLeft.setPosition(NB_SERVO_FL_FORWARD_POSITION);
+            servoFrontRight.setPosition(NB_SERVO_FR_FORWARD_POSITION);
+            servoBackLeft.setPosition(NB_SERVO_BL_FORWARD_POSITION);
+            servoBackRight.setPosition(NB_SERVO_BR_FORWARD_POSITION);
+
+            servoPosFL = NB_SERVO_FL_FORWARD_POSITION;
+            servoPosFR = NB_SERVO_FR_FORWARD_POSITION;
+            servoPosBL = NB_SERVO_BL_FORWARD_POSITION;
+            servoPosBR = NB_SERVO_BR_FORWARD_POSITION;
+        } else {
+            servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
+            servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
+            servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
+            servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
+
+            servoPosFL = SERVO_FL_FORWARD_POSITION;
+            servoPosFR = SERVO_FR_FORWARD_POSITION;
+            servoPosBL = SERVO_BL_FORWARD_POSITION;
+            servoPosBR = SERVO_BR_FORWARD_POSITION;
+        }
     }
 
     /***

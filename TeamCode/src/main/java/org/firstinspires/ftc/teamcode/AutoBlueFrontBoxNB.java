@@ -10,7 +10,7 @@ import java.io.StringWriter;
  */
 
 
-@Autonomous(name = "BlueFront", group = "NewBot")
+@Autonomous(name = "BlueFront-NB", group = "NewBot")
 public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
