@@ -29,8 +29,6 @@ public class AutoRedSideBoxProx extends SwerveUtilLOP{
 
         robot.allianceColor = TeamColor.RED;
 
-        int loops = 1;
-
         init_and_test();
 
         // Send telemetry message to signify robot waiting;

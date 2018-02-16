@@ -1745,13 +1745,18 @@ public class SwerveUtilLOP extends LinearOpMode {
     // Ex. sensor is red, camera is unknown, team is red. It will return 1.
     public int calcArmDirection(TeamColor sensor, TeamColor camera, boolean isBlueAlliance) {
         int result = 0;
-        if (sensor == TeamColor.RED) result = 1;
-        else if (sensor == TeamColor.BLUE) result = -1;
+        if (sensor == TeamColor.RED)
+            result = 1;
+        else if (sensor == TeamColor.BLUE)
+            result = -1;
         else { // Sensor trumps camera, only use camera when sensor is unknown
-            if (camera == TeamColor.RED) result = 1;
-            else if (camera == TeamColor.BLUE) result = -1;
+            if (camera == TeamColor.RED)
+                result = 1;
+            else if (camera == TeamColor.BLUE)
+                result = -1;
         }
-        if (isBlueAlliance) result *= -1;
+        if (isBlueAlliance)
+            result *= -1;
         return result;
     }
 
