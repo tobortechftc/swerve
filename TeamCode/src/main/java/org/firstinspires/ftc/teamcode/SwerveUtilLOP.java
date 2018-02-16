@@ -114,7 +114,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         else{
             if(!robot.use_imu2){
                 robot.angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                return -robot.angles.firstAngle;
+                return robot.angles.firstAngle;
             }
             else{
                 robot.angles = robot.imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
