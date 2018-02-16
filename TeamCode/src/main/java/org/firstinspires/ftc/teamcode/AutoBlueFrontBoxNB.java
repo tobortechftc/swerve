@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-/**
- * Created by mason on 2/15/2018.
+/*
+ * Created by Nick on 2/15/2018.
  */
 
-@Autonomous(name = "RedFront", group = "NewBot")
+@Autonomous(name = "BlueFrontBoxNew", group = "NewBot")
 public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,6 +26,7 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         robot.use_camera = true;
         robot.use_glyph_grabber = false;
         robot.use_proximity_sensor = false;
+        robot.use_relic_grabber = false;
         robot.use_relic_slider = false;
 
         robot.allianceColor = TeamColor.BLUE;
@@ -57,6 +58,9 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
             try {
                 doPlatformMission(true);
 
+                go_to_crypto_NB(.3, robot.targetColumn, true, false); // Drive to cryptobox
+                //deliverGlyph();
+                //turnToCenter(true, false, robot.targetColumn);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
@@ -72,4 +76,3 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         }
     }
 }
-
