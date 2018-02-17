@@ -618,7 +618,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_glyph_slider_pw = 0.6;
         // never exceed GG_SLIDE_MAX_COUNT
         int cur_pos = robot.mt_lift.getCurrentPosition();
-        if (cur_pos>robot.GG_SLIDE_MAX_COUNT && !force)
+        if ((cur_pos>robot.GG_SLIDE_MAX_COUNT) && !force)
             robot.mt_glyph_slider_pw = 0.0;
 
         robot.mt_lift.setPower(robot.mt_glyph_slider_pw);
@@ -628,7 +628,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_glyph_slider_pw = -0.5;
         // never lower than 0
         int cur_pos = robot.mt_lift.getCurrentPosition();
-        if (cur_pos<=0 && !force)
+        if ((cur_pos<=0) && !force)
             robot.mt_glyph_slider_pw = 0.0;
         robot.mt_lift.setPower(robot.mt_glyph_slider_pw);
     }
@@ -3032,8 +3032,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
 
         if (robot.use_dumper)  {
-            telemetry.addData("8.1 dumper slide / pos = ","%d/%3.3f",
-                    robot.mt_lift.getCurrentPosition(),
+            telemetry.addData("8.1 dumper slide / pos = ","%d (pw=%.2f)/%3.3f",
+                    robot.mt_lift.getCurrentPosition(), robot.mt_lift.getPower(),
                     robot.sv_dumper.getPosition());
         }
 

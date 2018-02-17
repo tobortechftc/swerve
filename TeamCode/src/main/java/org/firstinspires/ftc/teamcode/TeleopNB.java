@@ -54,9 +54,9 @@ public class TeleopNB extends SwerveUtilLOP {
                 sleep(100);
             }
             if (robot.use_intake) {
-                if (gamepad1.right_bumper) { // intake IN
+                if (gamepad1.right_bumper || gamepad2.right_bumper) { // intake IN
                     intakeIn();
-                } else if (gamepad1.right_trigger>0.1) { // intake OUT
+                } else if (gamepad1.right_trigger>0.1 || gamepad2.right_trigger>0.1) { // intake OUT
                     intakeOut();
                 } else {
                     intakeStop();
@@ -70,21 +70,25 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
             }
             if (robot.use_dumper) {
-                if (gamepad2.left_bumper) {
+                if (gamepad2.left_bumper || gamepad1.left_bumper) {
                     dumper_up();
-                    sleep(100);
-                } else if (gamepad2.left_trigger>0.1) {
+                    sleep(200);
+                } else if (gamepad2.left_trigger>0.1 || gamepad1.left_trigger>0.1) {
                     dumper_down();
                 }
 
-                if (gamepad2.right_bumper && gamepad2.back) { // manual lift up
+                if ((gamepad2.right_stick_y<-0.1) && gamepad2.back) { // manual lift up
                     lift_up(true);
-                } else if ((gamepad2.right_trigger > 0.1) && gamepad2.back) { // force down
+                } else if ((gamepad2.right_stick_y > 0.1) && gamepad2.back) { // force down
                     lift_down(true);
-                } else if (gamepad2.right_bumper) { // manual lift up
+                } else if (gamepad2.right_stick_y<-0.1) { // manual lift up
                     lift_up(false);
-                } else if (gamepad2.right_trigger > 0.1) { // manual down
+                } else if (gamepad2.right_stick_y > 0.1) { // manual down
                     lift_down(false);
+                } else if (gamepad2.dpad_down) {
+                    robot.mt_lift.setPower(-0.5);
+                } else if (gamepad2.dpad_up) {
+                    robot.mt_lift.setPower(0.5);
                 } else {
                     lift_stop();
                 }
