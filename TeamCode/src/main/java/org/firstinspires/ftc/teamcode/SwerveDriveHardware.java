@@ -256,7 +256,8 @@ public class SwerveDriveHardware {
     public ModernRoboticsI2cRangeSensor rangeSensorFrontLeft = null;
     public SwerveUtilLOP.Camera camera = null;
     public MB1202 mb_ultra = null;
-    public DigitalChannel proxSensor = null;
+    public DigitalChannel proxL = null;
+    public DigitalChannel proxR = null;
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -376,9 +377,17 @@ public class SwerveDriveHardware {
         }
 
         if (use_proximity_sensor) {
-            proxSensor =  hwMap.get(DigitalChannel.class, "prox6in");
-            // set the digital channel to input.
-            proxSensor.setMode(DigitalChannel.Mode.INPUT);
+            if (use_newbot) {
+                proxL = hwMap.get(DigitalChannel.class, "proxL");
+                proxR = hwMap.get(DigitalChannel.class, "proxR");
+                proxL.setMode(DigitalChannel.Mode.INPUT);
+                proxR.setMode(DigitalChannel.Mode.INPUT);
+            }
+            else {
+                proxL = hwMap.get(DigitalChannel.class, "prox6in");
+                // set the digital channel to input.
+                proxL.setMode(DigitalChannel.Mode.INPUT);
+            }
         }
         if (use_color_sensor) {
             if (use_newbot) {
