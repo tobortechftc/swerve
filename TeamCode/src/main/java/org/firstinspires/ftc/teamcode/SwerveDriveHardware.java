@@ -106,7 +106,7 @@ public class SwerveDriveHardware {
     final static double THETA_BACK = (Math.atan((DISTANCE_TO_CENTER_OF_GLYPH + LENGTH_BETWEEN_WHEELS) / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
     final static double NB_THETA_FRONT = (Math.atan(NB_DISTANCE_FOR_ORBIT / (0.5 * NB_WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
     final static double NB_THETA_BACK = (Math.atan((NB_DISTANCE_FOR_ORBIT + NB_LENGTH_BETWEEN_WHEELS) / (0.5 * NB_WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
-    static double SPOT_TURN_ANGLE_OFFSET = (Math.atan((0.5*LENGTH_BETWEEN_WHEELS)/(0.5*WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
+    static double SPOT_TURN_ANGLE_OFFSET = (Math.atan((0.5*LENGTH_BETWEEN_WHEELS)/(0.5*WIDTH_BETWEEN_WHEELS))) * (1/(2*Math.PI));
     final static long SERVO_TURN_TIME = 200;
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
@@ -619,7 +619,7 @@ public class SwerveDriveHardware {
     }
 
     void initialize_newbot() {
-        SPOT_TURN_ANGLE_OFFSET = (Math.atan((0.5*NB_LENGTH_BETWEEN_WHEELS)/(0.5*NB_WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
+        SPOT_TURN_ANGLE_OFFSET = (Math.atan((0.5*NB_LENGTH_BETWEEN_WHEELS)/(0.5*NB_WIDTH_BETWEEN_WHEELS))) * (1/(2*Math.PI));
 
         SERVO_FL_STRAFE_POSITION = NB_SERVO_FL_FORWARD_POSITION + NB_CRAB_DIFF_INC - NB_LEFT_SV_DIFF;
         SERVO_FR_STRAFE_POSITION = NB_SERVO_FR_FORWARD_POSITION - NB_CRAB_DIFF_DEC + NB_RIGHT_SV_DIFF;
