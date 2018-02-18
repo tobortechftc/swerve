@@ -25,10 +25,10 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_encoder = true;
         robot.use_minibot = false;
         robot.use_range_sensor = false;
-        robot.use_color_sensor = false;
+        robot.use_color_sensor = true;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = false;
-        robot.use_relic_grabber = false;
+        robot.use_relic_grabber = true;
         robot.use_relic_slider = false;
         robot.use_arm = false;
 
@@ -70,7 +70,9 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
             }
             if (robot.use_dumper && !robot.isTesting) {
-                if (gamepad2.left_bumper) {
+                if (gamepad2.right_bumper && gamepad2.left_bumper) {
+                    lift_back_init(); // back to initial position for collecting glyph
+                } else if (gamepad2.left_bumper) {
                     dumper_higher();
                 } else if (gamepad2.left_trigger>0.1) {
                     dumper_lower();

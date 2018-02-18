@@ -152,6 +152,9 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_GRABBER_INIT = 0.332;
     final static double SV_RELIC_GRABBER_CLOSE = 0.34;
     final static double SV_RELIC_GRABBER_OPEN = 0.65;
+    final static double SV_RELIC_GRABBER_INIT_NB = 0.332;
+    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.34;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.65;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
@@ -161,11 +164,13 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_WRIST_UP = 0.7;
     final static double SV_RELIC_WRIST_MIDDLE = 0.55;
     final static double SV_RELIC_WRIST_DOWN = 0.2;
+    final static double SV_RELIC_WRIST_DOWN_R = 0.27; // down and ready for release
     final static double SV_RELIC_ELBOW_INIT = 0.5;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
     final static double SV_RELIC_ELBOW_UP = 0.5;
     final static double SV_DUMPER_INIT = 0.7228;
     final static double SV_DUMPER_DOWN = 0.7228;
+    final static double SV_DUMPER_LIFT = 0.665;
     final static double SV_DUMPER_HALF_UP = 0.5472;
     final static double SV_DUMPER_UP = 0.28;
     final static double SV_DUMPER_DUMP = 0.18;
@@ -426,10 +431,10 @@ public class SwerveDriveHardware {
         }
         if (use_relic_grabber) {
             if (use_newbot) {
-                sv_relic_wrist = hwMap.servo.get("sv_relic_wrist");
+                sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
                 sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
-                sv_relic_elbow = hwMap.servo.get("sv_relic_elbow");
-                sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
+                // sv_relic_elbow = hwMap.servo.get("sv_relic_elbow");
+                // sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
             } else {
                 sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
                 sv_relic_wrist.setPosition(SV_RELIC_ARM_INIT);
