@@ -1986,12 +1986,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (targetColumn < 0) targetColumn = 1;
 
         if (isSideBox) {
-            int init_dist = 7;
 
             if (isBlue) { // Side Blue
-                driveDistance = init_dist + (18 * targetColumn); // 19cm between columns
+                driveDistance = 7 + (18 * targetColumn); // 19cm between columns
             } else { // Side Red
-                driveDistance = init_dist + (18 * (2 - targetColumn)); // 19cm between columns
+                driveDistance = 7 + (18 * (2 - targetColumn)); // 19cm between columns
             }
 
             StraightCm(-1*power, driveDistance);
@@ -2002,21 +2001,19 @@ public class SwerveUtilLOP extends LinearOpMode {
                 TurnRightD(0.3, 80);
             }
         } else { // Front box
-            int init_dist = (isBlue ? 6 : 7);
 
             if (isBlue) { // Front blue
-                driveDistance = init_dist + (19 * targetColumn); // 19cm between columns
+                driveDistance = (isBlue? 6:7) + (19 * targetColumn); // 19cm between columns
             }
             else { // Front red
                 power *= -1; // Reverses power input, all other code is pretty much the same
-                driveDistance = init_dist + (19 * (2 - targetColumn)); // 19cm between columns
+                driveDistance = (isBlue? 6:7) + (19 * (2 - targetColumn)); // 19cm between columns
             }
 
             if (!opModeIsActive()) return;
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(300);
             StraightCm(-1*power, driveDistance);
-            if (!opModeIsActive()) return;
             if (isBlue) {
                 TurnRightD(.15, 5);
             } else {
@@ -2086,21 +2083,19 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void go_to_crypto_prox_NB(double power, int targetColumn, boolean isBlue, boolean isSideBox)throws InterruptedException {
         if (!robot.use_newbot) go_to_crypto_prox(power, targetColumn, isBlue, isSideBox);
-        if (!opModeIsActive()) return;
+        if (targetColumn < 0) targetColumn = 1;
 
         StraightIn(-.2, (isSideBox ? 22 : 24)); // Drive off the balance stone
         alignUsingIMU();
-        if (!opModeIsActive()) return;
+
         double driveDistance;
-        if (targetColumn < 0) targetColumn = 1;
+        double dist;
         if (isSideBox) {
-            if (isBlue) { // Side Blue
-                driveDistance = 3 + (18 * targetColumn); // 19cm between columns
-            } else { // Side Red
-                driveDistance = 3 + (18 * (2 - targetColumn)); // 19cm between columns
-            }
+            if (isBlue) driveDistance = 3 + (18 * targetColumn); // 19cm between columns
+            else driveDistance = 3 + (18 * (2 - targetColumn));
             if (driveDistance<7) driveDistance=7; // ensure turn not hitting balance stone
             StraightCm(power, driveDistance);
+
             if (isBlue) {
                 TurnLeftD(0.3, 90);
             } else {
@@ -2108,22 +2103,14 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             if (!opModeIsActive()) return;
 
-            double dist=Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT))-34;
-            if (dist>30 || dist<=5) {
-                // use default distance
-                StraightCm(-.15, 7);
-            } else if (dist>0) {
-                StraightCm(-.15, dist); // forward using front range sensor, so it is close to cryptobox
-            }
-            if (!opModeIsActive()) return;
-            dist=Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT))-34;
-            if (dist>0 && dist<15) {
-                StraightCm(-.15, dist); // forward using front range sensor, so it is close to cryptobox
-            }
+            dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT))-34;
+            if (dist>30 || dist<=5) dist = 7;
+            StraightCm(-.15, dist); // drive close to cryptobox
 
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(200);
             if (!opModeIsActive()) return;
+
 
         } else { // Front box
             if (isBlue) { // Front Blue
@@ -2133,11 +2120,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                 driveDistance = 3 + (19 * (2 - targetColumn)); // 19cm between columns
             }
 
-            double dist=(isBlue?(getRange(RangeSensor.FRONT_LEFT) - 35):(getRange(RangeSensor.FRONT_RIGHT) - 35));
-            if (dist>30 || dist<=5) {
-                // use default distance
+            dist = (isBlue ? getRange(RangeSensor.FRONT_LEFT) : getRange(RangeSensor.FRONT_RIGHT)) - 16;
+            if (dist > 50 || dist <= 5) {
                 StraightCm(-.1, 10);
-            } else if (dist>0) {
+            } else if (dist > 0) {
                 StraightCm(-.1, dist); // forward using front range sensor, so it is close to cryptobox
             }
             if (!opModeIsActive()) return;
@@ -2145,11 +2131,13 @@ public class SwerveUtilLOP extends LinearOpMode {
             //alignUsingIMU();
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(200);
-            StraightCm(power, driveDistance);
+            if (isBlue)
+                StraightCm(-power, driveDistance);
+            else
+                StraightCm(power, driveDistance);
         }
         sleep(500); // wait a little bit for proxSensor to clear out the status
-        boolean edge_undetected_L = true; // robot.proxSensor.getState(); // false = something within proximity
-        boolean edge_undetected_R = true;
+
 
         if (isBlue) {
             driveTT(0.1, 0.1); // Crabs to the right
@@ -2157,15 +2145,16 @@ public class SwerveUtilLOP extends LinearOpMode {
             driveTT(-0.1, -0.1); // Crabs to the left
         }
 
+        boolean edge_undetected_L;// robot.proxSensor.getState(); // false = something within proximity
+        boolean edge_undetected_R;
         robot.runtime.reset();
-        while ((edge_undetected_L || edge_undetected_R) && (robot.runtime.seconds()<2) && opModeIsActive()) {
-            // Goes until detects edge or times out
+        do {
             edge_undetected_L = robot.proxL.getState();
             edge_undetected_R = robot.proxR.getState();
-
         }
+        while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 2) && opModeIsActive());
+
         driveTT(0, 0); // Stops
-        robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
 
         if (isBlue) { // crab back 1cm to correct proximity over shoot
             StraightCm(.1, 1);

@@ -21,12 +21,12 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         robot.use_encoder = true;
         robot.use_newbot = true;
         robot.use_minibot = false;
-        robot.use_range_sensor = false;
+        robot.use_range_sensor = true;
         robot.use_color_sensor = true;
         robot.use_Vuforia = true;
         robot.use_camera = true;
         robot.use_glyph_grabber = false;
-        robot.use_proximity_sensor = false;
+        robot.use_proximity_sensor = true;
         robot.use_relic_grabber = false;
         robot.use_relic_slider = false;
         robot.use_relic_grabber = false;
@@ -60,7 +60,7 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
             try {
                 doPlatformMission(true);
 
-                go_to_crypto_NB(.3, robot.targetColumn, true, false); // Drive to cryptobox
+                go_to_crypto_prox_NB(.3, robot.targetColumn, true, false); // Drive to cryptobox
                 //deliverGlyph();
                 //turnToCenter(true, false, robot.targetColumn);
                 stop_chassis();
