@@ -106,7 +106,7 @@ public class SwerveDriveHardware {
     final static double THETA_BACK = (Math.atan((DISTANCE_TO_CENTER_OF_GLYPH + LENGTH_BETWEEN_WHEELS) / (0.5 * WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
     final static double NB_THETA_FRONT = (Math.atan(NB_DISTANCE_FOR_ORBIT / (0.5 * NB_WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
     final static double NB_THETA_BACK = (Math.atan((NB_DISTANCE_FOR_ORBIT + NB_LENGTH_BETWEEN_WHEELS) / (0.5 * NB_WIDTH_BETWEEN_WHEELS))) * (180/Math.PI);
-    static double SPOT_TURN_ANGLE_OFFSET = (Math.atan((0.5*LENGTH_BETWEEN_WHEELS)/(0.5*WIDTH_BETWEEN_WHEELS))) * (1/(2*Math.PI));
+    static double SPOT_TURN_ANGLE_OFFSET = (Math.atan((0.5*LENGTH_BETWEEN_WHEELS)/(0.5*WIDTH_BETWEEN_WHEELS))) * (1/(Math.PI));
     final static long SERVO_TURN_TIME = 200;
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
@@ -276,12 +276,13 @@ public class SwerveDriveHardware {
     static double NB_SERVO_90_DEGREE = 0.479;
     static double NB_CRAB_DIFF_INC = 0.4663;
     static double NB_CRAB_DIFF_DEC = 0.4762;
-    static double NB_LEFT_SV_DIFF = 0.004;
+    static double NB_LEFT_SV_DIFF = 0.002;
     static double NB_RIGHT_SV_DIFF = 0.004;
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5344;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.5489;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.4756;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5506;
+
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5339;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.4956;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.4606;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5478;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;
@@ -619,7 +620,7 @@ public class SwerveDriveHardware {
     }
 
     void initialize_newbot() {
-        SPOT_TURN_ANGLE_OFFSET = (Math.atan((0.5*NB_LENGTH_BETWEEN_WHEELS)/(0.5*NB_WIDTH_BETWEEN_WHEELS))) * (1/(2*Math.PI));
+        SPOT_TURN_ANGLE_OFFSET = (Math.atan((0.5*NB_LENGTH_BETWEEN_WHEELS)/(0.5*NB_WIDTH_BETWEEN_WHEELS))) * (1/(Math.PI));
 
         SERVO_FL_STRAFE_POSITION = NB_SERVO_FL_FORWARD_POSITION + NB_CRAB_DIFF_INC - NB_LEFT_SV_DIFF;
         SERVO_FR_STRAFE_POSITION = NB_SERVO_FR_FORWARD_POSITION - NB_CRAB_DIFF_DEC + NB_RIGHT_SV_DIFF;

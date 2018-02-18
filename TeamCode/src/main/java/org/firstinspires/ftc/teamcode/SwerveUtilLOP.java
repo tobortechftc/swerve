@@ -3078,7 +3078,12 @@ public class SwerveUtilLOP extends LinearOpMode {
                     robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
         }
         if (robot.isTesting){
-            telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.LEFT_SV_DIFF, robot.RIGHT_SV_DIFF);
+            if(robot.use_newbot){
+                telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.NB_LEFT_SV_DIFF, robot.NB_RIGHT_SV_DIFF);
+            }
+            else {
+                telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.LEFT_SV_DIFF, robot.RIGHT_SV_DIFF);
+            }
         }
         telemetry.update();
     }
