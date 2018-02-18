@@ -1777,19 +1777,21 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void deliverGlyph() throws InterruptedException{
         if (!opModeIsActive()) return;
         if (robot.use_newbot) {
-            StraightIn(-0.3, 4);
+            StraightIn(0.3, 2);
             if (!opModeIsActive()) return;
             dumper_vertical();
+            dumper_up();
             if (!opModeIsActive()) return;
-            sleep(300);
+            sleep(500);
+            dumper_vertical();
             StraightIn(0.3, 4);
             if (!opModeIsActive()) return;
             sleep(100);
             StraightIn(-0.3, 5);
             if (!opModeIsActive()) return;
-            dumper_down();
+            StraightIn(0.7, 1);
             if (!opModeIsActive()) return;
-            StraightIn(-0.7, 3);
+            dumper_down();
         } else {
             StraightIn(0.3, 7);
             if (!opModeIsActive()) return;

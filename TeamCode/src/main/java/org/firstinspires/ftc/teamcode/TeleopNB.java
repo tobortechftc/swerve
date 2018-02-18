@@ -269,10 +269,11 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
 
                 if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
-                    if (Math.abs(gamepad1.left_stick_y)>0.1 && Math.abs(gamepad1.right_stick_x)>0.2) {
-                        calc_snake(-gamepad1.right_stick_x, Math.abs(gamepad1.right_stick_x));
+                    if (gamepad1.left_trigger > 0.1 || gamepad1.right_trigger > 0.1) {
+                        calc_snake(gamepad1.left_trigger, gamepad1.right_trigger);
                     } else {
-                        calc_snake(0, 0);
+                        float left_x = 0, right_x = 0;
+                        calc_snake(left_x, right_x);
                     }
                     snake_servo_adj();
                 }
