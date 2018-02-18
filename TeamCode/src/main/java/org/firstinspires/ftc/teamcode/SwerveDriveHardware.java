@@ -439,10 +439,10 @@ public class SwerveDriveHardware {
             sv_dumper = hwMap.servo.get("sv_dumper");
             sv_dumper.setPosition(SV_DUMPER_INIT);
             mt_lift = hwMap.dcMotor.get("mtLift");
-            // mt_lift.setDirection(DcMotor.Direction.REVERSE);
+            mt_lift.setDirection(DcMotor.Direction.REVERSE);
             mt_lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            mt_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             mt_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            mt_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");

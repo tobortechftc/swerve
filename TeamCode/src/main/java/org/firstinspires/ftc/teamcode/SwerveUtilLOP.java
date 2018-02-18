@@ -129,6 +129,26 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_dumper.setPosition(robot.SV_DUMPER_UP);
     }
 
+    public void dumper_higher() {
+        if (!robot.use_dumper)
+            return;
+        double pos = robot.sv_dumper.getPosition();
+        if (pos>robot.SV_DUMPER_DUMP)
+            pos -= 0.02;
+
+        robot.sv_dumper.setPosition(pos);
+    }
+
+    public void dumper_lower() {
+        if (!robot.use_dumper)
+            return;
+        double pos = robot.sv_dumper.getPosition();
+        if (pos<robot.SV_DUMPER_DOWN)
+            pos += 0.03;
+
+        robot.sv_dumper.setPosition(pos);
+    }
+
     public void dumper_up() {
         if (!robot.use_dumper)
             return;
@@ -613,29 +633,27 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.gg_layer = 0;
     }
 
-
     void lift_up(boolean force) {
-        robot.mt_glyph_slider_pw = 0.6;
+        double power = 0.6;
         // never exceed GG_SLIDE_MAX_COUNT
         int cur_pos = robot.mt_lift.getCurrentPosition();
-        if ((cur_pos>robot.GG_SLIDE_MAX_COUNT) && !force)
-            robot.mt_glyph_slider_pw = 0.0;
-
-        robot.mt_lift.setPower(robot.mt_glyph_slider_pw);
+        if ((cur_pos>robot.GG_SLIDE_MAX_COUNT) && !force) {
+            power = 0.0;
+        }
+        robot.mt_lift.setPower(power);
     }
 
     void lift_down(boolean force) {
-        robot.mt_glyph_slider_pw = -0.5;
+        double power = -0.5;
         // never lower than 0
         int cur_pos = robot.mt_lift.getCurrentPosition();
         if ((cur_pos<=0) && !force)
-            robot.mt_glyph_slider_pw = 0.0;
-        robot.mt_lift.setPower(robot.mt_glyph_slider_pw);
+            power = 0.0;
+        robot.mt_lift.setPower(power);
     }
 
     void lift_stop() {
-        robot.mt_glyph_slider_pw = 0.0;
-        robot.mt_lift.setPower(robot.mt_glyph_slider_pw);
+        robot.mt_lift.setPower(0.0);
     }
 
     void glyph_slider_up() {
@@ -2970,6 +2988,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     void intakeIn() {
         if (!robot.use_intake)
             return;
+        if (robot.sv_dumper!=null && robot.sv_dumper.getPosition()<0.63) {
+            return;
+        }
         robot.mt_intake_left.setPower(robot.intakeRatio);
         robot.mt_intake_right.setPower(robot.intakeRatio);
     }
