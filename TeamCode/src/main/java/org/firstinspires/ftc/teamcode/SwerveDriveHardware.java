@@ -155,7 +155,7 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_GRABBER_OPEN = 0.67;
     final static double SV_RELIC_GRABBER_INIT_NB = 0.3;
     final static double SV_RELIC_GRABBER_CLOSE_NB = 0.3;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.56;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.62;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
