@@ -282,13 +282,13 @@ public class SwerveDriveHardware {
     static double NB_SERVO_90_DEGREE = 0.479;
     static double NB_CRAB_DIFF_INC = 0.4663;
     static double NB_CRAB_DIFF_DEC = 0.4762;
-    static double NB_LEFT_SV_DIFF = 0.002;
-    static double NB_RIGHT_SV_DIFF = 0.004;
+    static double NB_LEFT_SV_DIFF = 0.005;
+    static double NB_RIGHT_SV_DIFF = 0.008;
 
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5339;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.4956;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.4606;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5478;
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5472;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.5400;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.4550;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5739;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;
