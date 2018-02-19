@@ -111,6 +111,7 @@ public class SwerveDriveHardware {
 
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4700; // ~14 inches
+    final static double LIFT_MAX_COUNT = 2600;
     final static int GG_SLIDE_INIT = 10;
     final static int RELIC_SLIDE_MAX = -8800;
 
@@ -141,30 +142,30 @@ public class SwerveDriveHardware {
     final static double SV_LEFT_ARM_UP_NB = 0.943;
     final static double SV_LEFT_ARM_DOWN_NB = 0.359;
 
-    final static double SV_GLYPH_GRABBER_TOP_INIT = 0.275;
+    final static double SV_GLYPH_GRABBER_TOP_INIT = 0.3; //from .275
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.38;
     final static double SV_GLYPH_GRABBER_TOP_HALF_CLOSED = 0.445;
-    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.57;
+    final static double SV_GLYPH_GRABBER_TOP_CLOSED = 0.65; //from .57
     final static double SV_GLYPH_GRABBER_BOTTOM_INIT = 0.65;
     final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.528;
     final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.485;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.358; // 0.405 0.037
     final static double SV_RELIC_GRABBER_INIT = 0.332;
     final static double SV_RELIC_GRABBER_CLOSE = 0.34;
-    final static double SV_RELIC_GRABBER_OPEN = 0.65;
-    final static double SV_RELIC_GRABBER_INIT_NB = 0.332;
-    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.34;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.65;
+    final static double SV_RELIC_GRABBER_OPEN = 0.67;
+    final static double SV_RELIC_GRABBER_INIT_NB = 0.3;
+    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.3;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.56;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
     final static double SV_RELIC_ARM_DOWN = 0.2;
     final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
-    final static double SV_RELIC_WRIST_INIT = 0.1;
-    final static double SV_RELIC_WRIST_UP = 0.7;
-    final static double SV_RELIC_WRIST_MIDDLE = 0.55;
-    final static double SV_RELIC_WRIST_DOWN = 0.2;
-    final static double SV_RELIC_WRIST_DOWN_R = 0.27; // down and ready for release
+    final static double SV_RELIC_WRIST_INIT = 0.70;
+    final static double SV_RELIC_WRIST_UP = 0.15;
+    final static double SV_RELIC_WRIST_MIDDLE = 0.4;
+    final static double SV_RELIC_WRIST_DOWN = 0.68;
+    final static double SV_RELIC_WRIST_DOWN_R = 0.65; // down and ready for release
     final static double SV_RELIC_ELBOW_INIT = 0.5;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
     final static double SV_RELIC_ELBOW_UP = 0.5;
@@ -440,7 +441,7 @@ public class SwerveDriveHardware {
                 sv_relic_wrist.setPosition(SV_RELIC_ARM_INIT);
             }
             sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
-            sv_relic_grabber.setPosition(SV_RELIC_GRABBER_INIT);
+            sv_relic_grabber.setPosition((use_newbot?SV_RELIC_GRABBER_INIT_NB:SV_RELIC_GRABBER_INIT));
         }
         if (use_dumper) {
             sv_dumper = hwMap.servo.get("sv_dumper");

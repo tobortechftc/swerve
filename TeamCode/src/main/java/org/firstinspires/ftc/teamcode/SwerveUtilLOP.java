@@ -534,7 +534,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 sleep(300);
                 robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
             } else {
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP + 0.12);
+                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP - 0.12);
             }
         } else {
             if (Math.abs(pos - robot.SV_RELIC_ARM_UP) > 0.15) {
@@ -692,7 +692,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         double power = 1.0;
         // never exceed GG_SLIDE_MAX_COUNT
         int cur_pos = robot.mt_lift.getCurrentPosition();
-        if ((cur_pos>robot.GG_SLIDE_MAX_COUNT) && !force) {
+        if ((cur_pos>robot.LIFT_MAX_COUNT) && !force) {
             power = 0.0;
         }
         if (robot.sv_dumper.getPosition()>robot.SV_DUMPER_LIFT) {

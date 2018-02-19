@@ -29,7 +29,7 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = true;
-        robot.use_relic_slider = false;
+        robot.use_relic_slider = true;
         robot.use_arm = false;
 
         init_and_test();
@@ -54,9 +54,9 @@ public class TeleopNB extends SwerveUtilLOP {
                 sleep(100);
             }
             if (robot.use_intake && !robot.isTesting) {
-                if (gamepad1.x || gamepad2.right_bumper) { // intake IN
+                if (gamepad1.x || (gamepad2.right_bumper && gamepad2.back)) { // intake IN
                     intakeIn();
-                } else if (gamepad1.b || gamepad2.right_trigger>0.1) { // intake OUT
+                } else if (gamepad1.b || ((gamepad2.right_trigger>1) && gamepad2.back)) { // intake OUT
                     intakeOut();
                 } else {
                     intakeStop();
@@ -84,13 +84,13 @@ public class TeleopNB extends SwerveUtilLOP {
                     dumper_down();
                 }
 
-                if ((gamepad2.right_stick_y<-0.1) && gamepad2.back) { // manual lift up
+                if ((gamepad2.right_bumper) && gamepad2.dpad_right) { // manual lift up
                     lift_up(true);
-                } else if ((gamepad2.right_stick_y > 0.1) && gamepad2.back) { // force down
+                } else if ((gamepad2.right_trigger>0.1) && gamepad2.dpad_right) { // force down
                     lift_down(true);
-                } else if (gamepad2.right_stick_y<-0.1) { // manual lift up
+                } else if (gamepad2.right_bumper && !gamepad2.back) { // manual lift up
                     lift_up(false);
-                } else if (gamepad2.right_stick_y > 0.1) { // manual down
+                } else if ((gamepad2.right_trigger > 0.1) && !gamepad2.back) { // manual down
                     lift_down(false);
                 } else {
                     lift_stop();
@@ -300,9 +300,11 @@ public class TeleopNB extends SwerveUtilLOP {
                 } else if (gamepad2.a & gamepad2.back) {
                     relic_slider_back_auto();
                 } else if (gamepad2.left_stick_y > 0.1) {
-                    robot.mt_relic_slider.setPower(1.0);
+                    double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
+                    robot.mt_relic_slider.setPower(pw);
                 } else if (gamepad2.left_stick_y < -0.1) {
-                    robot.mt_relic_slider.setPower(-1.0);
+                    double pw = -1.0*gamepad2.left_stick_y*gamepad2.left_stick_y;
+                    robot.mt_relic_slider.setPower(pw);
                 } else {
                     robot.mt_relic_slider.setPower(0);
                 }
@@ -379,12 +381,12 @@ public class TeleopNB extends SwerveUtilLOP {
             }
             if (robot.use_relic_grabber) {
                 // relic arm
-                if (gamepad2.right_stick_y<-0.1) {
+                if (gamepad2.right_stick_y>0.1) {
                     double cur_pos = robot.sv_relic_wrist.getPosition();
                     if (cur_pos<0.99) {
                         robot.sv_relic_wrist.setPosition(cur_pos + 0.005);
                     }
-                } else if (gamepad2.right_stick_y>0.1) {
+                } else if (gamepad2.right_stick_y<-0.1) {
                     double cur_pos = robot.sv_relic_wrist.getPosition();
                     if (cur_pos>0.01) {
                         robot.sv_relic_wrist.setPosition(cur_pos - 0.005);
