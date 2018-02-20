@@ -27,6 +27,7 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         robot.use_camera = true;
         robot.use_glyph_grabber = false;
         robot.use_proximity_sensor = true;
+        robot.use_dumper = true;
         robot.use_relic_grabber = false;
         robot.use_relic_slider = false;
         robot.use_relic_grabber = false;
