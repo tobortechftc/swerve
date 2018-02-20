@@ -164,6 +164,17 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.sv_dumper.setPosition(robot.SV_DUMPER_DUMP);
     }
 
+    public void dumper_shake() {
+        if (!robot.use_dumper)
+            return;
+        double pos = robot.sv_dumper.getPosition();
+        if ((pos-0.1)>0) {
+            robot.sv_dumper.setPosition(pos - 0.1);
+            sleep(200);
+        }
+        robot.sv_dumper.setPosition(pos);
+    }
+
     public void dumper_down()
     {
         if (!robot.use_dumper)
@@ -1833,6 +1844,73 @@ public class SwerveUtilLOP extends LinearOpMode {
             result *= -1;
         }
         return result;
+    }
+
+    public void autoIntakeGlyphs() throws InterruptedException {
+        for (int i=0; i<2; i++) {
+            StraightIn(0.2,6);
+            autoIntakeOneGlyph();
+        }
+    }
+    public void autoIntakeOneGlyph() throws InterruptedException {
+        if (!opModeIsActive()) return;
+        driveTT(-0.1,-0.1);
+        autoIntake();
+        driveTT(0,0);
+        for (int i=0; i<5; i++) {
+            autoIntake();
+        }
+    }
+
+    public void autoIntake() throws InterruptedException {
+        if (!opModeIsActive()) return;
+        intakeIn();
+        sleep(600);
+        intakeOut();
+        sleep(200);
+        intakeStop();
+    }
+
+    void alignBoxEdge(boolean toLeft) throws InterruptedException {
+        if (robot.old_mode!=SwerveDriveHardware.CarMode.CAR) {
+            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+            sleep(300);
+        }
+        double dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
+        if (dist>0) StraightCm(-.15, dist);
+        alignUsingIMU();
+        dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
+        if (dist>0) StraightCm(-.15, dist);
+        change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+        sleep(200);
+        if (toLeft) {
+            driveTT(-0.15, -0.15); // Crabs to the left
+        } else {
+            driveTT(0.15, 0.15); // Crabs to the right
+        }
+        if (!opModeIsActive()) return;
+
+        boolean edge_undetected_L;// robot.proxSensor.getState(); // false = something within proximity
+        boolean edge_undetected_R;
+        robot.runtime.reset();
+        do {
+            edge_undetected_L = robot.proxL.getState();
+            edge_undetected_R = robot.proxR.getState();
+            if (!opModeIsActive()) return;
+        }
+        while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 1.5));
+        driveTT(0, 0); // Stops
+
+        if (toLeft) { // crab back 1cm to correct proximity over shoot
+            StraightCm(-.2, 1);
+        } else {
+            StraightCm(.2, 1);
+        }
+        if (!opModeIsActive()) return;
+
+        change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+        sleep(300);
+        StraightCm(.2, 3); // goes back so that delivery has enough space
     }
 
     public void deliverGlyph() throws InterruptedException{

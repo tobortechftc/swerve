@@ -24,13 +24,14 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_imu = true;
         robot.use_encoder = true;
         robot.use_minibot = false;
-        robot.use_range_sensor = false;
+        robot.use_range_sensor = true;
         robot.use_color_sensor = true;
+        robot.use_proximity_sensor = true;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = true;
         robot.use_relic_slider = true;
-        robot.use_arm = false;
+        robot.use_arm = true;
 
         init_and_test();
 
@@ -76,6 +77,8 @@ public class TeleopNB extends SwerveUtilLOP {
                     dumper_higher();
                 } else if (gamepad2.dpad_right) {
                     dumper_lower();
+                } else if ((gamepad1.dpad_down&&gamepad1.start) || (gamepad2.dpad_down&&gamepad2.start)) {
+                    dumper_shake();
                 }
                 else if ((gamepad1.dpad_up&&!gamepad1.x) || gamepad2.dpad_up) {
                     dumper_up();
@@ -109,8 +112,14 @@ public class TeleopNB extends SwerveUtilLOP {
                         sleep(100);
                         TurnRightD(0.5, 90.0);
                     }
-                    if (gamepad1.dpad_up && robot.use_dumper) {
-                        deliverGlyph();
+                    if (robot.use_dumper) {
+                        if (gamepad1.dpad_up && gamepad1.a) {
+                            autoIntakeGlyphs();
+                        } else if (gamepad1.dpad_up && gamepad1.b) {
+                            alignBoxEdge(true); // align to left
+                        } else if (gamepad1.dpad_up && gamepad1.y) {
+                            deliverGlyph();
+                        }
                     }
 
                     if(gamepad1.left_trigger > 0.1){
