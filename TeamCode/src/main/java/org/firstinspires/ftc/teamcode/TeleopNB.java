@@ -54,9 +54,9 @@ public class TeleopNB extends SwerveUtilLOP {
                 sleep(100);
             }
             if (robot.use_intake && !robot.isTesting) {
-                if (gamepad1.x || gamepad2.dpad_left) { // intake IN
+                if (gamepad1.x || gamepad2.left_bumper) { // intake IN
                     intakeIn();
-                } else if (gamepad1.b || gamepad2.dpad_right) { // intake OUT
+                } else if (gamepad1.b || gamepad2.left_trigger > 0.1) { // intake OUT
                     intakeOut();
                 } else {
                     intakeStop();
@@ -72,9 +72,9 @@ public class TeleopNB extends SwerveUtilLOP {
             if (robot.use_dumper && !robot.isTesting) {
                 if (gamepad2.right_bumper && gamepad2.left_bumper) {
                     lift_back_init(); // back to initial position for collecting glyph
-                } else if (gamepad2.left_bumper) {
+                } else if (gamepad2.dpad_left) {
                     dumper_higher();
-                } else if (gamepad2.left_trigger>0.1) {
+                } else if (gamepad2.dpad_right) {
                     dumper_lower();
                 }
                 else if ((gamepad1.dpad_up&&!gamepad1.x) || gamepad2.dpad_up) {
