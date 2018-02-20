@@ -20,12 +20,13 @@ public class AutoRedFrontBoxNB extends SwerveUtilLOP{
         robot.use_encoder = true;
         robot.use_newbot = true;
         robot.use_minibot = false;
-        robot.use_range_sensor = false;
+        robot.use_range_sensor = true;
         robot.use_color_sensor = true;
         robot.use_Vuforia = true;
         robot.use_camera = true;
         robot.use_glyph_grabber = false;
-        robot.use_proximity_sensor = false;
+        robot.use_proximity_sensor = true;
+        robot.use_dumper = true;
         robot.use_relic_grabber = false;
         robot.use_relic_slider = false;
 
@@ -57,9 +58,9 @@ public class AutoRedFrontBoxNB extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 doPlatformMission(false);
-                go_to_crypto_NB(.3, robot.targetColumn, false, false); // Drive to cryptobox
-                //deliverGlyph();
-                //turnToCenter(false, false, robot.targetColumn);
+                go_to_crypto_prox_NB(.3, robot.targetColumn, false, false); // Drive to cryptobox
+                deliverGlyph();
+                turnToCenter(false, false, robot.targetColumn);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

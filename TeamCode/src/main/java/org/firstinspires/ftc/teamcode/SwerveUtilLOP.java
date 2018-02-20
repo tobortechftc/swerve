@@ -1847,12 +1847,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             dumper_vertical();
             StraightIn(0.3, 4);
             if (!opModeIsActive()) return;
+            dumper_down();
             sleep(100);
             StraightIn(-0.3, 5);
             if (!opModeIsActive()) return;
-            StraightIn(0.7, 1);
-            if (!opModeIsActive()) return;
-            dumper_down();
+            StraightIn(0.7, 5);
         } else {
             StraightIn(0.3, 7);
             if (!opModeIsActive()) return;
@@ -1879,48 +1878,53 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     public void turnToCenter(boolean isBlue, boolean isSide, int curColumn) throws InterruptedException{
         if (!opModeIsActive()) return;
-        StraightCm(-0.3, 6);
-        if (!opModeIsActive()) return;
-        if(isSide){
-            if(isBlue){
-                TurnRightD(0.6, 175);
-            }
-            else{
-                TurnLeftD(0.6, 175);
-            }
-        }
-        else{
-            if(isBlue){
-                if (curColumn == 0){
-                    TurnRightD(0.6, 125);
+        if (robot.use_newbot) {
+            if (isSide) {
+                if (isBlue) {
+                    TurnLeftD(.5,5);
                 }
-                else if(curColumn == 1){
-                    TurnRightD(0.6, 135);
-                }
-                else if(curColumn == 2){
-                    TurnRightD(0.6, 155);
+                else {
+                    TurnRightD(.5,5);
                 }
             }
-            else{
-                if (curColumn == 0){
-                    TurnLeftD(0.6, 155);
+            else {
+                if (isBlue) {
+                    TurnLeftD(0.5, 20);
                 }
-                else if(curColumn == 1){
-                    TurnLeftD(0.6, 135);
-                }
-                else if(curColumn == 2){
-                    TurnLeftD(0.6, 125);
+                else {
+                    TurnRightD(.5, 20);
                 }
             }
         }
-        /*
-        if((!isSide && isBlue && curColumn == 0) || (!isSide && !isBlue && curColumn == 2)) {
-            StraightCm(-0.6, 3);
+        else {
+            StraightCm(-0.3, 6);
+            if (!opModeIsActive()) return;
+            if (isSide) {
+                if (isBlue) {
+                    TurnRightD(0.6, 175);
+                } else {
+                    TurnLeftD(0.6, 175);
+                }
+            } else {
+                if (isBlue) {
+                    if (curColumn == 0) {
+                        TurnRightD(0.6, 125);
+                    } else if (curColumn == 1) {
+                        TurnRightD(0.6, 135);
+                    } else if (curColumn == 2) {
+                        TurnRightD(0.6, 155);
+                    }
+                } else {
+                    if (curColumn == 0) {
+                        TurnLeftD(0.6, 155);
+                    } else if (curColumn == 1) {
+                        TurnLeftD(0.6, 135);
+                    } else if (curColumn == 2) {
+                        TurnLeftD(0.6, 125);
+                    }
+                }
+            }
         }
-        else{
-            StraightCm(-0.6, 8);
-        }
-        */
     }
 
     TeamColor checkBallColor(boolean isBlueAlliance) throws InterruptedException {
@@ -2101,9 +2105,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             int init_dist = 7;
 
             if (isBlue) { // Side Blue
-                driveDistance = init_dist + (18 * targetColumn); // 19cm between columns
+                driveDistance = init_dist + (18 * targetColumn); // 19cm between columns, 18 works better
             } else { // Side Red
-                driveDistance = init_dist + (18 * (2 - targetColumn)); // 19cm between columns
+                driveDistance = init_dist + (18 * (2 - targetColumn)); 
             }
 
             StraightCm(power, driveDistance);
@@ -2155,7 +2159,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (isBlue) driveDistance = 3 + (18 * targetColumn); // 19cm between columns
             else driveDistance = 3 + (18 * (2 - targetColumn));
             if (driveDistance<7) driveDistance=7; // ensure turn not hitting balance stone
-            StraightCm(power, driveDistance);
+            StraightCm(power, driveDistance); // drive to cryptobox
 
             if (isBlue) {
                 TurnLeftD(0.3, 90);
@@ -2164,24 +2168,21 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             if (!opModeIsActive()) return;
 
-            dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT))-34;
+            dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 34;
             if (dist>30 || dist<=5) dist = 7;
             StraightCm(-.15, dist); // drive close to cryptobox
 
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(200);
             if (!opModeIsActive()) return;
-
-
         } else { // Front box
             if (isBlue) { // Front Blue
                 driveDistance = 2 + (19 * targetColumn); // 19cm between columns
             } else { // Front Red
-                power *= -1; // Reverses power input
                 driveDistance = 3 + (19 * (2 - targetColumn)); // 19cm between columns
             }
 
-            dist = (isBlue ? getRange(RangeSensor.FRONT_LEFT) : getRange(RangeSensor.FRONT_RIGHT)) - 16;
+            dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
             if (dist > 50 || dist <= 5) {
                 StraightCm(-.1, 10);
             } else if (dist > 0) {
@@ -2199,12 +2200,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         sleep(500); // wait a little bit for proxSensor to clear out the status
 
-
         if (isBlue) {
             driveTT(0.1, 0.1); // Crabs to the right
         } else { // Red
             driveTT(-0.1, -0.1); // Crabs to the left
         }
+        if (!opModeIsActive()) return;
 
         boolean edge_undetected_L;// robot.proxSensor.getState(); // false = something within proximity
         boolean edge_undetected_R;
@@ -2212,8 +2213,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         do {
             edge_undetected_L = robot.proxL.getState();
             edge_undetected_R = robot.proxR.getState();
+            if (!opModeIsActive()) return;
         }
-        while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 2) && opModeIsActive());
+        while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 2));
 
         driveTT(0, 0); // Stops
 
