@@ -169,8 +169,8 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ELBOW_INIT = 0.5;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
     final static double SV_RELIC_ELBOW_UP = 0.5;
-    final static double SV_DUMPER_INIT = 0.7306;
-    final static double SV_DUMPER_DOWN = 0.7306;
+    final static double SV_DUMPER_INIT = 0.7344;
+    final static double SV_DUMPER_DOWN = 0.7344;
     final static double SV_DUMPER_LIFT = 0.665;
     final static double SV_DUMPER_HALF_UP = 0.5472;
     final static double SV_DUMPER_UP = 0.28;
@@ -458,7 +458,8 @@ public class SwerveDriveHardware {
                 mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             }
             mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+            mt_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            mt_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");

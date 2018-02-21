@@ -488,16 +488,26 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     public void auto_relic_release() {
         double cur_pos = robot.sv_relic_wrist.getPosition();
-        relic_arm_down();
-        sleep(500);
-        relic_arm_down();
-        sleep(1000);
+        if (Math.abs(cur_pos - robot.SV_RELIC_WRIST_DOWN) > 0.1) {
+            relic_arm_down();
+            sleep(500);
+        }
+        if (Math.abs(cur_pos - robot.SV_RELIC_WRIST_DOWN) > 0.02) {
+            relic_arm_down();
+            sleep(500);
+        }
         relic_grabber_release();
         sleep(250);
-        robot.mt_relic_slider.setPower(1.0);
-        sleep(1000);
+        if (robot.use_newbot) {
+            robot.mt_relic_slider.setPower(0.2);
+            sleep(500);
+        } else {
+            robot.mt_relic_slider.setPower(1.0);
+            sleep(1000);
+        }
         robot.mt_relic_slider.setPower(0);
         relic_arm_up();
+
     }
 
     public void relic_arm_down()
