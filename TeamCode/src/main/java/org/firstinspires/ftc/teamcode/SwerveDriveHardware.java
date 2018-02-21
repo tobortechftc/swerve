@@ -454,12 +454,14 @@ public class SwerveDriveHardware {
         }
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
-            if (!use_newbot) {
-                mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+            if (use_newbot) {
+                // mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+            } else {
+                // mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             }
             mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            mt_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            mt_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         if (use_glyph_grabber) {
             sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");

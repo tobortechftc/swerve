@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @TeleOp(name="TeleOp-NB", group="Test-NewBot")
@@ -21,11 +22,11 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_front_drive_only = false; // front drive only
         robot.use_intake = true;
         robot.use_dumper = true;
-        robot.use_imu = true;
+        robot.use_imu = false;
         robot.use_encoder = true;
         robot.use_minibot = false;
-        robot.use_range_sensor = true;
-        robot.use_color_sensor = true;
+        robot.use_range_sensor = false;
+        robot.use_color_sensor = false;
         robot.use_proximity_sensor = true;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = false;
@@ -304,13 +305,23 @@ public class TeleopNB extends SwerveUtilLOP {
 
             if (robot.use_relic_slider) {
                 // relic slider
-                if (gamepad2.left_stick_y > 0.1) {
-                    double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
+                if (gamepad2.left_stick_y > 0.1) { // slide in
+                    double pos = robot.mt_relic_slider.getCurrentPosition();
+                    double pw = -1*gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
                         pw *= 0.5;
+                    if (pos<100 && !gamepad2.start) {
+                        if (pos>0) pw = 0.1;
+                        else {
+                            pw = 0;
+                            robot.mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                            robot.mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        }
+                    }
                     robot.mt_relic_slider.setPower(pw);
-                } else if (gamepad2.left_stick_y < -0.1) {
-                    double pw = -1.0*gamepad2.left_stick_y*gamepad2.left_stick_y;
+                } else if (gamepad2.left_stick_y < -0.1) { // slide out
+                    double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
+                    double pos = robot.mt_relic_slider.getCurrentPosition();
                     if (!gamepad2.back)
                         pw *= 0.7;
                     robot.mt_relic_slider.setPower(pw);

@@ -499,7 +499,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         relic_grabber_release();
         sleep(250);
         if (robot.use_newbot) {
-            robot.mt_relic_slider.setPower(0.2);
+            robot.mt_relic_slider.setPower(-0.25);
             sleep(500);
         } else {
             robot.mt_relic_slider.setPower(1.0);
