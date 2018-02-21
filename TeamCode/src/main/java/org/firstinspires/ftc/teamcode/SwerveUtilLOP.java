@@ -2237,7 +2237,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (isBlue) driveDistance = 3 + (18 * targetColumn); // 19cm between columns
             else driveDistance = 3 + (18 * (2 - targetColumn));
             if (driveDistance<7) driveDistance=7; // ensure turn not hitting balance stone
-            StraightCm(power, driveDistance); // drive to cryptobox
+            StraightCm(-power, driveDistance); // drive to cryptobox
 
             if (isBlue) {
                 TurnLeftD(0.3, 90);
@@ -2245,10 +2245,11 @@ public class SwerveUtilLOP extends LinearOpMode {
                 TurnRightD(0.3, 91);
             }
             if (!opModeIsActive()) return;
-
-            dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 34;
-            if (dist>30 || dist<=5) dist = 7;
-            StraightCm(-.15, dist); // drive close to cryptobox
+            for(int i = 0 ; i < 2 ; i++) {
+                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
+                if (dist > 30 || dist <= 5) dist = 7;
+                StraightCm(-.15, dist); // drive close to cryptobox
+            }
 
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(200);
