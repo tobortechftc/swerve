@@ -90,7 +90,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             glyph_slider_init();
         }
         if (robot.use_relic_grabber) {
-            relic_grabber_open();
+            if (robot.use_newbot) {
+                relic_grabber_close();
+            } else {
+                relic_grabber_open();
+            }
             relic_arm_down();
         }
         if (robot.use_Vuforia) {
@@ -546,7 +550,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 sleep(300);
                 robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
             } else {
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP - 0.12);
+                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
             }
         } else {
             if (Math.abs(pos - robot.SV_RELIC_ARM_UP) > 0.15) {

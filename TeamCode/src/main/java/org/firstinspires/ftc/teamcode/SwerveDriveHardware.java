@@ -138,7 +138,7 @@ public class SwerveDriveHardware {
     final static double SV_RIGHT_ARM_UP = 0.11;
     final static double SV_RIGHT_ARM_DOWN = 0.73;
     final static double SV_RIGHT_ARM_UP_NB = 0.2;
-    final static double SV_RIGHT_ARM_DOWN_NB = 0.783;
+    final static double SV_RIGHT_ARM_DOWN_NB = 0.747;
     final static double SV_LEFT_ARM_UP_NB = 0.943;
     final static double SV_LEFT_ARM_DOWN_NB = 0.359;
 
@@ -153,15 +153,15 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_GRABBER_INIT = 0.332;
     final static double SV_RELIC_GRABBER_CLOSE = 0.34;
     final static double SV_RELIC_GRABBER_OPEN = 0.67;
-    final static double SV_RELIC_GRABBER_INIT_NB = 0.3;
-    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.3;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.62;
+    final static double SV_RELIC_GRABBER_INIT_NB = 0.16;
+    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.16;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.45;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
     final static double SV_RELIC_ARM_DOWN = 0.2;
     final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
-    final static double SV_RELIC_WRIST_INIT = 0.70;
+    final static double SV_RELIC_WRIST_INIT = 0.718;
     final static double SV_RELIC_WRIST_UP = 0.15;
     final static double SV_RELIC_WRIST_MIDDLE = 0.4;
     final static double SV_RELIC_WRIST_DOWN = 0.68;
@@ -454,7 +454,9 @@ public class SwerveDriveHardware {
         }
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
-            mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+            if (!use_newbot) {
+                mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+            }
             mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         }

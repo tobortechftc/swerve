@@ -24,12 +24,12 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_color_sensor = false;
         robot.use_arm = true;
         robot.use_glyph_grabber = false;
-        robot.use_relic_grabber = false;
-        robot.use_relic_slider = false;
+        robot.use_relic_grabber = true;
+        robot.use_relic_slider = true;
         robot.use_test_servo = false;
         robot.use_test_motor = false;
         robot.use_range_sensor = false;
-        robot.use_proximity_sensor = false;
+        robot.use_proximity_sensor = true;
 
         init_and_test();
 
