@@ -499,7 +499,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         relic_grabber_release();
         sleep(250);
         if (robot.use_newbot) {
-            robot.mt_relic_slider.setPower(-0.25);
+            robot.mt_relic_slider.setPower(0.25);
             sleep(500);
         } else {
             robot.mt_relic_slider.setPower(1.0);
@@ -1373,6 +1373,29 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.runtime.reset();
     }
 
+    void run_until_encoder_and_jiggle_glyph(int leftCnt, double leftPower, int rightCnt, double rightPower) throws InterruptedException{
+        robot.runtime.reset();
+        int leftTC1 = leftCnt;
+        int rightTC1 = rightCnt;
+        int leftTC2 = 0;
+        int rightTC2 = 0;
+        int leftTC0 = 0;
+        int rightTC0 = 0;
+        int targetPosFrontLeft;
+        int curPosFrontLeft = robot.motorFrontLeft.getCurrentPosition();
+        int targetPosFrontRight;
+        int curPosFrontRight = robot.motorFrontRight.getCurrentPosition();
+        int targetPosBackLeft;
+        int curPosBackLeft = (robot.motorBackLeft!=null?robot.motorBackLeft.getCurrentPosition():0);
+        int targetPosBackRight;
+        int curPosBackRight = (robot.motorBackRight!=null?robot.motorBackRight.getCurrentPosition():0);
+        double initLeftPower = leftPower;
+        double initRightPower = rightPower;
+        double leftPowerSign = leftPower/Math.abs(leftPower);
+        double rightPowerSign = rightPower/Math.abs(rightPower);
+        boolean strafeRight = false;
+    }
+
     boolean has_left_drive_encoder_reached(double p_count) {
         DcMotor mt = robot.motorFrontLeft;
         if(robot.use_swerve||robot.use_newbot){
@@ -1805,14 +1828,14 @@ public class SwerveUtilLOP extends LinearOpMode {
         int directionI = calcArmDirection(rightJewelColorCS, rightJewelColorCamera, isBlueAlliance);
         if (!opModeIsActive()) return;
         if (robot.use_newbot) {
-            int dist = (directionI > 0 ? 7 : 5);
-            StraightCm(-.1 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
+            int dist = (directionI > 0 ? 7 : 6);
+            StraightCm(-.2 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
             sleep(100);
             if (isBlueAlliance)
                 r_arm_up(); // arm up to ensure the jewel is knocked out
             else
                 l_arm_up(); // arm up to ensure the jewel is knocked out
-            StraightCm(.15 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
+            StraightCm(.25 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
         } else { // oldBot
             if (isBlueAlliance) {
                 if (directionI == 1) { // Right jewel is our color
@@ -1879,9 +1902,11 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void autoIntake() throws InterruptedException {
         if (!opModeIsActive()) return;
         intakeIn();
-        sleep(600);
+        sleep(400);
         intakeOut();
         sleep(200);
+        intakeIn();
+        sleep(400);
         intakeStop();
     }
 
@@ -2498,6 +2523,16 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.thetaOneCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) - (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1
             robot.thetaTwoCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) + (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2
         }
+    }
+
+    void collectAuto() throws InterruptedException{
+        StraightCm(0.5, 30);
+        intakeIn();
+        StraightCm(0.3, 35);
+        sleep(1000);
+        StraightCm(-0.3, 20);
+
+
     }
 
     void alignUsingIMU() throws InterruptedException {

@@ -307,7 +307,7 @@ public class TeleopNB extends SwerveUtilLOP {
                 // relic slider
                 if (gamepad2.left_stick_y > 0.1) { // slide in
                     double pos = robot.mt_relic_slider.getCurrentPosition();
-                    double pw = -1*gamepad2.left_stick_y*gamepad2.left_stick_y;
+                    double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
                         pw *= 0.5;
                     if (pos<100 && !gamepad2.start) {
@@ -320,7 +320,7 @@ public class TeleopNB extends SwerveUtilLOP {
                     }
                     robot.mt_relic_slider.setPower(pw);
                 } else if (gamepad2.left_stick_y < -0.1) { // slide out
-                    double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
+                    double pw = -gamepad2.left_stick_y*gamepad2.left_stick_y;
                     double pos = robot.mt_relic_slider.getCurrentPosition();
                     if (!gamepad2.back)
                         pw *= 0.7;
