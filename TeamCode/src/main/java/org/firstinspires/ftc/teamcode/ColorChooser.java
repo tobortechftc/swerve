@@ -15,13 +15,14 @@ public class ColorChooser extends SwerveUtilLOP {
 
     @Override
     public void runOpMode() throws InterruptedException{
-        robot.use_swerve = true;
+        robot.use_swerve = false;
+        robot.use_newbot = true;
         robot.use_imu = false;
         robot.use_Vuforia = true;
         robot.use_camera = true;
         robot.use_color_sensor = true;
         robot.use_arm = true;
-        robot.use_glyph_grabber = true;
+        robot.use_glyph_grabber = false;
         robot.use_test_motor = false;
         robot.init(hardwareMap);
         robot.l_colorSensor.enableLed(true);
@@ -30,6 +31,8 @@ public class ColorChooser extends SwerveUtilLOP {
         robot.allianceColor = TeamColor.BLUE;
 
         waitForStart();
+
+        start_init();
 
         boolean start = false;
         while (opModeIsActive() && !start) {

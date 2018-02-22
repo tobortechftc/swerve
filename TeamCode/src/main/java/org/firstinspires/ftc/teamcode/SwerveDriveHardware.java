@@ -153,9 +153,10 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_GRABBER_INIT = 0.332;
     final static double SV_RELIC_GRABBER_CLOSE = 0.34;
     final static double SV_RELIC_GRABBER_OPEN = 0.67;
-    final static double SV_RELIC_GRABBER_INIT_NB = 0.16;
-    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.16;
+    final static double SV_RELIC_GRABBER_INIT_NB = 0.234;
+    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.234;
     final static double SV_RELIC_GRABBER_OPEN_NB = 0.45;
+    final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.65;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
@@ -265,6 +266,8 @@ public class SwerveDriveHardware {
     public MB1202 mb_ultra = null;
     public DigitalChannel proxL = null;
     public DigitalChannel proxR = null;
+    public DigitalChannel proxFL = null;
+
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -388,8 +391,10 @@ public class SwerveDriveHardware {
             if (use_newbot) {
                 proxL = hwMap.get(DigitalChannel.class, "proxL");
                 proxR = hwMap.get(DigitalChannel.class, "proxR");
+                proxFL = hwMap.get(DigitalChannel.class, "proxFL");
                 proxL.setMode(DigitalChannel.Mode.INPUT);
                 proxR.setMode(DigitalChannel.Mode.INPUT);
+                proxFL.setMode(DigitalChannel.Mode.INPUT);
             }
             else {
                 proxL = hwMap.get(DigitalChannel.class, "prox6in");
@@ -455,7 +460,7 @@ public class SwerveDriveHardware {
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
             if (use_newbot) {
-                // mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+                mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             } else {
                 // mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             }

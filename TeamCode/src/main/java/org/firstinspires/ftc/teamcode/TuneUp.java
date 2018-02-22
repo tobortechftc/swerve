@@ -19,16 +19,17 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_swerve = false;
         robot.use_newbot = true;
         robot.use_dumper = true;
+        robot.use_intake = true;
         robot.use_imu = true;
         robot.use_Vuforia = false;
-        robot.use_color_sensor = false;
+        robot.use_color_sensor = true;
         robot.use_arm = true;
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = true;
         robot.use_relic_slider = true;
         robot.use_test_servo = false;
         robot.use_test_motor = false;
-        robot.use_range_sensor = false;
+        robot.use_range_sensor = true;
         robot.use_proximity_sensor = true;
 
         init_and_test();
@@ -148,8 +149,18 @@ public class TuneUp extends SwerveUtilLOP {
             }
 
 
-            if (robot.use_swerve) { // swerve related control
-
+            if (robot.use_newbot) { // newbot related control
+                if (robot.use_dumper) {
+                    if (gamepad1.dpad_up && gamepad1.a) {
+                        autoIntakeGlyphs();
+                    } else if (gamepad1.dpad_up && gamepad1.b) {
+                        alignBoxEdge();
+                    } else if (gamepad1.dpad_up && gamepad1.y) {
+                        deliverGlyph();
+                    } else if (gamepad1.dpad_up && gamepad1.x) {
+                        grabAndDump();
+                    }
+                }
             } // end use_swerve
 
             if (robot.use_test_motor) {
@@ -255,7 +266,7 @@ public class TuneUp extends SwerveUtilLOP {
             if (robot.use_color_sensor) {
                 double l_d = calcDelta(true);
                 double r_d = calcDelta(false);
-                telemetry.addData("5.1 Color sen", "l_d=%1.0f, r_d=%1.0f", l_d,r_d);
+                telemetry.addData("5.1 Color delta", "l_d=%1.0f, r_d=%1.0f", l_d,r_d);
             }
             show_telemetry();
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.

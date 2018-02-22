@@ -93,7 +93,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (robot.use_newbot) {
                 relic_grabber_close();
             } else {
-                relic_grabber_open();
+                relic_grabber_open(false);
             }
             relic_arm_down();
         }
@@ -452,6 +452,18 @@ public class SwerveUtilLOP extends LinearOpMode {
         rotate_to_target(0.2);
     }
 
+    public void relic_grabber_higher() {
+        double pos = robot.sv_relic_grabber.getPosition()-0.04;
+        if (pos<0.001) pos = 0.001;
+        robot.sv_relic_grabber.setPosition(pos);
+    }
+
+    public void relic_grabber_lower() {
+        double pos = robot.sv_relic_grabber.getPosition()+0.04;
+        if (pos>0.99) pos = 0.99;
+        robot.sv_relic_grabber.setPosition(pos);
+    }
+
     public void relic_grabber_close() {
         if (robot.use_newbot) {
             robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
@@ -460,9 +472,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
-    public void relic_grabber_open() {
+    public void relic_grabber_open(boolean wide) {
         if (robot.use_newbot) {
-            robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN_NB);
+            if (wide) {
+                robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN_W_NB);
+            } else {
+                robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN_NB);
+            }
         } else {
             robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
         }
@@ -499,15 +515,38 @@ public class SwerveUtilLOP extends LinearOpMode {
         relic_grabber_release();
         sleep(250);
         if (robot.use_newbot) {
-            robot.mt_relic_slider.setPower(0.25);
-            sleep(500);
+            relic_slider_in(0.5, true);
+            sleep(400);
         } else {
-            robot.mt_relic_slider.setPower(1.0);
+            relic_slider_in(1.0, true);
             sleep(1000);
         }
-        robot.mt_relic_slider.setPower(0);
+        relic_slider_stop();
         relic_arm_up();
 
+    }
+
+    public void relic_slider_in(double power, boolean force) {
+        if (Math.abs(power)>1) power=1;
+        double pos = robot.mt_relic_slider.getCurrentPosition();
+        if (pos>-100 && power!=0 && force==false) {
+            if (pos<0) power = 0.1;
+            else {
+                power = 0;
+                robot.mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+        }
+        robot.mt_relic_slider.setPower(Math.abs(power));
+    }
+
+    public void relic_slider_out(double power) {
+        if (Math.abs(power)>1) power=1;
+        robot.mt_relic_slider.setPower(-1*Math.abs(power));
+    }
+
+    public void relic_slider_stop() {
+        robot.mt_relic_slider.setPower(0);
     }
 
     public void relic_arm_down()
@@ -1540,6 +1579,22 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
+    void crabRight(double power) {
+        if (robot.old_mode!=SwerveDriveHardware.CarMode.CRAB) {
+            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+            sleep(200);
+        }
+        driveTT(-Math.abs(power), -Math.abs(power)); // Crabs to the right
+    }
+
+    void crabLeft(double power) {
+        if (robot.old_mode!=SwerveDriveHardware.CarMode.CRAB) {
+            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+            sleep(200);
+        }
+        driveTT(Math.abs(power), Math.abs(power)); // Crabs to the right
+    }
+
     void TurnRightD(double power, double degree) throws InterruptedException {
 
         double adjust_degree_imu = robot.IMU_ROTATION_RATIO_R * degree;
@@ -1883,73 +1938,105 @@ public class SwerveUtilLOP extends LinearOpMode {
         return result;
     }
 
-    public void autoIntakeGlyphs() throws InterruptedException {
-        for (int i=0; i<2; i++) {
-            StraightIn(0.2,6);
-            autoIntakeOneGlyph();
-        }
-    }
-    public void autoIntakeOneGlyph() throws InterruptedException {
-        if (!opModeIsActive()) return;
-        driveTT(-0.1,-0.1);
-        autoIntake();
-        driveTT(0,0);
-        for (int i=0; i<5; i++) {
-            autoIntake();
+    public void grabAndDump() throws InterruptedException {
+        boolean got_one = autoIntakeGlyphs();
+        if (got_one) {
+            if (alignBoxEdge()) {
+                deliverGlyph();
+            }
         }
     }
 
-    public void autoIntake() throws InterruptedException {
-        if (!opModeIsActive()) return;
+    public boolean autoIntakeGlyphs() throws InterruptedException {
+        boolean got_one = false;
+        for (int i=0; i<2; i++) {
+            StraightIn(0.2,6);
+            got_one = autoIntakeOneGlyph();
+        }
+        if (got_one) {
+            dumper_shake();
+            intakeIn();
+            sleep(100);
+            intakeStop();
+            dumper_shake();
+            robot.sv_dumper.setPosition(robot.SV_DUMPER_LIFT);
+        }
+        return got_one;
+    }
+
+    public boolean autoIntakeOneGlyph() throws InterruptedException {
+        if (!opModeIsActive()) return false;
+        boolean got_one = autoIntake();
+        if (!opModeIsActive()) return false;
+
+        for (int i=0; (i<5) && !got_one; i++) { // try upto 5 times
+            got_one = autoIntake();
+            if (!opModeIsActive()) return false;
+        }
+        return got_one;
+    }
+
+    public boolean autoIntake() throws InterruptedException {
+        if (!opModeIsActive()) { intakeStop(); driveTT(0,0);return false; }
+        driveTT(-0.1,-0.1);
         intakeIn();
         sleep(400);
+        if (!opModeIsActive()) { intakeStop(); driveTT(0,0);return false; }
+        driveTT(0,0);
         intakeOut();
         sleep(200);
+        if (!opModeIsActive()) { intakeStop(); driveTT(0,0);return false; }
+        driveTT(-0.1,-0.1);
         intakeIn();
         sleep(400);
         intakeStop();
+        driveTT(0,0);
+        if (!opModeIsActive()) { return false; }
+        boolean got_one=false;
+        if (robot.use_proximity_sensor) {
+            got_one = !robot.proxFL.getState();
+        }
+        return got_one;
     }
 
-    void alignBoxEdge(boolean toLeft) throws InterruptedException {
+    boolean alignBoxEdge() throws InterruptedException {
         if (robot.old_mode!=SwerveDriveHardware.CarMode.CAR) {
             change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
             sleep(300);
         }
-        double dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
+        double dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 18;
         if (dist>0) StraightCm(-.15, dist);
-        alignUsingIMU();
+        // alignUsingIMU();
         dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
         if (dist>0) StraightCm(-.15, dist);
         change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
         sleep(200);
-        if (toLeft) {
-            driveTT(-0.15, -0.15); // Crabs to the left
-        } else {
-            driveTT(0.15, 0.15); // Crabs to the right
+        boolean edge_detected_L = !robot.proxL.getState();
+        boolean edge_detected_R = !robot.proxR.getState();
+        boolean aligned = (edge_detected_L && edge_detected_R);
+        boolean no_dump = false;
+        if (!aligned) { // done
+            if (!edge_detected_L) {
+                crabRight(0.15);
+            } else {
+                crabLeft(0.15);
+            }
         }
-        if (!opModeIsActive()) return;
-
-        boolean edge_undetected_L;// robot.proxSensor.getState(); // false = something within proximity
-        boolean edge_undetected_R;
+        if (!opModeIsActive()) return false;
         robot.runtime.reset();
         do {
-            edge_undetected_L = robot.proxL.getState();
-            edge_undetected_R = robot.proxR.getState();
-            if (!opModeIsActive()) return;
-        }
-        while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 1.5));
+            edge_detected_L = robot.proxL.getState();
+            edge_detected_R = robot.proxR.getState();
+            aligned = (edge_detected_L && edge_detected_R);
+            if (!opModeIsActive()) no_dump = true;
+        } while (!aligned && !no_dump && (robot.runtime.seconds() < 1.5));
         driveTT(0, 0); // Stops
-
-        if (toLeft) { // crab back 1cm to correct proximity over shoot
-            StraightCm(-.2, 1);
-        } else {
-            StraightCm(.2, 1);
-        }
-        if (!opModeIsActive()) return;
+        if (!opModeIsActive()) return false;
 
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);
         StraightCm(.2, 3); // goes back so that delivery has enough space
+        return aligned;
     }
 
     public void deliverGlyph() throws InterruptedException{
@@ -1966,9 +2053,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
             dumper_down();
             sleep(100);
-            StraightIn(-0.3, 5);
+            StraightIn(-0.3, 6);
             if (!opModeIsActive()) return;
-            StraightIn(0.7, 5);
+            StraightIn(0.7, 6);
         } else {
             StraightIn(0.3, 7);
             if (!opModeIsActive()) return;
@@ -2319,9 +2406,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(500); // wait a little bit for proxSensor to clear out the status
 
         if (isBlue) {
-            driveTT(0.1, 0.1); // Crabs to the right
+            driveTT(0.1, 0.1); // Crabs to the left
         } else { // Red
-            driveTT(-0.1, -0.1); // Crabs to the left
+            driveTT(-0.1, -0.1); // Crabs to the right
         }
         if (!opModeIsActive()) return;
 
@@ -3217,6 +3304,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             else {
                 telemetry.addData("4.2 ProxSensor =", robot.proxL.getState());
             }
+        }
+        if (robot.use_color_sensor) {
+            telemetry.addData("5.2 color =", "L b/r = %3d/%3d, R b/r = %3d/%3d",
+                    robot.l_colorSensor.blue(), robot.l_colorSensor.red(),
+                    robot.r_colorSensor.blue(), robot.r_colorSensor.red());
         }
 
         if (robot.use_Vuforia) {
