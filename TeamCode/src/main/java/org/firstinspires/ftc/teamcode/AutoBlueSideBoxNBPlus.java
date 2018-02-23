@@ -10,8 +10,8 @@ import java.io.StringWriter;
  */
 
 
-@Autonomous(name = "BlueFront-NB", group = "NewBot")
-public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
+@Autonomous(name = "BlueSide-NB-Plus", group = "NewBot")
+public class AutoBlueSideBoxNBPlus extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -28,6 +28,7 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         robot.use_glyph_grabber = false;
         robot.use_proximity_sensor = true;
         robot.use_dumper = true;
+        robot.use_intake = true;
         robot.use_relic_grabber = false;
         robot.use_relic_slider = false;
         robot.use_relic_grabber = false;
@@ -55,15 +56,14 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
             requestOpModeStop();
         }
 
-
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             try {
                 double next_dist = doPlatformMission(true);
 
-                go_to_crypto_prox_NB(next_dist, .3, robot.targetColumn, true, false); // Drive to cryptobox
+                go_to_crypto_prox_NB(next_dist, .4, robot.targetColumn, true, true); // Drive to cryptobox
                 deliverGlyph();
-                turnToCenter(true, false, robot.targetColumn);
+                grabAndDump();
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
@@ -71,9 +71,6 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
                 e.printStackTrace(pw);
                 telemetry.log().add(sw.toString());
                 stop_chassis();
-//                while (true) {
-//                    sleep(1000);
-//                }
             }
             stop_chassis();
         }

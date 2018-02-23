@@ -139,7 +139,7 @@ public class SwerveDriveHardware {
     final static double SV_RIGHT_ARM_UP = 0.11;
     final static double SV_RIGHT_ARM_DOWN = 0.73;
     final static double SV_RIGHT_ARM_UP_NB = 0.2;
-    final static double SV_RIGHT_ARM_DOWN_NB = 0.747;
+    final static double SV_RIGHT_ARM_DOWN_NB = 0.8;
     final static double SV_LEFT_ARM_UP_NB = 0.943;
     final static double SV_LEFT_ARM_DOWN_NB = 0.359;
 
@@ -185,7 +185,7 @@ public class SwerveDriveHardware {
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
-    double drivePowerRatio = 0.5; //Controls the upper cap on drive speed
+    double drivePowerRatio = 0.45; //Controls the upper cap on drive speed
     double intakeRatio = 0.8;
     float drivePower = 0; //Controls the throttling of the drive
 

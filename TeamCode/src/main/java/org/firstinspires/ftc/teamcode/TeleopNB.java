@@ -27,7 +27,7 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_minibot = false;
         robot.use_range_sensor = false;
         robot.use_color_sensor = false;
-        robot.use_proximity_sensor = true;
+        robot.use_proximity_sensor = false;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = true;
@@ -56,9 +56,9 @@ public class TeleopNB extends SwerveUtilLOP {
                 sleep(100);
             }
             if (robot.use_intake && !robot.isTesting) {
-                if (gamepad1.x || gamepad2.left_bumper) { // intake IN
+                if (gamepad1.x || (gamepad2.left_bumper&&!gamepad2.right_bumper)) { // intake IN
                     intakeIn();
-                } else if (gamepad1.b || gamepad2.left_trigger > 0.1) { // intake OUT
+                } else if (gamepad1.b || (gamepad2.left_trigger > 0.1)) { // intake OUT
                     intakeOut();
                 } else {
                     intakeStop();
@@ -310,115 +310,6 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
             }
 
-            if (robot.use_glyph_grabber) {
-                if ((gamepad2.right_stick_x<-0.1) && (gamepad2.left_bumper)) {
-                    // top grabber inc. widen
-                    glyph_grabber_top_widen();
-                } else if ((gamepad2.right_stick_x>0.1) && (gamepad2.left_bumper)) {
-                    // bottom grabber inc. close
-                    glyph_grabber_top_closer();
-                } else if (gamepad2.back && gamepad2.b) { //set glyph grabber to original open position
-                    glyph_grabber_auto_init();
-                    robot.sv_glyph_grabber_top.setPosition(robot.SV_GLYPH_GRABBER_TOP_OPEN);
-                    robot.sv_glyph_grabber_bottom.setPosition(robot.SV_GLYPH_GRABBER_BOTTOM_OPEN);
-                } else if (gamepad2.right_bumper && gamepad2.left_bumper) {
-                    glyph_grabber_auto_init();
-                } else if (gamepad2.left_bumper && gamepad2.y) {
-                    glyph_grabber_open_top();
-                } else if (gamepad2.left_bumper && gamepad2.a) {
-                    glyph_grabber_open_bottom();
-                } else if ((gamepad2.left_bumper&&!gamepad2.y&&!gamepad2.a) || gamepad1.dpad_left) {
-                    glyph_grabber_auto_open();
-                    // should slide back to init
-                    // glyph_slider_init();
-                } else if (gamepad2.back && (gamepad2.left_trigger > 0.1)) { // half close
-                    glyph_grabber_half_close();
-                    sleep(400);
-                } else if (gamepad2.dpad_up && (gamepad2.left_trigger > 0.1)) { // close top
-                    glyph_grabber_auto_close(true,false);
-                    sleep(400);
-                } else if (gamepad2.dpad_down && (gamepad2.left_trigger > 0.1)) { // half close
-                    glyph_grabber_half_close_both();
-                    sleep(400);
-                } else if ((gamepad2.b && (gamepad2.left_trigger > 0.1)) ||
-                        (gamepad1.back && gamepad1.dpad_right)) { // close both
-                    glyph_grabber_all_close();
-                    sleep(400);
-                } else if (gamepad2.right_stick_x>0.1 && (gamepad2.left_trigger > 0.1)) {
-                    // bottom grabber inc. close
-                    glyph_grabber_bottom_closer();
-                } else if (gamepad2.right_stick_x<-0.1 && (gamepad2.left_trigger > 0.1)) {
-                    // bottom grabber inc. widen
-                    glyph_grabber_bottom_widen();
-                } else if ((gamepad2.left_trigger > 0.1) || gamepad1.dpad_right) {
-                    glyph_grabber_auto_close(false,false);
-                } else if (gamepad2.a && gamepad2.dpad_down) {
-                    glyph_slider_init();
-                } else if (gamepad2.back && gamepad2.right_bumper) { // force up
-                    glyph_slider_up_force();
-                } else if (gamepad2.dpad_down) {
-                    glyph_slider_down_auto();
-                } else if (gamepad2.dpad_up) {
-                    glyph_slider_up_auto();
-                } else if (gamepad2.dpad_left) {
-                    glyph_grabber_auto_rotate(1.0);
-                } else if (gamepad2.dpad_right && gamepad2.b) {
-                    rotate_refine_up();
-                } else if (gamepad2.dpad_right && gamepad2.x) {
-                    rotate_refine_down();
-                } else if (gamepad2.dpad_right) {
-                    rotate_refine();
-                } else if (gamepad2.right_bumper || gamepad1.dpad_up) { // manual up
-                    glyph_slider_up();
-                } else if (gamepad2.back && gamepad2.right_trigger > 0.1) { // down and reset
-                    glyph_slider_down_and_reset();
-                }else if ((gamepad2.right_trigger > 0.1) || gamepad1.dpad_down) { // manual down
-                    glyph_slider_down();
-                } else {
-                    glyph_slider_stop();
-                }
-
-            }
-            if (robot.use_relic_grabber) {
-                // relic arm
-                if (gamepad2.right_stick_y>0.1) {
-                    double cur_pos = robot.sv_relic_wrist.getPosition();
-                    if (cur_pos<0.99) {
-                        robot.sv_relic_wrist.setPosition(cur_pos + 0.005);
-                    }
-                } else if (gamepad2.right_stick_y<-0.1) {
-                    double cur_pos = robot.sv_relic_wrist.getPosition();
-                    if (cur_pos>0.01) {
-                        robot.sv_relic_wrist.setPosition(cur_pos - 0.005);
-                    }
-                } else if (gamepad2.a && gamepad2.y) {
-                    relic_arm_middle();
-                } else if (gamepad2.y && !gamepad2.left_bumper) {
-                    relic_arm_up();
-                } else if (gamepad2.a && !gamepad2.left_bumper) {
-                    relic_arm_down();
-                }
-                // relic grabber open/close
-                if (gamepad2.b && !gamepad2.start) {
-                    relic_grabber_close();
-                } else if (gamepad2.x && gamepad2.back) {
-                    // relic_grabber_release();
-                    auto_relic_release();
-                }  else if (gamepad2.x && !gamepad2.dpad_right) {
-                    relic_grabber_release();
-                    // auto_relic_release();
-                } else if (gamepad2.back && (gamepad2.right_stick_y<-0.1)) { // higher
-                    relic_grabber_higher();
-                } else if (gamepad2.back && (gamepad2.right_stick_y>0.1)) { // lower
-                    relic_grabber_lower();
-                } else if (gamepad2.a && gamepad2.y) {
-                    relic_arm_middle();
-                } else if (gamepad2.y) {
-                    relic_arm_up();
-                } else if (gamepad2.a) {
-                    relic_arm_down();
-                }
-            }
             show_telemetry();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.

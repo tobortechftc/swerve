@@ -5,13 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-/*
- * Created by Mason on 2/15/2018.
+/**
+ * Created by Nick on 12/8/2017.
  */
 
-
-@Autonomous(name = "BlueFront-NB", group = "NewBot")
-public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
+@Autonomous(name = "RedSide-NB-Plus", group = "NewBot")
+public class AutoRedSideBoxNBPlus extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -28,11 +27,11 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         robot.use_glyph_grabber = false;
         robot.use_proximity_sensor = true;
         robot.use_dumper = true;
+        robot.use_intake = true;
         robot.use_relic_grabber = false;
         robot.use_relic_slider = false;
-        robot.use_relic_grabber = false;
 
-        robot.allianceColor = TeamColor.BLUE;
+        robot.allianceColor = TeamColor.RED;
 
         init_and_test();
 
@@ -45,7 +44,7 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         waitForStart();
 
         try {
-            start_init();
+        start_init();
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -55,15 +54,13 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
             requestOpModeStop();
         }
 
-
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             try {
-                double next_dist = doPlatformMission(true);
-
-                go_to_crypto_prox_NB(next_dist, .3, robot.targetColumn, true, false); // Drive to cryptobox
+                double next_dist = doPlatformMission(false);
+                go_to_crypto_prox_NB(next_dist, .3, robot.targetColumn, false, true); // Drive to cryptobox
                 deliverGlyph();
-                turnToCenter(true, false, robot.targetColumn);
+                grabAndDump();
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
@@ -71,9 +68,6 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
                 e.printStackTrace(pw);
                 telemetry.log().add(sw.toString());
                 stop_chassis();
-//                while (true) {
-//                    sleep(1000);
-//                }
             }
             stop_chassis();
         }
