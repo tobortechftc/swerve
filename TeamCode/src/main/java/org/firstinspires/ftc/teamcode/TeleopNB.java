@@ -309,7 +309,46 @@ public class TeleopNB extends SwerveUtilLOP {
                     relic_slider_stop();
                 }
             }
-
+            if (robot.use_relic_grabber) {
+                // relic arm
+                if (gamepad2.right_stick_y > 0.1) {
+                    double cur_pos = robot.sv_relic_wrist.getPosition();
+                    if (cur_pos < 0.99) {
+                        robot.sv_relic_wrist.setPosition(cur_pos + 0.005);
+                    }
+                } else if (gamepad2.right_stick_y < -0.1) {
+                    double cur_pos = robot.sv_relic_wrist.getPosition();
+                    if (cur_pos > 0.01) {
+                        robot.sv_relic_wrist.setPosition(cur_pos - 0.005);
+                    }
+                } else if (gamepad2.a && gamepad2.y) {
+                    relic_arm_middle();
+                } else if (gamepad2.y && !gamepad2.left_bumper) {
+                    relic_arm_up();
+                } else if (gamepad2.a && !gamepad2.left_bumper) {
+                    relic_arm_down();
+                }
+                // relic grabber open/close
+                if (gamepad2.b && !gamepad2.start) {
+                    relic_grabber_close();
+                } else if (gamepad2.x && gamepad2.back) {
+                    // relic_grabber_release();
+                    auto_relic_release();
+                } else if (gamepad2.x && !gamepad2.dpad_right) {
+                    relic_grabber_release();
+                    // auto_relic_release();
+                } else if (gamepad2.back && (gamepad2.right_stick_y < -0.1)) { // higher
+                    relic_grabber_higher();
+                } else if (gamepad2.back && (gamepad2.right_stick_y > 0.1)) { // lower
+                    relic_grabber_lower();
+                } else if (gamepad2.a && gamepad2.y) {
+                    relic_arm_middle();
+                } else if (gamepad2.y) {
+                    relic_arm_up();
+                } else if (gamepad2.a) {
+                    relic_arm_down();
+                }
+            }
             show_telemetry();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.

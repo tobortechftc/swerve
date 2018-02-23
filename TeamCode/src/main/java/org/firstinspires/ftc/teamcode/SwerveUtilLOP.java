@@ -455,13 +455,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         rotate_to_target(0.2);
     }
 
-    public void relic_grabber_higher() {
+    public void relic_grabber_lower() {
         double pos = robot.sv_relic_grabber.getPosition()-0.04;
         if (pos<0.001) pos = 0.001;
         robot.sv_relic_grabber.setPosition(pos);
     }
 
-    public void relic_grabber_lower() {
+    public void relic_grabber_higher() {
         double pos = robot.sv_relic_grabber.getPosition()+0.04;
         if (pos>0.99) pos = 0.99;
         robot.sv_relic_grabber.setPosition(pos);
