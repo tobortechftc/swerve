@@ -89,6 +89,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             glyph_grabber_auto_open();
             glyph_slider_init();
         }
+        if (robot.use_dumper) {
+            lift_to_target(robot.LIFT_INIT_COUNT);
+        }
         if (robot.use_relic_grabber) {
             if (robot.use_newbot) {
                 relic_grabber_close();
@@ -770,7 +773,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         double power = -0.95;
         // never lower than 0
         int cur_pos = robot.mt_lift.getCurrentPosition();
-        if ((cur_pos<=0) && !force)
+        if ((cur_pos<=robot.LIFT_INIT_COUNT) && !force)
             power = 0.0;
         robot.mt_lift.setPower(power);
     }
@@ -878,6 +881,13 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         robot.mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.mt_relic_slider.setPower(0);
+    }
+
+    public void lift_to_target(int pos) {
+        if (!robot.gg_slider_encoder_ok)
+            return;
+        robot.target_gg_slider_pos = pos;
+        slide_to_target(0.5);
     }
 
     public void slide_to_target(double power) {
@@ -3260,6 +3270,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.sv_dumper!=null && robot.sv_dumper.getPosition()<0.63) {
             return;
         }
+        if (Math.abs(robot.motorFrontLeft.getPower())<0.01 ||
+                Math.abs(robot.motorFrontRight.getPower())<0.01) {
+            driveTT(-0.1,-0.1);
+        }
         robot.mt_intake_left.setPower(robot.intakeRatio);
         robot.mt_intake_right.setPower(robot.intakeRatio);
     }
@@ -3276,6 +3290,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             return;
         robot.mt_intake_left.setPower(0);
         robot.mt_intake_right.setPower(0);
+        driveTT(0,0);
     }
 
     void show_telemetry() throws InterruptedException {
