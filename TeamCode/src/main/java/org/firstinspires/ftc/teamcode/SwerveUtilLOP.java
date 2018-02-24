@@ -1965,14 +1965,16 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (opModeIsActive()) {
             StraightIn(-0.8,20);
         }
+        /* disable the dummping mode
         if(robot.runtimeAuto.seconds() > 28){
-
+            return;
         }
         else if (got_one && opModeIsActive()) {
             if (alignBoxEdge() && opModeIsActive()) {
-                //deliverGlyph();
+                deliverGlyph();
             }
         }
+        */
     }
 
     public boolean autoIntakeGlyphs() throws InterruptedException {
@@ -1994,9 +1996,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public boolean autoIntakeOneGlyph() throws InterruptedException {
-        if (!opModeIsActive()) return false;
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) return false;
         boolean got_one = autoIntake();
-        if (!opModeIsActive()) return false;
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) return false;
 
         for (int i=0; (i<4) && !got_one; i++) { // try upto 4 times
             if(robot.runtimeAuto.seconds() > 28) return false;
@@ -2007,21 +2009,29 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public boolean autoIntake() throws InterruptedException {
-        if (!opModeIsActive()) { intakeStop(); driveTT(0,0);return false; }
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) {
+            intakeStop(); driveTT(0,0);return false;
+        }
         driveTT(-0.1,-0.1);
         intakeIn();
         sleep(400);
-        if (!opModeIsActive()) { intakeStop(); driveTT(0,0);return false; }
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) {
+            intakeStop(); driveTT(0,0);return false;
+        }
         driveTT(0,0);
         intakeOut();
         sleep(200);
-        if (!opModeIsActive()) { intakeStop(); driveTT(0,0);return false; }
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) {
+            intakeStop(); driveTT(0,0);return false;
+        }
         driveTT(-0.1,-0.1);
         intakeIn();
         sleep(400);
         intakeStop();
         driveTT(0,0);
-        if (!opModeIsActive()) { return false; }
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) {
+            return false;
+        }
         boolean got_one=false;
         if (robot.use_proximity_sensor) {
             got_one = !robot.proxFL.getState();
@@ -2046,10 +2056,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
         if (dist>0) StraightCm(-.2, dist);
         change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-        boolean edge_detected_L = false;
-        robot.proxL.setState(true);
-        boolean edge_detected_R = false;
-        robot.proxR.setState(true);
+        reset_prox();
+        boolean edge_detected_L = robot.proxL.getState();
+        boolean edge_detected_R = robot.proxR.getState();
         boolean aligned = (edge_detected_L && edge_detected_R);
         boolean no_dump = false;
         if (!aligned) { // done
@@ -2382,13 +2391,15 @@ public class SwerveUtilLOP extends LinearOpMode {
             } else { // Front Red
                 driveDistance = 3 + (19 * (2 - targetColumn)); // 19cm between columns
             }
-
-            dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
-            if (dist > 50 || dist <= 5) {
-                StraightCm(-.2, 10);
-            } else if (dist > 0) {
-                StraightCm(-.2, dist); // forward using front range sensor, so it is close to cryptobox
+            for (int i=0; i<2; i++) {
+                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
+                if (dist > 50 || (dist <= 5 && i==0)) {
+                    StraightCm(-.2, 16);
+                } else if (dist > 0) {
+                    StraightCm(-.2, dist); // forward using front range sensor, so it is close to cryptobox
+                }
             }
+
             if (!opModeIsActive()) return;
 
             //alignUsingIMU(0);
