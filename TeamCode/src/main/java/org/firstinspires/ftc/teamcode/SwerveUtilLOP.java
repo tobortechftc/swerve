@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
@@ -91,6 +92,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (robot.use_dumper) {
             lift_to_target(robot.LIFT_INIT_COUNT);
+            robot.runtimeAuto.reset();
         }
         if (robot.use_relic_grabber) {
             if (robot.use_newbot) {
@@ -1906,7 +1908,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             else
                 l_arm_up(); // arm up to ensure the jewel is knocked out
             // next_dist = -1.0*dist*directionI;
-            StraightCm(.25 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
+            StraightCm(.4 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
         } else { // oldBot
             if (isBlueAlliance) {
                 if (directionI == 1) { // Right jewel is our color
@@ -1961,11 +1963,14 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         boolean got_one = autoIntakeGlyphs();
         if (opModeIsActive()) {
-            StraightIn(-0.8,22);
+            StraightIn(-0.8,20);
         }
-        if (got_one && opModeIsActive()) {
+        if(robot.runtimeAuto.seconds() > 28){
+
+        }
+        else if (got_one && opModeIsActive()) {
             if (alignBoxEdge() && opModeIsActive()) {
-                deliverGlyph();
+                //deliverGlyph();
             }
         }
     }
@@ -1976,6 +1981,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             StraightIn(0.2,6);
             got_one = autoIntakeOneGlyph();
         }
+        if(robot.runtimeAuto.seconds() > 28) return false;
         if (got_one && opModeIsActive()) {
             dumper_shake();
             intakeIn();
@@ -1993,6 +1999,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!opModeIsActive()) return false;
 
         for (int i=0; (i<4) && !got_one; i++) { // try upto 4 times
+            if(robot.runtimeAuto.seconds() > 28) return false;
             got_one = autoIntake();
             if (!opModeIsActive()) return false;
         }
@@ -2028,7 +2035,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(300);
         }
         double dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 18;
-        if (dist>0) StraightCm(-.15, dist);
+        if (dist>0) StraightCm(-.2, dist);
         if (!robot.servo_tune_up) {
             if (robot.allianceColor == TeamColor.BLUE) {
                 alignUsingIMU(90);
@@ -2037,18 +2044,19 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
         dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
-        if (dist>0) StraightCm(-.15, dist);
+        if (dist>0) StraightCm(-.2, dist);
         change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-        sleep(200);
-        boolean edge_detected_L = !robot.proxL.getState();
-        boolean edge_detected_R = !robot.proxR.getState();
+        boolean edge_detected_L = false;
+        robot.proxL.setState(true);
+        boolean edge_detected_R = false;
+        robot.proxR.setState(true);
         boolean aligned = (edge_detected_L && edge_detected_R);
         boolean no_dump = false;
         if (!aligned) { // done
             if (!edge_detected_L) {
-                crabRight(0.15);
+                crabRight(0.2);
             } else {
-                crabLeft(0.15);
+                crabLeft(0.2);
             }
         }
         if (!opModeIsActive()) return false;
@@ -2058,7 +2066,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             edge_detected_R = robot.proxR.getState();
             aligned = (edge_detected_L && edge_detected_R);
             if (!opModeIsActive()) no_dump = true;
-        } while (!aligned && !no_dump && (robot.runtime.seconds() < 1));
+        } while (!aligned && !no_dump && (robot.runtime.seconds() < 2));
         driveTT(0, 0); // Stops
         if (!opModeIsActive()) return false;
 
@@ -2324,6 +2332,15 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(300);
     }
 
+    void reset_prox(){
+        robot.proxL.setMode(DigitalChannel.Mode.OUTPUT);
+        robot.proxR.setMode(DigitalChannel.Mode.OUTPUT);
+        robot.proxL.setState(true);
+        robot.proxR.setState(true);
+        robot.proxL.setMode(DigitalChannel.Mode.INPUT);
+        robot.proxR.setMode(DigitalChannel.Mode.INPUT);
+    }
+
     void go_to_crypto_prox_NB(double next_dist, double power, int targetColumn, boolean isBlue, boolean isSideBox)throws InterruptedException {
         if (!robot.use_newbot) go_to_crypto_prox(power, targetColumn, isBlue, isSideBox);
         if (targetColumn < 0) targetColumn = 1;
@@ -2382,7 +2399,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             else
                 StraightCm(power, driveDistance);
         }
-        sleep(500); // wait a little bit for proxSensor to clear out the status
+        // sleep(500); // wait a little bit for proxSensor to clear out the status
 
         if (isBlue) {
             driveTT(0.15, 0.15); // Crabs to the left
@@ -2391,8 +2408,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (!opModeIsActive()) return;
 
-        boolean edge_undetected_L;// robot.proxSensor.getState(); // false = something within proximity
-        boolean edge_undetected_R;
+        boolean edge_undetected_L=true;// robot.proxSensor.getState(); // false = something within proximity
+        boolean edge_undetected_R=true;
+        reset_prox();
         robot.runtime.reset();
         do {
             edge_undetected_L = robot.proxL.getState();
@@ -2606,10 +2624,10 @@ public class SwerveUtilLOP extends LinearOpMode {
     void alignUsingIMU(double degree) throws InterruptedException {
         double imu_diff = imu_heading()-degree;
         if (imu_diff < -0.5) {
-            TurnLeftD(.2, Math.abs(imu_diff));
+            TurnLeftD(.15, Math.abs(imu_diff));
         }
         else if (imu_diff > 0.5) {
-            TurnRightD(.2, Math.abs(imu_diff));
+            TurnRightD(.15, Math.abs(imu_diff));
         }
     }
 

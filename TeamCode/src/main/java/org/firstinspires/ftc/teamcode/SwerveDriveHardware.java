@@ -271,6 +271,7 @@ public class SwerveDriveHardware {
 
 
     ElapsedTime runtime = new ElapsedTime();
+    ElapsedTime runtimeAuto = new ElapsedTime();
 
     static double SERVO_90_DEGREE = 0.479;
     static double CRAB_DIFF_INC = 0.4663;
