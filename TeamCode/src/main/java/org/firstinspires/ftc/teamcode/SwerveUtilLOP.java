@@ -100,7 +100,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             } else {
                 relic_grabber_open(false);
             }
-            relic_arm_down();
+            relic_arm_auto();
         }
         if (robot.use_Vuforia) {
             robot.targetColumn = get_cryptobox_column();
@@ -508,6 +508,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void auto_relic_release() {
+        stop_chassis();
         double cur_pos = robot.sv_relic_wrist.getPosition();
         if (Math.abs(cur_pos - robot.SV_RELIC_WRIST_DOWN) > 0.1) {
             relic_arm_down();
@@ -542,11 +543,13 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
         }
+        if (power>0) stop_chassis();
         robot.mt_relic_slider.setPower(Math.abs(power));
     }
 
     public void relic_slider_out(double power) {
         if (Math.abs(power)>1) power=1;
+        if (power>0) stop_chassis();
         robot.mt_relic_slider.setPower(-1*Math.abs(power));
     }
 
@@ -554,8 +557,18 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_relic_slider.setPower(0);
     }
 
+    public void relic_arm_auto() {
+        stop_chassis();
+        if (robot.use_newbot) {
+            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
+        } else {
+            relic_arm_down();
+        }
+    }
+
     public void relic_arm_down()
     {
+        stop_chassis();
         double pos = robot.sv_relic_wrist.getPosition();
         if (robot.use_newbot) {
             if (Math.abs(pos - robot.SV_RELIC_WRIST_DOWN_R) > 0.2) {
@@ -592,6 +605,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void relic_arm_up() {
+        stop_chassis();
         double pos = robot.sv_relic_wrist.getPosition();
         if (robot.use_newbot) {
             if (Math.abs(pos - robot.SV_RELIC_WRIST_UP) > 0.15) {
@@ -623,6 +637,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void relic_arm_middle() {
+        stop_chassis();
         if (robot.use_newbot) {
             robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_MIDDLE);
         } else {
@@ -2348,6 +2363,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.proxR.setState(true);
         robot.proxL.setMode(DigitalChannel.Mode.INPUT);
         robot.proxR.setMode(DigitalChannel.Mode.INPUT);
+        sleep(200);
     }
 
     void go_to_crypto_prox_NB(double next_dist, double power, int targetColumn, boolean isBlue, boolean isSideBox)throws InterruptedException {
@@ -2411,6 +2427,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 StraightCm(power, driveDistance);
         }
         // sleep(500); // wait a little bit for proxSensor to clear out the status
+        reset_prox();
 
         if (isBlue) {
             driveTT(0.15, 0.15); // Crabs to the left
@@ -2421,14 +2438,12 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         boolean edge_undetected_L=true;// robot.proxSensor.getState(); // false = something within proximity
         boolean edge_undetected_R=true;
-        reset_prox();
         robot.runtime.reset();
         do {
             edge_undetected_L = robot.proxL.getState();
             edge_undetected_R = robot.proxR.getState();
             if (!opModeIsActive()) return;
-        }
-        while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 2));
+        } while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 2));
 
         driveTT(0, 0); // Stops
 

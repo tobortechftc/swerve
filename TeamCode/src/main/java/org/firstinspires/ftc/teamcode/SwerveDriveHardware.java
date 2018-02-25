@@ -112,7 +112,7 @@ public class SwerveDriveHardware {
     final static double GG_SLIDE_INCHES_PER_ROTATION = 6.5; // glyph slider moves # inches per motor rotation
     final static double GG_SLIDE_MAX_COUNT = 4700; // ~14 inches
     final static int LIFT_INIT_COUNT = 30;
-    final static int LIFT_MAX_COUNT = 2600+LIFT_INIT_COUNT;
+    final static int LIFT_MAX_COUNT = 2470+LIFT_INIT_COUNT;
     final static int GG_SLIDE_INIT = 10;
     final static int RELIC_SLIDE_MAX = -8800;
 
@@ -164,6 +164,7 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ARM_DOWN = 0.2;
     final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
     final static double SV_RELIC_WRIST_INIT = 0.718;
+    final static double SV_RELIC_WRIST_DOWN_AUTO = 0.60; // down out to prevent crab mode
     final static double SV_RELIC_WRIST_UP = 0.15;
     final static double SV_RELIC_WRIST_MIDDLE = 0.4;
     final static double SV_RELIC_WRIST_DOWN = 0.68;
@@ -185,7 +186,7 @@ public class SwerveDriveHardware {
     double motorPowerLeft;
     double motorPowerRight;
     double motorPowerTurn;
-    double drivePowerRatio = 0.45; //Controls the upper cap on drive speed
+    double drivePowerRatio = 0.5; //Controls the upper cap on drive speed
     double intakeRatio = 0.8;
     float drivePower = 0; //Controls the throttling of the drive
 
@@ -243,10 +244,10 @@ public class SwerveDriveHardware {
     public Servo servoBackLeft = null;
     public Servo servoBackRight = null;
 
-    public Servo sv_shoulder;
-    public Servo sv_elbow;
-    public Servo sv_left_arm;
-    public Servo sv_right_arm;
+    public Servo sv_shoulder = null;
+    public Servo sv_elbow = null;
+    public Servo sv_left_arm = null;
+    public Servo sv_right_arm = null;
 
     public Servo sv_glyph_grabber_top = null;
     public Servo sv_glyph_grabber_bottom = null;
@@ -287,13 +288,13 @@ public class SwerveDriveHardware {
     static double NB_SERVO_90_DEGREE = 0.479;
     static double NB_CRAB_DIFF_INC = 0.4663;
     static double NB_CRAB_DIFF_DEC = 0.4762;
-    static double NB_LEFT_SV_DIFF = -0.011;
-    static double NB_RIGHT_SV_DIFF = -0.010;
+    static double NB_LEFT_SV_DIFF = -0.017;
+    static double NB_RIGHT_SV_DIFF = 0.010;
 
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5472;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.5400;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.4550;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5739;
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5333;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.5367;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.4717;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5422;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;

@@ -298,12 +298,12 @@ public class TeleopNB extends SwerveUtilLOP {
                 if (gamepad2.left_stick_y > 0.1) { // slide in
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
-                        pw *= 0.5;
+                        pw *= 0.7;
                     relic_slider_in(pw, gamepad2.start); // push start to force slide in further
                 } else if (gamepad2.left_stick_y < -0.1) { // slide out
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
-                        pw *= 0.75;
+                        pw *= 0.85;
                     relic_slider_out(pw);
                 } else {
                     relic_slider_stop();
