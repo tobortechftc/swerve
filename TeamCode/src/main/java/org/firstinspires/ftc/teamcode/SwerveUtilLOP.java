@@ -134,6 +134,14 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
     }
+    public double imu2_heading() {
+        if (!robot.use_imu)
+            return 999;
+
+        robot.angles = robot.imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return robot.angles.firstAngle;
+
+    }
 
     public void dumper_vertical() {
         if (!robot.use_dumper)
@@ -1974,11 +1982,11 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     public void grabAndDump() throws InterruptedException {
         if (opModeIsActive()) {
-            StraightIn(0.8,21);
+            StraightIn(0.8,22);
         }
         boolean got_one = autoIntakeGlyphs();
         if (opModeIsActive()) {
-            StraightIn(-0.8,20);
+            StraightIn(-0.8,21);
         }
         /* disable the dummping mode
         if(robot.runtimeAuto.seconds() > 28){
@@ -2027,21 +2035,21 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) {
             intakeStop(); driveTT(0,0);return false;
         }
-        driveTT(-0.1,-0.1);
+        driveTT(-0.15,-0.15);
         intakeIn();
-        sleep(400);
+        sleep(500);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) {
             intakeStop(); driveTT(0,0);return false;
         }
         driveTT(0,0);
         intakeOut();
-        sleep(200);
+        sleep(150);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) {
             intakeStop(); driveTT(0,0);return false;
         }
         driveTT(-0.1,-0.1);
         intakeIn();
-        sleep(400);
+        sleep(450);
         intakeStop();
         driveTT(0,0);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > 28)) {
@@ -2114,7 +2122,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
             dumper_down();
             sleep(100);
-            StraightIn(-0.3, 6);
+            // StraightIn(-0.3, 6);
+            driveTT(0.3, 0.3); // drive backward for .5 sec
+            sleep(500);
+            driveTT(0,0);
             if (!opModeIsActive()) return;
             StraightIn(0.7, 6);
         } else {
@@ -2388,16 +2399,21 @@ public class SwerveUtilLOP extends LinearOpMode {
                 TurnLeftD(0.35, 90);
                 alignUsingIMU(90.0);
             } else {
-                TurnRightD(0.35, 91);
+                TurnRightD(0.35, 90);
                 alignUsingIMU(-90.0);
             }
             if (!opModeIsActive()) return;
-            for(int i = 0 ; i < 2 ; i++) {
+            for(int i = 0 ; i < 3 ; i++) {
                 dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
                 if (dist > 30) dist = 7;
+                if (dist<1) break;
                 StraightCm(-.2, dist); // drive close to cryptobox
             }
-
+            if (isBlue) {
+                alignUsingIMU(90.0);
+            } else {
+                alignUsingIMU(-90.0);
+            }
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
             sleep(200);
             if (!opModeIsActive()) return;
@@ -2407,13 +2423,14 @@ public class SwerveUtilLOP extends LinearOpMode {
             } else { // Front Red
                 driveDistance = 3 + (19 * (2 - targetColumn)); // 19cm between columns
             }
-            for (int i=0; i<2; i++) {
+            for (int i=0; i<3; i++) {
                 dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
                 if (dist > 50 || (dist <= 5 && i==0)) {
                     StraightCm(-.2, 16);
                 } else if (dist > 0) {
                     StraightCm(-.2, dist); // forward using front range sensor, so it is close to cryptobox
                 }
+                if (dist<1) break;
             }
 
             if (!opModeIsActive()) return;
@@ -2447,13 +2464,11 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         driveTT(0, 0); // Stops
 
-        if (!robot.use_newbot) {
-            if (isBlue) { // crab back 1cm to correct proximity over shoot
-                StraightCm(.2, 1);
-            } else {
-                StraightCm(-.2, 1);
-            }
+
+        if (!isBlue && isSideBox) { // crab back 1cm to correct proximity over shoot
+            StraightCm(-.2, 2);
         }
+
         if (!opModeIsActive()) return;
 
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
@@ -2650,10 +2665,10 @@ public class SwerveUtilLOP extends LinearOpMode {
     void alignUsingIMU(double degree) throws InterruptedException {
         double imu_diff = imu_heading()-degree;
         if (imu_diff < -0.5) {
-            TurnLeftD(.15, Math.abs(imu_diff));
+            TurnLeftD(.15, Math.abs(imu_diff)-0.5);
         }
         else if (imu_diff > 0.5) {
-            TurnRightD(.15, Math.abs(imu_diff));
+            TurnRightD(.15, Math.abs(imu_diff)-0.5);
         }
     }
 
@@ -3318,8 +3333,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         double range_front_right = getRange(RangeSensor.FRONT_RIGHT);
         if (range_front_right>365) range_front_right=0;
         if (robot.use_imu||robot.use_range_sensor) {
-            telemetry.addData("4.1 IMU/Range", "%s=%.2f/L=%.1f/R=%.1f cm",
-                    (robot.use_imu2?"i2":"i1"),imu_heading(),range_front_left,range_front_right);
+            telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.2f)/L=%.1f/R=%.1f cm",
+                    (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right);
         }
         if (robot.use_proximity_sensor) {
             if (robot.use_newbot) {
