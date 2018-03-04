@@ -33,6 +33,7 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_relic_grabber = true;
         robot.use_relic_slider = true;
         robot.use_arm = true;
+        robot.use_front_arm = false;
 
         init_and_test();
 
@@ -69,6 +70,11 @@ public class TeleopNB extends SwerveUtilLOP {
                 } else if (gamepad1.dpad_down && gamepad1.x) {
                     robot.intakeRatio -= 0.01;
                     sleep(50);
+                }
+            }
+            if (robot.use_front_arm) {
+                if (gamepad2.back && gamepad2.dpad_down) {
+                    front_arm_sweep();
                 }
             }
             if (robot.use_dumper && !robot.isTesting) {

@@ -43,6 +43,7 @@ public class SwerveDriveHardware {
     public boolean use_test_servo = false;
     public boolean use_test_motor = false;
     public boolean use_proximity_sensor = false;
+    public boolean use_front_arm = false;
     public boolean servo_tune_up = false;
 
     public SwerveUtilLOP.TeamColor allianceColor = SwerveUtilLOP.TeamColor.BLUE; // default blue team
@@ -143,6 +144,8 @@ public class SwerveDriveHardware {
     final static double SV_RIGHT_ARM_DOWN_NB = 0.8;
     final static double SV_LEFT_ARM_UP_NB = 0.943;
     final static double SV_LEFT_ARM_DOWN_NB = 0.359;
+    final static double SV_FRONT_ARM_IN = 0.82;
+    final static double SV_FRONT_ARM_OUT = 0.43;
 
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.3; //from .275
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.38;
@@ -204,7 +207,7 @@ public class SwerveDriveHardware {
     double insideWheelsMod;
     double outsideWheelsMod;
 
-    int targetColumn;
+    int targetColumn = -1;
 
     double blue = 0;
     double red = 0;
@@ -249,6 +252,7 @@ public class SwerveDriveHardware {
     public Servo sv_elbow = null;
     public Servo sv_left_arm = null;
     public Servo sv_right_arm = null;
+    public Servo sv_front_arm = null;
 
     public Servo sv_glyph_grabber_top = null;
     public Servo sv_glyph_grabber_bottom = null;
@@ -587,6 +591,10 @@ public class SwerveDriveHardware {
                 sv_right_arm.setPosition(SV_RIGHT_ARM_UP);
             }
 
+        }
+        if (use_front_arm) {
+            sv_front_arm = hwMap.servo.get("sv_front_arm");
+            sv_front_arm.setPosition(SV_FRONT_ARM_IN);
         }
 
     }

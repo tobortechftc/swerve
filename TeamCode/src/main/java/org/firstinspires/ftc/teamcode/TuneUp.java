@@ -32,6 +32,7 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_test_motor = false;
         robot.use_range_sensor = true;
         robot.use_proximity_sensor = true;
+        robot.use_front_arm = false;
 
         init_and_test();
 
@@ -39,7 +40,7 @@ public class TuneUp extends SwerveUtilLOP {
         telemetry.addData("My name is Tobot.", "Need tune-up?");
         telemetry.update();
 
-        int num_servos = 14;
+        int num_servos = 15;
         int cur_sv_ix = 0;
         boolean show_all = true;
         Servo[] sv_list = {
@@ -56,7 +57,8 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.sv_relic_grabber,
                 robot.sv_relic_wrist,
                 robot.sv_relic_elbow,
-                robot.sv_dumper
+                robot.sv_dumper,
+                robot.sv_front_arm
         };
         String [] sv_names = {
                 "FrontLeft",
@@ -72,19 +74,20 @@ public class TuneUp extends SwerveUtilLOP {
                 "sv_relic_grabber",
                 "sv_relic_wrist",
                 "sv_relic_elbow",
-                "sv_dumper"
+                "sv_dumper",
+                "sv_front_arm"
         };
 
         num_servos = sv_list.length;
-        while (cur_sv_ix < num_servos && sv_list[cur_sv_ix] == null) {
-            cur_sv_ix++;
-        }
-        if (cur_sv_ix==num_servos) cur_sv_ix = 0; // no servo available
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         start_init();
+        while (cur_sv_ix < num_servos && sv_list[cur_sv_ix] == null) {
+            cur_sv_ix++;
+        }
+        if (cur_sv_ix==num_servos) cur_sv_ix = 0; // no servo available
 
         if (robot.use_glyph_grabber) {
             glyph_grabber_auto_open();
