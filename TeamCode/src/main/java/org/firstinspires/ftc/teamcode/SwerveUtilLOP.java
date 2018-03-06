@@ -1982,7 +1982,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     public void grabAndDump() throws InterruptedException {
         if (opModeIsActive()) {
-            StraightCm(0.8,56);
+            StraightCm(0.95,60);
         }
         boolean got_one = autoIntakeGlyphs();
         if (opModeIsActive()) {
@@ -1990,9 +1990,12 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (dist<53) dist=53;
             else if (dist>80)
                 dist = 80;
-            StraightCm(-0.8,dist);
+            if (robot.runtimeAuto.seconds() > 27.5 || got_one==false) {
+                dist -= 25;
+            }
+            StraightCm(-0.9,dist);
         }
-        if(robot.runtimeAuto.seconds() > 28 && robot.servo_tune_up==false){
+        if((robot.runtimeAuto.seconds() > 28 || got_one==false) && robot.servo_tune_up==false){
             return;
         }
         else if (got_one && opModeIsActive()) {
@@ -2004,37 +2007,41 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void quickDump() throws InterruptedException {
-        double turn_left_angles = 0;
+        double turn_left_angles = -5;
+        /*
         if (robot.allianceColor == TeamColor.BLUE) {
-            if (robot.targetColumn==0)
-                turn_left_angles =  15.0;
-            else if (robot.targetColumn==2)
-                turn_left_angles =  -15.0;
-        } else { // Side Red
             if (robot.targetColumn==2)
-                turn_left_angles =  15.0;
-            else if (robot.targetColumn==1)
-                turn_left_angles =  -15.0;        }
+                turn_left_angles = 15.0;
+            else if (robot.targetColumn==0)
+                turn_left_angles = -15.0;
+        } else { // Side Red
+            if (robot.targetColumn==0)
+                turn_left_angles = 15.0;
+            else if (robot.targetColumn==2)
+                turn_left_angles = -15.0;        }
+        */
         if (turn_left_angles>0)
-            TurnLeftD(.4, turn_left_angles);
+            TurnLeftD(.6, turn_left_angles);
         else
-            TurnRightD(.4, -1*turn_left_angles);
+            TurnRightD(.6, -1*turn_left_angles);
 
         if (!opModeIsActive()) return;
         dumper_vertical();
         dumper_up();
         if (!opModeIsActive()) return;
-        sleep(600);
+        sleep(500);
         if (!opModeIsActive()) return;
         if (robot.runtimeAuto.seconds() < 29 || robot.servo_tune_up==true) {
-            sleep(100);
-            driveTT(0.4, 0.4); // drive backward for .3 sec
-            sleep(300);
+            // sleep(100);
+            driveTT(0.5, 0.5); // drive backward for .2 sec
+            sleep(200);
             driveTT(0, 0);
             if (!opModeIsActive()) return;
-            StraightIn(0.8,4);
+            StraightIn(0.9,4);
             if (!opModeIsActive()) return;
             dumper_down();
+        } else {
+            StraightIn(0.9,4);
         }
         if (!opModeIsActive()) return;
     }
