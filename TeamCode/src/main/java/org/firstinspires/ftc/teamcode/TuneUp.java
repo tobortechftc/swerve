@@ -156,13 +156,13 @@ public class TuneUp extends SwerveUtilLOP {
             if (robot.use_newbot) { // newbot related control
                 if (robot.use_dumper) {
                     if (gamepad1.dpad_up && gamepad1.a) {
-                        autoIntakeGlyphs();
+                        autoIntakeGlyphs(true);
                     } else if (gamepad1.dpad_up && gamepad1.b) {
                         alignBoxEdge();
                     } else if (gamepad1.dpad_up && gamepad1.y) {
                         deliverGlyph();
                     } else if (gamepad1.dpad_up && gamepad1.x) {
-                        grabAndDump();
+                        grabAndDump(true);
                     }
                 }
             } // end use_swerve
