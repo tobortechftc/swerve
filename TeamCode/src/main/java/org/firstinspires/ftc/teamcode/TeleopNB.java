@@ -179,7 +179,7 @@ public class TeleopNB extends SwerveUtilLOP {
                             // sleep(200);
                         }
                         // double pw_dir = (gamepad1.right_stick_y>0.1?-1.0:1.0);
-                        double pw_dir = (gamepad1.right_stick_x > 0.1 ? 1.0 : -1.0);
+                        double pw_dir = (gamepad1.right_stick_x > 0.1 ? -1.0 : 1.0);
                         // while (Math.abs(gamepad1.left_stick_y -gamepad1.right_stick_y) > 0.4) {
                         while (Math.abs(gamepad1.right_stick_x) > 0.1) {
                             robot.motorFrontLeft.setPower(robot.drivePowerRatio * pw_dir);
