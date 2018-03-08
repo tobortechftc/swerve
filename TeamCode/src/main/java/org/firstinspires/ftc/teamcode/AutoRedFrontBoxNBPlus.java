@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -8,7 +9,7 @@ import java.io.StringWriter;
 /**
  * Created by Nick on 12/8/2017.
  */
-
+@Disabled
 @Autonomous(name = "RedFront-NB-Plus", group = "NewBot")
 public class AutoRedFrontBoxNBPlus extends SwerveUtilLOP{
     @Override
