@@ -2479,8 +2479,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         double driveDistance;
         double dist;
         if (isSideBox) {
-            if (isBlue) driveDistance = 3 + (19 * targetColumn); // 19cm between columns
-            else driveDistance = 3 + (19 * (2 - targetColumn));
+            if (isBlue) driveDistance = 3 + (18 * targetColumn); // 18cm between columns
+            else driveDistance = 3 + (18 * (2 - targetColumn));
             if (driveDistance<7) driveDistance=7; // ensure turn not hitting balance stone
             StraightCm(-power, driveDistance); // drive to cryptobox
 
@@ -2508,9 +2508,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
         } else { // Front box
             if (isBlue) { // Front Blue
-                driveDistance = 2 + (19 * targetColumn); // 19cm between columns
+                driveDistance = 2 + (18 * targetColumn); // 18cm between columns
             } else { // Front Red
-                driveDistance = 5 + (19 * (2 - targetColumn)); // 19cm between columns
+                driveDistance = 5 + (18 * (2 - targetColumn)); // 18cm between columns
             }
             for (int i=0; i<2; i++) {
                 dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 17;
@@ -2555,7 +2555,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
         if (!isBlue && isSideBox) { // crab back 1cm to correct proximity over shoot
-            StraightCm(-.2, 2);
+            StraightCm(-.2, 1);
         }
 
         if (!opModeIsActive()) return;
