@@ -2492,8 +2492,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                 alignUsingIMU(-90.0);
             }
             if (!opModeIsActive()) return;
-            for(int i = 0 ; i < 3 ; i++) {
-                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
+            for(int i = 0 ; i < 2 ; i++) {
+                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 17;
                 if (dist > 30) dist = 7;
                 if (dist<1) break;
                 StraightCm(-.2, dist); // drive close to cryptobox
@@ -2510,10 +2510,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (isBlue) { // Front Blue
                 driveDistance = 2 + (19 * targetColumn); // 19cm between columns
             } else { // Front Red
-                driveDistance = 7 + (19 * (2 - targetColumn)); // 19cm between columns
+                driveDistance = 5 + (19 * (2 - targetColumn)); // 19cm between columns
             }
-            for (int i=0; i<3; i++) {
-                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 16;
+            for (int i=0; i<2; i++) {
+                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 17;
                 if (dist<2) break;
                 if (dist > 50 || (dist <= 5 && i==0)) {
                     StraightCm(-.2, 16);
@@ -2549,7 +2549,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             edge_undetected_L = robot.proxL.getState();
             edge_undetected_R = robot.proxR.getState();
             if (!opModeIsActive()) return;
-        } while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 2));
+        } while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 1.5));
 
         driveTT(0, 0); // Stops
 
