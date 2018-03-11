@@ -2510,7 +2510,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (isBlue) { // Front Blue
                 driveDistance = 2 + (18 * targetColumn); // 18cm between columns
             } else { // Front Red
-                driveDistance = 5 + (18 * (2 - targetColumn)); // 18cm between columns
+                driveDistance = 7 + (18.5 * (2 - targetColumn)); // 18.5 cm between columns
             }
             for (int i=0; i<2; i++) {
                 dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 17;
@@ -2532,7 +2532,6 @@ public class SwerveUtilLOP extends LinearOpMode {
             else
                 StraightCm(power, driveDistance);
         }
-        // sleep(500); // wait a little bit for proxSensor to clear out the status
         reset_prox();
 
         if (isBlue) {
