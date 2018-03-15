@@ -57,7 +57,13 @@ public class TeleopNB extends SwerveUtilLOP {
                 sleep(100);
             }
             if (robot.use_intake && !robot.isTesting) {
-                if (gamepad1.x || (gamepad2.left_bumper&&!gamepad2.right_bumper)) { // intake IN
+                if (gamepad1.x && gamepad1.dpad_right) {
+                    intakeTurn(true);
+                } else if (gamepad1.x && gamepad1.dpad_left) {
+                    intakeTurn(false);
+                } else if (gamepad1.x && gamepad1.a) {
+                    intakeAuto();
+                } else if (gamepad1.x || (gamepad2.left_bumper&&!gamepad2.right_bumper)) { // intake IN
                     intakeIn();
                 } else if (gamepad1.b || (gamepad2.left_trigger > 0.1)) { // intake OUT
                     intakeOut();
@@ -219,12 +225,12 @@ public class TeleopNB extends SwerveUtilLOP {
                             sleep(200);
                         }
                     }
-                    else if (gamepad1.dpad_left){ // orbot left
+                    else if (gamepad1.dpad_left && !gamepad1.x){ // orbot left
                         if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
                             change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
                             sleep(200);
                         }
-                        while (gamepad1.dpad_left) {
+                        while (gamepad1.dpad_left && !gamepad1.x) {
                             robot.motorFrontLeft.setPower(-robot.drivePowerRatio);
                             robot.motorFrontRight.setPower(robot.drivePowerRatio);
                             robot.motorBackLeft.setPower(-robot.drivePowerRatio);
@@ -235,12 +241,12 @@ public class TeleopNB extends SwerveUtilLOP {
                         robot.motorFrontRight.setPower(0);
                         robot.motorBackLeft.setPower(0);
                         robot.motorBackRight.setPower(0);
-                    } else if (gamepad1.dpad_right){ // orbit right
+                    } else if (gamepad1.dpad_right && !gamepad1.x){ // orbit right
                         if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
                             change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
                             sleep(200);
                         }
-                        while (gamepad1.dpad_right) {
+                        while (gamepad1.dpad_right && !gamepad1.x) {
                             robot.motorFrontLeft.setPower(robot.drivePowerRatio);
                             robot.motorFrontRight.setPower(-robot.drivePowerRatio);
                             robot.motorBackLeft.setPower(robot.drivePowerRatio);
@@ -270,7 +276,7 @@ public class TeleopNB extends SwerveUtilLOP {
                         }
                     } else if (gamepad1.y) { // slow mode
                         robot.drivePowerRatio = 0.5;
-                    } else if (gamepad1.a) { // slow mode
+                    } else if (gamepad1.a && !gamepad1.x) { // slow mode
                         robot.drivePowerRatio = 0.2;
                     }
 

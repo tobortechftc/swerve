@@ -1893,7 +1893,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (!opModeIsActive()) return 0;
         if (robot.use_newbot) {
-            if (robot.allianceColor == TeamColor.BLUE) {
+            if (robot.allianceColor == TeamColor.BLUE || robot.use_newbot_v2==true) {
                 r_arm_down();
             } else {
                 l_arm_down();
@@ -1921,12 +1921,15 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         // Determines if right jewel is red
         int directionI = calcArmDirection(rightJewelColorCS, rightJewelColorCamera, isBlueAlliance);
+        if (robot.use_newbot_v2) {
+            directionI *= -1;
+        }
         if (!opModeIsActive()) return 0;
         if (robot.use_newbot) {
             int dist = (directionI > 0 ? 7 : 6);
             StraightCm(-.2 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
             sleep(100);
-            if (isBlueAlliance)
+            if (isBlueAlliance || robot.use_newbot_v2)
                 r_arm_up(); // arm up to ensure the jewel is knocked out
             else
                 l_arm_up(); // arm up to ensure the jewel is knocked out
@@ -2469,12 +2472,18 @@ public class SwerveUtilLOP extends LinearOpMode {
     void go_to_crypto_prox_NB(double next_dist, double power, int targetColumn, boolean isBlue, boolean isSideBox)throws InterruptedException {
         if (!robot.use_newbot) go_to_crypto_prox(power, targetColumn, isBlue, isSideBox);
         if (targetColumn < 0) targetColumn = 1;
+
+        int direction = (robot.use_newbot_v2&&!isBlue?1:-1);
         if (robot.use_newbot) {
-            StraightIn(-.25, next_dist+(isSideBox ? 20 : 22)); // Drive off the balance stone
+            StraightIn(direction*.25, next_dist + (isSideBox ? 20 : 22)); // Drive off the balance stone
         } else {
             StraightIn(-.25, (isSideBox ? 22 : 24)); // Drive off the balance stone
         }
         alignUsingIMU(0);
+        if (direction==-1) {
+            TurnLeftD(0.4, 180);
+            alignUsingIMU(180.0);
+        }
 
         double driveDistance;
         double dist;
@@ -2750,8 +2759,23 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     }
 
-    void alignUsingIMU(double degree) throws InterruptedException {
-        double imu_diff = imu_heading()-degree;
+    void alignUsingIMU(double tar_degree) throws InterruptedException {
+        // normalize taregt tar_degree and heading to [0, 360]
+        double offset = 0;
+        if (tar_degree<-170) {
+            offset = 360;
+            tar_degree += offset;
+        }
+        if (tar_degree>170) {
+            offset = -360;
+            tar_degree += offset;
+        }
+        double cur_adj_heading = imu_heading();
+        if ( (cur_adj_heading<0 && offset>0) ||
+                (cur_adj_heading>0 && offset<0))
+            cur_adj_heading += offset;
+
+        double imu_diff = cur_adj_heading-tar_degree;
         if (imu_diff < -0.5) {
             TurnLeftD(.15, Math.abs(imu_diff)-0.5);
         }
@@ -3390,6 +3414,29 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         robot.mt_intake_left.setPower(robot.intakeRatio);
         robot.mt_intake_right.setPower(robot.intakeRatio);
+    }
+
+    void intakeAuto() {
+        if (!robot.use_intake)
+            return;
+        intakeTurn(true);
+        sleep(150);
+        intakeTurn(false);
+        sleep(150);
+        intakeIn();
+        sleep(300);
+    }
+
+    void intakeTurn(boolean clockwise) {
+        if (!robot.use_intake)
+            return;
+        if (clockwise) {
+            robot.mt_intake_left.setPower(-robot.intakeRatio / 2.0);
+            robot.mt_intake_right.setPower(robot.intakeRatio);
+        } else {
+            robot.mt_intake_left.setPower(robot.intakeRatio);
+            robot.mt_intake_right.setPower(-robot.intakeRatio / 2);
+        }
     }
 
     void intakeOut() {

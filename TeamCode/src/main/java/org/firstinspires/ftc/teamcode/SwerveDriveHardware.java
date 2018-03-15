@@ -25,6 +25,7 @@ public class SwerveDriveHardware {
     // define all switches to turn on/off hardware each component
     public boolean use_swerve = true;   // use four motors and four servos for chassis
     public boolean use_newbot = false;   // use four motors and four servos for new chassis
+    public boolean use_newbot_v2 = false;
     public boolean use_front_drive_only = false;
     public boolean use_intake = false;
     public boolean use_dumper = false;

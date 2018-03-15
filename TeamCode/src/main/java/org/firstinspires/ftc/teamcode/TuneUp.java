@@ -152,6 +152,10 @@ public class TuneUp extends SwerveUtilLOP {
                 }
             }
 
+            if(gamepad1.back && gamepad1.start){ // swap test/normalglyph_grabber_auto_open mode
+                robot.isTesting = !robot.isTesting;
+                sleep(100);
+            }
 
             if (robot.use_newbot) { // newbot related control
                 if (robot.use_dumper) {
@@ -165,6 +169,73 @@ public class TuneUp extends SwerveUtilLOP {
                         grabAndDump(true);
                     }
                 }
+
+                    if(robot.isTesting){ //Allow to test individual movement
+
+                        if(gamepad1.left_trigger > 0.1){
+                            robot.NB_LEFT_SV_DIFF -= 0.001;
+                            sleep(100);
+                        }
+
+                        if(gamepad1.left_bumper){
+                            robot.NB_LEFT_SV_DIFF += 0.001;
+                            sleep(100);
+                        }
+
+                        if(gamepad1.right_trigger > 0.1){
+                            robot.NB_RIGHT_SV_DIFF -= 0.001;
+                            sleep(100);
+                        }
+
+                        if(gamepad1.right_bumper){
+                            robot.NB_RIGHT_SV_DIFF += 0.001;
+                            sleep(100);
+                        }
+
+                        if (gamepad1.back && gamepad1.dpad_left){
+                            TurnLeftD(0.4, 180);
+                        } else if(gamepad1.start && gamepad1.dpad_left){
+                            double tar_heading = imu_heading()+180;
+                            TurnLeftD(0.4, 180);
+                            if (tar_heading>=180) {
+                                tar_heading -= 360;
+                            }
+                            alignUsingIMU(tar_heading);
+                        }
+                        else if(gamepad1.back && gamepad1.dpad_right){
+                            TurnRightD(0.4, 180);
+                        }
+                        else if(gamepad1.start && gamepad1.dpad_right){
+                            double tar_heading = imu_heading()-180;
+                            TurnRightD(0.4, 180);
+                            if (tar_heading<=-180) {
+                                tar_heading += 360;
+                            }
+                            alignUsingIMU(tar_heading);
+                        }
+                        else if(gamepad1.dpad_left){
+                            TurnLeftD(0.4, 90);
+                        }
+                        else if(gamepad1.dpad_right){
+                            TurnRightD(0.4, 90);
+                        } else if (gamepad1.b) {
+                            StraightIn(0.5, 22);
+                        } else if (gamepad1.a){
+                            StraightIn(-0.5, 22);
+                        }
+                        else if (gamepad1.start){
+                            if(!(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB)){// If in any other mode, switch to crab
+                                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                            }
+                            else{ //Return from snake to previous drive mode
+                                change_swerve_pos(robot.old_mode);
+                            }
+                            sleep(400);
+                        }
+                        if (robot.use_newbot) {
+                            robot.initialize_newbot();
+                        }
+                    } // end isTesting
             } // end use_swerve
 
             if (robot.use_test_motor) {
@@ -205,7 +276,7 @@ public class TuneUp extends SwerveUtilLOP {
                     glyph_grabber_auto_rotate(0.4);
                 }
             }
-            if (robot.servo_tune_up) {
+            if (robot.servo_tune_up && !robot.isTesting) {
                 if (gamepad1.back && gamepad1.a) {
                     show_all = !show_all;
                     sleep(50);
