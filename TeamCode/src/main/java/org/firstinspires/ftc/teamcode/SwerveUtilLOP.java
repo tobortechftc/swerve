@@ -2480,7 +2480,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             StraightIn(-.25, (isSideBox ? 22 : 24)); // Drive off the balance stone
         }
         alignUsingIMU(0);
-        if (direction==-1) {
+        if (direction==1) {
             TurnLeftD(0.4, 180);
             alignUsingIMU(180.0);
         }
