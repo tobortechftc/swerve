@@ -1232,7 +1232,10 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void stop_auto() {
         if (robot.use_color_sensor) {
-            robot.l_colorSensor.enableLed(false);
+            if (!robot.use_newbot_v2) {
+                robot.l_colorSensor.enableLed(false);
+            }
+            robot.r_colorSensor.enableLed(false);
             //robot.l_colorSensor.close();
             //robot.use_color_sensor = false;
         }
@@ -1250,8 +1253,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_swerve||robot.use_minibot||robot.use_newbot)
             stop_chassis();
         if (robot.use_color_sensor) {
-            robot.l_colorSensor.enableLed(false);
-            robot.l_colorSensor.close();
+            if (!robot.use_newbot_v2) {
+                robot.l_colorSensor.enableLed(false);
+                robot.l_colorSensor.close();
+            }
+            robot.r_colorSensor.enableLed(false);
+            robot.r_colorSensor.close();
         }
         // stop all sensors
     }
@@ -1783,7 +1790,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             return 0;
         }
         if (robot.use_newbot) {
-            if (isBlueAlliance) {
+            if (isBlueAlliance || robot.use_newbot_v2) {
                 robot.blue = robot.r_colorSensor.blue();
                 robot.red = robot.r_colorSensor.red();
             } else {
@@ -2479,10 +2486,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         } else {
             StraightIn(-.25, (isSideBox ? 22 : 24)); // Drive off the balance stone
         }
-        alignUsingIMU(0);
-        if (direction==1) {
+        if (direction==1 && isSideBox==false) { // red frond need to turn 180 degree
             TurnLeftD(0.4, 180);
             alignUsingIMU(180.0);
+        } else {
+            alignUsingIMU(0);
         }
 
         double driveDistance;
@@ -2491,9 +2499,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (isBlue) driveDistance = 3 + (18 * targetColumn); // 18cm between columns
             else driveDistance = 3 + (18 * (2 - targetColumn));
             if (driveDistance<7) driveDistance=7; // ensure turn not hitting balance stone
-            StraightCm(-power, driveDistance); // drive to cryptobox
+            StraightCm(direction*power, driveDistance); // drive to cryptobox
 
-            if (isBlue) {
+            if (isBlue || robot.use_newbot_v2) {
                 TurnLeftD(0.35, 90);
                 alignUsingIMU(90.0);
             } else {
@@ -2507,20 +2515,27 @@ public class SwerveUtilLOP extends LinearOpMode {
                 if (dist<1) break;
                 StraightCm(-.2, dist); // drive close to cryptobox
             }
-            if (isBlue) {
+            if (isBlue || robot.use_newbot_v2) {
                 alignUsingIMU(90.0);
             } else {
                 alignUsingIMU(-90.0);
             }
-            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-            sleep(200);
-            if (!opModeIsActive()) return;
         } else { // Front box
             if (isBlue) { // Front Blue
                 driveDistance = 2 + (18 * targetColumn); // 18cm between columns
             } else { // Front Red
                 driveDistance = 7 + (18.5 * (2 - targetColumn)); // 18.5 cm between columns
             }
+            if (!opModeIsActive()) return;
+
+            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+            sleep(200);
+            if (isBlue)
+                StraightCm(-power, driveDistance);
+            else
+                StraightCm(power, driveDistance);
+            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+
             for (int i=0; i<2; i++) {
                 dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 17;
                 if (dist<2) break;
@@ -2530,17 +2545,12 @@ public class SwerveUtilLOP extends LinearOpMode {
                     StraightCm(-.2, dist); // forward using front range sensor, so it is close to cryptobox
                 }
             }
-
-            if (!opModeIsActive()) return;
-
-            //alignUsingIMU(0);
-            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-            sleep(200);
-            if (isBlue)
-                StraightCm(-power, driveDistance);
-            else
-                StraightCm(power, driveDistance);
+            alignUsingIMU((isBlue?0:180));
         }
+        
+        change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+        sleep(200);
+        if (!opModeIsActive()) return;
         reset_prox();
 
         if (isBlue) {
@@ -2761,12 +2771,13 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void alignUsingIMU(double tar_degree) throws InterruptedException {
         // normalize taregt tar_degree and heading to [0, 360]
+        // align up to 45 degree
         double offset = 0;
-        if (tar_degree<-170) {
+        if (tar_degree<-135) {
             offset = 360;
             tar_degree += offset;
         }
-        if (tar_degree>170) {
+        if (tar_degree>135) {
             offset = -360;
             tar_degree += offset;
         }
@@ -2776,11 +2787,14 @@ public class SwerveUtilLOP extends LinearOpMode {
             cur_adj_heading += offset;
 
         double imu_diff = cur_adj_heading-tar_degree;
+        double corrected_degree = Math.abs(imu_diff)-0.5;
+        if (corrected_degree>45)
+            corrected_degree = 45;
         if (imu_diff < -0.5) {
-            TurnLeftD(.15, Math.abs(imu_diff)-0.5);
+            TurnLeftD(.15, corrected_degree);
         }
         else if (imu_diff > 0.5) {
-            TurnRightD(.15, Math.abs(imu_diff)-0.5);
+            TurnRightD(.15, corrected_degree);
         }
     }
 
@@ -3481,9 +3495,14 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
         if (robot.use_color_sensor) {
-            telemetry.addData("5.2 color =", "L b/r = %3d/%3d, R b/r = %3d/%3d",
-                    robot.l_colorSensor.blue(), robot.l_colorSensor.red(),
-                    robot.r_colorSensor.blue(), robot.r_colorSensor.red());
+            if (robot.use_newbot_v2) {
+                telemetry.addData("5.2 color =", "L b/r = %3d/%3d, R b/r = %3d/%3d",
+                        robot.l_colorSensor.blue(), robot.l_colorSensor.red(),
+                        robot.r_colorSensor.blue(), robot.r_colorSensor.red());
+            } else {
+                telemetry.addData("5.2 color =", "R b/r = %3d/%3d",
+                        robot.r_colorSensor.blue(), robot.r_colorSensor.red());
+            }
         }
 
         if (robot.use_Vuforia) {

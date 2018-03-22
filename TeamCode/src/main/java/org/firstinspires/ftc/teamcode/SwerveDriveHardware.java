@@ -299,9 +299,9 @@ public class SwerveDriveHardware {
     static double NB_RIGHT_SV_DIFF = 0.000;
 
     static double NB_SERVO_FL_FORWARD_POSITION = 0.5206;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.5322;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.5761;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5483;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.4667;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.5800;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5778;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;
@@ -415,8 +415,10 @@ public class SwerveDriveHardware {
         }
         if (use_color_sensor) {
             if (use_newbot) {
-                l_colorSensor = hwMap.get(ColorSensor.class, "colorLeft");
-                l_colorSensor.enableLed(true);
+                if (!use_newbot_v2) {
+                    l_colorSensor = hwMap.get(ColorSensor.class, "colorLeft");
+                    l_colorSensor.enableLed(true);
+                }
                 r_colorSensor = hwMap.get(ColorSensor.class, "colorRight");
                 r_colorSensor.enableLed(true);
             }

@@ -19,6 +19,7 @@ public class AutoRedSideBoxNBPlus extends SwerveUtilLOP{
         robot.use_imu = true;
         robot.use_encoder = true;
         robot.use_newbot = true;
+        robot.use_newbot_v2 = true;
         robot.use_minibot = false;
         robot.use_range_sensor = true;
         robot.use_color_sensor = true;
