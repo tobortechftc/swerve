@@ -2021,7 +2021,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (isSide) {
                 StraightCm(0.95,60);
             } else {
-                StraightCm(0.95,100);
+                StraightCm(0.95,95);
             }
         }
         boolean got_one = autoIntakeGlyphs(isSide);
@@ -2139,7 +2139,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         intakeIn();
         sleep(500);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-.5) && robot.servo_tune_up==false)) {
-            intakeStop(); driveTT(0,0);return false;
+            intakeAuto(); driveTT(0,0);return false;
         }
         driveTT(0,0);
         intakeOut();
@@ -2558,7 +2558,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
 
             for (int i=0; i<2; i++) {
-                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 17;
+                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 15;
                 if (dist<2) break;
                 if (dist > 50 || (dist <= 5 && i==0)) {
                     StraightCm(-.2, 16);
