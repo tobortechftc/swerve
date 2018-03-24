@@ -1929,7 +1929,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         // Determines if right jewel is red
         int directionI = calcArmDirection(rightJewelColorCS, rightJewelColorCamera, isBlueAlliance);
-        if (robot.use_newbot_v2) {
+        if (robot.use_newbot_v2 && !isBlueAlliance) {
             directionI *= -1;
         }
         if (!opModeIsActive()) return 0;
@@ -1991,25 +1991,27 @@ public class SwerveUtilLOP extends LinearOpMode {
         return result;
     }
 
-    public void bumpCheck() {
+    // returns true if it bumped the wall (noticeable acceleration difference), false if it went two seconds without hitting the wall
+    public boolean didBump() {
         Acceleration accel = robot.imu.getAcceleration();
         double xAccelStored = accel.xAccel;
         double zAccelStored = accel.zAccel;
         sleep(50);
-        while (true) {
+        robot.runtime.reset();
+        while (robot.runtime.seconds() <= 2) {
             if ((accel.xAccel - .2 < xAccelStored) || (accel.zAccel - .2 < zAccelStored)) { // .2 is a placeholder
-                break;
+                return true;
             }
             xAccelStored = accel.xAccel;
             zAccelStored = accel.zAccel;
-            telemetry.addData("runTime", getRuntime());
-            telemetry.addData("xAccel", xAccelStored);
-            telemetry.addData("zAccel", zAccelStored);
+            telemetry.update();
             sleep(50);
         }
+        return false;
     }
 
     public void grabAndDump(boolean isSide) throws InterruptedException {
+        intakeGateUp();
         if (opModeIsActive()==false ||
                 (isSide==true && robot.runtimeAuto.seconds() > 24) ||
                 (isSide==false && robot.runtimeAuto.seconds() > 26)) {
@@ -2024,7 +2026,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         boolean got_one = autoIntakeGlyphs(isSide);
         if (opModeIsActive()) {
-            double dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 29;
+            double dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 26;
             if (isSide) {
                 if (dist < 53) dist = 53;
                 else if (dist > 80)
@@ -2063,11 +2065,11 @@ public class SwerveUtilLOP extends LinearOpMode {
                 turn_left_angles = 15.0;
             else if (robot.targetColumn==2)
                 turn_left_angles = -15.0;        }
-        */
-        if (turn_left_angles>0)
-            TurnLeftD(.6, turn_left_angles);
-        else
-            TurnRightD(.6, -1*turn_left_angles);
+//        */
+//        if (turn_left_angles>0)
+//            TurnLeftD(.6, turn_left_angles);
+//        else
+//            TurnRightD(.6, -1*turn_left_angles);
 
         if (!opModeIsActive()) return;
         dumper_vertical();
@@ -2515,7 +2517,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         double driveDistance;
         double dist;
         if (isSideBox) {
-            if (isBlue) driveDistance = 3 + (18 * targetColumn); // 18cm between columns
+            if (isBlue) driveDistance = 3 + (18.5 * targetColumn); // 18cm between columns
             else driveDistance = 3 + (18 * (2 - targetColumn));
             if (driveDistance<7) driveDistance=7; // ensure turn not hitting balance stone
             StraightCm(direction*power, driveDistance); // drive to cryptobox
@@ -2529,16 +2531,16 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             if (!opModeIsActive()) return;
             for(int i = 0 ; i < 2 ; i++) {
-                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 17;
+                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 15;
                 if (dist > 30) dist = 7;
                 if (dist<1) break;
                 StraightCm(-.2, dist); // drive close to cryptobox
             }
-            if (isBlue || robot.use_newbot_v2) {
-                alignUsingIMU(90.0);
-            } else {
-                alignUsingIMU(-90.0);
-            }
+                if (isBlue || robot.use_newbot_v2) {
+                    alignUsingIMU(90.0);
+                } else {
+                    alignUsingIMU(-90.0);
+                }
         } else { // Front box
             if (isBlue) { // Front Blue
                 driveDistance = 2 + (18 * targetColumn); // 18cm between columns
@@ -2801,18 +2803,17 @@ public class SwerveUtilLOP extends LinearOpMode {
             tar_degree += offset;
         }
         double cur_adj_heading = imu_heading();
-        if ( (cur_adj_heading<0 && offset>0) ||
-                (cur_adj_heading>0 && offset<0))
+        if (cur_adj_heading!=0 && offset!=0)
             cur_adj_heading += offset;
 
         double imu_diff = cur_adj_heading-tar_degree;
         double corrected_degree = Math.abs(imu_diff)-0.5;
         if (corrected_degree>45)
             corrected_degree = 45;
-        if (imu_diff < -0.5) {
+        if (imu_diff < -5) {
             TurnLeftD(.15, corrected_degree);
         }
-        else if (imu_diff > 0.5) {
+        else if (imu_diff > 5) {
             TurnRightD(.15, corrected_degree);
         }
     }

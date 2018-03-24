@@ -32,6 +32,7 @@ public class AutoBlueSideBoxNBPlus extends SwerveUtilLOP{
         robot.use_relic_grabber = false;
         robot.use_relic_slider = false;
         robot.use_relic_grabber = false;
+        robot.use_newbot_v2 = true;
 
         robot.allianceColor = TeamColor.BLUE;
 
