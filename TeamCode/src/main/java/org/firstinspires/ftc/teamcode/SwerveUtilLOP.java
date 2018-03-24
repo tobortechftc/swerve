@@ -3439,6 +3439,18 @@ public class SwerveUtilLOP extends LinearOpMode {
 //        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
     }
 
+    void intakeGateUp() {
+        if (!robot.use_intake || !robot.use_newbot_v2)
+            return;
+        robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
+    }
+
+    void intakeGateDown() {
+        if (!robot.use_intake || !robot.use_newbot_v2)
+            return;
+        robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_DOWN);
+    }
+
     void intakeIn() {
         if (!robot.use_intake)
             return;

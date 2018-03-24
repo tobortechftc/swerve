@@ -88,9 +88,11 @@ public class TeleopNB extends SwerveUtilLOP {
                 if (gamepad2.right_bumper && gamepad2.left_bumper) {
                     lift_back_init(); // back to initial position for collecting glyph
                 } else if (gamepad2.dpad_left) {
-                    dumper_higher();
+                    // dumper_higher();
+                    intakeGateUp();
                 } else if (gamepad2.dpad_right) {
-                    dumper_lower();
+                    // dumper_lower();
+                    intakeGateDown();
                 } else if ((gamepad1.dpad_down&&gamepad1.start) || (gamepad2.dpad_down&&gamepad2.start)) {
                     dumper_shake();
                 }

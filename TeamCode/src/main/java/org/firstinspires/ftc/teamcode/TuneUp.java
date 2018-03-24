@@ -18,13 +18,14 @@ public class TuneUp extends SwerveUtilLOP {
         robot.servo_tune_up = true; // enable servo tune up
         robot.use_swerve = false;
         robot.use_newbot = true;
+        robot.use_newbot_v2= true;
         robot.use_dumper = true;
         robot.use_intake = true;
         robot.use_imu = true;
         robot.use_Vuforia = false;
         robot.use_camera = false;
-        robot.use_color_sensor = true;
-        robot.use_arm = true;
+        // robot.use_color_sensor = true;
+        // robot.use_arm = true;
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = true;
         robot.use_relic_slider = true;
@@ -40,7 +41,7 @@ public class TuneUp extends SwerveUtilLOP {
         telemetry.addData("My name is Tobot.", "Need tune-up?");
         telemetry.update();
 
-        int num_servos = 15;
+        int num_servos = 17;
         int cur_sv_ix = 0;
         boolean show_all = true;
         Servo[] sv_list = {
@@ -59,7 +60,8 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.sv_relic_elbow,
                 robot.sv_dumper,
                 robot.sv_front_arm,
-                robot.sv_intake_gate
+                robot.sv_intake_gate,
+                robot.sv_dumper_gate
         };
         String [] sv_names = {
                 "FrontLeft",
@@ -77,7 +79,8 @@ public class TuneUp extends SwerveUtilLOP {
                 "sv_relic_elbow",
                 "sv_dumper",
                 "sv_front_arm",
-                "sv_intake_gate"
+                "sv_intake_gate",
+                "sv_dumper_gate"
         };
 
         num_servos = sv_list.length;
@@ -345,7 +348,7 @@ public class TuneUp extends SwerveUtilLOP {
                 telemetry.addLine("7. No active servo to tune-up.");
             }
             if (robot.use_color_sensor) {
-                double l_d = calcDelta(true);
+                double l_d = (robot.use_newbot_v2?0:calcDelta(true));
                 double r_d = calcDelta(false);
                 telemetry.addData("5.1 Color delta", "l_d=%1.0f, r_d=%1.0f", l_d,r_d);
             }

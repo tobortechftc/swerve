@@ -183,7 +183,9 @@ public class SwerveDriveHardware {
     final static double SV_DUMPER_HALF_UP = 0.5472;
     final static double SV_DUMPER_UP = 0.17;
     final static double SV_DUMPER_DUMP = 0.18;
-    final static double SV_INTAKE_GATE_INIT = 0.5; //bigger value = clockwise
+    final static double SV_INTAKE_GATE_INIT = 0.864;
+    final static double SV_INTAKE_GATE_UP = 0.687;
+    final static double SV_INTAKE_GATE_DOWN = 0.217;
     final static double SV_DUMPER_GATE_INIT = 0.5;
 
     final static double GG_SLIDE_UP_POWER = 1.0;
@@ -438,7 +440,7 @@ public class SwerveDriveHardware {
                     rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
                     rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
                     if (use_newbot_v2) {
-                        rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsBack");
+                        // rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsBack");
                     }
                 } else {
                     rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
