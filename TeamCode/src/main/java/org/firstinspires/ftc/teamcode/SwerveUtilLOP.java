@@ -2019,9 +2019,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (opModeIsActive()) {
             if (isSide) {
-                StraightCm(0.95,60);
+                StraightCm(0.95,70);
             } else {
-                StraightCm(0.95,95);
+                StraightCm(0.95,105);
             }
         }
         boolean got_one = autoIntakeGlyphs(isSide);
@@ -2040,6 +2040,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                 dist -= 15;
             }
             StraightCm(-0.9,dist);
+            sleep(200);
+            StraightCm(0.5, 2.5);
         }
         if((robot.runtimeAuto.seconds() > 28 || got_one==false) && robot.servo_tune_up==false){
             return;
@@ -2139,11 +2141,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         intakeIn();
         sleep(500);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-.5) && robot.servo_tune_up==false)) {
-            intakeAuto(); driveTT(0,0);return false;
+            intakeStop(); driveTT(0,0);return false;
         }
         driveTT(0,0);
-        intakeOut();
-        sleep(150);
+        intakeAuto();
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             intakeStop(); driveTT(0,0);return false;
         }

@@ -263,7 +263,7 @@ public class TeleopNB extends SwerveUtilLOP {
                     }
 
                     if (gamepad1.a && gamepad1.y) {
-                        robot.drivePowerRatio = 0.7;
+                        robot.drivePowerRatio = 0.9;
                         sleep(20);
 
                     } else if (gamepad1.a && gamepad1.back){
@@ -278,9 +278,9 @@ public class TeleopNB extends SwerveUtilLOP {
                             robot.drivePowerRatio = 1.0;
                         }
                     } else if (gamepad1.y) { // slow mode
-                        robot.drivePowerRatio = 0.5;
+                        robot.drivePowerRatio = 0.7;
                     } else if (gamepad1.a && !gamepad1.x) { // slow mode
-                        robot.drivePowerRatio = 0.2;
+                        robot.drivePowerRatio = 0.3;
                     }
 
                 }
