@@ -14,6 +14,7 @@ import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -1988,6 +1989,24 @@ public class SwerveUtilLOP extends LinearOpMode {
             result *= -1;
         }
         return result;
+    }
+
+    public void bumpCheck() {
+        Acceleration accel = robot.imu.getAcceleration();
+        double xAccelStored = accel.xAccel;
+        double zAccelStored = accel.zAccel;
+        sleep(50);
+        while (true) {
+            if ((accel.xAccel - .2 < xAccelStored) || (accel.zAccel - .2 < zAccelStored)) { // .2 is a placeholder
+                break;
+            }
+            xAccelStored = accel.xAccel;
+            zAccelStored = accel.zAccel;
+            telemetry.addData("runTime", getRuntime());
+            telemetry.addData("xAccel", xAccelStored);
+            telemetry.addData("zAccel", zAccelStored);
+            sleep(50);
+        }
     }
 
     public void grabAndDump(boolean isSide) throws InterruptedException {
