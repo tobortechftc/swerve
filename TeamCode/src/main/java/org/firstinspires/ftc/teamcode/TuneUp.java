@@ -58,7 +58,8 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.sv_relic_wrist,
                 robot.sv_relic_elbow,
                 robot.sv_dumper,
-                robot.sv_front_arm
+                robot.sv_front_arm,
+                robot.sv_intake_gate
         };
         String [] sv_names = {
                 "FrontLeft",
@@ -75,7 +76,8 @@ public class TuneUp extends SwerveUtilLOP {
                 "sv_relic_wrist",
                 "sv_relic_elbow",
                 "sv_dumper",
-                "sv_front_arm"
+                "sv_front_arm",
+                "sv_intake_gate"
         };
 
         num_servos = sv_list.length;
@@ -169,7 +171,11 @@ public class TuneUp extends SwerveUtilLOP {
                         grabAndDump(true);
                     }
                 }
-
+              /*  if (robot.use_newbot_v2) {
+                    if (gamepad2.bumperleft) {
+                        robot.sv_intake_gate.setPosition(robot.sv_intake_gate.getPosition() + 0.01);
+                    }
+                } */
                     if(robot.isTesting){ //Allow to test individual movement
 
                         if(gamepad1.left_trigger > 0.1){

@@ -183,6 +183,8 @@ public class SwerveDriveHardware {
     final static double SV_DUMPER_HALF_UP = 0.5472;
     final static double SV_DUMPER_UP = 0.17;
     final static double SV_DUMPER_DUMP = 0.18;
+    final static double SV_INTAKE_GATE_INIT = 0.5; //bigger value = clockwise
+    final static double SV_DUMPER_GATE_INIT = 0.5;
 
     final static double GG_SLIDE_UP_POWER = 1.0;
     final static double GG_SLIDE_DOWN_POWER = -0.9;
@@ -263,13 +265,14 @@ public class SwerveDriveHardware {
     public Servo sv_relic_elbow = null;
     public Servo sv_test = null;
     public Servo sv_dumper = null;
-
+    public Servo sv_dumper_gate = null;
+    public Servo sv_intake_gate = null;
     public ColorSensor l_colorSensor = null;
     public ColorSensor r_colorSensor = null;
 
     public ModernRoboticsI2cRangeSensor rangeSensorFrontRight = null;
-    // public ModernRoboticsI2cRangeSensor rangeSensorLeft = null;
     public ModernRoboticsI2cRangeSensor rangeSensorFrontLeft = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
     public SwerveUtilLOP.Camera camera = null;
     public MB1202 mb_ultra = null;
     public DigitalChannel proxL = null;
@@ -406,6 +409,7 @@ public class SwerveDriveHardware {
                 proxL.setMode(DigitalChannel.Mode.INPUT);
                 proxR.setMode(DigitalChannel.Mode.INPUT);
                 proxFL.setMode(DigitalChannel.Mode.INPUT);
+
             }
             else {
                 proxL = hwMap.get(DigitalChannel.class, "prox6in");
@@ -433,6 +437,9 @@ public class SwerveDriveHardware {
                 if (use_newbot) {
                     rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
                     rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
+                    if (use_newbot_v2) {
+                        rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsBack");
+                    }
                 } else {
                     rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
                     //rangeSensorLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensorLeft");
@@ -450,10 +457,15 @@ public class SwerveDriveHardware {
         }
         if (use_relic_grabber) {
             if (use_newbot) {
-                sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
-                sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
-                // sv_relic_elbow = hwMap.servo.get("sv_relic_elbow");
-                // sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
+                if (use_newbot_v2) {
+                    sv_relic_elbow = hwMap.servo.get("sv_relic_arm");
+                    sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
+                    sv_relic_wrist = hwMap.servo.get("sv_relic_wrist");
+                    sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
+                } else {
+                    sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
+                    sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
+                }
             } else {
                 sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
                 sv_relic_wrist.setPosition(SV_RELIC_ARM_INIT);
@@ -464,6 +476,12 @@ public class SwerveDriveHardware {
         if (use_dumper) {
             sv_dumper = hwMap.servo.get("sv_dumper");
             sv_dumper.setPosition(SV_DUMPER_INIT);
+            if (use_newbot_v2) {
+                sv_intake_gate = hwMap.servo.get("sv_intake_gate");
+                sv_intake_gate.setPosition(SV_INTAKE_GATE_INIT);
+                sv_dumper_gate = hwMap.servo.get("sv_dumper_gate");
+                sv_dumper_gate.setPosition(SV_DUMPER_GATE_INIT);
+            }
             mt_lift = hwMap.dcMotor.get("mtLift");
             mt_lift.setDirection(DcMotor.Direction.REVERSE);
             mt_lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -581,10 +599,16 @@ public class SwerveDriveHardware {
         }
         if (use_arm) {
             if (use_newbot) {
-                sv_left_arm = hwMap.servo.get("sv_left_arm");
-                sv_right_arm = hwMap.servo.get("sv_right_arm");
-                sv_left_arm.setPosition(SV_LEFT_ARM_UP_NB);
-                sv_right_arm.setPosition(SV_RIGHT_ARM_UP_NB);
+                if (use_newbot_v2) {
+                    sv_right_arm = hwMap.servo.get("sv_right_arm");
+                    sv_right_arm.setPosition(SV_RIGHT_ARM_UP_NB);
+                }
+                else {
+                    sv_left_arm = hwMap.servo.get("sv_left_arm");
+                    sv_right_arm = hwMap.servo.get("sv_right_arm");
+                    sv_left_arm.setPosition(SV_LEFT_ARM_UP_NB);
+                    sv_right_arm.setPosition(SV_RIGHT_ARM_UP_NB);
+                }
             }
             else{
                 sv_elbow = hwMap.servo.get("sv_elbow");

@@ -19,6 +19,7 @@ public class TeleopNB extends SwerveUtilLOP {
          */
         robot.use_swerve = false;
         robot.use_newbot = true;
+        robot.use_newbot_v2= true;
         robot.use_front_drive_only = false; // front drive only
         robot.use_intake = true;
         robot.use_dumper = true;
