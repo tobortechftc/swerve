@@ -1169,15 +1169,15 @@ public class SwerveUtilLOP extends LinearOpMode {
                     robot.motorBackRight.setPower(0);
                 }
 
-            } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && !strafeRight) {
-                robot.motorFrontRight.setPower(-rp);
+            } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && strafeRight) {
+                robot.motorFrontRight.setPower(rp);
                 robot.motorFrontLeft.setPower(0);
                 if (!robot.use_front_drive_only) {
                     robot.motorBackLeft.setPower(0);
-                    robot.motorBackRight.setPower(-lp);
+                    robot.motorBackRight.setPower(lp);
                 }
             }
-            else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && strafeRight) {
+            else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && !strafeRight) {
                 robot.motorFrontRight.setPower(0);
                 robot.motorFrontLeft.setPower(rp);
                 if (!robot.use_front_drive_only) {
@@ -1361,10 +1361,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
         else if((robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) && !robot.use_front_drive_only){
-            if(!strafeRight) {
+            if(strafeRight) {
                 if (rightTC0 > 0 || leftTC0 > 0) {
-                    targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC0);
-                    targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC0);
+                    targetPosFrontRight = curPosFrontRight + ((int) -leftPowerSign * leftTC0);
+                    targetPosBackRight = curPosBackRight + ((int) -rightPowerSign * rightTC0);
                     robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                     robot.motorBackRight.setTargetPosition(targetPosBackRight);
 
@@ -1378,8 +1378,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                 curPosFrontRight = robot.motorFrontRight.getCurrentPosition();
                 curPosBackRight = robot.motorBackRight.getCurrentPosition();
 
-                targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC1);
-                targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC1);
+                targetPosFrontRight = curPosFrontRight + ((int) -leftPowerSign * leftTC1);
+                targetPosBackRight = curPosBackRight + ((int) -rightPowerSign * rightTC1);
 
                 robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                 robot.motorBackRight.setTargetPosition(targetPosBackRight);
@@ -1393,8 +1393,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                     curPosFrontRight = robot.motorFrontRight.getCurrentPosition();
                     curPosBackRight = robot.motorBackRight.getCurrentPosition();
 
-                    targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC2);
-                    targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC2);
+                    targetPosFrontRight = curPosFrontRight + ((int) -leftPowerSign * leftTC2);
+                    targetPosBackRight = curPosBackRight + ((int) -rightPowerSign * rightTC2);
 
                     robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                     robot.motorBackRight.setTargetPosition(targetPosBackRight);
@@ -1406,8 +1406,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             else{
                 if (rightTC0 > 0 || leftTC0 > 0) {
-                    targetPosFrontLeft = curPosFrontLeft + ((int) -leftPowerSign * leftTC0);
-                    targetPosBackLeft = curPosBackLeft + ((int) -rightPowerSign * rightTC0);
+                    targetPosFrontLeft = curPosFrontLeft + ((int) leftPowerSign * leftTC0);
+                    targetPosBackLeft = curPosBackLeft + ((int) rightPowerSign * rightTC0);
                     robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                     robot.motorBackLeft.setTargetPosition(targetPosBackLeft);
 
@@ -1421,8 +1421,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                 curPosFrontLeft = robot.motorFrontLeft.getCurrentPosition();
                 curPosBackLeft = robot.motorBackLeft.getCurrentPosition();
 
-                targetPosFrontLeft = curPosFrontLeft + ((int) -leftPowerSign * leftTC1);
-                targetPosBackLeft = curPosBackLeft + ((int) -rightPowerSign * rightTC1);
+                targetPosFrontLeft = curPosFrontLeft + ((int) leftPowerSign * leftTC1);
+                targetPosBackLeft = curPosBackLeft + ((int) rightPowerSign * rightTC1);
 
                 robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                 robot.motorBackLeft.setTargetPosition(targetPosBackLeft);
@@ -1436,8 +1436,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                     curPosFrontLeft = robot.motorFrontLeft.getCurrentPosition();
                     curPosBackLeft = robot.motorBackLeft.getCurrentPosition();
 
-                    targetPosFrontLeft = curPosFrontLeft + ((int) -leftPowerSign * leftTC2);
-                    targetPosBackLeft = curPosBackLeft + ((int) -rightPowerSign * rightTC2);
+                    targetPosFrontLeft = curPosFrontLeft + ((int) leftPowerSign * leftTC2);
+                    targetPosBackLeft = curPosBackLeft + ((int) rightPowerSign * rightTC2);
 
                     robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                     robot.motorBackLeft.setTargetPosition(targetPosBackLeft);
@@ -1596,7 +1596,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (robot.use_encoder) {
             double numberR = in / robot.INCHES_PER_ROTATION;
-            StraightR(-power, numberR);
+            if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){
+                StraightR(power, numberR);
+            }
+            else {
+                StraightR(-power, numberR);
+            }
         } else { // using timer
             double in_per_ms = 0.014 * power / 0.8;
             if (in_per_ms < 0) in_per_ms *= -1.0;
