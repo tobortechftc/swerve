@@ -1169,19 +1169,19 @@ public class SwerveUtilLOP extends LinearOpMode {
                     robot.motorBackRight.setPower(0);
                 }
 
-            } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && strafeRight) {
-                robot.motorFrontRight.setPower(rp);
+            } else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && !strafeRight) {
+                robot.motorFrontRight.setPower(-rp);
                 robot.motorFrontLeft.setPower(0);
                 if (!robot.use_front_drive_only) {
                     robot.motorBackLeft.setPower(0);
-                    robot.motorBackRight.setPower(lp);
+                    robot.motorBackRight.setPower(-lp);
                 }
             }
-            else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && !strafeRight) {
+            else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && strafeRight) {
                 robot.motorFrontRight.setPower(0);
-                robot.motorFrontLeft.setPower(-rp);
+                robot.motorFrontLeft.setPower(rp);
                 if (!robot.use_front_drive_only) {
-                    robot.motorBackLeft.setPower(-lp);
+                    robot.motorBackLeft.setPower(lp);
                     robot.motorBackRight.setPower(0);
                 }
             }
@@ -1361,7 +1361,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
         else if((robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) && !robot.use_front_drive_only){
-            if(strafeRight) {
+            if(!strafeRight) {
                 if (rightTC0 > 0 || leftTC0 > 0) {
                     targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC0);
                     targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC0);
@@ -3620,6 +3620,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.isTesting){
             if(robot.use_newbot){
                 telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.NB_LEFT_SV_DIFF, robot.NB_RIGHT_SV_DIFF);
+                telemetry.addData("12. CRAB_90_DIFF_DEC_FR/CRAB_90_DIFF_DEC_BR = ", "%.4f/%.4f",robot.NB_CRAB_DIFF_DEC_FR, robot.NB_CRAB_DIFF_DEC_BR);
+                telemetry.addData("13. CRAB_90_DIFF_INC = ", "%.4f", robot.NB_CRAB_DIFF_INC);
             }
             else {
                 telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.LEFT_SV_DIFF, robot.RIGHT_SV_DIFF);

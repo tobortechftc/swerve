@@ -54,6 +54,7 @@ public class SwerveDriveHardware {
     public boolean deliver_mode = false; //Affects gamepad1's controls, switches the function of the sticks
 
     boolean isTesting = false;
+    boolean needsUpdate = false;
 
     boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
     boolean isSnakingLeft = false; //See if the snake drive is turning to the left
@@ -301,16 +302,17 @@ public class SwerveDriveHardware {
 
     /* variables for newbot */
     static double NB_SERVO_90_DEGREE = 0.479;
-    static double NB_CRAB_DIFF_INC = 0.4663;
+    static double NB_CRAB_DIFF_INC = 0.4393;
     // static double NB_CRAB_DIFF_INC = 0.479;
-    static double NB_CRAB_DIFF_DEC = 0.4762;
+    static double NB_CRAB_DIFF_DEC_BR = 0.4832;
+    static double NB_CRAB_DIFF_DEC_FR = 0.4582;
     static double NB_LEFT_SV_DIFF = 0.001;
     static double NB_RIGHT_SV_DIFF = 0.000;
 
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5206;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.4667;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.5800;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5778;
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5139;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.4939;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.5456;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5361;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;
@@ -688,13 +690,13 @@ public class SwerveDriveHardware {
         SERVO_FL_STRAFE_POSITION = NB_SERVO_FL_FORWARD_POSITION + NB_CRAB_DIFF_INC - NB_LEFT_SV_DIFF;
         if (SERVO_FL_STRAFE_POSITION>1.0)
             SERVO_FL_STRAFE_POSITION = 1.0;
-        SERVO_FR_STRAFE_POSITION = NB_SERVO_FR_FORWARD_POSITION - NB_CRAB_DIFF_DEC + NB_RIGHT_SV_DIFF;
+        SERVO_FR_STRAFE_POSITION = NB_SERVO_FR_FORWARD_POSITION - NB_CRAB_DIFF_DEC_FR + NB_RIGHT_SV_DIFF;
         if (SERVO_FR_STRAFE_POSITION<0.0)
             SERVO_FR_STRAFE_POSITION = 0.0;
         SERVO_BL_STRAFE_POSITION = NB_SERVO_BL_FORWARD_POSITION + NB_CRAB_DIFF_INC - NB_LEFT_SV_DIFF;
         if (SERVO_BL_STRAFE_POSITION>1.0)
             SERVO_BL_STRAFE_POSITION = 1.0;
-        SERVO_BR_STRAFE_POSITION = NB_SERVO_BR_FORWARD_POSITION - NB_CRAB_DIFF_DEC + NB_RIGHT_SV_DIFF;
+        SERVO_BR_STRAFE_POSITION = NB_SERVO_BR_FORWARD_POSITION - NB_CRAB_DIFF_DEC_BR + NB_RIGHT_SV_DIFF;
         if (SERVO_BR_STRAFE_POSITION<0.0)
             SERVO_BR_STRAFE_POSITION = 0.0;
         double NB_SERVO_UNIT_CONVERSION = Math.abs(SERVO_FL_STRAFE_POSITION - SERVO_FL_FORWARD_POSITION)/0.5;
