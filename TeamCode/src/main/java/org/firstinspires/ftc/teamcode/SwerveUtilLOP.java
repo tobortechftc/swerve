@@ -92,9 +92,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             glyph_grabber_auto_open();
             glyph_slider_init();
         }
-        if (robot.use_dumper) {
-            lift_to_target(robot.LIFT_INIT_COUNT);
-        }
+        //if (robot.use_dumper) {
+        //    lift_to_target(robot.LIFT_INIT_COUNT);
+        //}
         if (robot.use_relic_grabber) {
             if (robot.use_newbot) {
                 relic_grabber_close();
@@ -804,6 +804,14 @@ public class SwerveUtilLOP extends LinearOpMode {
             dumper_down();
         }
         robot.mt_lift.setPower(power);
+    }
+
+    void lift_up_and_down(boolean force) {
+        lift_up(force);
+        sleep(200);
+        lift_down(force);
+        sleep(200);
+        lift_stop();
     }
 
     void lift_stop() {
@@ -1811,12 +1819,12 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     enum RangeSensor{
-        FRONT_LEFT, FRONT_RIGHT
+        FRONT_LEFT, FRONT_RIGHT, BACK
     }
 
     /**
      * Function to prevent range sensor from returning an error
-     * If this returns 6666666, it failed to get the right range in under .1 seconds
+     * If this returns 999, it failed to get the right range in under .3 seconds
      * @param direction
      * @return
      */
@@ -1826,17 +1834,28 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.use_range_sensor)
             return 0.0;
         if(direction == RangeSensor.FRONT_LEFT){
-            while(distance > 365 && elapsedTime.seconds() < 0.5){
+            if (robot.rangeSensorFrontLeft==null)
+                distance = 0;
+            else while(distance > 365 && elapsedTime.seconds() < 0.3){
                 distance = robot.rangeSensorFrontLeft.getDistance(DistanceUnit.CM);
             }
         } else if(direction == RangeSensor.FRONT_RIGHT){
-            while(distance > 365 && elapsedTime.seconds() < 0.5){
+            if (robot.rangeSensorFrontRight==null)
+                distance = 0;
+            else while(distance > 365 && elapsedTime.seconds() < 0.3){
                 distance = robot.rangeSensorFrontRight.getDistance(DistanceUnit.CM);
+            }
+        } else if(direction == RangeSensor.BACK){
+            if (robot.rangeSensorBack==null)
+                distance = 0;
+            else while(distance > 365 && elapsedTime.seconds() < 0.3){
+                distance = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
             }
         }
         else {
             throw new IllegalArgumentException("Direction not specified!");
         }
+        if (distance>365) distance = 999;
         return distance;
     }
 
@@ -3441,6 +3460,18 @@ public class SwerveUtilLOP extends LinearOpMode {
 //        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
     }
 
+    void dumperGateUp() {
+        if (!robot.use_dumper || !robot.use_newbot_v2)
+            return;
+        robot.sv_dumper_gate.setPosition(robot.SV_DUMPER_GATE_UP);
+    }
+
+    void dumperGateDown() {
+        if (!robot.use_dumper || !robot.use_newbot_v2)
+            return;
+        robot.sv_dumper_gate.setPosition(robot.SV_DUMPER_GATE_DOWN);
+    }
+
     void intakeGateUp() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
@@ -3511,12 +3542,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
         double range_front_left = getRange(RangeSensor.FRONT_LEFT);
-        if (range_front_left>365) range_front_left=0;
         double range_front_right = getRange(RangeSensor.FRONT_RIGHT);
-        if (range_front_right>365) range_front_right=0;
+        double range_back = getRange(RangeSensor.BACK);
         if (robot.use_imu||robot.use_range_sensor) {
-            telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.2f)/L=%.1f/R=%.1f cm",
-                    (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right);
+            telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.0f)/L=%.0f/R=%.0f/B=%.0fcm",
+                    (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right,range_back);
         }
         if (robot.use_proximity_sensor) {
             if (robot.use_newbot) {

@@ -142,7 +142,7 @@ public class SwerveDriveHardware {
     final static double SV_RIGHT_ARM_UP = 0.11;
     final static double SV_RIGHT_ARM_DOWN = 0.73;
     final static double SV_RIGHT_ARM_UP_NB = 0.2;
-    final static double SV_RIGHT_ARM_DOWN_NB = 0.8;
+    final static double SV_RIGHT_ARM_DOWN_NB = 0.79;
     final static double SV_LEFT_ARM_UP_NB = 0.943;
     final static double SV_LEFT_ARM_DOWN_NB = 0.359;
     final static double SV_FRONT_ARM_IN = 0.82;
@@ -156,6 +156,7 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.528;
     final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.485;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.358; // 0.405 0.037
+
     final static double SV_RELIC_GRABBER_INIT = 0.332;
     final static double SV_RELIC_GRABBER_CLOSE = 0.34;
     final static double SV_RELIC_GRABBER_OPEN = 0.67;
@@ -175,18 +176,21 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_WRIST_DOWN = 0.68;
     final static double SV_RELIC_WRIST_DOWN_R = 0.65; // down and ready for release
     final static double SV_RELIC_ELBOW_INIT = 0.5;
-    final static double SV_RELIC_ELBOW_DOWN = 0.5;
     final static double SV_RELIC_ELBOW_UP = 0.5;
-    final static double SV_DUMPER_INIT = 0.6744;
-    final static double SV_DUMPER_DOWN = 0.6744;
-    final static double SV_DUMPER_LIFT = 0.595;
-    final static double SV_DUMPER_HALF_UP = 0.5172;
+    final static double SV_RELIC_ELBOW_FLAT = 0.5;
+    final static double SV_RELIC_ELBOW_DOWN = 0.5;
+    final static double SV_DUMPER_INIT = 0.65;
+    final static double SV_DUMPER_DOWN = 0.65;
+    final static double SV_DUMPER_LIFT = 0.59;
+    final static double SV_DUMPER_HALF_UP = 0.5;
     final static double SV_DUMPER_UP = 0.17;
     final static double SV_DUMPER_DUMP = 0.18;
     final static double SV_INTAKE_GATE_INIT = 0.864;
     final static double SV_INTAKE_GATE_UP = 0.687;
     final static double SV_INTAKE_GATE_DOWN = 0.217;
     final static double SV_DUMPER_GATE_INIT = 0.5;
+    final static double SV_DUMPER_GATE_UP = 0.5;
+    final static double SV_DUMPER_GATE_DOWN = 0.5;
 
     final static double GG_SLIDE_UP_POWER = 1.0;
     final static double GG_SLIDE_DOWN_POWER = -0.9;
@@ -440,7 +444,7 @@ public class SwerveDriveHardware {
                     rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
                     rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
                     if (use_newbot_v2) {
-                        // rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsBack");
+                        rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsBack");
                     }
                 } else {
                     rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");

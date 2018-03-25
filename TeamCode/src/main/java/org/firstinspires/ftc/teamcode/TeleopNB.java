@@ -98,7 +98,15 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
                 else if ((gamepad1.dpad_up&&!gamepad1.x) || gamepad2.dpad_up) {
                     dumper_up();
+                    boolean auto_up_down = false;
+                    if (gamepad1.a) {
+                        auto_up_down = true;
+                    }
+                    double pos = robot.sv_dumper.getPosition();
                     sleep(200);
+                    if (auto_up_down && (Math.abs(pos-robot.SV_DUMPER_UP)<0.05)) {
+                        lift_up_and_down(true);
+                    }
                 } else if ((gamepad1.dpad_down && !gamepad1.x) || gamepad2.dpad_down) {
                     dumper_down();
                 }
@@ -279,7 +287,7 @@ public class TeleopNB extends SwerveUtilLOP {
                         }
                     } else if (gamepad1.y) { // slow mode
                         robot.drivePowerRatio = 0.7;
-                    } else if (gamepad1.a && !gamepad1.x) { // slow mode
+                    } else if (gamepad1.a && !gamepad1.x && !gamepad1.dpad_up) { // slow mode
                         robot.drivePowerRatio = 0.3;
                     }
 
