@@ -318,16 +318,20 @@ public class TeleopNB extends SwerveUtilLOP {
 
             if (robot.use_relic_slider) {
                 // relic slider
-                if (gamepad2.left_stick_y > 0.1) { // slide in
+                if (gamepad2.left_stick_y > 0.2) { // slide in
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
                         pw *= 0.7;
                     relic_slider_in(pw, gamepad2.start); // push start to force slide in further
-                } else if (gamepad2.left_stick_y < -0.1) { // slide out
+                } else if (gamepad2.left_stick_y < -0.2) { // slide out
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
                         pw *= 0.85;
                     relic_slider_out(pw);
+                } else if (gamepad2.left_stick_x < -0.2) { // slide out slowly
+                    relic_slider_out(0.2);
+                } else if (gamepad2.left_stick_x > 0.2) { // slide in slowly
+                    relic_slider_in(0.1, false);
                 } else {
                     relic_slider_stop();
                 }
@@ -347,9 +351,17 @@ public class TeleopNB extends SwerveUtilLOP {
                 } else if (gamepad2.a && gamepad2.y) {
                     relic_arm_middle();
                 } else if (gamepad2.y && !gamepad2.left_bumper) {
-                    relic_arm_up();
+                    if (robot.use_newbot_v2) {
+                        relic_arm_ready_delivery();
+                    } else {
+                        relic_arm_up();
+                    }
                 } else if (gamepad2.a && !gamepad2.left_bumper) {
-                    relic_arm_down();
+                    if (robot.use_newbot_v2) {
+                        relic_arm_ready_grab_and_release();
+                    } else {
+                        relic_arm_down();
+                    }
                 }
                 // relic grabber open/close
                 if (gamepad2.b && !gamepad2.start) {
@@ -364,12 +376,6 @@ public class TeleopNB extends SwerveUtilLOP {
                     relic_grabber_higher();
                 } else if (gamepad2.back && (gamepad2.right_stick_y > 0.1)) { // lower
                     relic_grabber_lower();
-                } else if (gamepad2.a && gamepad2.y) {
-                    relic_arm_middle();
-                } else if (gamepad2.y) {
-                    relic_arm_up();
-                } else if (gamepad2.a) {
-                    relic_arm_down();
                 }
             }
             show_telemetry();

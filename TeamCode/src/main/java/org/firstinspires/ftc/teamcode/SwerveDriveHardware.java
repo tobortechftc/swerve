@@ -158,27 +158,28 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.485;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.358; // 0.405 0.037
 
-    final static double SV_RELIC_GRABBER_INIT = 0.332;
-    final static double SV_RELIC_GRABBER_CLOSE = 0.34;
-    final static double SV_RELIC_GRABBER_OPEN = 0.67;
-    final static double SV_RELIC_GRABBER_INIT_NB = 0.31;
-    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.31;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.65;
-    final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.85;
+    final static double SV_RELIC_GRABBER_INIT = 0.5039;
+    final static double SV_RELIC_GRABBER_CLOSE = 0.5006;
+    final static double SV_RELIC_GRABBER_OPEN = 0.1822;
+    final static double SV_RELIC_GRABBER_INIT_NB = 0.5039;
+    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.5006;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.1822;
+    final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.1722;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
     final static double SV_RELIC_ARM_DOWN = 0.2;
     final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
-    final static double SV_RELIC_WRIST_INIT = 0.718;
-    final static double SV_RELIC_WRIST_DOWN_AUTO = 0.60; // down out to prevent crab mode
-    final static double SV_RELIC_WRIST_UP = 0.15;
-    final static double SV_RELIC_WRIST_MIDDLE = 0.4;
-    final static double SV_RELIC_WRIST_DOWN = 0.68;
-    final static double SV_RELIC_WRIST_DOWN_R = 0.65; // down and ready for release
-    final static double SV_RELIC_ELBOW_INIT = 0.5;
-    final static double SV_RELIC_ELBOW_UP = 0.5;
-    final static double SV_RELIC_ELBOW_FLAT = 0.5;
+    final static double SV_RELIC_WRIST_INIT = 0.41;
+    final static double SV_RELIC_WRIST_UP = 0.5283;
+    final static double SV_RELIC_WRIST_MIDDLE = 0.48;
+    final static double SV_RELIC_WRIST_DOWN = 0.8272;
+    final static double SV_RELIC_WRIST_DOWN_R = 0.82; // down and ready for release
+    final static double SV_RELIC_WRIST_DOWN_AUTO = 0.82; // down out to prevent crab mode
+
+    final static double SV_RELIC_ELBOW_INIT = 0.6167;
+    final static double SV_RELIC_ELBOW_UP = 0.5689;
+    final static double SV_RELIC_ELBOW_FLAT = 0.5117;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
     final static double SV_DUMPER_INIT = 0.65;
     final static double SV_DUMPER_DOWN = 0.65;
@@ -188,6 +189,7 @@ public class SwerveDriveHardware {
     final static double SV_DUMPER_DUMP = 0.18;
     final static double SV_INTAKE_GATE_INIT = 0.864;
     final static double SV_INTAKE_GATE_UP = 0.687;
+    final static double SV_INTAKE_GATE_MID = 0.5;
     final static double SV_INTAKE_GATE_DOWN = 0.217;
     final static double SV_DUMPER_GATE_INIT = 0.5;
     final static double SV_DUMPER_GATE_UP = 0.5;
@@ -499,7 +501,8 @@ public class SwerveDriveHardware {
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
             if (use_newbot) {
-                mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+                if (!use_newbot_v2)
+                    mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             } else {
                 // mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             }

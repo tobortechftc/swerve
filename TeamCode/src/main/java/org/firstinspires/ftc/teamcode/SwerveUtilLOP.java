@@ -566,10 +566,38 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_relic_slider.setPower(0);
     }
 
+    public void relic_elbow_up() {
+        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_UP);
+    }
+
+    public void relic_elbow_flat() {
+        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_FLAT);
+    }
+
+    public void relic_elbow_down() {
+        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_DOWN);
+    }
+
+    public void relic_elbow_init() {
+        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_INIT);
+    }
+
+    public void relic_arm_ready_grab_and_release() {
+        relic_elbow_flat();
+        robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN);
+    }
+
+    public void relic_arm_ready_delivery() {
+        robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
+        relic_elbow_up();
+        robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
+    }
+
     public void relic_arm_auto() {
         stop_chassis();
         if (robot.use_newbot) {
-            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
+            if (!robot.use_newbot_v2)
+                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
         } else {
             relic_arm_down();
         }
@@ -808,9 +836,11 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void lift_up_and_down(boolean force) {
         lift_up(force);
-        sleep(200);
+        sleep(300);
+        lift_stop();
+        sleep(150);
         lift_down(force);
-        sleep(200);
+        sleep(150);
         lift_stop();
     }
 
@@ -2032,6 +2062,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(50);
         }
         return false;
+    }
+    public boolean GlyphStucked() {
+        if (robot.rangeSensorBack==null)
+            return false;
+        return (getRange(RangeSensor.BACK)<5.1);
     }
 
     public void grabAndDump(boolean isSide) throws InterruptedException {
@@ -3480,13 +3515,27 @@ public class SwerveUtilLOP extends LinearOpMode {
     void intakeGateUp() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
+        double pos = robot.sv_intake_gate.getPosition();
+        if (Math.abs(pos-robot.SV_INTAKE_GATE_DOWN)<0.1)
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_MID);
+        else
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
+    }
+
+    void intakeGateMid() {
+        if (!robot.use_intake || !robot.use_newbot_v2)
+            return;
         robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
     }
 
     void intakeGateDown() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
-        robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_DOWN);
+        double pos = robot.sv_intake_gate.getPosition();
+        if (Math.abs(pos-robot.SV_INTAKE_GATE_UP)<0.1)
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_MID);
+        else
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_DOWN);
     }
 
     void intakeIn() {
@@ -3549,9 +3598,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         double range_front_left = getRange(RangeSensor.FRONT_LEFT);
         double range_front_right = getRange(RangeSensor.FRONT_RIGHT);
         double range_back = getRange(RangeSensor.BACK);
+        boolean glyph_stucked = GlyphStucked();
         if (robot.use_imu||robot.use_range_sensor) {
-            telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.0f)/L=%.0f/R=%.0f/B=%.0fcm",
-                    (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right,range_back);
+            telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.0f)/L=%.0f/R=%.0f/B%s=%.0fcm",
+                    (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right,
+                    (glyph_stucked?"(S)":""), range_back);
         }
         if (robot.use_proximity_sensor) {
             if (robot.use_newbot) {
