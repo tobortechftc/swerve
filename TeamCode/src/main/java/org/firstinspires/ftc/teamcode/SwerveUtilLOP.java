@@ -1654,7 +1654,12 @@ public class SwerveUtilLOP extends LinearOpMode {
             double CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI; // Also is mm per rotation
 
             double numberR = cm / (CIRCUMFERENCE / 10);
-            StraightR(-power, numberR);
+            if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){
+                StraightR(power, numberR);
+            }
+            else {
+                StraightR(-power, numberR);
+            }
         } else { // using timer
             double cm_per_ms = 0.014 * power / 0.8;
             if (cm_per_ms < 0) cm_per_ms *= -1.0;
@@ -1664,6 +1669,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             driveTT(power, power);
             sleep(msec);
             driveTT(0, 0);
+
         }
     }
 
@@ -2070,7 +2076,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void grabAndDump(boolean isSide) throws InterruptedException {
-        intakeGateUp();
+        intakeGateMid();
         if (opModeIsActive()==false ||
                 (isSide==true && robot.runtimeAuto.seconds() > 24) ||
                 (isSide==false && robot.runtimeAuto.seconds() > 26)) {
@@ -3525,7 +3531,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     void intakeGateMid() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
-        robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
+        robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_MID);
     }
 
     void intakeGateDown() {
