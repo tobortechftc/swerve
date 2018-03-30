@@ -50,7 +50,7 @@ public class DriveToCryptoboxDistance extends SwerveUtilLOP {
         robot.use_color_sensor = false;
         robot.use_Vuforia = false;
 
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Initialization Complete");

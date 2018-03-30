@@ -43,7 +43,7 @@ public class DriveToCryptoboxSpike extends SwerveUtilLOP {
         robot.use_encoder = false;
         robot.use_minibot = false;
         robot.use_range_sensor = true;
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
 
         waitForStart();
 

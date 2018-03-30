@@ -20,6 +20,7 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_newbot = true;
         robot.use_newbot_v2= true;
         robot.use_dumper = true;
+        robot.use_dumper_gate = true;
         robot.use_intake = true;
         robot.use_imu = true;
         robot.use_Vuforia = false;
@@ -28,12 +29,14 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_arm = true;
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = true;
+        robot.use_relic_elbow = false;
         robot.use_relic_slider = true;
         robot.use_test_servo = false;
         robot.use_test_motor = false;
         robot.use_range_sensor = true;
         robot.use_proximity_sensor = true;
         robot.use_front_arm = false;
+        robot.use_verbose = true;
 
         init_and_test();
 

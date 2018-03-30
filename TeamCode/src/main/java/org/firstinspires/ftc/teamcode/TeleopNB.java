@@ -23,6 +23,7 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_front_drive_only = false; // front drive only
         robot.use_intake = true;
         robot.use_dumper = true;
+        robot.use_dumper_gate = true;
         robot.use_imu = false;
         robot.use_encoder = true;
         robot.use_minibot = false;
@@ -33,6 +34,7 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = true;
         robot.use_relic_slider = true;
+        robot.use_relic_elbow = false;
         robot.use_arm = true;
         robot.use_front_arm = false;
 
@@ -351,14 +353,14 @@ public class TeleopNB extends SwerveUtilLOP {
                 } else if (gamepad2.a && gamepad2.y) {
                     relic_arm_middle();
                 } else if (gamepad2.y && !gamepad2.left_bumper) {
-                    if (robot.use_newbot_v2) {
-                        relic_arm_ready_delivery();
+                    if (robot.use_relic_elbow) {
+                        relic_elbow_up_auto();
                     } else {
                         relic_arm_up();
                     }
                 } else if (gamepad2.a && !gamepad2.left_bumper) {
-                    if (robot.use_newbot_v2) {
-                        relic_arm_ready_grab_and_release();
+                    if (robot.use_relic_elbow) {
+                        relic_elbow_down_auto();
                     } else {
                         relic_arm_down();
                     }
@@ -373,9 +375,15 @@ public class TeleopNB extends SwerveUtilLOP {
                     relic_grabber_release();
                     // auto_relic_release();
                 } else if (gamepad2.back && (gamepad2.right_stick_y < -0.1)) { // higher
-                    relic_grabber_higher();
+                    if (robot.use_relic_elbow)
+                        relic_elbow_higher();
+                    else
+                        relic_grabber_higher();
                 } else if (gamepad2.back && (gamepad2.right_stick_y > 0.1)) { // lower
-                    relic_grabber_lower();
+                    if (robot.use_relic_elbow)
+                        relic_elbow_lower();
+                    else
+                        relic_grabber_lower();
                 }
             }
             show_telemetry();

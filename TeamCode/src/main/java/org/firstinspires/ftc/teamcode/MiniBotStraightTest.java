@@ -41,7 +41,7 @@ public class MiniBotStraightTest extends SwerveUtilLOP {
          */
         double power_steps [] = {0.0, 0.5, 0.7, 0.85, 0.95, 1.0};
         int n_steps = 6;
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");    //

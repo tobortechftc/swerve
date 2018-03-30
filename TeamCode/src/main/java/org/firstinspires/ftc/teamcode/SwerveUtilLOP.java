@@ -51,13 +51,16 @@ public class SwerveUtilLOP extends LinearOpMode {
             return opposite;
         }
     }
+    enum RangeSensor{
+        FRONT_LEFT, FRONT_RIGHT, BACK
+    }
 
     @Override
     public void runOpMode() throws InterruptedException{
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello! Driver");    //
@@ -73,7 +76,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public void init_and_test() throws InterruptedException {
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
 
         if (robot.use_glyph_grabber) {
             // test_glyph_rotator_encoder();
@@ -113,6 +116,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.use_imu2 = true;
             }
         }
+        if (robot.use_verbose)
+            telemetry.addData("0: End start_init CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
     public double imu_heading() {
@@ -148,6 +153,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.use_dumper)
             return;
         robot.sv_dumper.setPosition(robot.SV_DUMPER_UP);
+        if (robot.use_dumper_gate) {
+            dumperGateDown();
+        }
     }
 
     public void dumper_higher() {
@@ -176,10 +184,17 @@ public class SwerveUtilLOP extends LinearOpMode {
         double pos = robot.sv_dumper.getPosition();
         if (Math.abs(pos-robot.SV_DUMPER_DOWN)<0.05)
             robot.sv_dumper.setPosition(robot.SV_DUMPER_HALF_UP);
-        else if (Math.abs(pos-robot.SV_DUMPER_HALF_UP)<0.05)
+        else if (Math.abs(pos-robot.SV_DUMPER_HALF_UP)<0.05) {
             robot.sv_dumper.setPosition(robot.SV_DUMPER_UP);
-        else
+            if (robot.use_dumper_gate) {
+                dumperGateDown();
+            }
+        } else {
             robot.sv_dumper.setPosition(robot.SV_DUMPER_DUMP);
+            if (robot.use_dumper_gate) {
+                dumperGateDown();
+            }
+        }
     }
 
     public void dumper_shake() {
@@ -198,6 +213,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.use_dumper)
             return;
         robot.sv_dumper.setPosition(robot.SV_DUMPER_DOWN);
+        if (robot.use_dumper_gate) {
+            dumperGateUp();
+        }
     }
 
     public void glyph_grabber_bottom_closer() {
@@ -566,28 +584,95 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_relic_slider.setPower(0);
     }
 
+    public void relic_elbow_up_auto() {
+        // down -> flat -> up -> init
+        if (!robot.use_relic_elbow) return;
+        if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.DOWN) {
+            relic_elbow_flat();
+            relic_arm_ready_grab_and_release();
+        } else if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.FLAT) {
+            // relic_elbow_up();
+            relic_arm_ready_delivery();
+        } else {
+            relic_elbow_init();
+        }
+    }
+
+    public void relic_elbow_down_auto() {
+        // init -> up -> flat -> down
+        if (!robot.use_relic_elbow) return;
+        if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.INIT) {
+            relic_elbow_up();
+        } else if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.UP) {
+            // relic_elbow_flat();
+            relic_arm_ready_grab_and_release();
+        } else {
+            relic_elbow_down();
+        }
+    }
+
+    public void relic_elbow_higher() {
+        if (!robot.use_relic_elbow) return;
+        double new_pos = robot.sv_relic_elbow.getPosition() + 0.001;
+        if (new_pos>0.999) new_pos = 0.999;
+        robot.sv_relic_elbow.setPosition(new_pos);
+        if (new_pos>=robot.SV_RELIC_ELBOW_INIT)
+            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.INIT;
+        else if (new_pos>=robot.SV_RELIC_ELBOW_UP)
+            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.UP;
+        else if (new_pos>=robot.SV_RELIC_ELBOW_FLAT)
+            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.FLAT;
+        else
+            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.DOWN;
+    }
+
+    public void relic_elbow_lower() {
+        if (!robot.use_relic_elbow) return;
+        double new_pos = robot.sv_relic_elbow.getPosition() - 0.001;
+        if (new_pos<0.001) new_pos = 0.001;
+        robot.sv_relic_elbow.setPosition(new_pos);
+        if (new_pos<=robot.SV_RELIC_ELBOW_DOWN)
+            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.DOWN;
+        else if (new_pos<=robot.SV_RELIC_ELBOW_FLAT)
+            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.FLAT;
+        else if (new_pos<=robot.SV_RELIC_ELBOW_UP)
+            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.UP;
+        else
+            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.INIT;
+    }
+
     public void relic_elbow_up() {
+        if (!robot.use_relic_elbow) return;
         robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_UP);
+        robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.UP;
     }
 
     public void relic_elbow_flat() {
+        if (!robot.use_relic_elbow) return;
         robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_FLAT);
+        robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.FLAT;
     }
 
     public void relic_elbow_down() {
+        if (!robot.use_relic_elbow) return;
         robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_DOWN);
+        robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.DOWN;
     }
 
     public void relic_elbow_init() {
+        if (!robot.use_relic_elbow) return;
         robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_INIT);
+        robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.INIT;
     }
 
     public void relic_arm_ready_grab_and_release() {
+        if (!robot.use_relic_elbow) return;
         relic_elbow_flat();
         robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN);
     }
 
     public void relic_arm_ready_delivery() {
+        if (!robot.use_relic_elbow) return;
         robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
         relic_elbow_up();
         robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
@@ -1859,10 +1944,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         return (robot.blue - robot.red);
     }
 
-    enum RangeSensor{
-        FRONT_LEFT, FRONT_RIGHT, BACK
-    }
-
     /**
      * Function to prevent range sensor from returning an error
      * If this returns 999, it failed to get the right range in under .3 seconds
@@ -2024,6 +2105,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(500);
             l_arm_up();
         }
+        if (robot.use_verbose)
+            telemetry.addData("0: End doPlatformMission CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
+
         return next_dist;
     }
 
@@ -2116,6 +2200,8 @@ public class SwerveUtilLOP extends LinearOpMode {
 //                deliverGlyph();
 //            }
         }
+        if (robot.use_verbose)
+            telemetry.addData("0: End GrabAndDump() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
     public void quickDump() throws InterruptedException {
@@ -2315,6 +2401,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
             glyph_grabber_auto_open();
         }
+        if (robot.use_verbose)
+            telemetry.addData("0: End deliveryGlyph() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
     public void turnToCenter(boolean isBlue, boolean isSide, int curColumn) throws InterruptedException{
@@ -2498,60 +2586,6 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
 
-    void go_to_crypto(double power, int targetColumn, boolean isBlue, boolean isSideBox)
-            throws InterruptedException {
-        StraightIn(.2, (isSideBox?22:24)); // Drive off the balance stone
-        alignUsingIMU(0);
-        if (!opModeIsActive()) return;
-
-        double driveDistance;
-        if (targetColumn < 0) targetColumn = 1;
-
-        if (isSideBox) {
-            int init_dist = 7;
-
-            if (isBlue) { // Side Blue
-                driveDistance = init_dist + (18 * targetColumn); // 19cm between columns, 18 works better
-            } else { // Side Red
-                driveDistance = init_dist + (18 * (2 - targetColumn)); 
-            }
-
-            StraightCm(power, driveDistance);
-            if (!opModeIsActive()) return;
-            if (isBlue) {
-                TurnLeftD(0.3, 80);
-            } else {
-                TurnRightD(0.3, 80);
-            }
-        } else { // Front box
-            int init_dist = (isBlue ? 6 : 7);
-
-            if (isBlue) { // Front blue
-                driveDistance = init_dist + (19 * targetColumn); // 19cm between columns
-            }
-            else { // Front red
-                power *= -1; // Reverses power input, all other code is pretty much the same
-                driveDistance = init_dist + (19 * (2 - targetColumn)); // 19cm between columns
-            }
-
-            if (!opModeIsActive()) return;
-            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-            sleep(300);
-            StraightCm(power, driveDistance);
-            if (!opModeIsActive()) return;
-            if (isBlue) {
-                TurnRightD(.15, 5);
-            } else {
-                TurnLeftD(.15, 5);
-            }
-        }
-        if (!opModeIsActive()) return;
-
-        driveTT(0, 0); // Stops
-        change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
-        sleep(300);
-    }
-
     void reset_prox(){
         robot.proxL.setMode(DigitalChannel.Mode.OUTPUT);
         robot.proxR.setMode(DigitalChannel.Mode.OUTPUT);
@@ -2667,6 +2701,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);
         StraightCm(.25, 3); // goes back so that delivery has enough space
+        if (robot.use_verbose)
+            telemetry.addData("0: End go_to_crypto_prox_NB() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
+
     }
 
     void go_to_crypto_prox(double power, int targetColumn, boolean isBlue, boolean isSideBox)throws InterruptedException {
