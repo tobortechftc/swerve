@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Bitmap;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -283,6 +285,9 @@ public class SwerveDriveHardware {
     public ModernRoboticsI2cRangeSensor rangeSensorFrontLeft = null;
     public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
     public SwerveUtilLOP.Camera camera = null;
+    public SwerveUtilLOP.TeamColor leftJewelColorCamera = SwerveUtilLOP.TeamColor.UNKNOWN;
+    public SwerveUtilLOP.TeamColor rightJewelColorCamera = SwerveUtilLOP.TeamColor.UNKNOWN;
+    public Bitmap bitmap = null;
     public MB1202 mb_ultra = null;
     public DigitalChannel proxL = null;
     public DigitalChannel proxR = null;

@@ -22,7 +22,7 @@ public class AutoBlueSideBoxNBPlus extends SwerveUtilLOP{
         robot.use_newbot = true;
         robot.use_minibot = false;
         robot.use_range_sensor = true;
-        robot.use_color_sensor = true;
+        robot.use_color_sensor = false;
         robot.use_Vuforia = true;
         robot.use_camera = true;
         robot.use_glyph_grabber = false;

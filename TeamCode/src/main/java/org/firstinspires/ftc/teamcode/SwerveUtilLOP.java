@@ -1923,32 +1923,43 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.targetColumn<0) {
             robot.targetColumn = get_cryptobox_column();
         }
-        TeamColor rightJewelColorCamera = TeamColor.UNKNOWN;
 
         ElapsedTime runTime = new ElapsedTime();
 
-
         if(robot.use_camera) {
-            Bitmap bitmap = null;
             robot.camera.activate();
-            while (runTime.seconds() < 0.5) {
-                bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
-                if (bitmap != null) {
-                    break;
+            do{
+                robot.bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+            }
+            while (runTime.seconds() < 0.5 && robot.bitmap == null);
+
+            if (robot.use_newbot) {
+                if (robot.allianceColor == TeamColor.BLUE || robot.use_newbot_v2==true) {
+                    r_arm_down();
+                } else {
+                    l_arm_down();
+                }
+            } else { // oldBot
+                if (robot.allianceColor == TeamColor.BLUE) {
+                    l_arm_down();
+                } else {
+                    r_arm_down();
                 }
             }
-            if (bitmap == null) {
-                telemetry.addData("Warning!", robot.camera.getLastError()).setRetained(true);
-                telemetry.update();
+            if (robot.bitmap != null) {
 
-                //while (opModeIsActive());
-            } else {
-                TeamColor leftJewelColorCamera = determineJewelColor(bitmap);
-                telemetry.addData("Left Jewel Color", leftJewelColorCamera);
-                //Mirrors to allow checking of right jewel
-                rightJewelColorCamera = leftJewelColorCamera.getOpposingColor();
-                //Current mounting solution only allows camera to check the left jewel color
-                robot.camera.stopCamera();
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        robot.leftJewelColorCamera = determineJewelColor(robot.bitmap);
+                        telemetry.addData("Left Jewel Color", robot.leftJewelColorCamera);
+                        robot.rightJewelColorCamera = robot.leftJewelColorCamera.getOpposingColor();
+                        robot.camera.stopCamera();
+                    }
+
+                }).start();
+
             }
         }
 
@@ -1960,19 +1971,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             glyph_slider_up_inches(.5, 3);
         }
         if (!opModeIsActive()) return 0;
-        if (robot.use_newbot) {
-            if (robot.allianceColor == TeamColor.BLUE || robot.use_newbot_v2==true) {
-                r_arm_down();
-            } else {
-                l_arm_down();
-            }
-        } else { // oldBot
-            if (robot.allianceColor == TeamColor.BLUE) {
-                l_arm_down();
-            } else {
-                r_arm_down();
-            }
-        }
+
         sleep(500);
         if (!opModeIsActive()) return 0;
 
@@ -1988,7 +1987,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         double next_dist = 0;
 
         // Determines if right jewel is red
-        int directionI = calcArmDirection(rightJewelColorCS, rightJewelColorCamera, isBlueAlliance);
+        int directionI = calcArmDirection(rightJewelColorCS, robot.rightJewelColorCamera, isBlueAlliance);
         if (robot.use_newbot_v2 && !isBlueAlliance) {
             directionI *= -1;
         }
@@ -3260,6 +3259,7 @@ public class SwerveUtilLOP extends LinearOpMode {
          * @return
          */
         Bitmap captureBitmap(double xOffsetF, double yOffsetF, double widthF, double heightF) {
+            Bitmap bitmapTemp = null;
             lastError = "";
             int capacity = vuforia.getFrameQueueCapacity();
             VuforiaLocalizer.CloseableFrame frame = vuforia.getFrameQueue().poll();
@@ -3269,7 +3269,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 return null;
             }
 
-            Bitmap bitmapTemp = convertFrameToBitmap(frame);
+            bitmapTemp = convertFrameToBitmap(frame);
 
             frame.close();
             if (bitmapTemp == null) {
@@ -3278,8 +3278,8 @@ public class SwerveUtilLOP extends LinearOpMode {
 
             }
             //White Balance applied here
-            //int whitestPixel = getWhitestPixel(bitmapTemp);
-            //applyWhiteBalance(bitmapTemp, whitestPixel);
+            int whitestPixel = getWhitestPixel(bitmapTemp);
+            applyWhiteBalance(bitmapTemp, whitestPixel);
 
             //Bitmap bitmap = cropBitmap(bitmapTemp, xOffsetF, yOffsetF, widthF, heightF);
             Bitmap bitmap = bitmapTemp;
