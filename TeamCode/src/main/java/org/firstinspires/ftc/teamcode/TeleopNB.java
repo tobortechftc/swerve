@@ -86,14 +86,23 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
             }
             if (robot.use_dumper && !robot.isTesting) {
+                if (gamepad2.dpad_left && gamepad2.y) {
+                    intakeBarWheelOut();
+                } else if (gamepad2.dpad_left && gamepad2.a) {
+                    intakeBarWheelIn();
+                } else {
+                    intakeBarWheelStop();
+                }
                 if (gamepad2.right_bumper && gamepad2.left_bumper) {
                     lift_back_init(); // back to initial position for collecting glyph
-                } else if (gamepad2.dpad_left) {
+                } else if (gamepad2.dpad_left && !gamepad2.y) {
                     // dumper_higher();
                     intakeGateUp();
+                    sleep(50);
                 } else if (gamepad2.dpad_right) {
                     // dumper_lower();
                     intakeGateDown();
+                    sleep(50);
                 } else if ((gamepad1.dpad_down&&gamepad1.start) || (gamepad2.dpad_down&&gamepad2.start)) {
                     dumper_shake();
                 }
@@ -351,13 +360,13 @@ public class TeleopNB extends SwerveUtilLOP {
                     }
                 } else if (gamepad2.a && gamepad2.y) {
                     relic_arm_middle();
-                } else if (gamepad2.y && !gamepad2.left_bumper) {
+                } else if (gamepad2.y && !gamepad2.left_bumper && !gamepad2.dpad_left) {
                     if (robot.use_relic_elbow) {
                         relic_elbow_up_auto();
                     } else {
                         relic_arm_up();
                     }
-                } else if (gamepad2.a && !gamepad2.left_bumper) {
+                } else if (gamepad2.a && !gamepad2.left_bumper && !gamepad2.dpad_left) {
                     if (robot.use_relic_elbow) {
                         relic_elbow_down_auto();
                     } else {

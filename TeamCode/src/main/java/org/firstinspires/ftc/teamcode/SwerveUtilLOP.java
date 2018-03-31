@@ -3561,8 +3561,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         double pos = robot.sv_intake_gate.getPosition();
         if (Math.abs(pos-robot.SV_INTAKE_GATE_DOWN)<0.1)
             robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_MID);
-        else
+        else if (Math.abs(pos-robot.SV_INTAKE_GATE_MID)<0.1)
             robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
+        else
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_INIT);
     }
 
     void intakeGateMid() {
@@ -3571,14 +3573,37 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_MID);
     }
 
+
     void intakeGateDown() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
         double pos = robot.sv_intake_gate.getPosition();
-        if (Math.abs(pos-robot.SV_INTAKE_GATE_UP)<0.1)
+        if (Math.abs(pos-robot.SV_INTAKE_GATE_INIT)<0.1)
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
+        else if (Math.abs(pos-robot.SV_INTAKE_GATE_UP)<0.1)
             robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_MID);
         else
             robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_DOWN);
+    }
+
+    void intakeBarWheelIn() {
+        robot.sv_bar_wheel.setPower(0.9);
+    }
+
+    void intakeBarWheelOut() {
+        robot.sv_bar_wheel.setPower(-0.9);
+    }
+
+    void intakeBarWheelInP(double pw) {
+        robot.sv_bar_wheel.setPower(Math.abs(pw));
+    }
+
+    void intakeBarWheelOutP(double pw) {
+        robot.sv_bar_wheel.setPower(-1*Math.abs(pw));
+    }
+
+    void intakeBarWheelStop() {
+        robot.sv_bar_wheel.setPower(0);
     }
 
     void intakeIn() {
@@ -3705,7 +3730,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                     (robot.is_gg_upside_down ?"dw":"up"));
         }
         if (robot.use_test_servo) {
-            telemetry.addData("10. test sv = ","%.3f",robot.sv_test.getPosition());
+            // telemetry.addData("10. test sv = ","%.3f",robot.sv_test.getPosition());
         }
         if (robot.use_relic_grabber) {
             telemetry.addData("9.1 relic gr/wrist/elbow = ", "%4.4f/%4.3f/%4.3f",

@@ -28,7 +28,7 @@ public class NullTelOp extends SwerveUtilLOP {
         // initialize robot
         robot.init(hardwareMap, telemetry);
 
-        robot.sv_test.setPosition(0.5);
+        // robot.sv_test.setPosition(0.5);
 
         waitForStart();
         double val = 0.5;
@@ -52,7 +52,7 @@ public class NullTelOp extends SwerveUtilLOP {
             if (val>1.0) val = 1.0;
             else if (val<0.0)
                 val = 0.0;
-            robot.sv_test.setPosition(val);
+            // robot.sv_test.setPosition(val);
 
             show_telemetry();
         }

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -169,7 +170,7 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_GRABBER_OPEN = 0.1822;
     final static double SV_RELIC_GRABBER_INIT_NB = 0.53;
     final static double SV_RELIC_GRABBER_CLOSE_NB = 0.47;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.18;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.1;
     final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.01;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
@@ -179,8 +180,8 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_WRIST_INIT = 0.41;
     final static double SV_RELIC_WRIST_UP = 0.99;
     final static double SV_RELIC_WRIST_MIDDLE = 0.48;
-    final static double SV_RELIC_WRIST_DOWN = 0.501;
-    final static double SV_RELIC_WRIST_DOWN_R = 0.52; // down and ready for release
+    final static double SV_RELIC_WRIST_DOWN = 0.51;
+    final static double SV_RELIC_WRIST_DOWN_R = 0.54; // down and ready for release
     final static double SV_RELIC_WRIST_DOWN_AUTO = 0.99; // down out to prevent crab mode
 
     final static double SV_RELIC_ELBOW_INIT = 0.6167;
@@ -278,10 +279,11 @@ public class SwerveDriveHardware {
     public Servo sv_relic_grabber = null;
     public Servo sv_relic_wrist = null;
     public Servo sv_relic_elbow = null;
-    public Servo sv_test = null;
+    // public Servo sv_test = null;
     public Servo sv_dumper = null;
     public Servo sv_dumper_gate = null;
     public Servo sv_intake_gate = null;
+    public CRServo sv_bar_wheel = null;
     public ColorSensor l_colorSensor = null;
     public ColorSensor r_colorSensor = null;
 
@@ -480,7 +482,7 @@ public class SwerveDriveHardware {
             tel.addData("0: initialize prox/color sensors CPU time =", "%3.2f sec", period.seconds());
 
         if (use_test_servo) {
-            sv_test = hwMap.servo.get("sv_test");
+            // sv_test = hwMap.servo.get("sv_test");
         }
         if (use_test_motor) {
             mt_test = hwMap.dcMotor.get("mt_test");
@@ -521,6 +523,8 @@ public class SwerveDriveHardware {
                     sv_dumper_gate = hwMap.servo.get("sv_dumper_gate");
                     sv_dumper_gate.setPosition(SV_DUMPER_GATE_INIT);
                 }
+                sv_bar_wheel = hwMap.crservo.get("sv_bar_wheel");
+                sv_bar_wheel.setPower(0);
             }
             mt_lift = hwMap.dcMotor.get("mtLift");
             mt_lift.setDirection(DcMotor.Direction.REVERSE);
