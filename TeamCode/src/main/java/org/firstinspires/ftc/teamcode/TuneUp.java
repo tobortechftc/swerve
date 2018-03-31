@@ -25,7 +25,7 @@ public class TuneUp extends SwerveUtilLOP {
         robot.use_Vuforia = false;
         robot.use_camera = false;
         // robot.use_color_sensor = true;
-        // robot.use_arm = true;
+        robot.use_arm = true;
         robot.use_glyph_grabber = false;
         robot.use_relic_grabber = true;
         robot.use_relic_slider = true;
@@ -163,7 +163,7 @@ public class TuneUp extends SwerveUtilLOP {
             }
 
             if (robot.use_newbot) { // newbot related control
-                if (robot.use_dumper) {
+                if (robot.use_dumper && !robot.isTesting) {
                     if (gamepad1.dpad_up && gamepad1.a) {
                         autoIntakeGlyphs(true);
                     } else if (gamepad1.dpad_up && gamepad1.b) {
@@ -199,6 +199,40 @@ public class TuneUp extends SwerveUtilLOP {
                         if(gamepad1.right_bumper){
                             robot.NB_RIGHT_SV_DIFF += 0.001;
                             sleep(100);
+                        }
+
+                        if(gamepad1.y) {
+                            if (gamepad1.dpad_up){
+                                robot.NB_CRAB_DIFF_DEC_BR += 0.001;
+                                robot.needsUpdate = true;
+                            }
+
+                            else if (gamepad1.dpad_down){
+                                robot.NB_CRAB_DIFF_DEC_BR -= 0.001;
+                                robot.needsUpdate = true;
+                            }
+                        }
+                        else if (gamepad1.x){
+                            if (gamepad1.dpad_up){
+                                robot.NB_CRAB_DIFF_DEC_FR += 0.001;
+                                robot.needsUpdate = true;
+                            }
+
+                            else if (gamepad1.dpad_down){
+                                robot.NB_CRAB_DIFF_DEC_FR -= 0.001;
+                                robot.needsUpdate = true;
+                            }
+                        }
+                        else{
+                            if (gamepad1.dpad_up){
+                                robot.NB_CRAB_DIFF_INC += 0.001;
+                                robot.needsUpdate = true;
+                            }
+
+                            else if (gamepad1.dpad_down){
+                                robot.NB_CRAB_DIFF_INC -= 0.001;
+                                robot.needsUpdate = true;
+                            }
                         }
 
                         if (gamepad1.back && gamepad1.dpad_left){
@@ -243,6 +277,10 @@ public class TuneUp extends SwerveUtilLOP {
                         }
                         if (robot.use_newbot) {
                             robot.initialize_newbot();
+                            if(robot.needsUpdate){
+                                change_swerve_pos(robot.cur_mode);
+                                robot.needsUpdate = false;
+                            }
                         }
                     } // end isTesting
             } // end use_swerve

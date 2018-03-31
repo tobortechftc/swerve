@@ -92,9 +92,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             glyph_grabber_auto_open();
             glyph_slider_init();
         }
-        if (robot.use_dumper) {
-            lift_to_target(robot.LIFT_INIT_COUNT);
-        }
+        //if (robot.use_dumper) {
+        //    lift_to_target(robot.LIFT_INIT_COUNT);
+        //}
         if (robot.use_relic_grabber) {
             if (robot.use_newbot) {
                 relic_grabber_close();
@@ -566,10 +566,38 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_relic_slider.setPower(0);
     }
 
+    public void relic_elbow_up() {
+        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_UP);
+    }
+
+    public void relic_elbow_flat() {
+        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_FLAT);
+    }
+
+    public void relic_elbow_down() {
+        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_DOWN);
+    }
+
+    public void relic_elbow_init() {
+        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_INIT);
+    }
+
+    public void relic_arm_ready_grab_and_release() {
+        relic_elbow_flat();
+        robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN);
+    }
+
+    public void relic_arm_ready_delivery() {
+        robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
+        relic_elbow_up();
+        robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
+    }
+
     public void relic_arm_auto() {
         stop_chassis();
         if (robot.use_newbot) {
-            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
+            if (!robot.use_newbot_v2)
+                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
         } else {
             relic_arm_down();
         }
@@ -804,6 +832,16 @@ public class SwerveUtilLOP extends LinearOpMode {
             dumper_down();
         }
         robot.mt_lift.setPower(power);
+    }
+
+    void lift_up_and_down(boolean force) {
+        lift_up(force);
+        sleep(300);
+        lift_stop();
+        sleep(150);
+        lift_down(force);
+        sleep(150);
+        lift_stop();
     }
 
     void lift_stop() {
@@ -1171,9 +1209,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             else if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB && !strafeRight) {
                 robot.motorFrontRight.setPower(0);
-                robot.motorFrontLeft.setPower(-rp);
+                robot.motorFrontLeft.setPower(rp);
                 if (!robot.use_front_drive_only) {
-                    robot.motorBackLeft.setPower(-lp);
+                    robot.motorBackLeft.setPower(lp);
                     robot.motorBackRight.setPower(0);
                 }
             }
@@ -1355,8 +1393,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         else if((robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) && !robot.use_front_drive_only){
             if(strafeRight) {
                 if (rightTC0 > 0 || leftTC0 > 0) {
-                    targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC0);
-                    targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC0);
+                    targetPosFrontRight = curPosFrontRight + ((int) -leftPowerSign * leftTC0);
+                    targetPosBackRight = curPosBackRight + ((int) -rightPowerSign * rightTC0);
                     robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                     robot.motorBackRight.setTargetPosition(targetPosBackRight);
 
@@ -1370,8 +1408,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                 curPosFrontRight = robot.motorFrontRight.getCurrentPosition();
                 curPosBackRight = robot.motorBackRight.getCurrentPosition();
 
-                targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC1);
-                targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC1);
+                targetPosFrontRight = curPosFrontRight + ((int) -leftPowerSign * leftTC1);
+                targetPosBackRight = curPosBackRight + ((int) -rightPowerSign * rightTC1);
 
                 robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                 robot.motorBackRight.setTargetPosition(targetPosBackRight);
@@ -1385,8 +1423,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                     curPosFrontRight = robot.motorFrontRight.getCurrentPosition();
                     curPosBackRight = robot.motorBackRight.getCurrentPosition();
 
-                    targetPosFrontRight = curPosFrontRight + ((int) leftPowerSign * leftTC2);
-                    targetPosBackRight = curPosBackRight + ((int) rightPowerSign * rightTC2);
+                    targetPosFrontRight = curPosFrontRight + ((int) -leftPowerSign * leftTC2);
+                    targetPosBackRight = curPosBackRight + ((int) -rightPowerSign * rightTC2);
 
                     robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                     robot.motorBackRight.setTargetPosition(targetPosBackRight);
@@ -1398,8 +1436,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
             else{
                 if (rightTC0 > 0 || leftTC0 > 0) {
-                    targetPosFrontLeft = curPosFrontLeft + ((int) -leftPowerSign * leftTC0);
-                    targetPosBackLeft = curPosBackLeft + ((int) -rightPowerSign * rightTC0);
+                    targetPosFrontLeft = curPosFrontLeft + ((int) leftPowerSign * leftTC0);
+                    targetPosBackLeft = curPosBackLeft + ((int) rightPowerSign * rightTC0);
                     robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                     robot.motorBackLeft.setTargetPosition(targetPosBackLeft);
 
@@ -1413,8 +1451,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                 curPosFrontLeft = robot.motorFrontLeft.getCurrentPosition();
                 curPosBackLeft = robot.motorBackLeft.getCurrentPosition();
 
-                targetPosFrontLeft = curPosFrontLeft + ((int) -leftPowerSign * leftTC1);
-                targetPosBackLeft = curPosBackLeft + ((int) -rightPowerSign * rightTC1);
+                targetPosFrontLeft = curPosFrontLeft + ((int) leftPowerSign * leftTC1);
+                targetPosBackLeft = curPosBackLeft + ((int) rightPowerSign * rightTC1);
 
                 robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                 robot.motorBackLeft.setTargetPosition(targetPosBackLeft);
@@ -1428,8 +1466,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                     curPosFrontLeft = robot.motorFrontLeft.getCurrentPosition();
                     curPosBackLeft = robot.motorBackLeft.getCurrentPosition();
 
-                    targetPosFrontLeft = curPosFrontLeft + ((int) -leftPowerSign * leftTC2);
-                    targetPosBackLeft = curPosBackLeft + ((int) -rightPowerSign * rightTC2);
+                    targetPosFrontLeft = curPosFrontLeft + ((int) leftPowerSign * leftTC2);
+                    targetPosBackLeft = curPosBackLeft + ((int) rightPowerSign * rightTC2);
 
                     robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                     robot.motorBackLeft.setTargetPosition(targetPosBackLeft);
@@ -1588,7 +1626,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (robot.use_encoder) {
             double numberR = in / robot.INCHES_PER_ROTATION;
-            StraightR(-power, numberR);
+            if(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB){
+                StraightR(power, numberR);
+            }
+            else {
+                StraightR(-power, numberR);
+            }
         } else { // using timer
             double in_per_ms = 0.014 * power / 0.8;
             if (in_per_ms < 0) in_per_ms *= -1.0;
@@ -1811,12 +1854,12 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     enum RangeSensor{
-        FRONT_LEFT, FRONT_RIGHT
+        FRONT_LEFT, FRONT_RIGHT, BACK
     }
 
     /**
      * Function to prevent range sensor from returning an error
-     * If this returns 6666666, it failed to get the right range in under .1 seconds
+     * If this returns 999, it failed to get the right range in under .3 seconds
      * @param direction
      * @return
      */
@@ -1826,17 +1869,28 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!robot.use_range_sensor)
             return 0.0;
         if(direction == RangeSensor.FRONT_LEFT){
-            while(distance > 365 && elapsedTime.seconds() < 0.5){
+            if (robot.rangeSensorFrontLeft==null)
+                distance = 0;
+            else while(distance > 365 && elapsedTime.seconds() < 0.3){
                 distance = robot.rangeSensorFrontLeft.getDistance(DistanceUnit.CM);
             }
         } else if(direction == RangeSensor.FRONT_RIGHT){
-            while(distance > 365 && elapsedTime.seconds() < 0.5){
+            if (robot.rangeSensorFrontRight==null)
+                distance = 0;
+            else while(distance > 365 && elapsedTime.seconds() < 0.3){
                 distance = robot.rangeSensorFrontRight.getDistance(DistanceUnit.CM);
+            }
+        } else if(direction == RangeSensor.BACK){
+            if (robot.rangeSensorBack==null)
+                distance = 0;
+            else while(distance > 365 && elapsedTime.seconds() < 0.3){
+                distance = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
             }
         }
         else {
             throw new IllegalArgumentException("Direction not specified!");
         }
+        if (distance>365) distance = 999;
         return distance;
     }
 
@@ -2008,6 +2062,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(50);
         }
         return false;
+    }
+    public boolean GlyphStucked() {
+        if (robot.rangeSensorBack==null)
+            return false;
+        return (getRange(RangeSensor.BACK)<5.1);
     }
 
     public void grabAndDump(boolean isSide) throws InterruptedException {
@@ -3441,7 +3500,29 @@ public class SwerveUtilLOP extends LinearOpMode {
 //        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
     }
 
+    void dumperGateUp() {
+        if (!robot.use_dumper || !robot.use_newbot_v2)
+            return;
+        robot.sv_dumper_gate.setPosition(robot.SV_DUMPER_GATE_UP);
+    }
+
+    void dumperGateDown() {
+        if (!robot.use_dumper || !robot.use_newbot_v2)
+            return;
+        robot.sv_dumper_gate.setPosition(robot.SV_DUMPER_GATE_DOWN);
+    }
+
     void intakeGateUp() {
+        if (!robot.use_intake || !robot.use_newbot_v2)
+            return;
+        double pos = robot.sv_intake_gate.getPosition();
+        if (Math.abs(pos-robot.SV_INTAKE_GATE_DOWN)<0.1)
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_MID);
+        else
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
+    }
+
+    void intakeGateMid() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
         robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
@@ -3450,7 +3531,11 @@ public class SwerveUtilLOP extends LinearOpMode {
     void intakeGateDown() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
-        robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_DOWN);
+        double pos = robot.sv_intake_gate.getPosition();
+        if (Math.abs(pos-robot.SV_INTAKE_GATE_UP)<0.1)
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_MID);
+        else
+            robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_DOWN);
     }
 
     void intakeIn() {
@@ -3511,12 +3596,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
         double range_front_left = getRange(RangeSensor.FRONT_LEFT);
-        if (range_front_left>365) range_front_left=0;
         double range_front_right = getRange(RangeSensor.FRONT_RIGHT);
-        if (range_front_right>365) range_front_right=0;
+        double range_back = getRange(RangeSensor.BACK);
+        boolean glyph_stucked = GlyphStucked();
         if (robot.use_imu||robot.use_range_sensor) {
-            telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.2f)/L=%.1f/R=%.1f cm",
-                    (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right);
+            telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.0f)/L=%.0f/R=%.0f/B%s=%.0fcm",
+                    (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right,
+                    (glyph_stucked?"(S)":""), range_back);
         }
         if (robot.use_proximity_sensor) {
             if (robot.use_newbot) {
@@ -3590,6 +3676,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.isTesting){
             if(robot.use_newbot){
                 telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.NB_LEFT_SV_DIFF, robot.NB_RIGHT_SV_DIFF);
+                telemetry.addData("12. CRAB_90_DIFF_DEC_FR/CRAB_90_DIFF_DEC_BR = ", "%.4f/%.4f",robot.NB_CRAB_DIFF_DEC_FR, robot.NB_CRAB_DIFF_DEC_BR);
+                telemetry.addData("13. CRAB_90_DIFF_INC = ", "%.4f", robot.NB_CRAB_DIFF_INC);
             }
             else {
                 telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.LEFT_SV_DIFF, robot.RIGHT_SV_DIFF);

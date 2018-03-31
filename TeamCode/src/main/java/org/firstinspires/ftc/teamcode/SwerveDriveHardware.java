@@ -54,6 +54,7 @@ public class SwerveDriveHardware {
     public boolean deliver_mode = false; //Affects gamepad1's controls, switches the function of the sticks
 
     boolean isTesting = false;
+    boolean needsUpdate = false;
 
     boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
     boolean isSnakingLeft = false; //See if the snake drive is turning to the left
@@ -142,7 +143,7 @@ public class SwerveDriveHardware {
     final static double SV_RIGHT_ARM_UP = 0.11;
     final static double SV_RIGHT_ARM_DOWN = 0.73;
     final static double SV_RIGHT_ARM_UP_NB = 0.2;
-    final static double SV_RIGHT_ARM_DOWN_NB = 0.8;
+    final static double SV_RIGHT_ARM_DOWN_NB = 0.79;
     final static double SV_LEFT_ARM_UP_NB = 0.943;
     final static double SV_LEFT_ARM_DOWN_NB = 0.359;
     final static double SV_FRONT_ARM_IN = 0.82;
@@ -156,27 +157,30 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_BOTTOM_OPEN = 0.528;
     final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.485;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.358; // 0.405 0.037
-    final static double SV_RELIC_GRABBER_INIT = 0.332;
-    final static double SV_RELIC_GRABBER_CLOSE = 0.34;
-    final static double SV_RELIC_GRABBER_OPEN = 0.67;
-    final static double SV_RELIC_GRABBER_INIT_NB = 0.31;
-    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.31;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.65;
-    final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.85;
+
+    final static double SV_RELIC_GRABBER_INIT = 0.5039;
+    final static double SV_RELIC_GRABBER_CLOSE = 0.5006;
+    final static double SV_RELIC_GRABBER_OPEN = 0.1822;
+    final static double SV_RELIC_GRABBER_INIT_NB = 0.5039;
+    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.5006;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.1822;
+    final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.1722;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
     final static double SV_RELIC_ARM_DOWN = 0.2;
     final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
-    final static double SV_RELIC_WRIST_INIT = 0.718;
-    final static double SV_RELIC_WRIST_DOWN_AUTO = 0.60; // down out to prevent crab mode
-    final static double SV_RELIC_WRIST_UP = 0.15;
-    final static double SV_RELIC_WRIST_MIDDLE = 0.4;
-    final static double SV_RELIC_WRIST_DOWN = 0.68;
-    final static double SV_RELIC_WRIST_DOWN_R = 0.65; // down and ready for release
-    final static double SV_RELIC_ELBOW_INIT = 0.5;
+    final static double SV_RELIC_WRIST_INIT = 0.41;
+    final static double SV_RELIC_WRIST_UP = 0.5283;
+    final static double SV_RELIC_WRIST_MIDDLE = 0.48;
+    final static double SV_RELIC_WRIST_DOWN = 0.8272;
+    final static double SV_RELIC_WRIST_DOWN_R = 0.82; // down and ready for release
+    final static double SV_RELIC_WRIST_DOWN_AUTO = 0.82; // down out to prevent crab mode
+
+    final static double SV_RELIC_ELBOW_INIT = 0.6167;
+    final static double SV_RELIC_ELBOW_UP = 0.5689;
+    final static double SV_RELIC_ELBOW_FLAT = 0.5117;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
-    final static double SV_RELIC_ELBOW_UP = 0.5;
     final static double SV_DUMPER_INIT = 0.6744;
     final static double SV_DUMPER_DOWN = 0.6744;
     final static double SV_DUMPER_LIFT = 0.565; //from 0.595
@@ -185,8 +189,11 @@ public class SwerveDriveHardware {
     final static double SV_DUMPER_DUMP = 0.18;
     final static double SV_INTAKE_GATE_INIT = 0.864;
     final static double SV_INTAKE_GATE_UP = 0.687;
+    final static double SV_INTAKE_GATE_MID = 0.5;
     final static double SV_INTAKE_GATE_DOWN = 0.217;
     final static double SV_DUMPER_GATE_INIT = 0.5;
+    final static double SV_DUMPER_GATE_UP = 0.5;
+    final static double SV_DUMPER_GATE_DOWN = 0.5;
 
     final static double GG_SLIDE_UP_POWER = 1.0;
     final static double GG_SLIDE_DOWN_POWER = -0.9;
@@ -297,16 +304,17 @@ public class SwerveDriveHardware {
 
     /* variables for newbot */
     static double NB_SERVO_90_DEGREE = 0.479;
-    static double NB_CRAB_DIFF_INC = 0.4663;
+    static double NB_CRAB_DIFF_INC = 0.4393;
     // static double NB_CRAB_DIFF_INC = 0.479;
-    static double NB_CRAB_DIFF_DEC = 0.4762;
+    static double NB_CRAB_DIFF_DEC_BR = 0.4832;
+    static double NB_CRAB_DIFF_DEC_FR = 0.4582;
     static double NB_LEFT_SV_DIFF = 0.001;
     static double NB_RIGHT_SV_DIFF = 0.000;
 
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5206;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.4667;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.5800;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5778;
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5139;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.4939;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.5456;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5361;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;
@@ -440,7 +448,7 @@ public class SwerveDriveHardware {
                     rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
                     rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
                     if (use_newbot_v2) {
-                        // rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsBack");
+                        rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsBack");
                     }
                 } else {
                     rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
@@ -493,7 +501,8 @@ public class SwerveDriveHardware {
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
             if (use_newbot) {
-                mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+                if (!use_newbot_v2)
+                    mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             } else {
                 // mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             }
@@ -684,13 +693,13 @@ public class SwerveDriveHardware {
         SERVO_FL_STRAFE_POSITION = NB_SERVO_FL_FORWARD_POSITION + NB_CRAB_DIFF_INC - NB_LEFT_SV_DIFF;
         if (SERVO_FL_STRAFE_POSITION>1.0)
             SERVO_FL_STRAFE_POSITION = 1.0;
-        SERVO_FR_STRAFE_POSITION = NB_SERVO_FR_FORWARD_POSITION - NB_CRAB_DIFF_DEC + NB_RIGHT_SV_DIFF;
+        SERVO_FR_STRAFE_POSITION = NB_SERVO_FR_FORWARD_POSITION - NB_CRAB_DIFF_DEC_FR + NB_RIGHT_SV_DIFF;
         if (SERVO_FR_STRAFE_POSITION<0.0)
             SERVO_FR_STRAFE_POSITION = 0.0;
         SERVO_BL_STRAFE_POSITION = NB_SERVO_BL_FORWARD_POSITION + NB_CRAB_DIFF_INC - NB_LEFT_SV_DIFF;
         if (SERVO_BL_STRAFE_POSITION>1.0)
             SERVO_BL_STRAFE_POSITION = 1.0;
-        SERVO_BR_STRAFE_POSITION = NB_SERVO_BR_FORWARD_POSITION - NB_CRAB_DIFF_DEC + NB_RIGHT_SV_DIFF;
+        SERVO_BR_STRAFE_POSITION = NB_SERVO_BR_FORWARD_POSITION - NB_CRAB_DIFF_DEC_BR + NB_RIGHT_SV_DIFF;
         if (SERVO_BR_STRAFE_POSITION<0.0)
             SERVO_BR_STRAFE_POSITION = 0.0;
         double NB_SERVO_UNIT_CONVERSION = Math.abs(SERVO_FL_STRAFE_POSITION - SERVO_FL_FORWARD_POSITION)/0.5;
