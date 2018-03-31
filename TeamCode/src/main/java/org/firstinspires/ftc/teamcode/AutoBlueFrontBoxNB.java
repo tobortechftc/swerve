@@ -62,7 +62,7 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
             try {
                 double next_dist = doPlatformMission(true);
 
-                go_to_crypto_prox_NB(next_dist, .3, robot.targetColumn, true, false); // Drive to cryptobox
+                go_to_crypto(next_dist, .3, robot.targetColumn, true, false); // Drive to cryptobox
                 deliverGlyph();
                 turnToCenter(true, false, robot.targetColumn);
                 stop_chassis();

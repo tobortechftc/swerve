@@ -60,7 +60,7 @@ public class AutoRedFrontBoxNBV2Plus extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 double next_dist = doPlatformMission(false);
-                go_to_crypto_prox_NB(next_dist, .3, robot.targetColumn, false, false); // Drive to cryptobox
+                go_to_crypto(next_dist, .3, robot.targetColumn, false, false); // Drive to cryptobox
                 deliverGlyph();
                 if(robot.targetColumn > 0) {
                     change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);

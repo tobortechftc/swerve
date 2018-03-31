@@ -58,7 +58,7 @@ public class AutoRedFrontBoxNBPlus extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 double next_dist = doPlatformMission(false);
-                go_to_crypto_prox_NB(next_dist, .3, robot.targetColumn, false, false); // Drive to cryptobox
+                go_to_crypto(next_dist, .3, robot.targetColumn, false, false); // Drive to cryptobox
                 deliverGlyph();
                 // turnToCenter(false, false, robot.targetColumn);
                 if (robot.targetColumn<2) {
