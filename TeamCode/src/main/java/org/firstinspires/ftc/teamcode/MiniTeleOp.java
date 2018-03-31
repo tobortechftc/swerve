@@ -46,7 +46,7 @@ public class MiniTeleOp extends SwerveUtilLOP {
         robot.use_range_sensor = true;
         robot.use_color_sensor = false;
         robot.use_test_servo = false;
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
 
         waitForStart();
 

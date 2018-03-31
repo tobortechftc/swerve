@@ -33,7 +33,7 @@ public class PositionDiagnostics extends SwerveUtilLOP {
 
         robot.allianceColor = TeamColor.BLUE;
 
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Initialization Complete");    //

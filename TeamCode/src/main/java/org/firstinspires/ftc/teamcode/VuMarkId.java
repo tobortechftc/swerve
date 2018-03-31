@@ -88,7 +88,7 @@ public class VuMarkId extends SwerveUtilLOP {
 
         robot.allianceColor = TeamColor.BLUE;
 
-        robot.init(hardwareMap);
+        robot.init(hardwareMap,telemetry);
 
         waitForStart();
 

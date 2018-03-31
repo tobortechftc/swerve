@@ -26,7 +26,7 @@ public class NullTelOp extends SwerveUtilLOP {
         robot.use_Vuforia = false;
         robot.use_test_servo = true;
         // initialize robot
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
 
         robot.sv_test.setPosition(0.5);
 
