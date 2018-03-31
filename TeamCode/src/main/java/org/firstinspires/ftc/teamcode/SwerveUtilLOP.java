@@ -2134,22 +2134,14 @@ public class SwerveUtilLOP extends LinearOpMode {
         return result;
     }
 
-    // returns true if it bumped the wall (noticeable acceleration difference), false if it went two seconds without hitting the wall
+    // returns true if it bumped the wall (noticeable negative acceleration), false if it went two seconds without hitting the wall
     public boolean didBump() {
         Acceleration accel = robot.imu.getAcceleration();
-        double xAccelStored = accel.xAccel;
-        double zAccelStored = accel.zAccel;
         sleep(50);
         robot.runtime.reset();
-        while (robot.runtime.seconds() <= 2) {
-            if ((accel.xAccel - .2 < xAccelStored) || (accel.zAccel - .2 < zAccelStored)) { // .2 is a placeholder
+        while (robot.runtime.seconds() <= 2 )
+            if ((accel.xAccel > .1) || (accel.zAccel > -.1)) // .1 is a placeholder
                 return true;
-            }
-            xAccelStored = accel.xAccel;
-            zAccelStored = accel.zAccel;
-            telemetry.update();
-            sleep(50);
-        }
         return false;
     }
     public boolean GlyphStucked() {
@@ -2184,14 +2176,14 @@ public class SwerveUtilLOP extends LinearOpMode {
                 else if (dist > 120)
                     dist = 120;
             }
-            if (robot.runtimeAuto.seconds() > 27.5 || got_one==false) {
+            if (robot.runtimeAuto.seconds() > 27.5 || !got_one) {
                 dist -= 15;
             }
             StraightCm(-0.9,dist);
             sleep(200);
             StraightCm(0.5, 2.5);
         }
-        if((robot.runtimeAuto.seconds() > 28 || got_one==false) && robot.servo_tune_up==false){
+        if((robot.runtimeAuto.seconds() > 28 || !got_one) && !robot.servo_tune_up){
             return;
         }
         else if (got_one && opModeIsActive()) {
@@ -2606,7 +2598,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         } else {
             StraightIn(-.25, (isSideBox ? 22 : 24)); // Drive off the balance stone
         }
-        if (direction==1 && isSideBox==false) { // red frond need to turn 180 degree
+        if (direction==1 && !isSideBox) { // red front need to turn 180 degree
             TurnLeftD(0.4, 180);
             alignUsingIMU(180.0);
         } else {
@@ -2616,7 +2608,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         double driveDistance;
         double dist;
         if (isSideBox) {
-            if (isBlue) driveDistance = 3 + (18.5 * targetColumn); // 18cm between columns
+            if (isBlue) driveDistance = 6 + (18.5 * targetColumn); // 18cm between columns
             else driveDistance = 3 + (18 * (2 - targetColumn));
             if (driveDistance<7) driveDistance=7; // ensure turn not hitting balance stone
             StraightCm(direction*power, driveDistance); // drive to cryptobox
@@ -2912,10 +2904,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         double corrected_degree = Math.abs(imu_diff)-0.5;
         if (corrected_degree>45)
             corrected_degree = 45;
-        if (imu_diff < -5) {
+        if (imu_diff < -4) {
             TurnLeftD(.15, corrected_degree);
         }
-        else if (imu_diff > 5) {
+        else if (imu_diff > 4) {
             TurnRightD(.15, corrected_degree);
         }
     }
