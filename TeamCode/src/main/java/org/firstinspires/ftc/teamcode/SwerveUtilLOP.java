@@ -2130,11 +2130,11 @@ public class SwerveUtilLOP extends LinearOpMode {
             else if (camera == TeamColor.BLUE)
                 result = -1;
         }
-        if (isBlueAlliance)
-            result *= -1;
-        if (robot.use_newbot && isBlueAlliance){
-            result *= -1;
-        }
+//        if (isBlueAlliance)
+//            result *= -1;
+//        if (robot.use_newbot && isBlueAlliance){
+//            result *= -1;
+//        }
         return result;
     }
 
@@ -3383,13 +3383,13 @@ public class SwerveUtilLOP extends LinearOpMode {
             double greenToBlueRatio = (double)pixelGreen / (double)pixelBlue;
             double greenToRedRatio = (double)pixelGreen / (double)pixelRed;
 
-            if(pixelRed > pixelGreen * 1.4 && pixelRed > pixelBlue * 1.4 && greenToRedRatio < .3){
+            if((pixelRed > (pixelGreen * 1.4)) && (pixelRed > (pixelBlue * 1.4)) && (greenToRedRatio < .3)){
                 redCount++;
                 if (redStart == -1){
                     redStart = pixelI;
                 }
             }
-            else if (pixelBlue > pixelRed * 1.4 && greenToBlueRatio > .65 && greenToBlueRatio < 1){
+            else if ((pixelBlue > (pixelRed * 1.4)) && (greenToBlueRatio > .65) && (greenToBlueRatio < .9)){
                 blueCount++;
                 if (blueStart == -1){
                     blueStart = pixelI;

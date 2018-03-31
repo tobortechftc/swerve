@@ -57,7 +57,6 @@ public class AutoBlueFrontBoxNBPlus extends SwerveUtilLOP{
             requestOpModeStop();
         }
 
-
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             try {
@@ -80,9 +79,6 @@ public class AutoBlueFrontBoxNBPlus extends SwerveUtilLOP{
                 e.printStackTrace(pw);
                 telemetry.log().add(sw.toString());
                 stop_chassis();
-//                while (true) {
-//                    sleep(1000);
-//                }
             }
             stop_chassis();
         }
