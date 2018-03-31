@@ -2148,7 +2148,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 return true;
         return false;
     }
-    public boolean GlyphStucked() {
+    public boolean GlyphStuck() {
         if (robot.rangeSensorBack==null)
             return false;
         return (getRange(RangeSensor.BACK)<5.1);
@@ -2290,13 +2290,17 @@ public class SwerveUtilLOP extends LinearOpMode {
             intakeStop(); driveTT(0,0);return false;
         }
         driveTT(0,0);
-        intakeAuto();
+        if(GlyphStuck()) correctGlyph();
+        else{
+            intakeOut();
+            sleep(400);
+        }
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             intakeStop(); driveTT(0,0);return false;
         }
         driveTT(-0.1,-0.1);
         intakeIn();
-        sleep(450);
+        sleep(600);
         intakeStop();
         driveTT(0,0);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out+0.5) && robot.servo_tune_up==false)) {
@@ -3587,7 +3591,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_intake_right.setPower(robot.intakeRatio);
     }
 
-    void intakeAuto() {
+    void correctGlyph() {
         if (!robot.use_intake)
             return;
         intakeTurn(true);
@@ -3637,11 +3641,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         double range_front_left = getRange(RangeSensor.FRONT_LEFT);
         double range_front_right = getRange(RangeSensor.FRONT_RIGHT);
         double range_back = getRange(RangeSensor.BACK);
-        boolean glyph_stucked = GlyphStucked();
+        boolean glyph_stuck = GlyphStuck();
         if (robot.use_imu||robot.use_range_sensor) {
             telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.0f)/L=%.0f/R=%.0f/B%s=%.0fcm",
                     (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right,
-                    (glyph_stucked?"(S)":""), range_back);
+                    (glyph_stuck?"(S)":""), range_back);
         }
         if (robot.use_proximity_sensor) {
             if (robot.use_newbot) {

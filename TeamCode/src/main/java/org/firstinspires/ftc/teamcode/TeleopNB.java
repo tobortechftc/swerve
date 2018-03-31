@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @TeleOp(name="TeleOp-NB", group="Test-NewBot")
@@ -65,7 +64,7 @@ public class TeleopNB extends SwerveUtilLOP {
                 } else if (gamepad1.x && gamepad1.dpad_left) {
                     intakeTurn(false);
                 } else if (gamepad1.x && gamepad1.a) {
-                    intakeAuto();
+                    correctGlyph();
                 } else if (gamepad1.x || (gamepad2.left_bumper&&!gamepad2.right_bumper)) { // intake IN
                     intakeIn();
                 } else if (gamepad1.b || (gamepad2.left_trigger > 0.1)) { // intake OUT

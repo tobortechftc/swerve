@@ -61,9 +61,9 @@ public class BumpTest extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 double next_dist = doPlatformMission(true);
-                driveTT(-.2,-.2); // back against wall
+                driveTT(.2,.2); // back against wall
                 boolean boop = didBump();
-                if (boop) driveTT(.2,.2);
+                if (boop) driveTT(-.2,-.2);
                 else driveTT(0,0);
                 sleep(5000);
                 stop_chassis();
