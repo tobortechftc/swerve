@@ -1985,7 +1985,7 @@ public class SwerveUtilLOP extends LinearOpMode {
      * doPlatformMission is meant to execute everything that needs to be done on the starting platform, including
      * determining what the bonus column is for the cryptobox from the pictograph, determining the jewel colors and
      * knocking off the opposing alliance ball based on the colors from the color class.
-     * @param isBlueAlliance
+     * @param isBlueAlliance Used to determine which ball to hit
      * @throws InterruptedException
      */
     public double doPlatformMission(boolean isBlueAlliance) throws InterruptedException {
@@ -1993,55 +1993,53 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         if (!opModeIsActive()) return 0;
 
-        //These constants are for setting a selected portion of the image from Camera
-        //(Assuming portrait) Top left is (0,0), Top right (0,1), Bottom left is (1,0), Bottom right is (1,1)
-        double IMAGE_WIDTH_CROP = 1;
-        double IMAGE_HEIGHT_CROP = 1;
-        double IMAGE_OFFSET_X = 0; // Cannot be 1, make sure take the respective crop into consideration
-        double IMAGE_OFFSET_Y = 0; // Cannot be 1, make sure take the respective crop into consideration
-
-
         if (robot.targetColumn<0) {
             robot.targetColumn = get_cryptobox_column();
         }
 
-        ElapsedTime runTime = new ElapsedTime();
-
         if(robot.use_camera) {
-            robot.camera.activate();
-            do{
-                robot.bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
-            }
-            while (runTime.seconds() < 0.5 && robot.bitmap == null);
-
-            if (robot.use_newbot) {
-                if (robot.allianceColor == TeamColor.BLUE || robot.use_newbot_v2==true) {
-                    r_arm_down();
-                } else {
-                    l_arm_down();
-                }
-            } else { // oldBot
-                if (robot.allianceColor == TeamColor.BLUE) {
-                    l_arm_down();
-                } else {
-                    r_arm_down();
-                }
-            }
-            if (robot.bitmap != null) {
 
                 new Thread(new Runnable() {
+                    //These constants are for setting a selected portion of the image from Camera
+                    //(Assuming portrait) Top left is (0,0), Top right (0,1), Bottom left is (1,0), Bottom right is (1,1)
+                    double IMAGE_WIDTH_CROP = 1;
+                    double IMAGE_HEIGHT_CROP = 1;
+                    double IMAGE_OFFSET_X = 0; // Cannot be 1, make sure take the respective crop into consideration
+                    double IMAGE_OFFSET_Y = 0; // Cannot be 1, make sure take the respective crop into consideration
+
+                    ElapsedTime runTime = new ElapsedTime();
 
                     @Override
                     public void run() {
-                        robot.leftJewelColorCamera = determineJewelColor(robot.bitmap);
-                        telemetry.addData("Left Jewel Color", robot.leftJewelColorCamera);
-                        robot.rightJewelColorCamera = robot.leftJewelColorCamera.getOpposingColor();
-                        robot.camera.stopCamera();
+                        robot.camera.activate();
+
+                        do{
+                            robot.bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+                        }
+                        while (runTime.seconds() < 0.5 && robot.bitmap == null);
+
+                        if (robot.use_newbot) {
+                            if (robot.allianceColor == TeamColor.BLUE || robot.use_newbot_v2) {
+                                r_arm_down();
+                            } else {
+                                l_arm_down();
+                            }
+                        } else { // oldBot
+                            if (robot.allianceColor == TeamColor.BLUE) {
+                                l_arm_down();
+                            } else {
+                                r_arm_down();
+                            }
+                        }
+                        if (robot.bitmap != null) {
+                            robot.leftJewelColorCamera = determineJewelColor(robot.bitmap);
+                            telemetry.addData("Left Jewel Color", robot.leftJewelColorCamera);
+                            robot.rightJewelColorCamera = robot.leftJewelColorCamera.getOpposingColor();
+                            robot.camReady = true;
+                            robot.camera.stopCamera();
+                        }
                     }
-
                 }).start();
-
-            }
         }
 
         if (!opModeIsActive()) return 0;
@@ -2066,6 +2064,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         telemetry.update();
         // sleep(2000);
         double next_dist = 0;
+
+        //gives time for camera if thread isn't done
+        if (!robot.camReady) {
+            telemetry.addData("Camera wasn't ready on time!", null).setRetained(true);
+            sleep(100);
+        }
 
         // Determines if right jewel is red
         int directionI = calcArmDirection(rightJewelColorCS, robot.rightJewelColorCamera, isBlueAlliance);

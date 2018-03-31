@@ -168,8 +168,8 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_GRABBER_CLOSE = 0.5006;
     final static double SV_RELIC_GRABBER_OPEN = 0.1822;
     final static double SV_RELIC_GRABBER_INIT_NB = 0.53;
-    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.39;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.1;
+    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.47;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.18;
     final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.01;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
@@ -187,10 +187,10 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ELBOW_UP = 0.5689;
     final static double SV_RELIC_ELBOW_FLAT = 0.5117;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
-    final static double SV_DUMPER_INIT = 0.65;
-    final static double SV_DUMPER_DOWN = 0.65;
-    final static double SV_DUMPER_LIFT = 0.59;
-    final static double SV_DUMPER_HALF_UP = 0.5;
+    final static double SV_DUMPER_INIT = 0.6744;
+    final static double SV_DUMPER_DOWN = 0.6744;
+    final static double SV_DUMPER_LIFT = 0.565; //from 0.595
+    final static double SV_DUMPER_HALF_UP = 0.5172;
     final static double SV_DUMPER_UP = 0.17;
     final static double SV_DUMPER_DUMP = 0.18;
     final static double SV_INTAKE_GATE_INIT = 0.864;
@@ -289,9 +289,12 @@ public class SwerveDriveHardware {
     public ModernRoboticsI2cRangeSensor rangeSensorFrontLeft = null;
     public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
     public SwerveUtilLOP.Camera camera = null;
+
     public SwerveUtilLOP.TeamColor leftJewelColorCamera = SwerveUtilLOP.TeamColor.UNKNOWN;
     public SwerveUtilLOP.TeamColor rightJewelColorCamera = SwerveUtilLOP.TeamColor.UNKNOWN;
     public Bitmap bitmap = null;
+    public boolean camReady = false;
+
     public MB1202 mb_ultra = null;
     public DigitalChannel proxL = null;
     public DigitalChannel proxR = null;
