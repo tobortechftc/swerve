@@ -144,7 +144,19 @@ public class TuneUp extends SwerveUtilLOP {
                     robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);
                 }
             }
-
+            if (robot.use_newbot_v2) {
+                if (gamepad2.dpad_left && gamepad2.y) {
+                    intakeBarWheelOut();
+                } else if (gamepad2.dpad_left && gamepad2.a) {
+                    intakeBarWheelIn();
+                } else if (gamepad2.dpad_right && gamepad2.y) {
+                    intakeBarWheelOutP(0.5);
+                } else if (gamepad2.dpad_right && gamepad2.a) {
+                    intakeBarWheelInP(0.5);
+                } else {
+                    intakeBarWheelStop();
+                }
+            }
             if (robot.use_glyph_grabber) {
                 if (gamepad1.dpad_down) {
                     double pos = robot.sv_glyph_grabber_bottom.getPosition();

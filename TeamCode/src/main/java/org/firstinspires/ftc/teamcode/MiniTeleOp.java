@@ -107,23 +107,23 @@ public class MiniTeleOp extends SwerveUtilLOP {
                 speedscale -= 0.05;
                 //robot.waitForTick(40);
             }
-            if (gamepad1.a && (robot.sv_test != null)) {
-                double pos = robot.sv_test.getPosition();
-                if (pos <= (1 - INCREMENT)) {
-                    robot.sv_test.setPosition(pos + INCREMENT);
-                } else robot.sv_test.setPosition(1);
-                sleep(50);
-            } else if (gamepad1.y && (robot.sv_test != null)) {
-                double pos = robot.sv_test.getPosition();
-                if (pos >= INCREMENT) {
-                    robot.sv_test.setPosition(pos - INCREMENT);
-                } else robot.sv_test.setPosition(0);
-                sleep(50);
-            }
+            //if (gamepad1.a && (robot.sv_test != null)) {
+            //    double pos = robot.sv_test.getPosition();
+            //    if (pos <= (1 - INCREMENT)) {
+            //        robot.sv_test.setPosition(pos + INCREMENT);
+            //    } else robot.sv_test.setPosition(1);
+            //    sleep(50);
+            //} else if (gamepad1.y && (robot.sv_test != null)) {
+            //    double pos = robot.sv_test.getPosition();
+            //    if (pos >= INCREMENT) {
+            //        robot.sv_test.setPosition(pos - INCREMENT);
+             //   } else robot.sv_test.setPosition(0);
+             //   sleep(50);
+            //}
             telemetry.addData("left/right/scale of motors  =", "%.2f/%.2f/%.2f", left, right, speedscale);
             telemetry.addData("left/right counter =", "%d/%d", left_event_counter, right_event_counter);
             if (robot.use_test_servo) {
-                telemetry.addData("test servo =", " %3.4f", robot.sv_test.getPosition());
+                // telemetry.addData("test servo =", " %3.4f", robot.sv_test.getPosition());
             }
             show_telemetry();
             telemetry.update();
