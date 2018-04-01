@@ -100,7 +100,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         //}
         if (robot.use_relic_grabber) {
             if (robot.use_newbot) {
-                relic_grabber_close();
+                relic_grabber_open(false);
             } else {
                 relic_grabber_open(false);
             }
@@ -681,8 +681,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void relic_arm_auto() {
         stop_chassis();
         if (robot.use_newbot) {
-            if (!robot.use_newbot_v2)
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
+            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
         } else {
             relic_arm_down();
         }

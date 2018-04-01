@@ -171,7 +171,7 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_GRABBER_OPEN = 0.1822;
     final static double SV_RELIC_GRABBER_INIT_NB = 0.53;
     final static double SV_RELIC_GRABBER_CLOSE_NB = 0.47;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.1;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.05;
     final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.01;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
@@ -183,19 +183,19 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_WRIST_MIDDLE = 0.48;
     final static double SV_RELIC_WRIST_DOWN = 0.51;
     final static double SV_RELIC_WRIST_DOWN_R = 0.54; // down and ready for release
-    final static double SV_RELIC_WRIST_DOWN_AUTO = 0.99; // down out to prevent crab mode
+    final static double SV_RELIC_WRIST_DOWN_AUTO = 0.51; // down out to prevent crab mode
 
     final static double SV_RELIC_ELBOW_INIT = 0.6167;
     final static double SV_RELIC_ELBOW_UP = 0.5689;
     final static double SV_RELIC_ELBOW_FLAT = 0.5117;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
-    final static double SV_DUMPER_INIT = 0.6744;
-    final static double SV_DUMPER_DOWN = 0.6744;
+    final static double SV_DUMPER_INIT = 0.658;
+    final static double SV_DUMPER_DOWN = 0.658;
     final static double SV_DUMPER_LIFT = 0.565; //from 0.595
     final static double SV_DUMPER_HALF_UP = 0.5172;
     final static double SV_DUMPER_UP = 0.17;
     final static double SV_DUMPER_DUMP = 0.18;
-    final static double SV_INTAKE_GATE_INIT = 0.864;
+    final static double SV_INTAKE_GATE_INIT = 0.844;
     final static double SV_INTAKE_GATE_UP = 0.687;
     final static double SV_INTAKE_GATE_MID = 0.5;
     final static double SV_INTAKE_GATE_DOWN = 0.217;
