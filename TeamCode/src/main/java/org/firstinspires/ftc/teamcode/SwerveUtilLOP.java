@@ -2144,7 +2144,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(50);
         robot.runtime.reset();
         while (robot.runtime.seconds() <= 2 )
-            if ((accel.xAccel > .1) || (accel.zAccel > -.1)) // .1 is a placeholder
+            if ((accel.xAccel < -.2) || (accel.zAccel < -.2)) // .2 is a rough estimate, can change
                 return true;
         return false;
     }
