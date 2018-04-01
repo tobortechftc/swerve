@@ -2162,15 +2162,12 @@ public class SwerveUtilLOP extends LinearOpMode {
             return;
         }
         if (opModeIsActive()) {
-            if (isSide) {
-                StraightCm(0.95,70);
-            } else {
-                StraightCm(0.95,105);
-            }
+            double distance = getRange(RangeSensor.BACK) - 16;
+            StraightCm(0.95, distance);
         }
         boolean got_one = autoIntakeGlyphs(isSide);
         if (opModeIsActive()) {
-            double dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 26;
+            double dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 20;
             if (isSide) {
                 if (dist < 53) dist = 53;
                 else if (dist > 80)
@@ -2283,22 +2280,31 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-1) && robot.servo_tune_up==false)) {
             intakeStop(); driveTT(0,0);return false;
         }
-        driveTT(-0.15,-0.15);
+        driveTT(-0.25,-0.25);
         intakeIn();
-        sleep(500);
+        sleep(700);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-.5) && robot.servo_tune_up==false)) {
             intakeStop(); driveTT(0,0);return false;
         }
         driveTT(0,0);
-        if(GlyphStuck()) correctGlyph();
+        if(GlyphStuck()) {
+            if(!robot.tried_clockwise) {
+                correctGlyph(true);
+                robot.tried_clockwise = true;
+            }
+            else{
+                correctGlyph(false);
+                robot.tried_clockwise = false;
+            }
+        }
         else{
             intakeOut();
-            sleep(400);
+            sleep(300);
         }
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             intakeStop(); driveTT(0,0);return false;
         }
-        driveTT(-0.1,-0.1);
+        driveTT(-0.2,-0.2);
         intakeIn();
         sleep(600);
         intakeStop();
@@ -3518,15 +3524,25 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_intake_right.setPower(robot.intakeRatio);
     }
 
-    void correctGlyph() {
+    void correctGlyph(boolean leadClockwise) {
         if (!robot.use_intake)
             return;
-        intakeTurn(true);
-        sleep(150);
-        intakeTurn(false);
-        sleep(150);
-        intakeIn();
-        sleep(300);
+        if(leadClockwise) {
+            intakeTurn(true);
+            sleep(150);
+            intakeTurn(false);
+            sleep(150);
+            intakeIn();
+            sleep(300);
+        }
+        else{
+            intakeTurn(false);
+            sleep(150);
+            intakeTurn(true);
+            sleep(150);
+            intakeIn();
+            sleep(300);
+        }
     }
 
     void intakeTurn(boolean clockwise) {
