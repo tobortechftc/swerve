@@ -153,7 +153,7 @@ public class SwerveDriveHardware {
     final static double SV_RIGHT_ARM_DOWN_NB = 0.79;
     final static double SV_LEFT_ARM_UP_NB = 0.943;
     final static double SV_LEFT_ARM_DOWN_NB = 0.359;
-    final static double SV_FRONT_ARM_IN = 0.82;
+    final static double SV_FRONT_ARM_IN = 0.83;
     final static double SV_FRONT_ARM_OUT = 0.43;
 
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.3; //from .275
