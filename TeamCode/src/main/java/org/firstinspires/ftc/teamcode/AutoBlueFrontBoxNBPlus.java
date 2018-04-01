@@ -9,7 +9,6 @@ import java.io.StringWriter;
  * Created by Mason on 2/15/2018.
  */
 
-
 @Autonomous(name = "BlueFront-NB-Plus", group = "NewBot")
 public class AutoBlueFrontBoxNBPlus extends SwerveUtilLOP{
     @Override
@@ -31,7 +30,6 @@ public class AutoBlueFrontBoxNBPlus extends SwerveUtilLOP{
         robot.use_intake = true;
         robot.use_relic_grabber = false;
         robot.use_relic_slider = false;
-        robot.use_relic_grabber = false;
         robot.use_newbot_v2 = true;
 
         robot.allianceColor = TeamColor.BLUE;
@@ -61,7 +59,6 @@ public class AutoBlueFrontBoxNBPlus extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 double next_dist = doPlatformMission(true);
-
                 go_to_crypto(next_dist, .3, robot.targetColumn, true, false); // Drive to cryptobox
                 deliverGlyph();
                 if(robot.targetColumn < 2) {

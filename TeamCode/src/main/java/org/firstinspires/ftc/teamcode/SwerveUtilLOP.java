@@ -1383,6 +1383,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.r_colorSensor.enableLed(false);
             robot.r_colorSensor.close();
         }
+        if(robot.use_newbot_v2 && robot.use_intake) intakeBarWheelStop();
         // stop all sensors
     }
 
@@ -3521,6 +3522,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         robot.mt_intake_left.setPower(robot.intakeRatio);
         robot.mt_intake_right.setPower(robot.intakeRatio);
+        intakeBarWheelIn();
     }
 
     void correctGlyph(boolean leadClockwise) {
@@ -3561,6 +3563,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             return;
         robot.mt_intake_left.setPower(-1.0*robot.intakeRatio);
         robot.mt_intake_right.setPower(-1.0*robot.intakeRatio);
+        intakeBarWheelOut();
     }
 
     void intakeStop() {
@@ -3568,6 +3571,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             return;
         robot.mt_intake_left.setPower(0);
         robot.mt_intake_right.setPower(0);
+        intakeBarWheelStop();
     }
 
     void show_telemetry() throws InterruptedException {

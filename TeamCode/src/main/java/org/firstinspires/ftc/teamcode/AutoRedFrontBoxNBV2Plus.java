@@ -19,7 +19,6 @@ public class AutoRedFrontBoxNBV2Plus extends SwerveUtilLOP{
         robot.use_imu = true;
         robot.use_encoder = true;
         robot.use_newbot = true;
-        robot.use_newbot_v2 = true;
         robot.use_minibot = false;
         robot.use_range_sensor = true;
         robot.use_color_sensor = true;
@@ -31,6 +30,7 @@ public class AutoRedFrontBoxNBV2Plus extends SwerveUtilLOP{
         robot.use_intake = true;
         robot.use_relic_grabber = false;
         robot.use_relic_slider = false;
+        robot.use_newbot_v2 = true;
 
         robot.allianceColor = TeamColor.RED;
 
@@ -55,7 +55,6 @@ public class AutoRedFrontBoxNBV2Plus extends SwerveUtilLOP{
             requestOpModeStop();
         }
 
-
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             try {
@@ -70,8 +69,6 @@ public class AutoRedFrontBoxNBV2Plus extends SwerveUtilLOP{
                 }
                 alignUsingIMU(170);
                 grabAndDump(false);
-
-
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
@@ -79,9 +76,6 @@ public class AutoRedFrontBoxNBV2Plus extends SwerveUtilLOP{
                 e.printStackTrace(pw);
                 telemetry.log().add(sw.toString());
                 stop_chassis();
-//                while (true) {
-//                    sleep(1000);
-//                }
             }
             stop_chassis();
         }
