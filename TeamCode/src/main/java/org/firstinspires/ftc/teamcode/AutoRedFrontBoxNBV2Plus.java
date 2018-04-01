@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-/**
- * Created by Nick on 12/8/2017.
+/*
+ * Created by Mason on 2/15/2018.
  */
 
-@Autonomous(name = "RedFront-NB-V2-PLUS", group = "NewBot")
+@Autonomous(name = "RedFront-NB-V2-Plus", group = "NewBot")
 public class AutoRedFrontBoxNBV2Plus extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,7 +45,7 @@ public class AutoRedFrontBoxNBV2Plus extends SwerveUtilLOP{
         waitForStart();
 
         try {
-        start_init();
+            start_init();
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

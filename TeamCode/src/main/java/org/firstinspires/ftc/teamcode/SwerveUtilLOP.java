@@ -2613,7 +2613,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (direction==1 && !isSideBox) { // red front need to turn 180 degree
             TurnLeftD(0.4, 180);
-            alignUsingIMU(180.0);
+            alignUsingIMU(178.0);
         } else {
             alignUsingIMU(0);
         }
@@ -2670,7 +2670,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                     StraightCm(-.2, dist); // forward using front range sensor, so it is close to cryptobox
                 }
             }
-            alignUsingIMU((isBlue?0:180));
+            alignUsingIMU((isBlue?0:179));
         }
         
         change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
