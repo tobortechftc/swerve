@@ -521,14 +521,14 @@ public class SwerveUtilLOP extends LinearOpMode {
         double pos = robot.sv_relic_grabber.getPosition();
         double tar = (robot.use_newbot?robot.SV_RELIC_GRABBER_OPEN_NB:robot.SV_RELIC_GRABBER_OPEN);
         if (pos < tar) {
-            robot.sv_relic_grabber.setPosition(pos+0.05);
-            sleep(250);
             robot.sv_relic_grabber.setPosition(pos+0.1);
             sleep(250);
-        } else {
-            robot.sv_relic_grabber.setPosition(pos-0.05);
+            robot.sv_relic_grabber.setPosition(pos+0.2);
             sleep(250);
+        } else {
             robot.sv_relic_grabber.setPosition(pos-0.1);
+            sleep(250);
+            robot.sv_relic_grabber.setPosition(pos-0.2);
             sleep(250);
         }
         robot.sv_relic_grabber.setPosition(tar);
@@ -2167,21 +2167,25 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         boolean got_one = autoIntakeGlyphs(isSide);
         if (opModeIsActive()) {
-            double dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 20;
-            if (isSide) {
-                if (dist < 53) dist = 53;
-                else if (dist > 80)
-                    dist = 80;
-            } else { // front
-                if (dist < 93) dist = 93;
-                else if (dist > 120)
-                    dist = 120;
+            for (int i=0; i<2; i++) {
+                double dist = (isSide? Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 20:
+                        Math.min(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 20);
+                if (i==0) {
+                    if (isSide) {
+                        if (dist < 53) dist = 53;
+                        else if (dist > 80)
+                            dist = 80;
+                    } else { // front
+                        if (dist < 93) dist = 93;
+                        else if (dist > 120)
+                            dist = 120;
+                    }
+                    if (robot.runtimeAuto.seconds() > 27.5 || !got_one) {
+                        dist -= 15;
+                    }
+                } else if (dist<1) break;
+                StraightCm(-0.9, dist);
             }
-            if (robot.runtimeAuto.seconds() > 27.5 || !got_one) {
-                dist -= 15;
-            }
-            StraightCm(-0.9,dist);
-            sleep(200);
             StraightCm(0.5, 2.5);
         }
         if((robot.runtimeAuto.seconds() > 28 || !got_one) && !robot.servo_tune_up){
@@ -2312,11 +2316,24 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out+0.5) && robot.servo_tune_up==false)) {
             return false;
         }
+        boolean got_one=gotOneGlyph();
+        return got_one;
+    }
+
+    boolean gotOneGlyph() {
         boolean got_one=false;
         if (robot.use_proximity_sensor) {
             got_one = !robot.proxFL.getState();
         }
         return got_one;
+    }
+
+    boolean gotTwoGlyphs() {
+        boolean got_two=false;
+        if (robot.use_proximity_sensor) {
+            got_two = !robot.proxML.getState() && !robot.proxFL.getState();
+        }
+        return got_two;
     }
 
     boolean alignBoxEdge() throws InterruptedException {
@@ -2801,20 +2818,22 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     void alignUsingIMU(double tar_degree) throws InterruptedException {
-        // normalize taregt tar_degree and heading to [0, 360]
+        // target degree must between -180 and +180
         // align up to 45 degree
         double offset = 0;
+        int offset_dir = 0;
         if (tar_degree<-135) {
-            offset = 360;
-            tar_degree += offset;
+            offset_dir = -1;
         }
         if (tar_degree>135) {
-            offset = -360;
-            tar_degree += offset;
+            offset_dir = 1;
         }
         double cur_adj_heading = imu_heading();
-        if (cur_adj_heading!=0 && offset!=0)
-            cur_adj_heading += offset;
+        if (cur_adj_heading>135 && offset_dir==-1) {
+            cur_adj_heading -= 360;
+        } else if (cur_adj_heading<-135 && offset_dir==1) {
+            cur_adj_heading += 360;
+        }
 
         double imu_diff = cur_adj_heading-tar_degree;
         double corrected_degree = Math.abs(imu_diff)-0.5;

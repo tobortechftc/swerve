@@ -35,7 +35,7 @@ public class SwerveDriveHardware {
     public boolean use_front_drive_only = false;
     public boolean use_intake = false;
     public boolean use_dumper = false;
-    public boolean use_dumper_gate = false;
+    public boolean use_dumper_gate = true;
     public boolean use_minibot = false; // use motorFrontLeft and motorFrontRight only for chassis
     public boolean use_Vuforia = true;
     public boolean use_camera = false;
@@ -169,10 +169,10 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_GRABBER_INIT = 0.5039;
     final static double SV_RELIC_GRABBER_CLOSE = 0.5006;
     final static double SV_RELIC_GRABBER_OPEN = 0.1822;
-    final static double SV_RELIC_GRABBER_INIT_NB = 0.53;
-    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.47;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.05;
-    final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.01;
+    final static double SV_RELIC_GRABBER_INIT_NB = 0.86;
+    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.8;
+    final static double SV_RELIC_GRABBER_OPEN_NB = 0.25;
+    final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.15;
     final static double SV_RELIC_ARM_INIT = 0.1;
     final static double SV_RELIC_ARM_UP = 0.7;
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
@@ -302,6 +302,7 @@ public class SwerveDriveHardware {
     public DigitalChannel proxL = null;
     public DigitalChannel proxR = null;
     public DigitalChannel proxFL = null;
+    public DigitalChannel proxML = null;
 
 
     ElapsedTime runtime = new ElapsedTime();
@@ -437,11 +438,13 @@ public class SwerveDriveHardware {
         if (use_proximity_sensor) {
             if (use_newbot) {
                 proxL = hwMap.get(DigitalChannel.class, "proxL");
-                proxR = hwMap.get(DigitalChannel.class, "proxR");
-                proxFL = hwMap.get(DigitalChannel.class, "proxFL");
                 proxL.setMode(DigitalChannel.Mode.INPUT);
+                proxR = hwMap.get(DigitalChannel.class, "proxR");
                 proxR.setMode(DigitalChannel.Mode.INPUT);
+                proxFL = hwMap.get(DigitalChannel.class, "proxFL");
                 proxFL.setMode(DigitalChannel.Mode.INPUT);
+                proxML= hwMap.get(DigitalChannel.class, "proxML");
+                proxML.setMode(DigitalChannel.Mode.INPUT);
 
             }
             else {
