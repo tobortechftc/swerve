@@ -238,14 +238,25 @@ public class TuneUp extends SwerveUtilLOP {
                                 robot.needsUpdate = true;
                             }
                         }
-                        else{
+                        else if (gamepad1.back){
                             if (gamepad1.dpad_up){
-                                robot.NB_CRAB_DIFF_INC += 0.001;
+                                robot.NB_CRAB_DIFF_INC_BL += 0.001;
                                 robot.needsUpdate = true;
                             }
 
                             else if (gamepad1.dpad_down){
-                                robot.NB_CRAB_DIFF_INC -= 0.001;
+                                robot.NB_CRAB_DIFF_INC_BL -= 0.001;
+                                robot.needsUpdate = true;
+                            }
+                        }
+                        else{
+                            if (gamepad1.dpad_up){
+                                robot.NB_CRAB_DIFF_INC_FL += 0.001;
+                                robot.needsUpdate = true;
+                            }
+
+                            else if (gamepad1.dpad_down){
+                                robot.NB_CRAB_DIFF_INC_FL -= 0.001;
                                 robot.needsUpdate = true;
                             }
                         }

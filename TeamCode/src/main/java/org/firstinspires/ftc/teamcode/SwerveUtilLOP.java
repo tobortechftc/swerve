@@ -2162,8 +2162,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             return;
         }
         if (opModeIsActive()) {
-            double distance = getRange(RangeSensor.BACK) - 16;
-            StraightCm(0.95, distance);
+            for(int i=0; i<2; i++) {
+                double distance = getRange(RangeSensor.BACK) - 16;
+                StraightCm(0.95, distance);
+            }
         }
         boolean got_one = autoIntakeGlyphs(isSide);
         if (opModeIsActive()) {
@@ -3684,8 +3686,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.isTesting){
             if(robot.use_newbot){
                 telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.NB_LEFT_SV_DIFF, robot.NB_RIGHT_SV_DIFF);
-                telemetry.addData("12. CRAB_90_DIFF_DEC_FR/CRAB_90_DIFF_DEC_BR = ", "%.4f/%.4f",robot.NB_CRAB_DIFF_DEC_FR, robot.NB_CRAB_DIFF_DEC_BR);
-                telemetry.addData("13. CRAB_90_DIFF_INC = ", "%.4f", robot.NB_CRAB_DIFF_INC);
+                telemetry.addData("12. CRAB_90_DIFF_DEC_FR/BR = ", "%.4f/%.4f",robot.NB_CRAB_DIFF_DEC_FR, robot.NB_CRAB_DIFF_DEC_BR);
+                telemetry.addData("13. CRAB_90_DIFF_INC_FL/BL = ", "%.4f/%.4f", robot.NB_CRAB_DIFF_INC_FL, robot.NB_CRAB_DIFF_INC_BL);
             }
             else {
                 telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.LEFT_SV_DIFF, robot.RIGHT_SV_DIFF);
