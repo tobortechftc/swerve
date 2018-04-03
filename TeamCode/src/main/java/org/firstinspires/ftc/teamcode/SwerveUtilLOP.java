@@ -19,7 +19,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 import static java.lang.Thread.sleep;
@@ -2049,6 +2051,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             sleep(100);
             glyph_slider_up_inches(.5, 3);
         }
+
+        if (robot.use_newbot_v2)
+            intakeGateUp();
+
         if (!opModeIsActive()) return 0;
 
         sleep(500);
@@ -2140,12 +2146,9 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     // returns true if it bumped the wall (noticeable negative acceleration), false if it went two seconds without hitting the wall
     public boolean didBump() {
-        Acceleration accel = robot.imu.getAcceleration();
-        sleep(50);
-        robot.runtime.reset();
-        while (robot.runtime.seconds() <= 2 )
-            if ((accel.xAccel < -.2) || (accel.zAccel < -.2)) // .2 is a rough estimate, can change
-                return true;
+        robot.accel = robot.imu.getAcceleration();
+        if (robot.accel.xAccel <= -.24 || robot.accel.zAccel <= -.24)
+            return true;
         return false;
     }
     public boolean GlyphStuck() {

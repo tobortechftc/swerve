@@ -4,6 +4,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -17,10 +19,9 @@ import java.io.StringWriter;
 
 
 @Autonomous(name = "accel test", group = "NewBot")
-public class BumpTest extends SwerveUtilLOP{
+public class AccelTest extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
-
 
         robot.use_swerve = false;
         robot.use_arm = true;
@@ -45,16 +46,18 @@ public class BumpTest extends SwerveUtilLOP{
 
         init_and_test();
 
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Initialization Complete");
-        telemetry.update();
-
         double highestX = 0;
         double highestY = 0;
         double highestZ = 0;
         double lowestX = 0;
         double lowestZ = 0;
         double lowestY = 0;
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Say", "Initialization Complete");
+        telemetry.update();
+
+
 
         // Wait for the game to start (driver presses PLAY)
         robot.runtime.reset();
@@ -71,25 +74,26 @@ public class BumpTest extends SwerveUtilLOP{
             requestOpModeStop();
         }
 
+        robot.runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             try {
-                robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-                while (true) {
+                driveTT(.3, .3);
+                boolean boop = false;
+                while (robot.runtime.seconds() <= 3 && boop==false) {
                     intakeGateMid();
-                    Acceleration accel = robot.imu.getAcceleration();
+                    boop = didBump();
+                    if (robot.accel.xAccel > highestX) highestX = robot.accel.xAccel;
+                    if (robot.accel.yAccel > highestY) highestY = robot.accel.yAccel;
+                    if (robot.accel.zAccel > highestZ) highestZ = robot.accel.zAccel;
+                    if (robot.accel.xAccel < lowestX) lowestX = robot.accel.xAccel;
+                    if (robot.accel.yAccel < lowestY) lowestY = robot.accel.yAccel;
+                    if (robot.accel.zAccel < lowestZ) lowestZ = robot.accel.zAccel;
 
-                    if (accel.xAccel > highestX) highestX = accel.xAccel;
-                    if (accel.yAccel > highestY) highestY = accel.yAccel;
-                    if (accel.zAccel > highestZ) highestZ = accel.zAccel;
-                    if (accel.xAccel < lowestX) lowestX = accel.xAccel;
-                    if (accel.yAccel < lowestY) lowestY = accel.yAccel;
-                    if (accel.zAccel < lowestZ) lowestZ = accel.zAccel;
-
-                    telemetry.addData("xAccel", String.format("%.5f", accel.xAccel));
-                    telemetry.addData("yAccel", String.format("%.5f", accel.yAccel));
-                    telemetry.addData("zAccel", String.format("%.5f", accel.zAccel));
+                    telemetry.addData("xAccel", String.format("%.5f", robot.accel.xAccel));
+                    telemetry.addData("yAccel", String.format("%.5f", robot.accel.yAccel));
+                    telemetry.addData("zAccel", String.format("%.5f", robot.accel.zAccel));
                     telemetry.addLine();
                     telemetry.addData("HighestX", String.format("%.5f", highestX));
                     telemetry.addData("LowestX", String.format("%.5f", lowestX));
@@ -101,15 +105,9 @@ public class BumpTest extends SwerveUtilLOP{
                     telemetry.addData("LowestZ", String.format("%.5f", lowestZ));
                     telemetry.update();
                 }
-
-//                driveTT(-.2, -.2); // back against wall
-//                boolean boop = didBump();
-//                if (boop)
-//                    driveTT(.2,.2);
-//                else
-//                    driveTT(0,0);
-//                sleep(5000);
-//                stop_chassis();
+                if (boop) StraightCm(.3, 20);
+                else driveTT(0, 0);
+                sleep(10000);
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);

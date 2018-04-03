@@ -18,6 +18,8 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
@@ -364,6 +366,7 @@ public class SwerveDriveHardware {
     // The IMU sensor object
     BNO055IMU imu = null;
     BNO055IMU imu2 = null;
+    Acceleration accel = null;
 
     // State used for updating telemetry
     Orientation angles;
@@ -431,6 +434,9 @@ public class SwerveDriveHardware {
 
             imu2 = hwMap.get(BNO055IMU.class, "imu2");
             imu2.initialize(imuParameters);
+
+            accel = imu.getAcceleration();
+            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         }
         if (use_verbose)
             tel.addData("0: initialize imu CPU time =", "%3.2f sec", period.seconds());
