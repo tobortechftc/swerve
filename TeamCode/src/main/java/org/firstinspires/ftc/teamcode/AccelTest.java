@@ -31,8 +31,8 @@ public class AccelTest extends SwerveUtilLOP{
         robot.use_minibot = false;
         robot.use_range_sensor = true;
         robot.use_color_sensor = true;
-        robot.use_Vuforia = true;
-        robot.use_camera = true;
+        robot.use_Vuforia = false;
+        robot.use_camera = false;
         robot.use_glyph_grabber = false;
         robot.use_proximity_sensor = true;
         robot.use_dumper = true;
@@ -79,8 +79,10 @@ public class AccelTest extends SwerveUtilLOP{
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {
             try {
-                driveTT(.3, .3);
                 boolean boop = false;
+                driveTT(.3, .3);
+                sleep(500); // start for 0.5 sec to get stable speed before getting acceleratmeter value
+
                 while (robot.runtime.seconds() <= 3 && boop==false) {
                     intakeGateMid();
                     boop = didBump();
@@ -91,32 +93,22 @@ public class AccelTest extends SwerveUtilLOP{
                     if (robot.accel.yAccel < lowestY) lowestY = robot.accel.yAccel;
                     if (robot.accel.zAccel < lowestZ) lowestZ = robot.accel.zAccel;
 
-                    telemetry.addData("xAccel", String.format("%.5f", robot.accel.xAccel));
-                    telemetry.addData("yAccel", String.format("%.5f", robot.accel.yAccel));
-                    telemetry.addData("zAccel", String.format("%.5f", robot.accel.zAccel));
-                    telemetry.addLine();
-                    telemetry.addData("HighestX", String.format("%.5f", highestX));
-                    telemetry.addData("LowestX", String.format("%.5f", lowestX));
-                    telemetry.addLine();
-                    telemetry.addData("HighestY", String.format("%.5f", highestY));
-                    telemetry.addData("LowestY", String.format("%.5f", lowestY));
-                    telemetry.addLine();
-                    telemetry.addData("HighestZ", String.format("%.5f", highestZ));
-                    telemetry.addData("LowestZ", String.format("%.5f", lowestZ));
+                    telemetry.addData("xAccel/max/min=", "%.2f/%.2f/%.2f", robot.accel.xAccel,highestX,lowestX);
+                    telemetry.addData("yAccel/max/min=", "%.2f/%.2f/%.2f", robot.accel.yAccel,highestY,lowestY);
+                    telemetry.addData("zAccel/max/min=", "%.2f/%.2f/%.2f", robot.accel.zAccel,highestZ,lowestZ);
                     telemetry.update();
                 }
                 if (boop) StraightCm(.3, 20);
                 else driveTT(0, 0);
-                sleep(10000);
+                telemetry.addLine("Hit X button to exit the program...");
+                telemetry.update();
+                while (!gamepad1.x) {;}
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
                 telemetry.log().add(sw.toString());
                 stop_chassis();
-//                while (true) {
-//                    sleep(1000);
-//                }
             }
             stop_chassis();
         }

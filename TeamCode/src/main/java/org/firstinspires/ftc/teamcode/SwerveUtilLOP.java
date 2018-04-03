@@ -1371,7 +1371,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_camera) {
             robot.use_camera = false;
         }
-
+        if(robot.use_newbot_v2 && robot.use_intake) intakeBarWheelStop();
     }
 
     void stop_tobot() {
@@ -3519,11 +3519,11 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     void intakeBarWheelIn() {
-        robot.sv_bar_wheel.setPower(0.9);
+        robot.sv_bar_wheel.setPower(1);
     }
 
     void intakeBarWheelOut() {
-        robot.sv_bar_wheel.setPower(-0.9);
+        robot.sv_bar_wheel.setPower(-1);
     }
 
     void intakeBarWheelInP(double pw) {

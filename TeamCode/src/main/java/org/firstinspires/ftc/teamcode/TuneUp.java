@@ -47,6 +47,7 @@ public class TuneUp extends SwerveUtilLOP {
         int num_servos = 17;
         int cur_sv_ix = 0;
         boolean show_all = true;
+        double cs_val = 0;
         Servo[] sv_list = {
                 robot.servoFrontLeft,
                 robot.servoFrontRight,
@@ -310,7 +311,16 @@ public class TuneUp extends SwerveUtilLOP {
                         }
                     } // end isTesting
             } // end use_swerve
-
+            if (robot.sv_bar_wheel!=null) {
+                if (gamepad2.y) {
+                    cs_val += 0.1;
+                    if (cs_val>1) cs_val=1;
+                } else if (gamepad2.a) {
+                    cs_val -= 0.1;
+                    if (cs_val<-1) cs_val=-1;
+                }
+                robot.sv_bar_wheel.setPower(cs_val);
+            }
             if (robot.use_test_motor) {
                 if (gamepad1.x) {
                    if (robot.is_gg_upside_down) {
@@ -398,6 +408,7 @@ public class TuneUp extends SwerveUtilLOP {
                 }
             }
             telemetry.addData("0. GP1:", "x/b:sv sel, y/a:+/-%4.3f(ix=%d)", INCREMENT, cur_sv_ix);
+            telemetry.addData("0.1 cvservo =", "%2.1f", cs_val);
             if (show_all) {
                 for (int i = 0; i < num_servos; i++) {
                     if (sv_list[i] != null) {
