@@ -65,7 +65,8 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.sv_dumper,
                 robot.sv_front_arm,
                 robot.sv_intake_gate,
-                robot.sv_dumper_gate
+                robot.sv_dumper_gate,
+                robot.sv_jkicker
         };
         String [] sv_names = {
                 "FrontLeft",
@@ -84,7 +85,8 @@ public class TuneUp extends SwerveUtilLOP {
                 "sv_dumper",
                 "sv_front_arm",
                 "sv_intake_gate",
-                "sv_dumper_gate"
+                "sv_dumper_gate",
+                "sv_jkicker"
         };
 
         num_servos = sv_list.length;

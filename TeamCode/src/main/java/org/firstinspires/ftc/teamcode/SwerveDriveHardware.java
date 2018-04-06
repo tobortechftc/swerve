@@ -152,12 +152,17 @@ public class SwerveDriveHardware {
 
     final static double SV_RIGHT_ARM_UP = 0.11;
     final static double SV_RIGHT_ARM_DOWN = 0.73;
-    final static double SV_RIGHT_ARM_UP_NB = 0.2;
-    final static double SV_RIGHT_ARM_DOWN_NB = 0.79;
+    final static double SV_RIGHT_ARM_UP_NB = 0.18;
+    final static double SV_RIGHT_ARM_DOWN_NB = 0.6628;
     final static double SV_LEFT_ARM_UP_NB = 0.943;
     final static double SV_LEFT_ARM_DOWN_NB = 0.359;
     final static double SV_FRONT_ARM_IN = 0.83;
     final static double SV_FRONT_ARM_OUT = 0.43;
+    final static double SV_JKICKER_UP = 0.47;
+    final static double SV_JKICKER_RIGHT = 0.61;
+    final static double SV_JKICKER_LEFT = 0.22;
+    final static double SV_JKICKER_INIT = 0.82;
+
 
     final static double SV_GLYPH_GRABBER_TOP_INIT = 0.3; //from .275
     final static double SV_GLYPH_GRABBER_TOP_OPEN = 0.38;
@@ -275,6 +280,7 @@ public class SwerveDriveHardware {
     public Servo sv_left_arm = null;
     public Servo sv_right_arm = null;
     public Servo sv_front_arm = null;
+    public Servo sv_jkicker = null;
 
     public Servo sv_glyph_grabber_top = null;
     public Servo sv_glyph_grabber_bottom = null;
@@ -665,6 +671,8 @@ public class SwerveDriveHardware {
                 if (use_newbot_v2) {
                     sv_right_arm = hwMap.servo.get("sv_right_arm");
                     sv_right_arm.setPosition(SV_RIGHT_ARM_UP_NB);
+                    sv_jkicker = hwMap.servo.get("sv_jkicker");
+                    sv_jkicker.setPosition(SV_JKICKER_INIT);
                 }
                 else {
                     sv_left_arm = hwMap.servo.get("sv_left_arm");

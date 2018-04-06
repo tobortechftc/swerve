@@ -100,6 +100,9 @@ public class SwerveUtilLOP extends LinearOpMode {
         //if (robot.use_dumper) {
         //    lift_to_target(robot.LIFT_INIT_COUNT);
         //}
+        if (robot.use_newbot_v2 && robot.use_arm) {
+            robot.sv_jkicker.setPosition(robot.SV_JKICKER_UP);
+        }
         if (robot.use_relic_grabber) {
             if (robot.use_newbot) {
                 relic_grabber_open(false);
@@ -2042,6 +2045,8 @@ public class SwerveUtilLOP extends LinearOpMode {
                         }
                     }
                 }).start();
+        } else {
+            r_arm_down();
         }
 
         if (!opModeIsActive()) return 0;
@@ -2083,7 +2088,13 @@ public class SwerveUtilLOP extends LinearOpMode {
             directionI *= -1;
         }
         if (!opModeIsActive()) return 0;
-        if (robot.use_newbot) {
+        if (robot.sv_jkicker!=null) {
+            if (directionI<0)
+                jkick_left();
+            else if (directionI>0)
+                jkick_right();
+            r_arm_up();
+        } else if (robot.use_newbot) {
             int dist = (directionI > 0 ? 7 : 6);
             StraightCm(-.2 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
             sleep(100);
@@ -2166,7 +2177,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (opModeIsActive()) {
             for(int i=0; i<2; i++) {
-                double distance = getRange(RangeSensor.BACK) - 16;
+                double distance = getRange(RangeSensor.BACK);
                 StraightCm(0.95, distance);
             }
         }
@@ -2189,7 +2200,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                         dist -= 15;
                     }
                 } else if (dist<1) break;
-                StraightCm(-0.9, dist);
+                StraightCm((i==0?-0.95:-0.7), dist);
             }
             StraightCm(0.5, 2.5);
         }
@@ -2298,7 +2309,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         driveTT(0,0);
         if(GlyphStuck()) {
             if(!robot.tried_clockwise) {
-                correctGlyph(true);
+                correctGlyph(false);
                 robot.tried_clockwise = true;
             }
             else{
@@ -2390,20 +2401,18 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void deliverGlyph() throws InterruptedException{
         if (!opModeIsActive()) return;
         if (robot.use_newbot) {
-            StraightIn(0.3, 2);
+            StraightIn(0.6, 4);
             if (!opModeIsActive()) return;
             dumper_vertical();
-            dumper_up();
+            // dumper_up();
             if (!opModeIsActive()) return;
             sleep(500);
-            dumper_vertical();
-            StraightIn(0.3, 4);
             if (!opModeIsActive()) return;
             dumper_down();
             sleep(100);
             // StraightIn(-0.3, 6);
-            driveTT(0.3, 0.3); // drive backward for .5 sec
-            sleep(500);
+            driveTT(0.35, 0.35); // drive backward for .5 sec
+            sleep(300);
             driveTT(0,0);
             if (!opModeIsActive()) return;
             StraightIn(0.7, 6);
@@ -2557,6 +2566,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     void r_arm_up() {
+        if (robot.sv_jkicker!=null) {
+            jkick_up();
+        }
         if (robot.use_newbot) {
             robot.sv_right_arm.setPosition(robot.SV_RIGHT_ARM_UP_NB);
         } else {
@@ -2575,6 +2587,23 @@ public class SwerveUtilLOP extends LinearOpMode {
         sleep(200);
     }
 
+    void jkick_right() {
+        if (robot.sv_jkicker==null) return;
+        robot.sv_jkicker.setPosition(robot.SV_JKICKER_RIGHT);
+        sleep(300);
+    }
+
+    void jkick_left() {
+        if (robot.sv_jkicker==null) return;
+        robot.sv_jkicker.setPosition(robot.SV_JKICKER_LEFT);
+        sleep(300);
+    }
+
+    void jkick_up() {
+        if (robot.sv_jkicker==null) return;
+        robot.sv_jkicker.setPosition(robot.SV_JKICKER_UP);
+        sleep(300);
+    }
 
     void arm_left() {
         robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN_HIT);
@@ -2629,7 +2658,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         int direction = (robot.use_newbot_v2&&!isBlue?1:-1);
         if (robot.use_newbot) {
-            StraightIn(direction*.25, next_dist + (isSideBox ? 20 : 22)); // Drive off the balance stone
+            StraightIn(direction*.3, next_dist + (isSideBox ? 20 : 24)); // Drive off the balance stone
         } else {
             StraightIn(-.25, (isSideBox ? 22 : 24)); // Drive off the balance stone
         }
@@ -2644,7 +2673,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         double dist;
         if (isSideBox) {
             if (isBlue) driveDistance = 6 + (18.5 * targetColumn); // 18cm between columns
-            else driveDistance = 3 + (18 * (2 - targetColumn));
+            else driveDistance = 6 + (18.5 * (2 - targetColumn));
             if (driveDistance<7) driveDistance=7; // ensure turn not hitting balance stone
             StraightCm(direction*power, driveDistance); // drive to cryptobox
 
@@ -2669,7 +2698,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 }
         } else { // Front box
             if (isBlue) { // Front Blue
-                driveDistance = 2 + (18 * targetColumn); // 18cm between columns
+                driveDistance = 0 + (18 * targetColumn); // 18cm between columns
             } else { // Front Red
                 driveDistance = 7 + (18.5 * (2 - targetColumn)); // 18.5 cm between columns
             }
@@ -2720,14 +2749,14 @@ public class SwerveUtilLOP extends LinearOpMode {
 
 
         if (!isBlue && isSideBox) { // crab back 1cm to correct proximity over shoot
-            StraightCm(-.2, 1);
+            StraightCm(-.3, 1);
         }
 
         if (!opModeIsActive()) return;
 
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);
-        StraightCm(.25, 3); // goes back so that delivery has enough space
+        StraightCm(.4, 3); // goes back so that delivery has enough space
         if (robot.use_verbose)
             telemetry.addData("0: End go_to_crypto() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
