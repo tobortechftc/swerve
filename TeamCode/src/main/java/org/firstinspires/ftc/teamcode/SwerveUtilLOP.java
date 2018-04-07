@@ -213,12 +213,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_dumper.setPosition(pos);
     }
 
-    public void dumper_down()
+    public void dumper_down(boolean raiseGate)
     {
         if (!robot.use_dumper)
             return;
         robot.sv_dumper.setPosition(robot.SV_DUMPER_DOWN);
-        if (robot.use_dumper_gate) {
+        if (robot.use_dumper_gate && raiseGate) {
             dumperGateUp();
         }
     }
@@ -896,7 +896,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     void lift_back_init() { // back to initial position
         robot.target_gg_slider_pos = robot.init_gg_slider_pos;
         slide_to_target(robot.GG_SLIDE_DOWN_POWER);
-        dumper_down();
+        dumper_down(true);
     }
 
     void lift_up(boolean force) {
@@ -918,7 +918,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         int cur_pos = robot.mt_lift.getCurrentPosition();
         if ((cur_pos<=robot.LIFT_INIT_COUNT) && !force) {
             power = 0.0;
-            dumper_down();
+            dumper_down(true);
         }
         robot.mt_lift.setPower(power);
     }
@@ -2250,7 +2250,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
             StraightIn(0.9,4);
             if (!opModeIsActive()) return;
-            dumper_down();
+            dumper_down(false);
         } else {
             StraightIn(0.9,4);
         }
@@ -2408,7 +2408,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
             sleep(500);
             if (!opModeIsActive()) return;
-            dumper_down();
+            dumper_down(true);
             sleep(100);
             // StraightIn(-0.3, 6);
             driveTT(0.35, 0.35); // drive backward for .5 sec
