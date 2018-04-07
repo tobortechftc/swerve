@@ -64,7 +64,7 @@ public class TeleopNB extends SwerveUtilLOP {
                 } else if (gamepad1.x && gamepad1.dpad_left) {
                     intakeTurn(false);
                 } else if (gamepad1.x && gamepad1.a) {
-                    correctGlyph(true);
+                    correctGlyph(false);
                 } else if (gamepad1.x || (gamepad2.left_bumper&&!gamepad2.right_bumper)) { // intake IN
                     intakeIn();
                 } else if (gamepad1.b || (gamepad2.left_trigger > 0.1)) { // intake OUT
@@ -86,9 +86,9 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
             }
             if (robot.use_dumper && !robot.isTesting) {
-                if (gamepad2.dpad_left && gamepad2.y) {
+                if (gamepad2.back && gamepad2.y) {
                     intakeBarWheelOut();
-                } else if (gamepad2.dpad_left && gamepad2.a) {
+                } else if (gamepad2.back && gamepad2.a) {
                     intakeBarWheelIn();
                 } else {
                     intakeBarWheelStop();
@@ -118,7 +118,7 @@ public class TeleopNB extends SwerveUtilLOP {
                         lift_up_and_down(true);
                     }
                 } else if ((gamepad1.dpad_down && !gamepad1.x) || gamepad2.dpad_down) {
-                    dumper_down();
+                    dumper_down(true);
                 }
 
                 if ((gamepad2.right_bumper) && gamepad2.back) { // manual lift up
@@ -360,13 +360,13 @@ public class TeleopNB extends SwerveUtilLOP {
                     }
                 } else if (gamepad2.a && gamepad2.y) {
                     relic_arm_middle();
-                } else if (gamepad2.y && !gamepad2.left_bumper && !gamepad2.dpad_left) {
+                } else if (gamepad2.y && !gamepad2.left_bumper && !gamepad2.back) {
                     if (robot.use_relic_elbow) {
                         relic_elbow_up_auto();
                     } else {
                         relic_arm_up();
                     }
-                } else if (gamepad2.a && !gamepad2.left_bumper && !gamepad2.dpad_left) {
+                } else if (gamepad2.a && !gamepad2.left_bumper && !gamepad2.back) {
                     if (robot.use_relic_elbow) {
                         relic_elbow_down_auto();
                     } else {
@@ -399,5 +399,6 @@ public class TeleopNB extends SwerveUtilLOP {
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
             // robot.waitForTick(40);
         }
+        stop_tobot();
     }
 }

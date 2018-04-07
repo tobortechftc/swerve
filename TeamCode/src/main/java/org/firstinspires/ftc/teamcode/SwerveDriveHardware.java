@@ -82,6 +82,8 @@ public class SwerveDriveHardware {
     boolean gg_top_close = false;
     boolean gg_bottom_close = false;
     boolean is_gg_upside_down = false;
+    boolean stop_on_dump = false;
+    boolean bump_detected = false;
 
 
     public double target_heading = 0.0;

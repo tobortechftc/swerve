@@ -1374,7 +1374,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_camera) {
             robot.use_camera = false;
         }
-        if(robot.use_newbot_v2 && robot.use_intake) intakeBarWheelStop();
+        if(robot.use_newbot_v2 && robot.use_intake)
+            intakeBarWheelStop();
     }
 
     void stop_tobot() {
@@ -1461,8 +1462,36 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
 
             driveTTCoast(leftPower, rightPower);
+            int iter = 0;
+            int prev_lpos = curPosFrontLeft;
+            double cur_time = robot.runtime.nanoseconds()/1000000000.0;
+            double prev_time = cur_time;
+            double cur_speed = 0, prev_speed=0;
             while (robot.motorFrontLeft.isBusy() && robot.motorFrontRight.isBusy() && (robot.runtime.seconds() < 7) && opModeIsActive()) {
                 driveTTCoast(leftPower, rightPower);
+                if ((++iter)%6==0 && robot.stop_on_dump==true) {
+                    curPosFrontLeft = robot.motorFrontLeft.getCurrentPosition();
+                    cur_time = robot.runtime.nanoseconds()/1000000000.0;
+                    cur_speed = (curPosFrontLeft-prev_lpos) / (cur_time-prev_time);
+                    if (iter>20 && Math.abs(cur_speed-prev_speed)<1.0 &&
+                            Math.abs(cur_speed)<0.25 && Math.abs(curPosFrontLeft-targetPosFrontLeft)>100) {
+                        robot.bump_detected = true;
+                        break;
+                    }
+                    prev_lpos = curPosFrontLeft;
+                    prev_time = cur_time;
+                    prev_speed = cur_speed;
+                }
+                if (robot.use_verbose) {
+                    telemetry.addData("4.Speed cur/prev/i=", "%.2f/%.2f/%1d", cur_speed, prev_speed, iter);
+                    telemetry.addData("5.time cur/prev/^=", "%.4f/%.4f/%.4f", cur_time, prev_time, (cur_time-prev_time));
+                    telemetry.addData("6.enco cur/prev/^=", "%2d/%2d/%2d", curPosFrontLeft, prev_lpos,(curPosFrontLeft-prev_lpos));
+                    telemetry.update();
+                }
+                //if (robot.stop_on_dump && didBump()) {
+                //    robot.bump_detected = true;
+                //    break;
+                //}
             }
 
             if (rightTC2 > 0 || leftTC2 > 0) {
@@ -1475,9 +1504,19 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.motorFrontLeft.setTargetPosition(targetPosFrontLeft);
                 robot.motorFrontRight.setTargetPosition(targetPosFrontRight);
                 driveTTCoast(leftPowerSign * 0.2, rightPowerSign * 0.2);
-                while (robot.motorFrontLeft.isBusy() && robot.motorFrontRight.isBusy() && (robot.runtime.seconds() < 8) && opModeIsActive()) {
+                while (!robot.bump_detected && robot.motorFrontLeft.isBusy() && robot.motorFrontRight.isBusy() && (robot.runtime.seconds() < 8) && opModeIsActive()) {
                     driveTTCoast(leftPowerSign * 0.2, rightPowerSign * 0.2);
                 }
+            }
+            if (robot.use_verbose) {
+                //stop_chassis();
+                telemetry.addData("4.Speed cur/prev/i/bumped=", "%.2f/%.2f/%1d/%s",
+                        cur_speed, prev_speed, iter, (robot.bump_detected?"T":"F"));
+                telemetry.addData("5.time cur/prev/^=", "%.4f/%.4f/%.4f", cur_time, prev_time, (cur_time-prev_time));
+                telemetry.addData("6.enco cur/prev/^=", "%2d/%2d/%2d", curPosFrontLeft, prev_lpos,(curPosFrontLeft-prev_lpos));
+                telemetry.addLine("7.Hit B/X button to go next/exit ...");
+                telemetry.update();
+                //while (!gamepad1.x&&!gamepad1.b) {;}
             }
         }
         else if((robot.cur_mode == SwerveDriveHardware.CarMode.CRAB) && !robot.use_front_drive_only){
@@ -2155,13 +2194,26 @@ public class SwerveUtilLOP extends LinearOpMode {
         return result;
     }
 
+    void enable_bump_detection() {
+        robot.bump_detected = false;
+        robot.stop_on_dump = true;
+    }
+
+    void disable_bump_detection() {
+        robot.bump_detected = false;
+        robot.stop_on_dump = false;
+    }
+
     // returns true if it bumped the wall (noticeable negative acceleration), false if it went two seconds without hitting the wall
     public boolean didBump() {
         robot.accel = robot.imu.getAcceleration();
-        if (robot.accel.xAccel <= -.24 || robot.accel.zAccel <= -.24)
+        if (Math.abs(robot.accel.xAccel)+Math.abs(robot.accel.zAccel) >= 1.8) {
+            robot.bump_detected = true;
             return true;
+        }
         return false;
     }
+
     public boolean GlyphStuck() {
         if (robot.rangeSensorBack==null)
             return false;
@@ -2178,7 +2230,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (opModeIsActive()) {
             for(int i=0; i<2; i++) {
                 double distance = getRange(RangeSensor.BACK);
-                StraightCm(0.95, distance);
+                if (distance>20) {
+                    distance += 10;
+                    StraightCm(0.95, distance);
+                }
             }
         }
         boolean got_one = autoIntakeGlyphs(isSide);
@@ -2408,7 +2463,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
             sleep(500);
             if (!opModeIsActive()) return;
-            dumper_down(true);
+            dumper_down(false);
             sleep(100);
             // StraightIn(-0.3, 6);
             driveTT(0.35, 0.35); // drive backward for .5 sec
@@ -2416,6 +2471,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             driveTT(0,0);
             if (!opModeIsActive()) return;
             StraightIn(0.7, 6);
+            dumperGateUp();
         } else {
             StraightIn(0.3, 7);
             if (!opModeIsActive()) return;
@@ -2685,17 +2741,24 @@ public class SwerveUtilLOP extends LinearOpMode {
                 alignUsingIMU(-90.0);
             }
             if (!opModeIsActive()) return;
+            enable_bump_detection();
             for(int i = 0 ; i < 2 ; i++) {
                 dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 15;
                 if (dist > 30) dist = 7;
                 if (dist<1) break;
                 StraightCm(-.2, dist); // drive close to cryptobox
             }
-                if (isBlue || robot.use_newbot_v2) {
-                    alignUsingIMU(90.0);
-                } else {
-                    alignUsingIMU(-90.0);
-                }
+            if (robot.bump_detected) {
+                // hit divider, forward 2 cm
+                robot.bump_detected=false;
+                StraightCm(.3, 2);
+            }
+            disable_bump_detection();
+            if (isBlue || robot.use_newbot_v2) {
+                alignUsingIMU(90.0);
+            } else {
+                alignUsingIMU(-90.0);
+            }
         } else { // Front box
             if (isBlue) { // Front Blue
                 driveDistance = 0 + (18 * targetColumn); // 18cm between columns
@@ -2711,7 +2774,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             else
                 StraightCm(power, driveDistance);
             change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
-
+            enable_bump_detection();
             for (int i=0; i<2; i++) {
                 dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 15;
                 if (dist<2) break;
@@ -2721,6 +2784,12 @@ public class SwerveUtilLOP extends LinearOpMode {
                     StraightCm(-.2, dist); // forward using front range sensor, so it is close to cryptobox
                 }
             }
+            if (robot.bump_detected) {
+                // hit divider, forward 2 cm
+                robot.bump_detected=false;
+                StraightCm(.3, 2);
+            }
+            disable_bump_detection();
             alignUsingIMU((isBlue?0:179));
         }
         
@@ -2746,7 +2815,6 @@ public class SwerveUtilLOP extends LinearOpMode {
         } while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 1.5));
 
         driveTT(0, 0); // Stops
-
 
         if (!isBlue && isSideBox) { // crab back 1cm to correct proximity over shoot
             StraightCm(-.3, 1);
@@ -3548,11 +3616,11 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     void intakeBarWheelIn() {
-        robot.sv_bar_wheel.setPower(1);
+        robot.sv_bar_wheel.setPower(0.8);
     }
 
     void intakeBarWheelOut() {
-        robot.sv_bar_wheel.setPower(-1);
+        robot.sv_bar_wheel.setPower(-0.8);
     }
 
     void intakeBarWheelInP(double pw) {
