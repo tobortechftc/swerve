@@ -29,8 +29,8 @@ public class AutoRedSideBoxNBPlus extends SwerveUtilLOP{
         robot.use_proximity_sensor = true;
         robot.use_dumper = true;
         robot.use_intake = true;
-        robot.use_relic_grabber = false;
-        robot.use_relic_slider = false;
+        robot.use_relic_grabber = true;
+        robot.use_relic_slider = true;
 
         robot.allianceColor = TeamColor.RED;
 
