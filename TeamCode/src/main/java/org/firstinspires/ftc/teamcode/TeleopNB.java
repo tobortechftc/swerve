@@ -298,7 +298,7 @@ public class TeleopNB extends SwerveUtilLOP {
                     } else if (gamepad1.y) { // slow mode
                         robot.drivePowerRatio = 0.7;
                     } else if (gamepad1.a && !gamepad1.x && !gamepad1.dpad_up) { // slow mode
-                        robot.drivePowerRatio = 0.3;
+                        robot.drivePowerRatio = 0.2;
                     }
 
                 }
@@ -331,12 +331,12 @@ public class TeleopNB extends SwerveUtilLOP {
                 if (gamepad2.left_stick_y > 0.2) { // slide in
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
-                        pw *= 0.75;
+                        pw *= 0.9;
                     relic_slider_in(pw, gamepad2.start); // push start to force slide in further
                 } else if (gamepad2.left_stick_y < -0.2) { // slide out
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
-                        pw *= 0.95;
+                        pw *= 0.99;
                     relic_slider_out(pw);
                 } else if (gamepad2.left_stick_x < -0.2) { // slide out slowly
                     relic_slider_out(0.3);

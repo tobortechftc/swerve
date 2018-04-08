@@ -205,7 +205,7 @@ public class SwerveDriveHardware {
     final static double SV_DUMPER_UP = 0.17;
     final static double SV_DUMPER_DUMP = 0.18;
     final static double SV_INTAKE_GATE_INIT = 0.844;
-    final static double SV_INTAKE_GATE_UP = 0.687;
+    final static double SV_INTAKE_GATE_UP = 0.61;
     final static double SV_INTAKE_GATE_MID = 0.5;
     final static double SV_INTAKE_GATE_DOWN = 0.217;
     final static double SV_DUMPER_GATE_INIT = 0.25;
@@ -331,16 +331,16 @@ public class SwerveDriveHardware {
     /* variables for newbot */
     static double NB_SERVO_90_DEGREE = 0.479;
     static double NB_CRAB_DIFF_INC_FL = 0.4393;
-    static double NB_CRAB_DIFF_INC_BL = 0.4433;
     static double NB_CRAB_DIFF_DEC_FR = 0.4702;
+    static double NB_CRAB_DIFF_INC_BL = 0.4433;
     static double NB_CRAB_DIFF_DEC_BR = 0.4832;
     static double NB_LEFT_SV_DIFF = 0.001;
     static double NB_RIGHT_SV_DIFF = 0.000;
 
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5283;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.4461;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.5511;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5394;
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5183;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.4856;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.5356;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5589;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;
@@ -369,7 +369,7 @@ public class SwerveDriveHardware {
         ORBIT
     }
     CarMode cur_mode = CarMode.CAR;
-    CarMode old_mode = CarMode.STRAIGHT;
+    CarMode old_mode = CarMode.CAR;
 
     // The IMU sensor object
     BNO055IMU imu = null;

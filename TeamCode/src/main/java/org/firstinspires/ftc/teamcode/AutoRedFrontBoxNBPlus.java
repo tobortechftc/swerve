@@ -63,7 +63,7 @@ public class AutoRedFrontBoxNBPlus extends SwerveUtilLOP{
                 // turnToCenter(false, false, robot.targetColumn);
                 if (robot.targetColumn<2) {
                     TurnRightD(.6,(robot.targetColumn==0?7:14));
-                    grabAndDump(false);
+                    grabAndDump(false, false);
                 }
                 stop_chassis();
             } catch (Exception e) {

@@ -64,7 +64,7 @@ public class AutoBlueSideBoxNBPlus extends SwerveUtilLOP{
 
                 go_to_crypto(next_dist, .3, robot.targetColumn, true, true); // Drive to cryptobox
                 deliverGlyph();
-                grabAndDump(true);
+                grabAndDump(true, true);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

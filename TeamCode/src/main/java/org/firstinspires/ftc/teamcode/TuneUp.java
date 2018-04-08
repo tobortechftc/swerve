@@ -183,13 +183,13 @@ public class TuneUp extends SwerveUtilLOP {
             if (robot.use_newbot) { // newbot related control
                 if (robot.use_dumper && !robot.isTesting) {
                     if (gamepad1.dpad_up && gamepad1.a) {
-                        autoIntakeGlyphs(true);
+                        driveTTSnake(0.4, (float) 0.5, true);
                     } else if (gamepad1.dpad_up && gamepad1.b) {
                         alignBoxEdge();
                     } else if (gamepad1.dpad_up && gamepad1.y) {
                         deliverGlyph();
                     } else if (gamepad1.dpad_up && gamepad1.x) {
-                        grabAndDump(true);
+                        grabAndDump(true, true);
                     }
                 }
               /*  if (robot.use_newbot_v2) {
@@ -218,7 +218,7 @@ public class TuneUp extends SwerveUtilLOP {
                             robot.NB_RIGHT_SV_DIFF += 0.001;
                             sleep(100);
                         }
-
+                        //Start of Crab adjust code
                         if(gamepad1.y) {
                             if (gamepad1.dpad_up){
                                 robot.NB_CRAB_DIFF_DEC_BR += 0.001;
@@ -263,6 +263,7 @@ public class TuneUp extends SwerveUtilLOP {
                                 robot.needsUpdate = true;
                             }
                         }
+                        //End of Crab adjust code
 
                         if (gamepad1.back && gamepad1.dpad_left){
                             TurnLeftD(0.4, 180);
