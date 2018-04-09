@@ -161,7 +161,7 @@ public class SwerveDriveHardware {
     final static double SV_FRONT_ARM_IN = 0.83;
     final static double SV_FRONT_ARM_OUT = 0.43;
     final static double SV_JKICKER_UP = 0.47;
-    final static double SV_JKICKER_RIGHT = 0.61;
+    final static double SV_JKICKER_RIGHT = 0.71;
     final static double SV_JKICKER_LEFT = 0.22;
     final static double SV_JKICKER_INIT = 0.82;
 
@@ -190,9 +190,9 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_WRIST_INIT = 0.41;
     final static double SV_RELIC_WRIST_UP = 0.99;
     final static double SV_RELIC_WRIST_MIDDLE = 0.48;
-    final static double SV_RELIC_WRIST_DOWN = 0.51;
-    final static double SV_RELIC_WRIST_DOWN_R = 0.54; // down and ready for release
-    final static double SV_RELIC_WRIST_DOWN_AUTO = 0.51; // down out to prevent crab mode
+    final static double SV_RELIC_WRIST_DOWN = 0.545;
+    final static double SV_RELIC_WRIST_DOWN_R = 0.575; // down and ready for release
+    final static double SV_RELIC_WRIST_DOWN_AUTO = SV_RELIC_WRIST_DOWN;
 
     final static double SV_RELIC_ELBOW_INIT = 0.6167;
     final static double SV_RELIC_ELBOW_UP = 0.5689;
@@ -220,7 +220,7 @@ public class SwerveDriveHardware {
     double motorPowerRight;
     double motorPowerTurn;
     double drivePowerRatio = 0.5; //Controls the upper cap on drive speed
-    double intakeRatio = 0.8;
+    double intakeRatio = 1.0;
     float drivePower = 0; //Controls the throttling of the drive
 
     double servoPosFL;
@@ -330,16 +330,16 @@ public class SwerveDriveHardware {
 
     /* variables for newbot */
     static double NB_SERVO_90_DEGREE = 0.479;
+    static double NB_CRAB_DIFF_DEC_FR = 0.4802;
+    static double NB_CRAB_DIFF_DEC_BR = 0.4942;
     static double NB_CRAB_DIFF_INC_FL = 0.4393;
-    static double NB_CRAB_DIFF_DEC_FR = 0.4702;
-    static double NB_CRAB_DIFF_INC_BL = 0.4433;
-    static double NB_CRAB_DIFF_DEC_BR = 0.4832;
+    static double NB_CRAB_DIFF_INC_BL = 0.4533;
     static double NB_LEFT_SV_DIFF = 0.001;
     static double NB_RIGHT_SV_DIFF = 0.000;
 
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5183;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.4856;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.5356;
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5178;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.4606;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.5506;
     static double NB_SERVO_BR_FORWARD_POSITION = 0.5589;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
@@ -440,8 +440,8 @@ public class SwerveDriveHardware {
             imu = hwMap.get(BNO055IMU.class, "imu");
             imu.initialize(imuParameters);
 
-            imu2 = hwMap.get(BNO055IMU.class, "imu2");
-            imu2.initialize(imuParameters);
+            // imu2 = hwMap.get(BNO055IMU.class, "imu2");
+            // imu2.initialize(imuParameters);
 
             accel = imu.getAcceleration();
             imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
@@ -541,8 +541,8 @@ public class SwerveDriveHardware {
                     sv_dumper_gate = hwMap.servo.get("sv_dumper_gate");
                     sv_dumper_gate.setPosition(SV_DUMPER_GATE_INIT);
                 }
-                sv_bar_wheel = hwMap.crservo.get("sv_bar_wheel");
-                sv_bar_wheel.setPower(0);
+                // sv_bar_wheel = hwMap.crservo.get("sv_bar_wheel");
+                // sv_bar_wheel.setPower(0);
             }
             mt_lift = hwMap.dcMotor.get("mtLift");
             mt_lift.setDirection(DcMotor.Direction.REVERSE);

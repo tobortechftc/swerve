@@ -106,6 +106,15 @@ public class TuneUp extends SwerveUtilLOP {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            if (gamepad1.left_stick_y<-0.1) {
+                INCREMENT += 0.001;
+                if (INCREMENT>0.5) INCREMENT = 0.5;
+            } else if (gamepad1.left_stick_y>0.1) {
+                INCREMENT -= 0.001;
+                if (INCREMENT<0.001) INCREMENT = 0.001;
+            }
+
             if (robot.use_arm && !robot.use_newbot) {
                 if (gamepad2.dpad_down) {
                     double pos = robot.sv_shoulder.getPosition();
@@ -197,122 +206,122 @@ public class TuneUp extends SwerveUtilLOP {
                         robot.sv_intake_gate.setPosition(robot.sv_intake_gate.getPosition() + 0.01);
                     }
                 } */
-                    if(robot.isTesting){ //Allow to test individual movement
+                if(robot.isTesting) { //Allow to test individual movement
 
-                        if(gamepad1.left_trigger > 0.1){
-                            robot.NB_LEFT_SV_DIFF -= 0.001;
-                            sleep(100);
+                    if(gamepad1.left_trigger > 0.1){
+                        robot.NB_LEFT_SV_DIFF -= 0.001;
+                        sleep(100);
+                    }
+
+                    if(gamepad1.left_bumper){
+                        robot.NB_LEFT_SV_DIFF += 0.001;
+                        sleep(100);
+                    }
+
+                    if(gamepad1.right_trigger > 0.1){
+                        robot.NB_RIGHT_SV_DIFF -= 0.001;
+                        sleep(100);
+                    }
+
+                    if(gamepad1.right_bumper){
+                        robot.NB_RIGHT_SV_DIFF += 0.001;
+                        sleep(100);
+                    }
+                    //Start of Crab adjust code
+                    if(gamepad1.y) { // FL
+                        if (gamepad1.dpad_up){
+                            robot.NB_CRAB_DIFF_INC_FL += INCREMENT;
+                            robot.needsUpdate = true;
                         }
 
-                        if(gamepad1.left_bumper){
-                            robot.NB_LEFT_SV_DIFF += 0.001;
-                            sleep(100);
+                        else if (gamepad1.dpad_down){
+                            robot.NB_CRAB_DIFF_INC_FL -= INCREMENT;
+                            robot.needsUpdate = true;
+                        }
+                    }
+                    else if (gamepad1.x){ // BL
+                        if (gamepad1.dpad_up){
+                            robot.NB_CRAB_DIFF_INC_BL += INCREMENT;
+                            robot.needsUpdate = true;
                         }
 
-                        if(gamepad1.right_trigger > 0.1){
-                            robot.NB_RIGHT_SV_DIFF -= 0.001;
-                            sleep(100);
+                        else if (gamepad1.dpad_down){
+                            robot.NB_CRAB_DIFF_INC_BL -= INCREMENT;
+                            robot.needsUpdate = true;
+                        }
+                    }
+                    else if (gamepad1.b){ // FR
+                        if (gamepad1.dpad_up){
+                            robot.NB_CRAB_DIFF_DEC_FR += INCREMENT;
+                            robot.needsUpdate = true;
                         }
 
-                        if(gamepad1.right_bumper){
-                            robot.NB_RIGHT_SV_DIFF += 0.001;
-                            sleep(100);
+                        else if (gamepad1.dpad_down){
+                            robot.NB_CRAB_DIFF_DEC_FR -= INCREMENT;
+                            robot.needsUpdate = true;
                         }
-                        //Start of Crab adjust code
-                        if(gamepad1.y) {
-                            if (gamepad1.dpad_up){
-                                robot.NB_CRAB_DIFF_DEC_BR += 0.001;
-                                robot.needsUpdate = true;
-                            }
+                    }
+                    else if (gamepad1.a){
+                        if (gamepad1.dpad_up){
+                            robot.NB_CRAB_DIFF_DEC_BR += INCREMENT;
+                            robot.needsUpdate = true;
+                        }
 
-                            else if (gamepad1.dpad_down){
-                                robot.NB_CRAB_DIFF_DEC_BR -= 0.001;
-                                robot.needsUpdate = true;
-                            }
+                        else if (gamepad1.dpad_down){
+                            robot.NB_CRAB_DIFF_DEC_BR -= INCREMENT;
+                            robot.needsUpdate = true;
                         }
-                        else if (gamepad1.x){
-                            if (gamepad1.dpad_up){
-                                robot.NB_CRAB_DIFF_DEC_FR += 0.001;
-                                robot.needsUpdate = true;
-                            }
+                    }
+                    //End of Crab adjust code
 
-                            else if (gamepad1.dpad_down){
-                                robot.NB_CRAB_DIFF_DEC_FR -= 0.001;
-                                robot.needsUpdate = true;
-                            }
+                    if (gamepad1.back && gamepad1.dpad_left){
+                        TurnLeftD(0.4, 180);
+                    } else if(gamepad1.start && gamepad1.dpad_left){
+                        double tar_heading = imu_heading()+180;
+                        TurnLeftD(0.4, 180);
+                        if (tar_heading>=180) {
+                            tar_heading -= 360;
                         }
-                        else if (gamepad1.back){
-                            if (gamepad1.dpad_up){
-                                robot.NB_CRAB_DIFF_INC_BL += 0.001;
-                                robot.needsUpdate = true;
-                            }
-
-                            else if (gamepad1.dpad_down){
-                                robot.NB_CRAB_DIFF_INC_BL -= 0.001;
-                                robot.needsUpdate = true;
-                            }
+                        alignUsingIMU(tar_heading);
+                    }
+                    else if(gamepad1.back && gamepad1.dpad_right){
+                        TurnRightD(0.4, 180);
+                    }
+                    else if(gamepad1.start && gamepad1.dpad_right){
+                        double tar_heading = imu_heading()-180;
+                        TurnRightD(0.4, 180);
+                        if (tar_heading<=-180) {
+                            tar_heading += 360;
                         }
-                        else{
-                            if (gamepad1.dpad_up){
-                                robot.NB_CRAB_DIFF_INC_FL += 0.001;
-                                robot.needsUpdate = true;
-                            }
-
-                            else if (gamepad1.dpad_down){
-                                robot.NB_CRAB_DIFF_INC_FL -= 0.001;
-                                robot.needsUpdate = true;
-                            }
+                        alignUsingIMU(tar_heading);
+                    }
+                    else if(gamepad1.dpad_left){
+                        TurnLeftD(0.4, 90);
+                    }
+                    else if(gamepad1.dpad_right){
+                        TurnRightD(0.4, 90);
+                    } else if (gamepad1.back && gamepad1.b) {
+                        StraightIn(0.5, 22);
+                    } else if (gamepad1.back && gamepad1.a){
+                        StraightIn(-0.5, 22);
+                    }
+                    else if (gamepad1.start){
+                        if(!(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB)){// If in any other mode, switch to crab
+                            change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
                         }
-                        //End of Crab adjust code
-
-                        if (gamepad1.back && gamepad1.dpad_left){
-                            TurnLeftD(0.4, 180);
-                        } else if(gamepad1.start && gamepad1.dpad_left){
-                            double tar_heading = imu_heading()+180;
-                            TurnLeftD(0.4, 180);
-                            if (tar_heading>=180) {
-                                tar_heading -= 360;
-                            }
-                            alignUsingIMU(tar_heading);
+                        else{ //Return from snake to previous drive mode
+                            change_swerve_pos(robot.old_mode);
                         }
-                        else if(gamepad1.back && gamepad1.dpad_right){
-                            TurnRightD(0.4, 180);
+                        sleep(400);
+                    }
+                    if (robot.use_newbot) {
+                        robot.initialize_newbot();
+                        if(robot.needsUpdate){
+                            change_swerve_pos(robot.cur_mode);
+                            robot.needsUpdate = false;
                         }
-                        else if(gamepad1.start && gamepad1.dpad_right){
-                            double tar_heading = imu_heading()-180;
-                            TurnRightD(0.4, 180);
-                            if (tar_heading<=-180) {
-                                tar_heading += 360;
-                            }
-                            alignUsingIMU(tar_heading);
-                        }
-                        else if(gamepad1.dpad_left){
-                            TurnLeftD(0.4, 90);
-                        }
-                        else if(gamepad1.dpad_right){
-                            TurnRightD(0.4, 90);
-                        } else if (gamepad1.b) {
-                            StraightIn(0.5, 22);
-                        } else if (gamepad1.a){
-                            StraightIn(-0.5, 22);
-                        }
-                        else if (gamepad1.start){
-                            if(!(robot.cur_mode == SwerveDriveHardware.CarMode.CRAB)){// If in any other mode, switch to crab
-                                change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-                            }
-                            else{ //Return from snake to previous drive mode
-                                change_swerve_pos(robot.old_mode);
-                            }
-                            sleep(400);
-                        }
-                        if (robot.use_newbot) {
-                            robot.initialize_newbot();
-                            if(robot.needsUpdate){
-                                change_swerve_pos(robot.cur_mode);
-                                robot.needsUpdate = false;
-                            }
-                        }
-                    } // end isTesting
+                    }
+                } // end isTesting
             } // end use_swerve
             if (robot.sv_bar_wheel!=null) {
                 if (gamepad2.y) {
@@ -379,13 +388,7 @@ public class TuneUp extends SwerveUtilLOP {
                     }
                     sleep(50);
                 }
-                if (gamepad1.left_stick_y<-0.1) {
-                    INCREMENT += 0.001;
-                    if (INCREMENT>0.5) INCREMENT = 0.5;
-                } else if (gamepad1.left_stick_y>0.1) {
-                    INCREMENT -= 0.001;
-                    if (INCREMENT<0.001) INCREMENT = 0.001;
-                }
+
                 if (gamepad1.x) {
                     cur_sv_ix--;
                     if (cur_sv_ix < 0) cur_sv_ix = num_servos - 1;
