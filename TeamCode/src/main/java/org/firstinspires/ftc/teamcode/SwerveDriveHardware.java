@@ -65,6 +65,7 @@ public class SwerveDriveHardware {
     boolean isTesting = false;
     boolean needsUpdate = false;
     boolean tried_clockwise = false; //For determining how to correct the glyph during autonomous collection
+    boolean snaked_left = false;
 
     boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
     boolean isSnakingLeft = false; //See if the snake drive is turning to the left

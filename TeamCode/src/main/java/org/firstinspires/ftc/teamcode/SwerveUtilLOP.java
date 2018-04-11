@@ -2346,6 +2346,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             got_one = autoIntakeOneGlyph(isSide, isBlue);
         }
         if(robot.runtimeAuto.seconds() < time_out-4 && got_one) {
+            robot.snaked_left = false;
             got_two = autoIntakeSecondGlyph(isSide, isBlue);
         }
         if(robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false) return got_one;
@@ -2400,7 +2401,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     public boolean autoIntake(boolean isSide, boolean isFirstGlyph, boolean isBlue) throws InterruptedException {
         double time_out = (isSide?28:25.5);
         boolean got_one = false;
-        boolean curve_right = (isBlue?1:-1) * (isSide?1:-1) * (isFirstGlyph?1:-1) > 0;
+        boolean curve_right = robot.snaked_left;
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-1) && robot.servo_tune_up==false)) {
             intakeStop(); stop_chassis();return false;
         }
@@ -2411,6 +2412,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 //            driveTT(-0.1,-0.2);
 //        }
         driveTTSnake(-0.3,(float) 1.0,curve_right);
+        robot.snaked_left = !robot.snaked_left;
         intakeIn();
         sleep(700);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-.5) && robot.servo_tune_up==false)) {
