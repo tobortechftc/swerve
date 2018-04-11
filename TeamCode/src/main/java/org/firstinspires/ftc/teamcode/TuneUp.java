@@ -282,7 +282,7 @@ public class TuneUp extends SwerveUtilLOP {
                         if (tar_heading>=180) {
                             tar_heading -= 360;
                         }
-                        alignUsingIMU(tar_heading);
+                        alignUsingIMU(0.2, tar_heading);
                     }
                     else if(gamepad1.back && gamepad1.dpad_right){
                         TurnRightD(0.4, 180);
@@ -293,7 +293,7 @@ public class TuneUp extends SwerveUtilLOP {
                         if (tar_heading<=-180) {
                             tar_heading += 360;
                         }
-                        alignUsingIMU(tar_heading);
+                        alignUsingIMU(0.2, tar_heading);
                     }
                     else if(gamepad1.dpad_left){
                         TurnLeftD(0.4, 90);
