@@ -198,12 +198,12 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ELBOW_UP = 0.5689;
     final static double SV_RELIC_ELBOW_FLAT = 0.5117;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
-    final static double SV_DUMPER_INIT = 0.658;
-    final static double SV_DUMPER_DOWN = 0.658;
-    final static double SV_DUMPER_LIFT = 0.565; //from 0.595
-    final static double SV_DUMPER_HALF_UP = 0.5172;
-    final static double SV_DUMPER_UP = 0.17;
-    final static double SV_DUMPER_DUMP = 0.18;
+    final static double SV_DUMPER_INIT = 0.692;
+    final static double SV_DUMPER_DOWN = 0.692;
+    final static double SV_DUMPER_LIFT = 0.599;
+    final static double SV_DUMPER_HALF_UP = 0.551;
+    final static double SV_DUMPER_UP = 0.204;
+    final static double SV_DUMPER_DUMP = 0.214;
     final static double SV_INTAKE_GATE_INIT = 0.844;
     final static double SV_INTAKE_GATE_UP = 0.61;
     final static double SV_INTAKE_GATE_MID = 0.5;
@@ -330,17 +330,17 @@ public class SwerveDriveHardware {
 
     /* variables for newbot */
     static double NB_SERVO_90_DEGREE = 0.479;
-    static double NB_CRAB_DIFF_DEC_FR = 0.4802;
-    static double NB_CRAB_DIFF_DEC_BR = 0.4942;
-    static double NB_CRAB_DIFF_INC_FL = 0.4393;
+    static double NB_CRAB_DIFF_DEC_FR = 0.4652;
+    static double NB_CRAB_DIFF_DEC_BR = 0.4992;
+    static double NB_CRAB_DIFF_INC_FL = 0.4343;
     static double NB_CRAB_DIFF_INC_BL = 0.4533;
     static double NB_LEFT_SV_DIFF = 0.001;
     static double NB_RIGHT_SV_DIFF = 0.000;
 
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5178;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.4606;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.5506;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5589;
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5217;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.4628;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.5944;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5661;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;

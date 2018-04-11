@@ -1751,8 +1751,8 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.set_chassis_forward_position();
         }
 
-        if (!robot.fast_mode)
-            sleep(135);
+        //if (!robot.fast_mode)
+        //    sleep(135);
     }
 
     void StraightIn(double power, double in) throws InterruptedException {
@@ -1844,7 +1844,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
 
-        sleep(300);
+        sleep(100);
 
         robot.leftCnt += leftEncode;
         robot.rightCnt += rightEncode;
@@ -1881,10 +1881,10 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         driveTT(0, 0);
         if (!opModeIsActive()) return;
-        sleep(300);
+        sleep(100);
         change_swerve_pos(robot.old_mode);
-        if (!robot.fast_mode)
-            sleep(135);
+        //if (!robot.fast_mode)
+        //    sleep(135);
     }
 
     void TurnLeftD(double power, double degree) throws InterruptedException {
@@ -1906,7 +1906,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
 
-        sleep(300);
+        sleep(100);
 
         robot.leftCnt += leftEncode;
         robot.rightCnt += rightEncode;
@@ -1942,10 +1942,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
         driveTT(0, 0);
-        sleep(300);
+        sleep(100);
         change_swerve_pos(robot.old_mode);
-        if (!robot.fast_mode)
-            sleep(135);
+        //if (!robot.fast_mode)
+        //    sleep(135);
     }
 
     public int get_cryptobox_column() throws InterruptedException {
