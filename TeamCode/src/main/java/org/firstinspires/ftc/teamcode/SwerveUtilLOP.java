@@ -2328,7 +2328,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             // StraightIn(0.2,6);
             got_one = autoIntakeOneGlyph(isSide, isBlue);
         }
-        if(robot.runtimeAuto.seconds() < time_out-2 && got_one) {
+        if(robot.runtimeAuto.seconds() < time_out-4 && got_one) {
             got_two = autoIntakeSecondGlyph(isSide, isBlue);
         }
         if(robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false) return got_one;
@@ -2352,7 +2352,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public boolean autoIntakeOneGlyph(boolean isSide, boolean isBlue) throws InterruptedException {
-        double time_out = (isSide?28:25.5);
+        double time_out = (isSide?26:25.5);
 
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             return false;
@@ -2371,7 +2371,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public boolean autoIntakeSecondGlyph(boolean isSide,boolean isBlue) throws InterruptedException {
-        double time_out = (isSide?28:25.5);
+        double time_out = (isSide?26:25.5);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             return false;
         }
@@ -2395,13 +2395,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-1) && robot.servo_tune_up==false)) {
             intakeStop(); stop_chassis();return false;
         }
-        double cur_heading = imu_heading();
-        if (isBlue) { // drive to right
-            driveTT(-0.2,-0.1);
-        } else {
-            driveTT(-0.1,-0.2);
-        }
-        // driveTTSnake(-0.3,(float) 0.4,curve_right);
+//        double cur_heading = imu_heading();
+//        if (isBlue) { // drive to right
+//            driveTT(-0.2,-0.1);
+//        } else {
+//            driveTT(-0.1,-0.2);
+//        }
+        driveTTSnake(-0.3,(float) 1.0,curve_right);
         intakeIn();
         sleep(700);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-.5) && robot.servo_tune_up==false)) {
@@ -2425,7 +2425,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             intakeStop(); stop_chassis();return false;
         }
-        // driveTTSnake(-0.3,(float) 0.4,curve_right);
+        //driveTTSnake(-0.3,(float) 1.0,!curve_right);
         intakeIn();
         sleep(600);
         intakeStop();
@@ -2928,10 +2928,10 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     // void calc_snake(float stick_x){
     void calc_snake(float left_t, float right_t){
-        float stick_x = 0;
+        float stick_x;
         if (left_t > 0.1)
-            stick_x = -1 * (float)(left_t / 1.2);
-        else stick_x = (float)(right_t / 1.2);
+            stick_x = -1 * left_t;
+        else stick_x = right_t;
         if(stick_x > 0.1){
             robot.isSnakingLeft = false;
         }
@@ -2954,23 +2954,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
 
         if(robot.use_newbot){
-            robot.thetaOneCalc = (Math.atan((0.5 * robot.NB_WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) - (0.5 * robot.NB_LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1
-            robot.thetaTwoCalc = (Math.atan((0.5 * robot.NB_WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) + (0.5 * robot.NB_LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2
+            robot.thetaOneCalc = (Math.atan((0.5 * robot.NB_WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) - (0.5 * robot.NB_LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1 (inside wheels)
+            robot.thetaTwoCalc = (Math.atan((0.5 * robot.NB_WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) + (0.5 * robot.NB_LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2 (outside wheels)
         }
         else {
             robot.thetaOneCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) - (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1
             robot.thetaTwoCalc = (Math.atan((0.5 * robot.WIDTH_BETWEEN_WHEELS) / ((robot.r_Value) + (0.5 * robot.LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2
         }
-    }
-
-    void collectAuto() throws InterruptedException{
-        StraightCm(0.5, 30);
-        intakeIn();
-        StraightCm(0.3, 35);
-        sleep(1000);
-        StraightCm(-0.3, 20);
-
-
     }
 
     void alignUsingIMU(double tar_degree) throws InterruptedException {

@@ -192,7 +192,7 @@ public class TuneUp extends SwerveUtilLOP {
             if (robot.use_newbot) { // newbot related control
                 if (robot.use_dumper && !robot.isTesting) {
                     if (gamepad1.dpad_up && gamepad1.a) {
-                        driveTTSnake(0.4, (float) 0.5, true);
+                        driveTTSnake(-0.3, (float) 1.0, true); sleep(700); stop_chassis();
                     } else if (gamepad1.dpad_up && gamepad1.b) {
                         alignBoxEdge();
                     } else if (gamepad1.dpad_up && gamepad1.y) {
