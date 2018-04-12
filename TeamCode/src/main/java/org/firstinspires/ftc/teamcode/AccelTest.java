@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -17,7 +18,7 @@ import java.io.StringWriter;
  * Created by Nick on 3/31/18.
  */
 
-
+@Disabled
 @Autonomous(name = "accel test", group = "NewBot")
 public class AccelTest extends SwerveUtilLOP{
     @Override

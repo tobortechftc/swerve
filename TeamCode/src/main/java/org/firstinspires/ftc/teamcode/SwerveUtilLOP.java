@@ -689,7 +689,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void relic_arm_auto() {
         stop_chassis();
         if (robot.use_newbot) {
-            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
+            // robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
+            relic_arm_up();
         } else {
             relic_arm_down();
         }
@@ -698,6 +699,9 @@ public class SwerveUtilLOP extends LinearOpMode {
     public void relic_arm_down()
     {
         stop_chassis();
+        if (robot.use_intake) {
+            intakeGateInit();
+        }
         double pos = robot.sv_relic_wrist.getPosition();
         if (robot.use_newbot) {
             if (Math.abs(pos - robot.SV_RELIC_WRIST_DOWN_R) > 0.2) {
@@ -2231,7 +2235,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         if (opModeIsActive()==false ||
                 (isSide==true && robot.runtimeAuto.seconds() > 24) ||
-                (isSide==false && robot.runtimeAuto.seconds() > 26)) {
+                (isSide==false && robot.runtimeAuto.seconds() > 22)) {
             return;
         }
         if (opModeIsActive()) {
@@ -2269,7 +2273,9 @@ public class SwerveUtilLOP extends LinearOpMode {
                         dist -= 15;
                     }
                 } else if (dist<1) break;
+                if (i==0)robot.fast_mode = true;
                 StraightCm((i==0?-0.9:-0.5), dist);
+                robot.fast_mode =false;
                 if (robot.runtimeAuto.seconds() > 29) return;
             }
             StraightCm(0.6, 4);
@@ -3012,6 +3018,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         else if (imu_diff > 4) {
             TurnRightD(power, corrected_degree);
         }
+        change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
     }
 
     void snake_servo_adj(){
@@ -3653,6 +3660,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_dumper_gate.setPosition(robot.SV_DUMPER_GATE_DOWN);
     }
 
+    void intakeGateInit() {
+        if (!robot.use_intake || !robot.use_newbot_v2)
+            return;
+        robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_INIT);
+    }
+
     void intakeGateUp() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
@@ -3675,6 +3688,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     void intakeGateDown() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
+        if (robot.use_newbot_v2 && robot.use_relic_grabber)
+            relic_arm_up();
         double pos = robot.sv_intake_gate.getPosition();
         if (Math.abs(pos-robot.SV_INTAKE_GATE_INIT)<0.1)
             robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);

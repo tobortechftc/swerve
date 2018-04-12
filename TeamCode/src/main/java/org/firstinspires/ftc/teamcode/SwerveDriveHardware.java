@@ -188,11 +188,11 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ARM_MIDDLE = 0.55;
     final static double SV_RELIC_ARM_DOWN = 0.2;
     final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
-    final static double SV_RELIC_WRIST_INIT = 0.41;
+    final static double SV_RELIC_WRIST_INIT = 0.329;
     final static double SV_RELIC_WRIST_UP = 0.99;
-    final static double SV_RELIC_WRIST_MIDDLE = 0.48;
-    final static double SV_RELIC_WRIST_DOWN = 0.545;
-    final static double SV_RELIC_WRIST_DOWN_R = 0.575; // down and ready for release
+    final static double SV_RELIC_WRIST_MIDDLE = 0.78;
+    final static double SV_RELIC_WRIST_DOWN = 0.379;
+    final static double SV_RELIC_WRIST_DOWN_R = 0.4; // down and ready for release
     final static double SV_RELIC_WRIST_DOWN_AUTO = SV_RELIC_WRIST_DOWN;
 
     final static double SV_RELIC_ELBOW_INIT = 0.6167;

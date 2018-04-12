@@ -9,7 +9,7 @@ import java.io.StringWriter;
  * Created by Nick on 12/8/2017.
  */
 
-@Autonomous(name = "RedFront-NB-V2", group = "NewBot")
+@Autonomous(name = "RedFront", group = "NewBot2")
 public class AutoRedFrontBoxNBV2 extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {

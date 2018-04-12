@@ -10,7 +10,7 @@ import java.io.StringWriter;
  */
 
 
-@Autonomous(name = "BlueSide-NB-Plus", group = "NewBot")
+@Autonomous(name = "BlueSide-Plus", group = "NewBot2")
 public class AutoBlueSideBoxNBPlus extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
