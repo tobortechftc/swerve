@@ -9,7 +9,6 @@ import java.io.StringWriter;
 /**
  * Created by Nick on 12/8/2017.
  */
-@Disabled
 @Autonomous(name = "RedSide", group = "NewBot2")
 public class AutoRedSideBoxNB extends SwerveUtilLOP{
     @Override
