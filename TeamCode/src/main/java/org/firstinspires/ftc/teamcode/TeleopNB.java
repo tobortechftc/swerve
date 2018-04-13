@@ -47,6 +47,7 @@ public class TeleopNB extends SwerveUtilLOP {
         waitForStart();
 
         start_init();
+        relic_arm_up(); // arm up to prevent intake gate collision 
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {

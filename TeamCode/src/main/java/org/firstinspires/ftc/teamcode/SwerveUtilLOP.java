@@ -690,7 +690,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         stop_chassis();
         if (robot.use_newbot) {
             // robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
-            relic_arm_up();
+            relic_arm_down();
         } else {
             relic_arm_down();
         }
@@ -2711,14 +2711,22 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     void jkick_right() {
         if (robot.sv_jkicker==null) return;
+        robot.sv_jkicker.setPosition(robot.SV_JKICKER_RIGHT1);
+        sleep(100);
+        robot.sv_jkicker.setPosition(robot.SV_JKICKER_RIGHT2);
+        sleep(100);
         robot.sv_jkicker.setPosition(robot.SV_JKICKER_RIGHT);
-        sleep(350);
+        sleep(100);
     }
 
     void jkick_left() {
         if (robot.sv_jkicker==null) return;
+        robot.sv_jkicker.setPosition(robot.SV_JKICKER_LEFT1);
+        sleep(100);
+        robot.sv_jkicker.setPosition(robot.SV_JKICKER_LEFT2);
+        sleep(100);
         robot.sv_jkicker.setPosition(robot.SV_JKICKER_LEFT);
-        sleep(350);
+        sleep(100);
     }
 
     void jkick_up() {
