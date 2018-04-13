@@ -2245,17 +2245,15 @@ public class SwerveUtilLOP extends LinearOpMode {
             return;
         }
         if (opModeIsActive()) {
-            enable_bump_detection();
-            for(int i=0; i<2 && robot.bump_detected==false; i++) {
+            robot.fast_mode = true;
+            for(int i=0; i<2; i++) {
                 double distance = getRange(RangeSensor.BACK);
                 if (distance>20) {
                     distance += 20;
-                    StraightCm(0.95, distance);
+                    StraightCm((i==0?0.95:0.3), distance);
                 }
             }
-            if (robot.bump_detected) {
-                StraightCm(0.6,5);
-            }
+            robot.fast_mode = false;
         }
         boolean got_one = autoIntakeGlyphs(isSide, isBlue);
 
@@ -2263,7 +2261,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         else alignUsingIMU(0.3, orig_imu + (isBlue?-3:3));
 
         if (opModeIsActive()) {
-            for (int i=0; i<2; i++) {
+            enable_bump_detection();
+            for (int i=0; i<2 && robot.bump_detected==false; i++) {
                 double dist = (isSide? Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 20:
                         Math.min(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 20);
                 if (i==0) {
@@ -2285,6 +2284,10 @@ public class SwerveUtilLOP extends LinearOpMode {
                 robot.fast_mode =false;
                 if (robot.runtimeAuto.seconds() > 29) return;
             }
+            if (robot.bump_detected) {
+                StraightCm(0.6,5);
+            }
+            disable_bump_detection();
             StraightCm(0.6, 4);
         }
         if((robot.runtimeAuto.seconds() > 29 || !got_one) && !robot.servo_tune_up){
@@ -2398,6 +2401,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             return false;
         }
+        StraightCm(0.4,15);
         boolean got_two = autoIntake(isSide, false, isBlue);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             return false;
