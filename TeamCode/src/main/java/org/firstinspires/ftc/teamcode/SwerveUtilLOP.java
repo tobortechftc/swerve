@@ -2255,7 +2255,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         boolean got_one = autoIntakeGlyphs(isSide, isBlue);
 
         if(isSide) alignUsingIMU(0.3, orig_imu);
-        else alignUsingIMU(0.3, orig_imu /*+ (isBlue?-1:1)*/);
+        else alignUsingIMU(0.3, orig_imu);
 
         if (opModeIsActive()) {
             enable_bump_detection();
@@ -2332,7 +2332,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         }
         else {
-            if (robot.targetColumn == 2) {
+            if (robot.allianceColor == TeamColor.RED) {
                 TurnLeftD(0.6, 3);
             } else {
                 TurnRightD(0.6, 3);
@@ -2404,7 +2404,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public boolean autoIntakeSecondGlyph(boolean isSide,boolean isBlue) throws InterruptedException {
-        double time_out = (isSide?23:21.5);
+        double time_out = (isSide?22:20);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             return false;
         }
@@ -2913,8 +2913,8 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         driveTT(0, 0); // Stops
 
-        if (!isBlue && isSideBox) { // crab back 1cm to correct proximity over shoot
-            StraightCm(-.3, 1);
+        if (!isBlue) { // crab back 1cm to correct proximity over shoot
+            StraightCm(-.35, 2.5);
         }
 
         if (!opModeIsActive()) return;
@@ -3020,28 +3020,24 @@ public class SwerveUtilLOP extends LinearOpMode {
         // target degree must between -180 and +180
         // align up to 45 degree
         double offset = 0;
-        int offset_dir = 0;
-        if (tar_degree<-135) {
-            offset_dir = -1;
-        }
-        if (tar_degree>135) {
-            offset_dir = 1;
-        }
         double cur_adj_heading = imu_heading();
-        if (cur_adj_heading>135 && offset_dir==-1) {
-            cur_adj_heading -= 360;
-        } else if (cur_adj_heading<-135 && offset_dir==1) {
+        if (tar_degree>135 && cur_adj_heading<0) {
             cur_adj_heading += 360;
+        } else if (tar_degree<-135 && cur_adj_heading>0) {
+            cur_adj_heading -= 360;
         }
 
         double imu_diff = cur_adj_heading-tar_degree;
         double corrected_degree = Math.abs(imu_diff)-0.5;
+        if (corrected_degree>10) {
+            corrected_degree*=0.8;
+        }
         if (corrected_degree>45)
             corrected_degree = 45;
-        if (imu_diff < -4) {
+        if (imu_diff < -2) {
             TurnLeftD(power, corrected_degree);
         }
-        else if (imu_diff > 4) {
+        else if (imu_diff > 2) {
             TurnRightD(power, corrected_degree);
         }
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
