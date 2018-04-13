@@ -67,7 +67,7 @@ public class AutoBlueFrontBoxNBPlus extends SwerveUtilLOP{
                     StraightCm(-0.5, 18.5 * (2 - robot.targetColumn));
                     change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
                 }
-                alignUsingIMU(0.18, 30);
+                alignUsingIMU(0.18, 20);
                 grabAndDump(false, true);
                 stop_chassis();
             } catch (Exception e) {

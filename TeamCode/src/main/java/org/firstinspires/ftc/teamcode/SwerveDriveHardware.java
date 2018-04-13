@@ -331,17 +331,17 @@ public class SwerveDriveHardware {
 
     /* variables for newbot */
     static double NB_SERVO_90_DEGREE = 0.479;
-    static double NB_CRAB_DIFF_DEC_FR = 0.4652;
-    static double NB_CRAB_DIFF_DEC_BR = 0.4992;
-    static double NB_CRAB_DIFF_INC_FL = 0.4343;
-    static double NB_CRAB_DIFF_INC_BL = 0.4533;
+    static double NB_CRAB_DIFF_INC_FL = 0.4373;
+    static double NB_CRAB_DIFF_DEC_FR = 0.4612;
+    static double NB_CRAB_DIFF_INC_BL = 0.4413;
+    static double NB_CRAB_DIFF_DEC_BR = 0.4872;
     static double NB_LEFT_SV_DIFF = 0.001;
     static double NB_RIGHT_SV_DIFF = 0.000;
 
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5217;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.4628;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.5944;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5661;
+    static double NB_SERVO_FL_FORWARD_POSITION = 0.5278;
+    static double NB_SERVO_FR_FORWARD_POSITION = 0.4478;
+    static double NB_SERVO_BL_FORWARD_POSITION = 0.4178;
+    static double NB_SERVO_BR_FORWARD_POSITION = 0.5589;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;

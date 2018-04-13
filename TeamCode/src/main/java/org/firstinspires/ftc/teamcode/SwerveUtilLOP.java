@@ -2253,7 +2253,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         boolean got_one = autoIntakeGlyphs(isSide, isBlue);
 
-        alignUsingIMU(0.3, orig_imu);
+        if(isSide) alignUsingIMU(0.3, orig_imu);
+        else alignUsingIMU(0.3, orig_imu + (isBlue?-3:3));
 
         if (opModeIsActive()) {
             for (int i=0; i<2; i++) {
@@ -2368,7 +2369,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public boolean autoIntakeOneGlyph(boolean isSide, boolean isBlue) throws InterruptedException {
-        double time_out = (isSide?26:25.5);
+        double time_out = (isSide?26:24.5);
 
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             return false;
@@ -2387,7 +2388,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public boolean autoIntakeSecondGlyph(boolean isSide,boolean isBlue) throws InterruptedException {
-        double time_out = (isSide?26:25.5);
+        double time_out = (isSide?26:24.5);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             return false;
         }
@@ -2405,7 +2406,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public boolean autoIntake(boolean isSide, boolean isFirstGlyph, boolean isBlue) throws InterruptedException {
-        double time_out = (isSide?28:25.5);
+        double time_out = (isSide?26:24.5);
         boolean got_one = false;
         boolean curve_right = robot.snaked_left;
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-1) && robot.servo_tune_up==false)) {
@@ -2417,7 +2418,7 @@ public class SwerveUtilLOP extends LinearOpMode {
 //        } else {
 //            driveTT(-0.1,-0.2);
 //        }
-        driveTTSnake(-0.3,(float) 1.0,curve_right);
+        driveTTSnake(-0.5,(float) 1.0,curve_right);
         robot.snaked_left = !robot.snaked_left;
         intakeIn();
         sleep(700);
