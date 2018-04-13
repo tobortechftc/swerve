@@ -14,14 +14,11 @@ import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 import static java.lang.Thread.sleep;
@@ -906,8 +903,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         dumper_down(true);
     }
 
-    void lift_up_level_one() {
-        robot.target_gg_slider_pos = robot.layer_positions[1];
+    void lift_up_level_half() {
+        robot.target_gg_slider_pos = robot.layer_positions[1] / 2;
         lift_up(false);
         slide_to_target(robot.GG_SLIDE_UP_POWER);
     }
@@ -2258,7 +2255,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         boolean got_one = autoIntakeGlyphs(isSide, isBlue);
 
         if(isSide) alignUsingIMU(0.3, orig_imu);
-        else alignUsingIMU(0.3, orig_imu + (isBlue?-3:3));
+        else alignUsingIMU(0.3, orig_imu /*+ (isBlue?-1:1)*/);
 
         if (opModeIsActive()) {
             enable_bump_detection();
@@ -2294,7 +2291,9 @@ public class SwerveUtilLOP extends LinearOpMode {
             return;
         }
         else if (got_one && opModeIsActive()) {
+            lift_up_level_half();
             quickDump(isSide);
+            lift_back_init();
 //            if (alignBoxEdge() && opModeIsActive()) {
 //                deliverGlyph();
 //            }
@@ -2329,6 +2328,14 @@ public class SwerveUtilLOP extends LinearOpMode {
                 TurnLeftD(0.6, 5);
             } else {
                 TurnRightD(0.6, 5);
+            }
+            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+        }
+        else {
+            if (robot.targetColumn == 2) {
+                TurnLeftD(0.6, 3);
+            } else {
+                TurnRightD(0.6, 3);
             }
             change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         }
@@ -2397,7 +2404,7 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     public boolean autoIntakeSecondGlyph(boolean isSide,boolean isBlue) throws InterruptedException {
-        double time_out = (isSide?26:24.5);
+        double time_out = (isSide?23:21.5);
         if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
             return false;
         }
