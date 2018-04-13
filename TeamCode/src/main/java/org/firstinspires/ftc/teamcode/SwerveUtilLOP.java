@@ -906,6 +906,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         dumper_down(true);
     }
 
+    void lift_up_level_one() {
+        robot.target_gg_slider_pos = robot.layer_positions[1];
+        lift_up(false);
+        slide_to_target(robot.GG_SLIDE_UP_POWER);
+    }
+
     void lift_up(boolean force) {
         double power = 1.0;
         // never exceed GG_SLIDE_MAX_COUNT

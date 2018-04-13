@@ -253,7 +253,7 @@ public class SwerveDriveHardware {
     int target_relic_slider_pos = 0;
     int gg_layer = 0;
     int max_gg_layer = 2;
-    int [] layer_positions = {GG_SLIDE_INIT, ONE_ROTATION_60+GG_SLIDE_INIT, 2*ONE_ROTATION_60+GG_SLIDE_INIT};
+    int [] layer_positions = {GG_SLIDE_INIT, ONE_ROTATION_40+GG_SLIDE_INIT, 2*ONE_ROTATION_40+GG_SLIDE_INIT};
 
     double DRIVE_RATIO_FL = INIT_DRIVE_RATIO_FL; //control veering by lowering left motor power
     double DRIVE_RATIO_FR = INIT_DRIVE_RATIO_FR;//control veering by lowering right motor power
