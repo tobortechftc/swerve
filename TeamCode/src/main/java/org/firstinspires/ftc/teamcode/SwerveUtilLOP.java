@@ -2824,6 +2824,10 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         double driveDistance;
         double dist;
+        boolean nearest_col = false;
+        if ((targetColumn==0 && isBlue==true) || (targetColumn==2 && isBlue==false))
+            nearest_col = true;
+
         if (isSideBox) {
             if (isBlue) driveDistance = 6 + (18.5 * targetColumn); // 18cm between columns
             else driveDistance = 6 + (18.5 * (2 - targetColumn));
@@ -2891,10 +2895,13 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         
         change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
-        sleep(200);
+        // sleep(200);
         if (!opModeIsActive()) return;
         reset_prox();
-
+        if (nearest_col) {
+            // allow more time for proximity sensor to reset
+            sleep(400);
+        }
         if (isBlue) {
             driveTT(0.15, 0.15); // Crabs to the left
         } else { // Red
@@ -2906,15 +2913,15 @@ public class SwerveUtilLOP extends LinearOpMode {
         boolean edge_undetected_R=true;
         robot.runtime.reset();
         do {
-            edge_undetected_L = true; // robot.proxL.getState();
+            edge_undetected_L = robot.proxL.getState();
             edge_undetected_R = robot.proxR.getState();
             if (!opModeIsActive()) return;
         } while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 1.5));
 
         driveTT(0, 0); // Stops
 
-        if (!isBlue) { // crab back 1cm to correct proximity over shoot
-            StraightCm(-.35, 2.5);
+        if (!isBlue) { // crab back 3cm to correct proximity over shoot
+            StraightCm(-.35, 3);
         }
 
         if (!opModeIsActive()) return;
