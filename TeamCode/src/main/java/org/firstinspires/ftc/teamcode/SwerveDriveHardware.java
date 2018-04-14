@@ -164,10 +164,10 @@ public class SwerveDriveHardware {
     final static double SV_JKICKER_UP = 0.47;
     final static double SV_JKICKER_RIGHT1 = 0.57;
     final static double SV_JKICKER_RIGHT2 = 0.65;
-    final static double SV_JKICKER_RIGHT = 0.71;
+    final static double SV_JKICKER_RIGHT = 0.76;
     final static double SV_JKICKER_LEFT1 = 0.37;
     final static double SV_JKICKER_LEFT2 = 0.27;
-    final static double SV_JKICKER_LEFT = 0.22;
+    final static double SV_JKICKER_LEFT = 0.17;
     final static double SV_JKICKER_INIT = 0.82;
 
 
