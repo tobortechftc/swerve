@@ -709,7 +709,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                         pos -= 0.1;
                     }
                     robot.sv_relic_wrist.setPosition(pos);
-                    sleep(150);
+                    sleep(50);
                     pos = robot.sv_relic_wrist.getPosition();
                 }
                 robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_R);
@@ -725,7 +725,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                         pos = robot.SV_RELIC_ARM_DOWN_R + 0.1;
                     }
                     robot.sv_relic_wrist.setPosition(pos);
-                    sleep(350);
+                    sleep(50);
                 }
                 robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN_R);
             } else {
