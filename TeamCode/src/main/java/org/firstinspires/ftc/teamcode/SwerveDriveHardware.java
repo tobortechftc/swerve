@@ -203,8 +203,8 @@ public class SwerveDriveHardware {
     final static double SV_RELIC_ELBOW_UP = 0.5689;
     final static double SV_RELIC_ELBOW_FLAT = 0.5117;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
-    final static double SV_DUMPER_INIT = 0.692;
-    final static double SV_DUMPER_DOWN = 0.692;
+    final static double SV_DUMPER_INIT = 0.6822;
+    final static double SV_DUMPER_DOWN = 0.6822;
     final static double SV_DUMPER_LIFT = 0.599;
     final static double SV_DUMPER_HALF_UP = 0.551;
     final static double SV_DUMPER_UP = 0.204;
