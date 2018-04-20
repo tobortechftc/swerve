@@ -16,6 +16,7 @@ public class AutoBlueSideBoxNB extends SwerveUtilLOP{
     public void runOpMode() throws InterruptedException {
 
         robot.use_swerve = false;
+        robot.use_newbot_v2 = true;
         robot.use_arm = true;
         robot.use_imu = true;
         robot.use_encoder = true;
@@ -62,6 +63,8 @@ public class AutoBlueSideBoxNB extends SwerveUtilLOP{
 
                 go_to_crypto(next_dist, .3, robot.targetColumn, true, true); // Drive to cryptobox
                 deliverGlyph();
+                StraightTime(-.4,.5);
+                StraightCm(.4,20);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

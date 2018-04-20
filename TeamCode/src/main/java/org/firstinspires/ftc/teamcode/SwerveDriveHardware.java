@@ -155,8 +155,8 @@ public class SwerveDriveHardware {
 
     final static double SV_RIGHT_ARM_UP = 0.11;
     final static double SV_RIGHT_ARM_DOWN = 0.73;
-    final static double SV_RIGHT_ARM_UP_NB = 0.18;
-    final static double SV_RIGHT_ARM_DOWN_NB = 0.6628;
+    final static double SV_RIGHT_ARM_UP_NB = 0.02;
+    final static double SV_RIGHT_ARM_DOWN_NB = 0.43;
     final static double SV_LEFT_ARM_UP_NB = 0.943;
     final static double SV_LEFT_ARM_DOWN_NB = 0.359;
     final static double SV_FRONT_ARM_IN = 0.83;
@@ -164,10 +164,10 @@ public class SwerveDriveHardware {
     final static double SV_JKICKER_UP = 0.47;
     final static double SV_JKICKER_RIGHT1 = 0.57;
     final static double SV_JKICKER_RIGHT2 = 0.65;
-    final static double SV_JKICKER_RIGHT = 0.76;
+    final static double SV_JKICKER_RIGHT = 0.85;
     final static double SV_JKICKER_LEFT1 = 0.37;
     final static double SV_JKICKER_LEFT2 = 0.27;
-    final static double SV_JKICKER_LEFT = 0.17;
+    final static double SV_JKICKER_LEFT = 0.1;
     final static double SV_JKICKER_INIT = 0.82;
 
 

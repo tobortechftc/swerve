@@ -61,10 +61,11 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         if (opModeIsActive()) {
             try {
                 double next_dist = doPlatformMission(true);
-
                 go_to_crypto(next_dist, .3, robot.targetColumn, true, false); // Drive to cryptobox
                 deliverGlyph();
-                turnToCenter(true, false, robot.targetColumn);
+                StraightTime(-.4,.5);
+                StraightCm(.4,20);
+                //turnToCenter(true, false, robot.targetColumn);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

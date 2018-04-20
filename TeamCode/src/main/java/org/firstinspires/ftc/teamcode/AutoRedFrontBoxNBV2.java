@@ -61,7 +61,9 @@ public class AutoRedFrontBoxNBV2 extends SwerveUtilLOP{
                 double next_dist = doPlatformMission(false);
                 go_to_crypto(next_dist, .3, robot.targetColumn, false, false); // Drive to cryptobox
                 deliverGlyph();
-                turnToCenter(false, false, robot.targetColumn);
+                StraightTime(-.4,.5);
+                StraightCm(.4,20);
+                //turnToCenter(false, false, robot.targetColumn);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

@@ -60,6 +60,8 @@ public class AutoRedSideBoxNB extends SwerveUtilLOP{
                 double next_dist = doPlatformMission(false);
                 go_to_crypto(next_dist, .3, robot.targetColumn, false, true); // Drive to cryptobox
                 deliverGlyph();
+                StraightTime(-.4,.5);
+                StraightCm(.4,20);
                 stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

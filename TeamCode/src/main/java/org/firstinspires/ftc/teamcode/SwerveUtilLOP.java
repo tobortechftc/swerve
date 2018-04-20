@@ -1815,6 +1815,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
+    void StraightTime(double power, double timeSec){
+        driveTT(-power, -power);
+        sleep((long)(timeSec * 1000));
+        driveTT(0,0);
+    }
+
     void crabRight(double power) {
         if (robot.old_mode!=SwerveDriveHardware.CarMode.CRAB) {
             change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
@@ -2243,19 +2249,23 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
         if (opModeIsActive()) {
             robot.fast_mode = true;
-            for(int i=0; i<2; i++) {
-                double distance = getRange(RangeSensor.BACK);
-                if (distance>20) {
-                    distance += 20;
-                    StraightCm((i==0?0.95:0.3), distance);
-                }
-            }
+//            for(int i=0; i<2; i++) {
+//                double distance = getRange(RangeSensor.BACK);
+//                if (distance>20) {
+//                    distance += 20;
+//                    StraightCm((i==0?0.95:0.3), distance);
+//                }
+//            }
+            if (isSide)
+                StraightCm(.95, 75);
+            else
+                StraightCm(.95,115);
             robot.fast_mode = false;
         }
         boolean got_one = autoIntakeGlyphs(isSide, isBlue);
 
         if(isSide) alignUsingIMU(0.3, orig_imu);
-        else alignUsingIMU(0.3, orig_imu);
+        else alignUsingIMU(0.3, orig_imu + (isBlue?14:-14));
 
         if (opModeIsActive()) {
             enable_bump_detection();
@@ -2336,7 +2346,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
             if (robot.runtimeAuto.seconds() < 29.5)
                 sleep(100);
-            StraightIn(0.9,2.5); // out 5.5 in
+            StraightIn(0.9,4); // out 5.5 in
             if (!opModeIsActive()) return;
             dumper_down(false);
         } else {
@@ -2355,7 +2365,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             // StraightIn(0.2,6);
             got_at_least_one = autoIntakeOneGlyph(isSide, isBlue);
         }
-        if(robot.runtimeAuto.seconds() < time_out-4 && got_at_least_one && !gotTwoGlyphs()) {
+        if(/*robot.runtimeAuto.seconds() < time_out-4 && got_at_least_one && !gotTwoGlyphs()*/ false) {
             robot.snaked_left = false;
             got_two = autoIntakeSecondGlyph(isSide, isBlue);
         }
@@ -2720,7 +2730,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_jkicker.setPosition(robot.SV_JKICKER_RIGHT2);
         sleep(150);
         robot.sv_jkicker.setPosition(robot.SV_JKICKER_RIGHT);
-        sleep(150);
+        sleep(250);
     }
 
     void jkick_left() {
@@ -2730,7 +2740,7 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.sv_jkicker.setPosition(robot.SV_JKICKER_LEFT2);
         sleep(150);
         robot.sv_jkicker.setPosition(robot.SV_JKICKER_LEFT);
-        sleep(150);
+        sleep(250);
     }
 
     void jkick_up() {
@@ -2865,8 +2875,15 @@ public class SwerveUtilLOP extends LinearOpMode {
             else
                 StraightCm(power, driveDistance);
             change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+            if(isBlue){
+                StraightCm(-0.2, 10);
+            }
+            else {
+                StraightCm(-.2,5);
+            }
+
             enable_bump_detection();
-            for (int i=0; i<2; i++) {
+            for (int i=1; i<3; i++) {
                 dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 15;
                 if (dist<2) break;
                 if (dist > 50 || (dist <= 5 && i==0)) {
@@ -3609,13 +3626,13 @@ public class SwerveUtilLOP extends LinearOpMode {
 
             if((pixelRed > (pixelGreen * 1.4)) && (pixelRed > (pixelBlue * 1.4)) && (greenToRedRatio < .3)){
                 redCount++;
-                if (redStart == -1){
+                if (redStart == -1 && pixelI > 250){
                     redStart = pixelI;
                 }
             }
             else if ((pixelBlue > (pixelRed * 1.4)) && (greenToBlueRatio > .65) && (greenToBlueRatio < .9)){
                 blueCount++;
-                if (blueStart == -1){
+                if (blueStart == -1 && pixelI > 250){
                     blueStart = pixelI;
                 }
             }
