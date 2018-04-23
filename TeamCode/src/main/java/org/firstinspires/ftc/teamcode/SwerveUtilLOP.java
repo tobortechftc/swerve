@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -10,8 +11,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.CameraDevice;
 import com.vuforia.Image;
+import com.vuforia.Matrix34F;
 import com.vuforia.PIXEL_FORMAT;
+import com.vuforia.Trackable;
+import com.vuforia.TrackableResult;
+import com.vuforia.Vec2F;
+import com.vuforia.Vec3F;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -20,6 +27,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 
 import static java.lang.Thread.sleep;
 
@@ -3384,8 +3392,19 @@ public class SwerveUtilLOP extends LinearOpMode {
     }
 
     static class Camera {
+
         private VuforiaLocalizer vuforia;
         private String lastError = "";
+
+        boolean focusModeSet = CameraDevice.getInstance().setFocusMode(
+                CameraDevice.FOCUS_MODE.FOCUS_MODE_CONTINUOUSAUTO);
+
+        /**
+         * Used to select gimbal mode
+         */
+        public enum CameraMode{
+            SERVO_LOCK, GLOBAL_LOCK, TRACK;
+        }
 
         Camera(VuforiaLocalizer vuforia){
             this.vuforia = vuforia;
@@ -3543,6 +3562,7 @@ public class SwerveUtilLOP extends LinearOpMode {
                 return source;
             }
         }
+
         void stopCamera(){
             Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
             this.vuforia.setFrameQueueCapacity(0);
@@ -3684,6 +3704,29 @@ public class SwerveUtilLOP extends LinearOpMode {
 //        telemetry.addData("Blue Total", blueTotal);
 //        telemetry.addData("Red Value AVG", redTotal > 0 ? redValue/redTotal : 0);
 //        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
+    }
+
+    /**
+     * Uses a Vec2F (A vector with 2 float values) to show the x y component translation from the position of the
+     * camera/phone (which is always 0,0). The returned data will primarily be used for drawing lines to a desired target for the robot to travel upon.
+     * @param target
+     * @return
+     */
+    public Vec2F intakeTargetCoord(TrackableResult target){
+
+        Matrix34F pose = target.getPose();
+
+        float[] reference = pose.getData();
+        float xCoord = reference[3];
+        float yCoord = reference[7];
+
+        Vec2F position = new Vec2F(xCoord, yCoord);
+
+        float distanceToTarget = (float)Math.sqrt(Math.pow(xCoord,2) + Math.pow(yCoord,2));
+
+        telemetry.addData("Target Position - x: " + xCoord + "y: " + yCoord, null);
+        telemetry.addData("Distance to Target: ", distanceToTarget);
+        return position;
     }
 
     void dumperGateUp() {
