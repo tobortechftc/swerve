@@ -28,9 +28,9 @@ public class TuneUp extends SwerveUtilLOP {
 //        // robot.use_color_sensor = true;
 //        robot.use_arm = true;
 //        robot.use_glyph_grabber = false;
-//        robot.rrxx__use_relic_grabber = true;
-//        robot.rrxx__use_relic_elbow = false;
-//        robot.rrxx__use_relic_slider = true;
+//        robot.relicReachSystem.use_relic_grabber = true;
+//        robot.relicReachSystem.use_relic_elbow = false;
+//        robot.relicReachSystem.use_relic_slider = true;
 //        robot.use_test_servo = false;
 //        robot.use_test_motor = false;
 //        robot.use_range_sensor = true;
@@ -59,9 +59,9 @@ public class TuneUp extends SwerveUtilLOP {
 //                robot.sv_right_arm,
 //                robot.sv_glyph_grabber_bottom,
 //                robot.sv_glyph_grabber_top,
-//                robot.rrxx__sv_relic_grabber,
-//                robot.rrxx__sv_relic_wrist,
-//                robot.rrxx__sv_relic_elbow,
+//                robot.relicReachSystem.sv_relic_grabber,
+//                robot.relicReachSystem.sv_relic_wrist,
+//                robot.relicReachSystem.sv_relic_elbow,
 //                robot.sv_dumper,
 //                robot.sv_front_arm,
 //                robot.sv_intake_gate,

@@ -23,26 +23,27 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.hardware.RelicReachSystem;
+import org.firstinspires.ftc.teamcode.hardware.SharedSystem;
+import org.firstinspires.ftc.teamcode.hardware.SystemControl;
 
 import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
 
 
-    static class SharedSystem {
-        public boolean use_verbose = false;
-    }
-    static class RelicReachSystem {
-    }
+//    static class SharedSystem {
+//        public boolean use_verbose = false;
+//    }
 
-    public SharedSystem shxx = new SharedSystem();
-    public RelicReachSystem rrxx = new RelicReachSystem();
+    SystemControl robot = new SystemControl();
+    public SharedSystem shxx = robot.shared;
+    public RelicReachSystem relicReachSystem = robot.rrxx;
 
     // define all switches to turn on/off hardware each component
     public boolean use_swerve = true;   // use four motors and four servos for chassis
     public boolean use_newbot = false;   // use four motors and four servos for new chassis
     public boolean use_newbot_v2 = false;
-    public boolean rrxx__use_relic_elbow = false;
     public boolean use_front_drive_only = false;
     public boolean use_intake = false;
     public boolean use_dumper = false;
@@ -55,8 +56,6 @@ public class SwerveDriveHardware {
     public boolean use_encoder = true;
     public boolean use_color_sensor = false;
     public boolean use_range_sensor = false;
-    public boolean rrxx__use_relic_grabber = true;
-    public boolean rrxx__use_relic_slider = true;
     public boolean use_glyph_grabber = false;
     public boolean use_arm = false;
     public boolean use_test_servo = false;
@@ -189,29 +188,6 @@ public class SwerveDriveHardware {
     final static double SV_GLYPH_GRABBER_BOTTOM_HALF_CLOSED = 0.485;
     final static double SV_GLYPH_GRABBER_BOTTOM_CLOSED = 0.358; // 0.405 0.037
 
-    final static double SV_RELIC_GRABBER_INIT = 0.5039;
-    final static double SV_RELIC_GRABBER_CLOSE = 0.5006;
-    final static double SV_RELIC_GRABBER_OPEN = 0.1822;
-    final static double SV_RELIC_GRABBER_INIT_NB = 0.86;
-    final static double SV_RELIC_GRABBER_CLOSE_NB = 0.8;
-    final static double SV_RELIC_GRABBER_OPEN_NB = 0.25;
-    final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.15;
-    final static double SV_RELIC_ARM_INIT = 0.1;
-    final static double SV_RELIC_ARM_UP = 0.7;
-    final static double SV_RELIC_ARM_MIDDLE = 0.55;
-    final static double SV_RELIC_ARM_DOWN = 0.2;
-    final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
-    final static double SV_RELIC_WRIST_INIT = 0.329;
-    final static double SV_RELIC_WRIST_UP = 0.99;
-    final static double SV_RELIC_WRIST_MIDDLE = 0.78;
-    final static double SV_RELIC_WRIST_DOWN = 0.379;
-    final static double SV_RELIC_WRIST_DOWN_R = 0.4; // down and ready for release
-    final static double SV_RELIC_WRIST_DOWN_AUTO = SV_RELIC_WRIST_DOWN;
-
-    final static double SV_RELIC_ELBOW_INIT = 0.6167;
-    final static double SV_RELIC_ELBOW_UP = 0.5689;
-    final static double SV_RELIC_ELBOW_FLAT = 0.5117;
-    final static double SV_RELIC_ELBOW_DOWN = 0.5;
     final static double SV_DUMPER_INIT = 0.6822;
     final static double SV_DUMPER_DOWN = 0.6822;
     final static double SV_DUMPER_LIFT = 0.599;
@@ -277,7 +253,6 @@ public class SwerveDriveHardware {
     public DcMotor motorBackLeft = null;
     public DcMotor motorBackRight = null;
 
-    public DcMotor rrxx__mt_relic_slider = null;
     public DcMotor mt_lift = null;
     public DcMotor mt_test = null;
 
@@ -301,9 +276,6 @@ public class SwerveDriveHardware {
     public Servo sv_glyph_grabber_top = null;
     public Servo sv_glyph_grabber_bottom = null;
 
-    public Servo rrxx__sv_relic_grabber = null;
-    public Servo rrxx__sv_relic_wrist = null;
-    public Servo rrxx__sv_relic_elbow = null;
     // public Servo sv_test = null;
     public Servo sv_dumper = null;
     public Servo sv_dumper_gate = null;
@@ -371,10 +343,6 @@ public class SwerveDriveHardware {
     static double SERVO_BL_ORBIT_POSITION = SERVO_BL_FORWARD_POSITION + (THETA_BACK / 180);
     static double SERVO_BR_ORBIT_POSITION = SERVO_BR_FORWARD_POSITION - (THETA_BACK / 180);
 
-    enum RelicArmPos{
-        INIT, UP, FLAT, DOWN
-    }
-    RelicArmPos relic_arm_pos = RelicArmPos.INIT;
     enum CarMode {
         CAR,
         STRAIGHT,
@@ -522,28 +490,6 @@ public class SwerveDriveHardware {
             mt_test.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             orig_rot_pos = mt_test.getCurrentPosition();
         }
-        if (rrxx__use_relic_grabber) {
-            if (use_newbot) {
-                if (use_newbot_v2) {
-                    if (rrxx__use_relic_elbow) {
-                        rrxx__sv_relic_elbow = hwMap.servo.get("sv_relic_arm");
-                        rrxx__sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
-                    }
-                    rrxx__sv_relic_wrist = hwMap.servo.get("sv_relic_wrist");
-                    rrxx__sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
-                } else {
-                    rrxx__sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
-                    rrxx__sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
-                }
-            } else {
-                rrxx__sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
-                rrxx__sv_relic_wrist.setPosition(SV_RELIC_ARM_INIT);
-            }
-            rrxx__sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
-            rrxx__sv_relic_grabber.setPosition((use_newbot?SV_RELIC_GRABBER_INIT_NB:SV_RELIC_GRABBER_INIT));
-        }
-        if (shxx.use_verbose)
-            tel.addData("0: initialize relic graber CPU time =", "%3.2f sec", period.seconds());
 
         if (use_dumper) {
             sv_dumper = hwMap.servo.get("sv_dumper");
@@ -567,18 +513,10 @@ public class SwerveDriveHardware {
         if (shxx.use_verbose)
             tel.addData("0: initialize dumper CPU time =", "%3.2f sec", period.seconds());
 
-        if (rrxx__use_relic_slider) {
-            rrxx__mt_relic_slider = hwMap.dcMotor.get("rrxx__mt_relic_slider");
-            if (use_newbot) {
-                if (!use_newbot_v2)
-                    rrxx__mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
-            } else {
-                // rrxx__mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
-            }
-            rrxx__mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rrxx__mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rrxx__mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+        relicReachSystem.init(hwMap, tel);
+        if (shxx.use_verbose)
+            tel.addData("0: initialize relic graber CPU time =", "%3.2f sec", period.seconds());
+
         if (use_intake) {
             mt_intake_left = hwMap.dcMotor.get("mtIntakeLeft");
             mt_intake_left.setDirection(DcMotor.Direction.REVERSE);

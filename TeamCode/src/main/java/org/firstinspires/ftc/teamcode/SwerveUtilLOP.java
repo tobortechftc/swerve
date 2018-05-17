@@ -80,11 +80,11 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_newbot_v2 && robot.use_arm) {
             robot.sv_jkicker.setPosition(robot.SV_JKICKER_UP);
         }
-        if (robot.rrxx__use_relic_grabber) {
+        if (robot.relicReachSystem.use_relic_grabber) {
             if (robot.use_newbot) {
-                rrxx__relic_grabber_open(false);
+                robot.relicReachSystem.relic_grabber_open(false);
             } else {
-                rrxx__relic_grabber_open(false);
+                robot.relicReachSystem.relic_grabber_open(false);
             }
             relic_arm_auto();
         }
@@ -112,257 +112,338 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
     /*
      **** [ 1. Relic Reach System ] ****
      */
-    public void rrxx__relic_grabber_lower() {
-        double pos = robot.rrxx__sv_relic_grabber.getPosition()-0.04;
-        if (pos<0.001) pos = 0.001;
-        robot.rrxx__sv_relic_grabber.setPosition(pos);
-    }
 
-    public void rrxx__relic_grabber_higher() {
-        double pos = robot.rrxx__sv_relic_grabber.getPosition()+0.04;
-        if (pos>0.99) pos = 0.99;
-        robot.rrxx__sv_relic_grabber.setPosition(pos);
-    }
+    /*
+    static class RelicReachSystem {
 
-    public void rrxx__relic_grabber_close() {
-        if (robot.use_newbot) {
-            robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
-        } else {
-            robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE);
+        enum RelicArmPos{
+            INIT, UP, FLAT, DOWN
         }
-    }
 
-    public void rrxx__relic_grabber_open(boolean wide) {
-        if (robot.use_newbot) {
-            if (wide) {
-                robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN_W_NB);
+        final static double SV_RELIC_GRABBER_INIT = 0.5039;
+        final static double SV_RELIC_GRABBER_CLOSE = 0.5006;
+        final static double SV_RELIC_GRABBER_OPEN = 0.1822;
+        final static double SV_RELIC_GRABBER_INIT_NB = 0.86;
+        final static double SV_RELIC_GRABBER_CLOSE_NB = 0.8;
+        final static double SV_RELIC_GRABBER_OPEN_NB = 0.25;
+        final static double SV_RELIC_GRABBER_OPEN_W_NB = 0.15;
+        final static double SV_RELIC_ARM_INIT = 0.1;
+        final static double SV_RELIC_ARM_UP = 0.7;
+        final static double SV_RELIC_ARM_MIDDLE = 0.55;
+        final static double SV_RELIC_ARM_DOWN = 0.2;
+        final static double SV_RELIC_ARM_DOWN_R = 0.27; // down and ready for release
+        final static double SV_RELIC_WRIST_INIT = 0.329;
+        final static double SV_RELIC_WRIST_UP = 0.99;
+        final static double SV_RELIC_WRIST_MIDDLE = 0.78;
+        final static double SV_RELIC_WRIST_DOWN = 0.379;
+        final static double SV_RELIC_WRIST_DOWN_R = 0.4; // down and ready for release
+        final static double SV_RELIC_WRIST_DOWN_AUTO = SV_RELIC_WRIST_DOWN;
+
+        final static double SV_RELIC_ELBOW_INIT = 0.6167;
+        final static double SV_RELIC_ELBOW_UP = 0.5689;
+        final static double SV_RELIC_ELBOW_FLAT = 0.5117;
+        final static double SV_RELIC_ELBOW_DOWN = 0.5;
+
+        public boolean use_relic_elbow = false;
+        public boolean use_relic_grabber = true;
+        public boolean use_relic_slider = true;
+        final boolean use_newbot = true; // TODO: Clean up this assumption
+        final boolean use_newbot_v2 = true; // TODO: Clean up this assumption
+
+        public Servo sv_relic_grabber = null;
+        public Servo sv_relic_wrist = null;
+        public Servo sv_relic_elbow = null;
+
+        public DcMotor mt_relic_slider = null;
+        RelicArmPos relic_arm_pos = RelicArmPos.INIT;
+
+
+        public void init(HardwareMap hwMap, Telemetry tel) {
+            if (use_relic_grabber) {
+                if (use_newbot) {
+                    if (use_newbot_v2) {
+                        if (use_relic_elbow) {
+                            sv_relic_elbow = hwMap.servo.get("sv_relic_arm");
+                            sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
+                        }
+                        sv_relic_wrist = hwMap.servo.get("sv_relic_wrist");
+                        sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
+                    } else {
+                        sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
+                        sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
+                    }
+                } else {
+                    sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
+                    sv_relic_wrist.setPosition(SV_RELIC_ARM_INIT);
+                }
+                sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
+                sv_relic_grabber.setPosition((use_newbot ? SV_RELIC_GRABBER_INIT_NB : SV_RELIC_GRABBER_INIT));
+            }
+            if (use_relic_slider) {
+                mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
+                if (use_newbot) {
+                    if (!use_newbot_v2)
+                        mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+                } else {
+                    // rrxx__mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+                }
+                mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+        }
+
+        public void relic_grabber_lower() {
+            double pos = sv_relic_grabber.getPosition()-0.04;
+            if (pos<0.001) pos = 0.001;
+            sv_relic_grabber.setPosition(pos);
+        }
+
+        public void relic_grabber_higher() {
+            double pos = sv_relic_grabber.getPosition()+0.04;
+            if (pos>0.99) pos = 0.99;
+            sv_relic_grabber.setPosition(pos);
+        }
+
+        public void relic_grabber_close() {
+            if (use_newbot) {
+                sv_relic_grabber.setPosition(SV_RELIC_GRABBER_CLOSE_NB);
             } else {
-                robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN_NB);
-            }
-        } else {
-            robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
-        }
-    }
-
-    public void rrxx__relic_grabber_release() {
-        // robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN_R);
-        double pos = robot.rrxx__sv_relic_grabber.getPosition();
-        double tar = (robot.use_newbot?robot.SV_RELIC_GRABBER_OPEN_NB:robot.SV_RELIC_GRABBER_OPEN);
-        if (pos < tar) {
-            robot.rrxx__sv_relic_grabber.setPosition(pos+0.1);
-            sleep(250);
-            robot.rrxx__sv_relic_grabber.setPosition(pos+0.2);
-            sleep(250);
-        } else {
-            robot.rrxx__sv_relic_grabber.setPosition(pos-0.1);
-            sleep(250);
-            robot.rrxx__sv_relic_grabber.setPosition(pos-0.2);
-            sleep(250);
-        }
-        robot.rrxx__sv_relic_grabber.setPosition(tar);
-    }
-
-    public void rrxx__relic_slider_in(double power, boolean force) {
-        if (Math.abs(power)>1) power=1;
-        double pos = robot.rrxx__mt_relic_slider.getCurrentPosition();
-        if (pos>-100 && power!=0 && force==false) {
-            if (pos<0) power = 0.1;
-            else {
-                power = 0;
-                robot.rrxx__mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.rrxx__mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                sv_relic_grabber.setPosition(SV_RELIC_GRABBER_CLOSE);
             }
         }
-        if (power>0) stop_chassis();
-        robot.rrxx__mt_relic_slider.setPower(Math.abs(power));
-    }
 
-    public void rrxx__relic_slider_out(double power) {
-        if (Math.abs(power)>1) power=1;
-        if (power>0) stop_chassis();
-        robot.rrxx__mt_relic_slider.setPower(-1*Math.abs(power));
-    }
-
-    public void rrxx__relic_slider_stop() {
-        robot.rrxx__mt_relic_slider.setPower(0);
-    }
-
-    public void rrxx__relic_elbow_up_auto() {
-        // down -> flat -> up -> init
-        if (!robot.rrxx__use_relic_elbow) return;
-        if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.DOWN) {
-            rrxx__relic_elbow_flat();
-            rrxx__relic_arm_ready_grab_and_release();
-        } else if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.FLAT) {
-            // rrxx__relic_elbow_up();
-            rrxx__relic_arm_ready_delivery();
-        } else {
-            rrxx__relic_elbow_init();
+        public void relic_grabber_open(boolean wide) {
+            if (use_newbot) {
+                if (wide) {
+                    sv_relic_grabber.setPosition(SV_RELIC_GRABBER_OPEN_W_NB);
+                } else {
+                    sv_relic_grabber.setPosition(SV_RELIC_GRABBER_OPEN_NB);
+                }
+            } else {
+                sv_relic_grabber.setPosition(SV_RELIC_GRABBER_OPEN);
+            }
         }
-    }
 
-    public void relic_elbow_down_auto() {
-        // init -> up -> flat -> down
-        if (!robot.rrxx__use_relic_elbow) return;
-        if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.INIT) {
-            rrxx__relic_elbow_up();
-        } else if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.UP) {
-            // rrxx__relic_elbow_flat();
-            rrxx__relic_arm_ready_grab_and_release();
-        } else {
-            rrxx__relic_elbow_down();
+        public void relic_grabber_release() {
+            // sv_relic_wrist.setPosition(SV_RELIC_ARM_DOWN_R);
+            double pos = sv_relic_grabber.getPosition();
+            double tar = (use_newbot?SV_RELIC_GRABBER_OPEN_NB:SV_RELIC_GRABBER_OPEN);
+            if (pos < tar) {
+                sv_relic_grabber.setPosition(pos+0.1);
+                sleep(250);
+                sv_relic_grabber.setPosition(pos+0.2);
+                sleep(250);
+            } else {
+                sv_relic_grabber.setPosition(pos-0.1);
+                sleep(250);
+                sv_relic_grabber.setPosition(pos-0.2);
+                sleep(250);
+            }
+            sv_relic_grabber.setPosition(tar);
         }
-    }
 
-    public void rrxx__relic_elbow_higher() {
-        if (!robot.rrxx__use_relic_elbow) return;
-        double new_pos = robot.rrxx__sv_relic_elbow.getPosition() + 0.001;
-        if (new_pos>0.999) new_pos = 0.999;
-        robot.rrxx__sv_relic_elbow.setPosition(new_pos);
-        if (new_pos>=robot.SV_RELIC_ELBOW_INIT)
-            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.INIT;
-        else if (new_pos>=robot.SV_RELIC_ELBOW_UP)
-            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.UP;
-        else if (new_pos>=robot.SV_RELIC_ELBOW_FLAT)
-            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.FLAT;
-        else
-            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.DOWN;
-    }
+        public void relic_slider_in(double power, boolean force) {
+            if (Math.abs(power)>1) power=1;
+            double pos = mt_relic_slider.getCurrentPosition();
+            if (pos>-100 && power!=0 && force==false) {
+                if (pos<0) power = 0.1;
+                else {
+                    power = 0;
+                    mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
+            }
+            if (power>0) stop_chassis();
+            mt_relic_slider.setPower(Math.abs(power));
+        }
 
-    public void rrxx__relic_elbow_lower() {
-        if (!robot.rrxx__use_relic_elbow) return;
-        double new_pos = robot.rrxx__sv_relic_elbow.getPosition() - 0.001;
-        if (new_pos<0.001) new_pos = 0.001;
-        robot.rrxx__sv_relic_elbow.setPosition(new_pos);
-        if (new_pos<=robot.SV_RELIC_ELBOW_DOWN)
-            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.DOWN;
-        else if (new_pos<=robot.SV_RELIC_ELBOW_FLAT)
-            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.FLAT;
-        else if (new_pos<=robot.SV_RELIC_ELBOW_UP)
-            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.UP;
-        else
-            robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.INIT;
-    }
+        public void relic_slider_out(double power) {
+            if (Math.abs(power)>1) power=1;
+            if (power>0) stop_chassis();
+            mt_relic_slider.setPower(-1*Math.abs(power));
+        }
 
-    public void rrxx__relic_elbow_up() {
-        if (!robot.rrxx__use_relic_elbow) return;
-        robot.rrxx__sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_UP);
-        robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.UP;
-    }
+        public void relic_slider_stop() {
+            mt_relic_slider.setPower(0);
+        }
 
-    public void rrxx__relic_elbow_flat() {
-        if (!robot.rrxx__use_relic_elbow) return;
-        robot.rrxx__sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_FLAT);
-        robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.FLAT;
-    }
+        public void relic_elbow_up_auto() {
+            // down -> flat -> up -> init
+            if (!use_relic_elbow) return;
+            if (relic_arm_pos == RelicArmPos.DOWN) {
+                relic_elbow_flat();
+                relic_arm_ready_grab_and_release();
+            } else if (relic_arm_pos == RelicArmPos.FLAT) {
+                // relic_elbow_up();
+                relic_arm_ready_delivery();
+            } else {
+                relic_elbow_init();
+            }
+        }
 
-    public void rrxx__relic_elbow_down() {
-        if (!robot.rrxx__use_relic_elbow) return;
-        robot.rrxx__sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_DOWN);
-        robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.DOWN;
-    }
+        public void relic_elbow_down_auto() {
+            // init -> up -> flat -> down
+            if (!use_relic_elbow) return;
+            if (relic_arm_pos == RelicArmPos.INIT) {
+                relic_elbow_up();
+            } else if (relic_arm_pos == RelicArmPos.UP) {
+                // relic_elbow_flat();
+                relic_arm_ready_grab_and_release();
+            } else {
+                relic_elbow_down();
+            }
+        }
 
-    public void rrxx__relic_elbow_init() {
-        if (!robot.rrxx__use_relic_elbow) return;
-        robot.rrxx__sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_INIT);
-        robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.INIT;
-    }
+        public void relic_elbow_higher() {
+            if (!use_relic_elbow) return;
+            double new_pos = sv_relic_elbow.getPosition() + 0.001;
+            if (new_pos>0.999) new_pos = 0.999;
+            sv_relic_elbow.setPosition(new_pos);
+            if (new_pos>=SV_RELIC_ELBOW_INIT)
+                relic_arm_pos = RelicArmPos.INIT;
+            else if (new_pos>=SV_RELIC_ELBOW_UP)
+                relic_arm_pos = RelicArmPos.UP;
+            else if (new_pos>=SV_RELIC_ELBOW_FLAT)
+                relic_arm_pos = RelicArmPos.FLAT;
+            else
+                relic_arm_pos = RelicArmPos.DOWN;
+        }
 
-    public void rrxx__relic_arm_ready_grab_and_release() {
-        if (!robot.rrxx__use_relic_elbow) return;
-        rrxx__relic_elbow_flat();
-        robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN);
-    }
+        public void relic_elbow_lower() {
+            if (!use_relic_elbow) return;
+            double new_pos = sv_relic_elbow.getPosition() - 0.001;
+            if (new_pos<0.001) new_pos = 0.001;
+            sv_relic_elbow.setPosition(new_pos);
+            if (new_pos<=SV_RELIC_ELBOW_DOWN)
+                relic_arm_pos = RelicArmPos.DOWN;
+            else if (new_pos<=SV_RELIC_ELBOW_FLAT)
+                relic_arm_pos = RelicArmPos.FLAT;
+            else if (new_pos<=SV_RELIC_ELBOW_UP)
+                relic_arm_pos = RelicArmPos.UP;
+            else
+                relic_arm_pos = RelicArmPos.INIT;
+        }
 
-    public void rrxx__relic_arm_ready_delivery() {
-        if (!robot.rrxx__use_relic_elbow) return;
-        robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
-        rrxx__relic_elbow_up();
-        robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
-    }
+        public void relic_elbow_up() {
+            if (!use_relic_elbow) return;
+            sv_relic_elbow.setPosition(SV_RELIC_ELBOW_UP);
+            relic_arm_pos = RelicArmPos.UP;
+        }
 
-    public void rrxx__relic_arm_down()
-    {
-        stop_chassis();
-        if (robot.use_intake) {
+        public void relic_elbow_flat() {
+            if (!use_relic_elbow) return;
+            sv_relic_elbow.setPosition(SV_RELIC_ELBOW_FLAT);
+            relic_arm_pos = RelicArmPos.FLAT;
+        }
+
+        public void relic_elbow_down() {
+            if (!use_relic_elbow) return;
+            sv_relic_elbow.setPosition(SV_RELIC_ELBOW_DOWN);
+            relic_arm_pos = RelicArmPos.DOWN;
+        }
+
+        public void relic_elbow_init() {
+            if (!use_relic_elbow) return;
+            sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
+            relic_arm_pos = RelicArmPos.INIT;
+        }
+
+        public void relic_arm_ready_grab_and_release() {
+            if (!use_relic_elbow) return;
+            relic_elbow_flat();
+            sv_relic_wrist.setPosition(SV_RELIC_WRIST_DOWN);
+        }
+
+        public void relic_arm_ready_delivery() {
+            if (!use_relic_elbow) return;
+            sv_relic_wrist.setPosition(SV_RELIC_WRIST_UP);
+            relic_elbow_up();
+            sv_relic_grabber.setPosition(SV_RELIC_GRABBER_CLOSE_NB);
+        }
+
+        public void relic_arm_down()
+        {
+            stop_chassis();
             intakeGateInit();
-        }
-        double pos = robot.rrxx__sv_relic_wrist.getPosition();
-        if (robot.use_newbot) {
-            if (Math.abs(pos - robot.SV_RELIC_WRIST_DOWN_R) > 0.2) {
-                while (Math.abs(pos - robot.SV_RELIC_WRIST_DOWN_R) > 0.1) {
-                    if (pos < robot.SV_RELIC_WRIST_DOWN_R) {
-                        pos += 0.1;
-                    } else {
-                        pos -= 0.1;
+            double pos = sv_relic_wrist.getPosition();
+            if (use_newbot) {
+                if (Math.abs(pos - SV_RELIC_WRIST_DOWN_R) > 0.2) {
+                    while (Math.abs(pos - SV_RELIC_WRIST_DOWN_R) > 0.1) {
+                        if (pos < SV_RELIC_WRIST_DOWN_R) {
+                            pos += 0.1;
+                        } else {
+                            pos -= 0.1;
+                        }
+                        sv_relic_wrist.setPosition(pos);
+                        sleep(50);
+                        pos = sv_relic_wrist.getPosition();
                     }
-                    robot.rrxx__sv_relic_wrist.setPosition(pos);
-                    sleep(50);
-                    pos = robot.rrxx__sv_relic_wrist.getPosition();
+                    sv_relic_wrist.setPosition(SV_RELIC_WRIST_DOWN_R);
+                } else {
+                    sv_relic_wrist.setPosition(SV_RELIC_WRIST_DOWN);
                 }
-                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_R);
             } else {
-                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN);
-            }
-        } else {
-            if (Math.abs(pos - robot.SV_RELIC_ARM_DOWN_R) > 0.2) {
-                while (Math.abs(pos - robot.SV_RELIC_ARM_DOWN_R) > 0.1) {
-                    if (pos < robot.SV_RELIC_ARM_DOWN_R) {
-                        pos = robot.SV_RELIC_ARM_DOWN_R - 0.1;
-                    } else {
-                        pos = robot.SV_RELIC_ARM_DOWN_R + 0.1;
+                if (Math.abs(pos - SV_RELIC_ARM_DOWN_R) > 0.2) {
+                    while (Math.abs(pos - SV_RELIC_ARM_DOWN_R) > 0.1) {
+                        if (pos < SV_RELIC_ARM_DOWN_R) {
+                            pos = SV_RELIC_ARM_DOWN_R - 0.1;
+                        } else {
+                            pos = SV_RELIC_ARM_DOWN_R + 0.1;
+                        }
+                        sv_relic_wrist.setPosition(pos);
+                        sleep(50);
                     }
-                    robot.rrxx__sv_relic_wrist.setPosition(pos);
-                    sleep(50);
-                }
-                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN_R);
-            } else {
-                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN);
-            }
-        }
-    }
-
-    public void rrxx__relic_arm_up() {
-        stop_chassis();
-        double pos = robot.rrxx__sv_relic_wrist.getPosition();
-        if (robot.use_newbot) {
-            if (Math.abs(pos - robot.SV_RELIC_WRIST_UP) > 0.15) {
-                if (pos < robot.SV_RELIC_WRIST_UP) {
-                    pos = robot.SV_RELIC_WRIST_UP - 0.2;
+                    sv_relic_wrist.setPosition(SV_RELIC_ARM_DOWN_R);
                 } else {
-                    pos = robot.SV_RELIC_WRIST_UP + 0.2;
+                    sv_relic_wrist.setPosition(SV_RELIC_ARM_DOWN);
                 }
-                robot.rrxx__sv_relic_wrist.setPosition(pos);
-                sleep(300);
-                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
-            } else {
-                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
             }
-        } else {
-            if (Math.abs(pos - robot.SV_RELIC_ARM_UP) > 0.15) {
-                if (pos < robot.SV_RELIC_ARM_UP) {
-                    pos = robot.SV_RELIC_ARM_UP - 0.2;
+        }
+
+        public void relic_arm_up() {
+            stop_chassis();
+            double pos = sv_relic_wrist.getPosition();
+            if (use_newbot) {
+                if (Math.abs(pos - SV_RELIC_WRIST_UP) > 0.15) {
+                    if (pos < SV_RELIC_WRIST_UP) {
+                        pos = SV_RELIC_WRIST_UP - 0.2;
+                    } else {
+                        pos = SV_RELIC_WRIST_UP + 0.2;
+                    }
+                    sv_relic_wrist.setPosition(pos);
+                    sleep(300);
+                    sv_relic_wrist.setPosition(SV_RELIC_WRIST_UP);
                 } else {
-                    pos = robot.SV_RELIC_ARM_UP + 0.2;
+                    sv_relic_wrist.setPosition(SV_RELIC_WRIST_UP);
                 }
-                robot.rrxx__sv_relic_wrist.setPosition(pos);
-                sleep(300);
-                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_UP);
             } else {
-                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_UP + 0.12);
+                if (Math.abs(pos - SV_RELIC_ARM_UP) > 0.15) {
+                    if (pos < SV_RELIC_ARM_UP) {
+                        pos = SV_RELIC_ARM_UP - 0.2;
+                    } else {
+                        pos = SV_RELIC_ARM_UP + 0.2;
+                    }
+                    sv_relic_wrist.setPosition(pos);
+                    sleep(300);
+                    sv_relic_wrist.setPosition(SV_RELIC_ARM_UP);
+                } else {
+                    sv_relic_wrist.setPosition(SV_RELIC_ARM_UP + 0.12);
+                }
             }
         }
-    }
 
-    public void rrxx__relic_arm_middle() {
-        stop_chassis();
-        if (robot.use_newbot) {
-            robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_MIDDLE);
-        } else {
-            robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_MIDDLE);
+        public void relic_arm_middle() {
+            stop_chassis();
+            if (use_newbot) {
+                sv_relic_wrist.setPosition(SV_RELIC_WRIST_MIDDLE);
+            } else {
+                sv_relic_wrist.setPosition(SV_RELIC_ARM_MIDDLE);
+            }
         }
-    }
 
+    }
+    */
 
     /*
      **** [ 2. Glyph Intake System ] ****
@@ -388,8 +469,8 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
     void intakeGateDown() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
-        if (robot.use_newbot_v2 && robot.rrxx__use_relic_grabber)
-            rrxx__relic_arm_up();
+        if (robot.use_newbot_v2 && robot.relicReachSystem.use_relic_grabber)
+            robot.relicReachSystem.relic_arm_up();
         double pos = robot.sv_intake_gate.getPosition();
         if (Math.abs(pos-robot.SV_INTAKE_GATE_INIT)<0.1)
             robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
@@ -2656,14 +2737,14 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 //        if (robot.use_test_servo) {
 //            // telemetry.addData("10. test sv = ","%.3f",robot.sv_test.getPosition());
 //        }
-//        if (robot.rrxx__use_relic_grabber) {
+//        if (robot.relicReachSystem.use_relic_grabber) {
 //            telemetry.addData("9.1 relic gr/wrist/elbow = ", "%4.4f/%4.3f/%4.3f",
-//                    robot.rrxx__sv_relic_grabber.getPosition(), robot.rrxx__sv_relic_wrist.getPosition(),
-//                    (robot.rrxx__sv_relic_elbow!=null?robot.rrxx__sv_relic_elbow.getPosition():0));
+//                    robot.relicReachSystem.sv_relic_grabber.getPosition(), robot.relicReachSystem.sv_relic_wrist.getPosition(),
+//                    (robot.relicReachSystem.sv_relic_elbow!=null?robot.relicReachSystem.sv_relic_elbow.getPosition():0));
 //        }
-//        if (robot.rrxx__use_relic_slider) {
+//        if (robot.relicReachSystem.use_relic_slider) {
 //            telemetry.addData("9.2 r-slider pwr/enc/tar = ","%3.2f/%d/%d",
-//                    robot.rrxx__mt_relic_slider.getPower(),robot.rrxx__mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
+//                    robot.relicReachSystem.mt_relic_slider.getPower(),robot.relicReachSystem.mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
 //        }
 //        if (robot.isTesting){
 //            if(robot.use_newbot){
@@ -2680,36 +2761,36 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 
     public void auto_relic_release() {
         stop_chassis();
-        double cur_pos = robot.rrxx__sv_relic_wrist.getPosition();
-        if (Math.abs(cur_pos - robot.SV_RELIC_WRIST_DOWN) > 0.1) {
-            rrxx__relic_arm_down();
+        double cur_pos = robot.relicReachSystem.sv_relic_wrist.getPosition();
+        if (Math.abs(cur_pos - robot.relicReachSystem.SV_RELIC_WRIST_DOWN) > 0.1) {
+            robot.relicReachSystem.relic_arm_down();
             sleep(500);
         }
-        if (Math.abs(cur_pos - robot.SV_RELIC_WRIST_DOWN) > 0.02) {
-            rrxx__relic_arm_down();
+        if (Math.abs(cur_pos - robot.relicReachSystem.SV_RELIC_WRIST_DOWN) > 0.02) {
+            robot.relicReachSystem.relic_arm_down();
             sleep(500);
         }
-        rrxx__relic_grabber_release();
+        robot.relicReachSystem.relic_grabber_release();
         sleep(250);
         if (robot.use_newbot) {
-            rrxx__relic_slider_in(0.5, true);
+            robot.relicReachSystem.relic_slider_in(0.5, true);
             sleep(400);
         } else {
-            rrxx__relic_slider_in(1.0, true);
+            robot.relicReachSystem.relic_slider_in(1.0, true);
             sleep(1000);
         }
-        rrxx__relic_slider_stop();
-        rrxx__relic_arm_up();
+        robot.relicReachSystem.relic_slider_stop();
+        robot.relicReachSystem.relic_arm_up();
 
     }
 
     public void relic_arm_auto() {
         stop_chassis();
         if (robot.use_newbot) {
-            // robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
-            rrxx__relic_arm_down();
+            // robot.relicReachSystem.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
+            robot.relicReachSystem.relic_arm_down();
         } else {
-            rrxx__relic_arm_down();
+            robot.relicReachSystem.relic_arm_down();
         }
     }
 

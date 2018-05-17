@@ -32,9 +32,9 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_proximity_sensor = false;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = false;
-        robot.rrxx__use_relic_grabber = true;
-        robot.rrxx__use_relic_slider = true;
-        robot.rrxx__use_relic_elbow = false;
+        robot.relicReachSystem.use_relic_grabber = true;
+        robot.relicReachSystem.use_relic_slider = true;
+        robot.relicReachSystem.use_relic_elbow = false;
         robot.use_arm = true;
         //robot.use_front_arm = false;
 
@@ -48,7 +48,7 @@ public class TeleopNB extends SwerveUtilLOP {
         waitForStart();
 
         start_init();
-        rrxx__relic_arm_up(); // arm up to prevent intake gate collision
+        robot.relicReachSystem.relic_arm_up(); // arm up to prevent intake gate collision
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -328,72 +328,72 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
             } // end use_newbot
 
-            if (robot.rrxx__use_relic_slider) {
+            if (robot.relicReachSystem.use_relic_slider) {
                 // relic slider
                 if (gamepad2.left_stick_y > 0.2) { // slide in
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
                         pw *= 0.9;
-                    rrxx__relic_slider_in(pw, gamepad2.start); // push start to force slide in further
+                    robot.relicReachSystem.relic_slider_in(pw, gamepad2.start); // push start to force slide in further
                 } else if (gamepad2.left_stick_y < -0.2) { // slide out
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
                         pw *= 0.99;
-                    rrxx__relic_slider_out(pw);
+                    robot.relicReachSystem.relic_slider_out(pw);
                 } else if (gamepad2.left_stick_x < -0.2) { // slide out slowly
-                    rrxx__relic_slider_out(0.3);
+                    robot.relicReachSystem.relic_slider_out(0.3);
                 } else if (gamepad2.left_stick_x > 0.2) { // slide in slowly
-                    rrxx__relic_slider_in(0.2, false);
+                    robot.relicReachSystem.relic_slider_in(0.2, false);
                 } else {
-                    rrxx__relic_slider_stop();
+                    robot.relicReachSystem.relic_slider_stop();
                 }
             }
-            if (robot.rrxx__use_relic_grabber) {
+            if (robot.relicReachSystem.use_relic_grabber) {
                 // relic arm
                 if (gamepad2.right_stick_y < -0.1) {
-                    double cur_pos = robot.rrxx__sv_relic_wrist.getPosition();
+                    double cur_pos = robot.relicReachSystem.sv_relic_wrist.getPosition();
                     if (cur_pos < 0.99) {
-                        robot.rrxx__sv_relic_wrist.setPosition(cur_pos + 0.005);
+                        robot.relicReachSystem.sv_relic_wrist.setPosition(cur_pos + 0.005);
                     }
                 } else if (gamepad2.right_stick_y > 0.1) {
-                    double cur_pos = robot.rrxx__sv_relic_wrist.getPosition();
+                    double cur_pos = robot.relicReachSystem.sv_relic_wrist.getPosition();
                     if (cur_pos > 0.01) {
-                        robot.rrxx__sv_relic_wrist.setPosition(cur_pos - 0.005);
+                        robot.relicReachSystem.sv_relic_wrist.setPosition(cur_pos - 0.005);
                     }
                 } else if (gamepad2.a && gamepad2.y) {
-                    rrxx__relic_arm_middle();
+                    robot.relicReachSystem.relic_arm_middle();
                 } else if (gamepad2.y && !gamepad2.left_bumper && !gamepad2.back) {
-                    if (robot.rrxx__use_relic_elbow) {
-                        rrxx__relic_elbow_up_auto();
+                    if (robot.relicReachSystem.use_relic_elbow) {
+                        robot.relicReachSystem.relic_elbow_up_auto();
                     } else {
-                        rrxx__relic_arm_up();
+                        robot.relicReachSystem.relic_arm_up();
                     }
                 } else if (gamepad2.a && !gamepad2.left_bumper && !gamepad2.back) {
-                    if (robot.rrxx__use_relic_elbow) {
-                        relic_elbow_down_auto();
+                    if (robot.relicReachSystem.use_relic_elbow) {
+                        robot.relicReachSystem.relic_elbow_down_auto();
                     } else {
-                        rrxx__relic_arm_down();
+                        robot.relicReachSystem.relic_arm_down();
                     }
                 }
                 // relic grabber open/close
                 if (gamepad2.b && !gamepad2.start) {
-                    rrxx__relic_grabber_close();
+                    robot.relicReachSystem.relic_grabber_close();
                 } else if (gamepad2.x && gamepad2.back) {
                     // rrxx__relic_grabber_release();
                     auto_relic_release();
                 } else if (gamepad2.x && !gamepad2.dpad_right) {
-                    rrxx__relic_grabber_release();
+                    robot.relicReachSystem.relic_grabber_release();
                     // auto_relic_release();
                 } else if (gamepad2.back && (gamepad2.right_stick_y < -0.1)) { // higher
-                    if (robot.rrxx__use_relic_elbow)
-                        rrxx__relic_elbow_higher();
+                    if (robot.relicReachSystem.use_relic_elbow)
+                        robot.relicReachSystem.relic_elbow_higher();
                     else
-                        rrxx__relic_grabber_higher();
+                        robot.relicReachSystem.relic_grabber_higher();
                 } else if (gamepad2.back && (gamepad2.right_stick_y > 0.1)) { // lower
-                    if (robot.rrxx__use_relic_elbow)
-                        rrxx__relic_elbow_lower();
+                    if (robot.relicReachSystem.use_relic_elbow)
+                        robot.relicReachSystem.relic_elbow_lower();
                     else
-                        rrxx__relic_grabber_lower();
+                        robot.relicReachSystem.relic_grabber_lower();
                 }
             }
             show_telemetry();
