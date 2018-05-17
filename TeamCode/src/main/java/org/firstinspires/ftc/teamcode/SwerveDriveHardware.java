@@ -53,7 +53,7 @@ public class SwerveDriveHardware {
     public boolean use_test_servo = false;
     public boolean use_test_motor = false;
     public boolean use_proximity_sensor = false;
-    public boolean use_front_arm = false;
+    //public boolean use_front_arm = false;
     public boolean servo_tune_up = false;
 
     public SwerveUtilLOP.TeamColor allianceColor = SwerveUtilLOP.TeamColor.BLUE; // default blue team
@@ -698,10 +698,10 @@ public class SwerveDriveHardware {
             }
 
         }
-        if (use_front_arm) {
-            sv_front_arm = hwMap.servo.get("sv_front_arm");
-            sv_front_arm.setPosition(SV_FRONT_ARM_IN);
-        }
+//        if (use_front_arm) {
+//            sv_front_arm = hwMap.servo.get("sv_front_arm");
+//            sv_front_arm.setPosition(SV_FRONT_ARM_IN);
+//        }
         if (use_verbose)
             tel.addData("0: initialize arms CPU time =", "%3.2f sec", period.seconds());
 

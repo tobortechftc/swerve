@@ -37,7 +37,7 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_relic_slider = true;
         robot.use_relic_elbow = false;
         robot.use_arm = true;
-        robot.use_front_arm = false;
+        //robot.use_front_arm = false;
 
         init_and_test();
 
@@ -83,11 +83,11 @@ public class TeleopNB extends SwerveUtilLOP {
                     sleep(50);
                 }
             }
-            if (robot.use_front_arm) {
-                if (gamepad2.back && gamepad2.dpad_down) {
-                    front_arm_sweep();
-                }
-            }
+//            if (robot.use_front_arm) {
+//                if (gamepad2.back && gamepad2.dpad_down) {
+//                    front_arm_sweep();
+//                }
+//            }
             if (robot.use_dumper && !robot_isTesting) {
                 if (gamepad2.back && gamepad2.y) {
                     intakeBarWheelOut();

@@ -2977,24 +2977,24 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 //        return false;
 //    }
 
-    void front_arm_in() {
-        if (!robot.use_front_arm)
-            return;
-        robot.sv_front_arm.setPosition(robot.SV_FRONT_ARM_IN);
-    }
-
-    void front_arm_out() {
-        if (!robot.use_front_arm)
-            return;
-        robot.sv_front_arm.setPosition(robot.SV_FRONT_ARM_OUT);
-    }
-
-    void front_arm_sweep() {
-        stop_chassis();
-        front_arm_out();
-        sleep(300);
-        front_arm_in();
-    }
+//    void front_arm_in() {
+//        if (!robot.use_front_arm)
+//            return;
+//        robot.sv_front_arm.setPosition(robot.SV_FRONT_ARM_IN);
+//    }
+//
+//    void front_arm_out() {
+//        if (!robot.use_front_arm)
+//            return;
+//        robot.sv_front_arm.setPosition(robot.SV_FRONT_ARM_OUT);
+//    }
+//
+//    void front_arm_sweep() {
+//        stop_chassis();
+//        front_arm_out();
+//        sleep(300);
+//        front_arm_in();
+//    }
 
 
     void reset_prox(){
