@@ -2452,6 +2452,22 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         return got_one;
     }
 
+    boolean gotOneGlyph() {
+        boolean got_one=false;
+        if (robot.use_proximity_sensor) {
+            got_one = !robot.proxFL.getState() || !robot.proxML.getState();
+        }
+        return got_one;
+    }
+
+    boolean gotTwoGlyphs() {
+        boolean got_two=false;
+        if (robot.use_proximity_sensor) {
+            got_two = !robot.proxML.getState() && !robot.proxFL.getState();
+        }
+        return got_two;
+    }
+
     public void deliverGlyph() throws InterruptedException{
         if (!opModeIsActive()) return;
         if (robot.use_newbot) {
@@ -2804,6 +2820,78 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 //        telemetry.addData("Blue Value AVG", blueTotal > 0 ? blueValue/blueTotal : 0);
     }
 
+    void stop_tobot() {
+        if (robot.use_swerve||robot.use_minibot||robot.use_newbot)
+            stop_chassis();
+        if (robot.use_color_sensor) {
+            if (!robot.use_newbot_v2) {
+                robot.l_colorSensor.enableLed(false);
+                robot.l_colorSensor.close();
+            }
+            robot.r_colorSensor.enableLed(false);
+            robot.r_colorSensor.close();
+        }
+        if (robot.sv_bar_wheel!=null) {
+            robot.sv_bar_wheel.close();
+        }
+        // stop all sensors
+    }
+
+    public boolean GlyphStuck() {
+        if (robot.rangeSensorBack==null)
+            return false;
+        return (getRange(RangeSensor.BACK)<5.1);
+    }
+
+    void correctGlyph(boolean leadClockwise) {
+        if (!robot.use_intake)
+            return;
+        if(leadClockwise) {
+            intakeTurn(true);
+            sleep(150);
+            intakeTurn(false);
+            sleep(150);
+            intakeIn();
+            sleep(300);
+        }
+        else{
+            intakeTurn(false);
+            sleep(150);
+            intakeTurn(true);
+            sleep(150);
+            intakeIn();
+            sleep(300);
+        }
+    }
+
+    void intakeTurn(boolean clockwise) {
+        if (!robot.use_intake)
+            return;
+        if (clockwise) {
+            robot.mt_intake_left.setPower(-robot.intakeRatio / 2.0);
+            robot.mt_intake_right.setPower(robot.intakeRatio);
+        } else {
+            robot.mt_intake_left.setPower(robot.intakeRatio);
+            robot.mt_intake_right.setPower(-robot.intakeRatio / 2);
+        }
+    }
+
+    void intakeOut() {
+        if (!robot.use_intake)
+            return;
+        robot.mt_intake_left.setPower(-1.0*robot.intakeRatio);
+        robot.mt_intake_right.setPower(-1.0*robot.intakeRatio);
+        intakeBarWheelOut();
+    }
+
+    void intakeStop() {
+        if (!robot.use_intake)
+            return;
+        robot.mt_intake_left.setPower(0);
+        robot.mt_intake_right.setPower(0);
+        intakeBarWheelStop();
+    }
+
     /*
      **** [ UNDECIDED :( ] ****
      */
@@ -2879,23 +2967,6 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("0: End start_init CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
-    void stop_tobot() {
-        if (robot.use_swerve||robot.use_minibot||robot.use_newbot)
-            stop_chassis();
-        if (robot.use_color_sensor) {
-            if (!robot.use_newbot_v2) {
-                robot.l_colorSensor.enableLed(false);
-                robot.l_colorSensor.close();
-            }
-            robot.r_colorSensor.enableLed(false);
-            robot.r_colorSensor.close();
-        }
-        if (robot.sv_bar_wheel!=null) {
-            robot.sv_bar_wheel.close();
-        }
-        // stop all sensors
-    }
-
     // returns true if it bumped the wall (noticeable negative acceleration), false if it went two seconds without hitting the wall
 //    public boolean didBump() {
 //        robot.accel = robot.imu.getAcceleration();
@@ -2905,28 +2976,6 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 //        }
 //        return false;
 //    }
-
-    public boolean GlyphStuck() {
-        if (robot.rangeSensorBack==null)
-            return false;
-        return (getRange(RangeSensor.BACK)<5.1);
-    }
-
-    boolean gotOneGlyph() {
-        boolean got_one=false;
-        if (robot.use_proximity_sensor) {
-            got_one = !robot.proxFL.getState() || !robot.proxML.getState();
-        }
-        return got_one;
-    }
-
-    boolean gotTwoGlyphs() {
-        boolean got_two=false;
-        if (robot.use_proximity_sensor) {
-            got_two = !robot.proxML.getState() && !robot.proxFL.getState();
-        }
-        return got_two;
-    }
 
     void front_arm_in() {
         if (!robot.use_front_arm)
@@ -2965,55 +3014,6 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
     }
 
 
-
-    void correctGlyph(boolean leadClockwise) {
-        if (!robot.use_intake)
-            return;
-        if(leadClockwise) {
-            intakeTurn(true);
-            sleep(150);
-            intakeTurn(false);
-            sleep(150);
-            intakeIn();
-            sleep(300);
-        }
-        else{
-            intakeTurn(false);
-            sleep(150);
-            intakeTurn(true);
-            sleep(150);
-            intakeIn();
-            sleep(300);
-        }
-    }
-
-    void intakeTurn(boolean clockwise) {
-        if (!robot.use_intake)
-            return;
-        if (clockwise) {
-            robot.mt_intake_left.setPower(-robot.intakeRatio / 2.0);
-            robot.mt_intake_right.setPower(robot.intakeRatio);
-        } else {
-            robot.mt_intake_left.setPower(robot.intakeRatio);
-            robot.mt_intake_right.setPower(-robot.intakeRatio / 2);
-        }
-    }
-
-    void intakeOut() {
-        if (!robot.use_intake)
-            return;
-        robot.mt_intake_left.setPower(-1.0*robot.intakeRatio);
-        robot.mt_intake_right.setPower(-1.0*robot.intakeRatio);
-        intakeBarWheelOut();
-    }
-
-    void intakeStop() {
-        if (!robot.use_intake)
-            return;
-        robot.mt_intake_left.setPower(0);
-        robot.mt_intake_right.setPower(0);
-        intakeBarWheelStop();
-    }
 
     void show_telemetry() throws InterruptedException {
 //        telemetry.addData("1. Team", " %s sw/IMU/Vu/GG = %s%s/%s/%s/%s",
