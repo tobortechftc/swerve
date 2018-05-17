@@ -74,7 +74,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 //            glyph_grabber_auto_open();
 //            glyph_slider_init();
 //        }
-//        //if (robot.use_dumper) {
+        //if (robot.use_dumper) {
         //    lift_to_target(robot.LIFT_INIT_COUNT);
         //}
         if (robot.use_newbot_v2 && robot.use_arm) {
