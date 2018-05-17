@@ -28,12 +28,21 @@ import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
 
+
+    static class SharedSystem {
+        public boolean use_verbose = false;
+    }
+    static class RelicReachSystem {
+    }
+
+    public SharedSystem shxx = new SharedSystem();
+    public RelicReachSystem rrxx = new RelicReachSystem();
+
     // define all switches to turn on/off hardware each component
-    public boolean use_verbose = false;
     public boolean use_swerve = true;   // use four motors and four servos for chassis
     public boolean use_newbot = false;   // use four motors and four servos for new chassis
     public boolean use_newbot_v2 = false;
-    public boolean use_relic_elbow = false;
+    public boolean rrxx__use_relic_elbow = false;
     public boolean use_front_drive_only = false;
     public boolean use_intake = false;
     public boolean use_dumper = false;
@@ -46,8 +55,8 @@ public class SwerveDriveHardware {
     public boolean use_encoder = true;
     public boolean use_color_sensor = false;
     public boolean use_range_sensor = false;
-    public boolean use_relic_grabber = true;
-    public boolean use_relic_slider = true;
+    public boolean rrxx__use_relic_grabber = true;
+    public boolean rrxx__use_relic_slider = true;
     public boolean use_glyph_grabber = false;
     public boolean use_arm = false;
     public boolean use_test_servo = false;
@@ -78,7 +87,7 @@ public class SwerveDriveHardware {
 
     boolean isRedBall = false;
     boolean isBlueBall = false;
-    boolean gg_slider_encoder_ok = false; // [not sure what this is]
+    boolean gg_slider_encoder_ok = false; // [glyph dump system ?]
     boolean gg_rotator_encoder_ok = false;
     boolean gg_top_close = false;
     boolean gg_bottom_close = false;
@@ -268,7 +277,7 @@ public class SwerveDriveHardware {
     public DcMotor motorBackLeft = null;
     public DcMotor motorBackRight = null;
 
-    public DcMotor mt_relic_slider = null;
+    public DcMotor rrxx__mt_relic_slider = null;
     public DcMotor mt_lift = null;
     public DcMotor mt_test = null;
 
@@ -286,15 +295,15 @@ public class SwerveDriveHardware {
     public Servo sv_elbow = null;
     public Servo sv_left_arm = null;
     public Servo sv_right_arm = null;
-    public Servo sv_front_arm = null;
+//    public Servo sv_front_arm = null;
     public Servo sv_jkicker = null;
 
     public Servo sv_glyph_grabber_top = null;
     public Servo sv_glyph_grabber_bottom = null;
 
-    public Servo sv_relic_grabber = null;
-    public Servo sv_relic_wrist = null;
-    public Servo sv_relic_elbow = null;
+    public Servo rrxx__sv_relic_grabber = null;
+    public Servo rrxx__sv_relic_wrist = null;
+    public Servo rrxx__sv_relic_elbow = null;
     // public Servo sv_test = null;
     public Servo sv_dumper = null;
     public Servo sv_dumper_gate = null;
@@ -423,7 +432,7 @@ public class SwerveDriveHardware {
             }
             this.camera = new SwerveUtilLOP.Camera(this.vuforia);
         }
-        if (use_verbose)
+        if (shxx.use_verbose)
             tel.addData("0: initialize Vuforia CPU time =", "%3.2f sec", period.seconds());
 
         if (use_imu) {
@@ -451,7 +460,7 @@ public class SwerveDriveHardware {
             accel = imu.getAcceleration();
             imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         }
-        if (use_verbose)
+        if (shxx.use_verbose)
             tel.addData("0: initialize imu CPU time =", "%3.2f sec", period.seconds());
 
         if (use_proximity_sensor) {
@@ -501,7 +510,7 @@ public class SwerveDriveHardware {
                     rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
                 }
         }
-        if (use_verbose)
+        if (shxx.use_verbose)
             tel.addData("0: initialize prox/color sensors CPU time =", "%3.2f sec", period.seconds());
 
         if (use_test_servo) {
@@ -513,27 +522,27 @@ public class SwerveDriveHardware {
             mt_test.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             orig_rot_pos = mt_test.getCurrentPosition();
         }
-        if (use_relic_grabber) {
+        if (rrxx__use_relic_grabber) {
             if (use_newbot) {
                 if (use_newbot_v2) {
-                    if (use_relic_elbow) {
-                        sv_relic_elbow = hwMap.servo.get("sv_relic_arm");
-                        sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
+                    if (rrxx__use_relic_elbow) {
+                        rrxx__sv_relic_elbow = hwMap.servo.get("sv_relic_arm");
+                        rrxx__sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
                     }
-                    sv_relic_wrist = hwMap.servo.get("sv_relic_wrist");
-                    sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
+                    rrxx__sv_relic_wrist = hwMap.servo.get("sv_relic_wrist");
+                    rrxx__sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
                 } else {
-                    sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
-                    sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
+                    rrxx__sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
+                    rrxx__sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
                 }
             } else {
-                sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
-                sv_relic_wrist.setPosition(SV_RELIC_ARM_INIT);
+                rrxx__sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
+                rrxx__sv_relic_wrist.setPosition(SV_RELIC_ARM_INIT);
             }
-            sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
-            sv_relic_grabber.setPosition((use_newbot?SV_RELIC_GRABBER_INIT_NB:SV_RELIC_GRABBER_INIT));
+            rrxx__sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
+            rrxx__sv_relic_grabber.setPosition((use_newbot?SV_RELIC_GRABBER_INIT_NB:SV_RELIC_GRABBER_INIT));
         }
-        if (use_verbose)
+        if (shxx.use_verbose)
             tel.addData("0: initialize relic graber CPU time =", "%3.2f sec", period.seconds());
 
         if (use_dumper) {
@@ -555,39 +564,20 @@ public class SwerveDriveHardware {
             mt_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             mt_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        if (use_verbose)
+        if (shxx.use_verbose)
             tel.addData("0: initialize dumper CPU time =", "%3.2f sec", period.seconds());
 
-        if (use_relic_slider) {
-            mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
+        if (rrxx__use_relic_slider) {
+            rrxx__mt_relic_slider = hwMap.dcMotor.get("rrxx__mt_relic_slider");
             if (use_newbot) {
                 if (!use_newbot_v2)
-                    mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+                    rrxx__mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             } else {
-                // mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
+                // rrxx__mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             }
-            mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        if (use_glyph_grabber) {
-            sv_glyph_grabber_bottom = hwMap.servo.get("sv_grabber_bottom");
-            sv_glyph_grabber_bottom.setPosition(SV_GLYPH_GRABBER_BOTTOM_INIT);
-
-            sv_glyph_grabber_top = hwMap.servo.get("sv_grabber_top");
-            sv_glyph_grabber_top.setPosition(SV_GLYPH_GRABBER_TOP_INIT);
-
-            mt_glyph_rotator = hwMap.dcMotor.get("mt_glyph_rotator");
-            mt_glyph_rotator.setDirection(DcMotor.Direction.REVERSE);
-            mt_glyph_rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            mt_glyph_rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            mt_glyph_rotator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-            mt_glyph_slider = hwMap.dcMotor.get("mt_glyph_slider");
-            // mt_glyph_slider.setDirection(DcMotor.Direction.REVERSE);
-            mt_glyph_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            mt_glyph_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            mt_glyph_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rrxx__mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rrxx__mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rrxx__mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         if (use_intake) {
             mt_intake_left = hwMap.dcMotor.get("mtIntakeLeft");
@@ -601,7 +591,7 @@ public class SwerveDriveHardware {
             mt_intake_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         }
-        if (use_verbose)
+        if (shxx.use_verbose)
             tel.addData("0: initialize intake CPU time =", "%3.2f sec", period.seconds());
 
 //        if (use_minibot) {
@@ -670,7 +660,7 @@ public class SwerveDriveHardware {
                 initialize_newbot();
             }
         }
-        if (use_verbose)
+        if (shxx.use_verbose)
             tel.addData("0: initialize chassis CPU time =", "%3.2f sec", period.seconds());
 
         if (use_arm) {
@@ -702,7 +692,7 @@ public class SwerveDriveHardware {
 //            sv_front_arm = hwMap.servo.get("sv_front_arm");
 //            sv_front_arm.setPosition(SV_FRONT_ARM_IN);
 //        }
-        if (use_verbose)
+        if (shxx.use_verbose)
             tel.addData("0: initialize arms CPU time =", "%3.2f sec", period.seconds());
 
     }

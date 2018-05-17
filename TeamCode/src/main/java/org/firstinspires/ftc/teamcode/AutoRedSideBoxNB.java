@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -28,8 +27,8 @@ public class AutoRedSideBoxNB extends SwerveUtilLOP{
         robot.use_glyph_grabber = false;
         robot.use_proximity_sensor = true;
         robot.use_dumper = true;
-        robot.use_relic_grabber = false;
-        robot.use_relic_slider = false;
+        robot.rrxx__use_relic_grabber = false;
+        robot.rrxx__use_relic_slider = false;
 
         robot.allianceColor = TeamColor.RED;
 

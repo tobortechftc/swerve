@@ -28,15 +28,15 @@ public class TuneUp extends SwerveUtilLOP {
 //        // robot.use_color_sensor = true;
 //        robot.use_arm = true;
 //        robot.use_glyph_grabber = false;
-//        robot.use_relic_grabber = true;
-//        robot.use_relic_elbow = false;
-//        robot.use_relic_slider = true;
+//        robot.rrxx__use_relic_grabber = true;
+//        robot.rrxx__use_relic_elbow = false;
+//        robot.rrxx__use_relic_slider = true;
 //        robot.use_test_servo = false;
 //        robot.use_test_motor = false;
 //        robot.use_range_sensor = true;
 //        robot.use_proximity_sensor = true;
 //        robot.use_front_arm = false;
-//        robot.use_verbose = true;
+//        robot.shxx.use_verbose = true;
 //
 //        init_and_test();
 //
@@ -59,9 +59,9 @@ public class TuneUp extends SwerveUtilLOP {
 //                robot.sv_right_arm,
 //                robot.sv_glyph_grabber_bottom,
 //                robot.sv_glyph_grabber_top,
-//                robot.sv_relic_grabber,
-//                robot.sv_relic_wrist,
-//                robot.sv_relic_elbow,
+//                robot.rrxx__sv_relic_grabber,
+//                robot.rrxx__sv_relic_wrist,
+//                robot.rrxx__sv_relic_elbow,
 //                robot.sv_dumper,
 //                robot.sv_front_arm,
 //                robot.sv_intake_gate,
@@ -79,9 +79,9 @@ public class TuneUp extends SwerveUtilLOP {
 //                "sv_right_arm",
 //                "sv_gg_bottom",
 //                "sv_gg_top",
-//                "sv_relic_grabber",
-//                "sv_relic_wrist",
-//                "sv_relic_elbow",
+//                "rrxx__sv_relic_grabber",
+//                "rrxx__sv_relic_wrist",
+//                "rrxx__sv_relic_elbow",
 //                "sv_dumper",
 //                "sv_front_arm",
 //                "sv_intake_gate",

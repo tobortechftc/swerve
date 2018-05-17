@@ -80,11 +80,11 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         if (robot.use_newbot_v2 && robot.use_arm) {
             robot.sv_jkicker.setPosition(robot.SV_JKICKER_UP);
         }
-        if (robot.use_relic_grabber) {
+        if (robot.rrxx__use_relic_grabber) {
             if (robot.use_newbot) {
-                relic_grabber_open(false);
+                rrxx__relic_grabber_open(false);
             } else {
-                relic_grabber_open(false);
+                rrxx__relic_grabber_open(false);
             }
             relic_arm_auto();
         }
@@ -101,7 +101,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                 robot.use_imu2 = true;
             }
         }
-        if (robot.use_verbose)
+        if (robot.shxx.use_verbose)
             telemetry.addData("0: End start_init CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
@@ -112,138 +112,113 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
     /*
      **** [ 1. Relic Reach System ] ****
      */
-    public void relic_grabber_lower() {
-        double pos = robot.sv_relic_grabber.getPosition()-0.04;
+    public void rrxx__relic_grabber_lower() {
+        double pos = robot.rrxx__sv_relic_grabber.getPosition()-0.04;
         if (pos<0.001) pos = 0.001;
-        robot.sv_relic_grabber.setPosition(pos);
+        robot.rrxx__sv_relic_grabber.setPosition(pos);
     }
 
-    public void relic_grabber_higher() {
-        double pos = robot.sv_relic_grabber.getPosition()+0.04;
+    public void rrxx__relic_grabber_higher() {
+        double pos = robot.rrxx__sv_relic_grabber.getPosition()+0.04;
         if (pos>0.99) pos = 0.99;
-        robot.sv_relic_grabber.setPosition(pos);
+        robot.rrxx__sv_relic_grabber.setPosition(pos);
     }
 
-    public void relic_grabber_close() {
+    public void rrxx__relic_grabber_close() {
         if (robot.use_newbot) {
-            robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
+            robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
         } else {
-            robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE);
+            robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE);
         }
     }
 
-    public void relic_grabber_open(boolean wide) {
+    public void rrxx__relic_grabber_open(boolean wide) {
         if (robot.use_newbot) {
             if (wide) {
-                robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN_W_NB);
+                robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN_W_NB);
             } else {
-                robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN_NB);
+                robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN_NB);
             }
         } else {
-            robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
+            robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_OPEN);
         }
     }
 
-    public void relic_grabber_release() {
-        // robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN_R);
-        double pos = robot.sv_relic_grabber.getPosition();
+    public void rrxx__relic_grabber_release() {
+        // robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN_R);
+        double pos = robot.rrxx__sv_relic_grabber.getPosition();
         double tar = (robot.use_newbot?robot.SV_RELIC_GRABBER_OPEN_NB:robot.SV_RELIC_GRABBER_OPEN);
         if (pos < tar) {
-            robot.sv_relic_grabber.setPosition(pos+0.1);
+            robot.rrxx__sv_relic_grabber.setPosition(pos+0.1);
             sleep(250);
-            robot.sv_relic_grabber.setPosition(pos+0.2);
+            robot.rrxx__sv_relic_grabber.setPosition(pos+0.2);
             sleep(250);
         } else {
-            robot.sv_relic_grabber.setPosition(pos-0.1);
+            robot.rrxx__sv_relic_grabber.setPosition(pos-0.1);
             sleep(250);
-            robot.sv_relic_grabber.setPosition(pos-0.2);
+            robot.rrxx__sv_relic_grabber.setPosition(pos-0.2);
             sleep(250);
         }
-        robot.sv_relic_grabber.setPosition(tar);
+        robot.rrxx__sv_relic_grabber.setPosition(tar);
     }
 
-    public void auto_relic_release() {
-        stop_chassis();
-        double cur_pos = robot.sv_relic_wrist.getPosition();
-        if (Math.abs(cur_pos - robot.SV_RELIC_WRIST_DOWN) > 0.1) {
-            relic_arm_down();
-            sleep(500);
-        }
-        if (Math.abs(cur_pos - robot.SV_RELIC_WRIST_DOWN) > 0.02) {
-            relic_arm_down();
-            sleep(500);
-        }
-        relic_grabber_release();
-        sleep(250);
-        if (robot.use_newbot) {
-            relic_slider_in(0.5, true);
-            sleep(400);
-        } else {
-            relic_slider_in(1.0, true);
-            sleep(1000);
-        }
-        relic_slider_stop();
-        relic_arm_up();
-
-    }
-
-    public void relic_slider_in(double power, boolean force) {
+    public void rrxx__relic_slider_in(double power, boolean force) {
         if (Math.abs(power)>1) power=1;
-        double pos = robot.mt_relic_slider.getCurrentPosition();
+        double pos = robot.rrxx__mt_relic_slider.getCurrentPosition();
         if (pos>-100 && power!=0 && force==false) {
             if (pos<0) power = 0.1;
             else {
                 power = 0;
-                robot.mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.rrxx__mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.rrxx__mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
         }
         if (power>0) stop_chassis();
-        robot.mt_relic_slider.setPower(Math.abs(power));
+        robot.rrxx__mt_relic_slider.setPower(Math.abs(power));
     }
 
-    public void relic_slider_out(double power) {
+    public void rrxx__relic_slider_out(double power) {
         if (Math.abs(power)>1) power=1;
         if (power>0) stop_chassis();
-        robot.mt_relic_slider.setPower(-1*Math.abs(power));
+        robot.rrxx__mt_relic_slider.setPower(-1*Math.abs(power));
     }
 
-    public void relic_slider_stop() {
-        robot.mt_relic_slider.setPower(0);
+    public void rrxx__relic_slider_stop() {
+        robot.rrxx__mt_relic_slider.setPower(0);
     }
 
-    public void relic_elbow_up_auto() {
+    public void rrxx__relic_elbow_up_auto() {
         // down -> flat -> up -> init
-        if (!robot.use_relic_elbow) return;
+        if (!robot.rrxx__use_relic_elbow) return;
         if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.DOWN) {
-            relic_elbow_flat();
-            relic_arm_ready_grab_and_release();
+            rrxx__relic_elbow_flat();
+            rrxx__relic_arm_ready_grab_and_release();
         } else if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.FLAT) {
-            // relic_elbow_up();
-            relic_arm_ready_delivery();
+            // rrxx__relic_elbow_up();
+            rrxx__relic_arm_ready_delivery();
         } else {
-            relic_elbow_init();
+            rrxx__relic_elbow_init();
         }
     }
 
     public void relic_elbow_down_auto() {
         // init -> up -> flat -> down
-        if (!robot.use_relic_elbow) return;
+        if (!robot.rrxx__use_relic_elbow) return;
         if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.INIT) {
-            relic_elbow_up();
+            rrxx__relic_elbow_up();
         } else if (robot.relic_arm_pos == SwerveDriveHardware.RelicArmPos.UP) {
-            // relic_elbow_flat();
-            relic_arm_ready_grab_and_release();
+            // rrxx__relic_elbow_flat();
+            rrxx__relic_arm_ready_grab_and_release();
         } else {
-            relic_elbow_down();
+            rrxx__relic_elbow_down();
         }
     }
 
-    public void relic_elbow_higher() {
-        if (!robot.use_relic_elbow) return;
-        double new_pos = robot.sv_relic_elbow.getPosition() + 0.001;
+    public void rrxx__relic_elbow_higher() {
+        if (!robot.rrxx__use_relic_elbow) return;
+        double new_pos = robot.rrxx__sv_relic_elbow.getPosition() + 0.001;
         if (new_pos>0.999) new_pos = 0.999;
-        robot.sv_relic_elbow.setPosition(new_pos);
+        robot.rrxx__sv_relic_elbow.setPosition(new_pos);
         if (new_pos>=robot.SV_RELIC_ELBOW_INIT)
             robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.INIT;
         else if (new_pos>=robot.SV_RELIC_ELBOW_UP)
@@ -254,11 +229,11 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.DOWN;
     }
 
-    public void relic_elbow_lower() {
-        if (!robot.use_relic_elbow) return;
-        double new_pos = robot.sv_relic_elbow.getPosition() - 0.001;
+    public void rrxx__relic_elbow_lower() {
+        if (!robot.rrxx__use_relic_elbow) return;
+        double new_pos = robot.rrxx__sv_relic_elbow.getPosition() - 0.001;
         if (new_pos<0.001) new_pos = 0.001;
-        robot.sv_relic_elbow.setPosition(new_pos);
+        robot.rrxx__sv_relic_elbow.setPosition(new_pos);
         if (new_pos<=robot.SV_RELIC_ELBOW_DOWN)
             robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.DOWN;
         else if (new_pos<=robot.SV_RELIC_ELBOW_FLAT)
@@ -269,60 +244,50 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.INIT;
     }
 
-    public void relic_elbow_up() {
-        if (!robot.use_relic_elbow) return;
-        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_UP);
+    public void rrxx__relic_elbow_up() {
+        if (!robot.rrxx__use_relic_elbow) return;
+        robot.rrxx__sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_UP);
         robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.UP;
     }
 
-    public void relic_elbow_flat() {
-        if (!robot.use_relic_elbow) return;
-        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_FLAT);
+    public void rrxx__relic_elbow_flat() {
+        if (!robot.rrxx__use_relic_elbow) return;
+        robot.rrxx__sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_FLAT);
         robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.FLAT;
     }
 
-    public void relic_elbow_down() {
-        if (!robot.use_relic_elbow) return;
-        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_DOWN);
+    public void rrxx__relic_elbow_down() {
+        if (!robot.rrxx__use_relic_elbow) return;
+        robot.rrxx__sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_DOWN);
         robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.DOWN;
     }
 
-    public void relic_elbow_init() {
-        if (!robot.use_relic_elbow) return;
-        robot.sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_INIT);
+    public void rrxx__relic_elbow_init() {
+        if (!robot.rrxx__use_relic_elbow) return;
+        robot.rrxx__sv_relic_elbow.setPosition(robot.SV_RELIC_ELBOW_INIT);
         robot.relic_arm_pos = SwerveDriveHardware.RelicArmPos.INIT;
     }
 
-    public void relic_arm_ready_grab_and_release() {
-        if (!robot.use_relic_elbow) return;
-        relic_elbow_flat();
-        robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN);
+    public void rrxx__relic_arm_ready_grab_and_release() {
+        if (!robot.rrxx__use_relic_elbow) return;
+        rrxx__relic_elbow_flat();
+        robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN);
     }
 
-    public void relic_arm_ready_delivery() {
-        if (!robot.use_relic_elbow) return;
-        robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
-        relic_elbow_up();
-        robot.sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
+    public void rrxx__relic_arm_ready_delivery() {
+        if (!robot.rrxx__use_relic_elbow) return;
+        robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
+        rrxx__relic_elbow_up();
+        robot.rrxx__sv_relic_grabber.setPosition(robot.SV_RELIC_GRABBER_CLOSE_NB);
     }
 
-    public void relic_arm_auto() {
-        stop_chassis();
-        if (robot.use_newbot) {
-            // robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
-            relic_arm_down();
-        } else {
-            relic_arm_down();
-        }
-    }
-
-    public void relic_arm_down()
+    public void rrxx__relic_arm_down()
     {
         stop_chassis();
         if (robot.use_intake) {
             intakeGateInit();
         }
-        double pos = robot.sv_relic_wrist.getPosition();
+        double pos = robot.rrxx__sv_relic_wrist.getPosition();
         if (robot.use_newbot) {
             if (Math.abs(pos - robot.SV_RELIC_WRIST_DOWN_R) > 0.2) {
                 while (Math.abs(pos - robot.SV_RELIC_WRIST_DOWN_R) > 0.1) {
@@ -331,13 +296,13 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                     } else {
                         pos -= 0.1;
                     }
-                    robot.sv_relic_wrist.setPosition(pos);
+                    robot.rrxx__sv_relic_wrist.setPosition(pos);
                     sleep(50);
-                    pos = robot.sv_relic_wrist.getPosition();
+                    pos = robot.rrxx__sv_relic_wrist.getPosition();
                 }
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_R);
+                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_R);
             } else {
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN);
+                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN);
             }
         } else {
             if (Math.abs(pos - robot.SV_RELIC_ARM_DOWN_R) > 0.2) {
@@ -347,19 +312,19 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                     } else {
                         pos = robot.SV_RELIC_ARM_DOWN_R + 0.1;
                     }
-                    robot.sv_relic_wrist.setPosition(pos);
+                    robot.rrxx__sv_relic_wrist.setPosition(pos);
                     sleep(50);
                 }
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN_R);
+                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN_R);
             } else {
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN);
+                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_DOWN);
             }
         }
     }
 
-    public void relic_arm_up() {
+    public void rrxx__relic_arm_up() {
         stop_chassis();
-        double pos = robot.sv_relic_wrist.getPosition();
+        double pos = robot.rrxx__sv_relic_wrist.getPosition();
         if (robot.use_newbot) {
             if (Math.abs(pos - robot.SV_RELIC_WRIST_UP) > 0.15) {
                 if (pos < robot.SV_RELIC_WRIST_UP) {
@@ -367,11 +332,11 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                 } else {
                     pos = robot.SV_RELIC_WRIST_UP + 0.2;
                 }
-                robot.sv_relic_wrist.setPosition(pos);
+                robot.rrxx__sv_relic_wrist.setPosition(pos);
                 sleep(300);
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
+                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
             } else {
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
+                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_UP);
             }
         } else {
             if (Math.abs(pos - robot.SV_RELIC_ARM_UP) > 0.15) {
@@ -380,21 +345,21 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                 } else {
                     pos = robot.SV_RELIC_ARM_UP + 0.2;
                 }
-                robot.sv_relic_wrist.setPosition(pos);
+                robot.rrxx__sv_relic_wrist.setPosition(pos);
                 sleep(300);
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_UP);
+                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_UP);
             } else {
-                robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_UP + 0.12);
+                robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_UP + 0.12);
             }
         }
     }
 
-    public void relic_arm_middle() {
+    public void rrxx__relic_arm_middle() {
         stop_chassis();
         if (robot.use_newbot) {
-            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_MIDDLE);
+            robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_MIDDLE);
         } else {
-            robot.sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_MIDDLE);
+            robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_ARM_MIDDLE);
         }
     }
 
@@ -423,8 +388,8 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
     void intakeGateDown() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
-        if (robot.use_newbot_v2 && robot.use_relic_grabber)
-            relic_arm_up();
+        if (robot.use_newbot_v2 && robot.rrxx__use_relic_grabber)
+            rrxx__relic_arm_up();
         double pos = robot.sv_intake_gate.getPosition();
         if (Math.abs(pos-robot.SV_INTAKE_GATE_INIT)<0.1)
             robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_UP);
@@ -1247,7 +1212,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                     prev_time = cur_time;
                     prev_speed = cur_speed;
                 }
-                if (robot.use_verbose) {
+                if (robot.shxx.use_verbose) {
                     telemetry.addData("4.Speed cur/prev/i=", "%.2f/%.2f/%1d", cur_speed, prev_speed, iter);
                     telemetry.addData("5.time cur/prev/^=", "%.4f/%.4f/%.4f", cur_time, prev_time, (cur_time-prev_time));
                     telemetry.addData("6.enco cur/prev/^=", "%2d/%2d/%2d", curPosFrontLeft, prev_lpos,(curPosFrontLeft-prev_lpos));
@@ -1273,7 +1238,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                     driveTTCoast(leftPowerSign * 0.2, rightPowerSign * 0.2);
                 }
             }
-            if (robot.use_verbose) {
+            if (robot.shxx.use_verbose) {
                 //stop_chassis();
                 telemetry.addData("4.Speed cur/prev/i/bumped=", "%.2f/%.2f/%1d/%s",
                         cur_speed, prev_speed, iter, (robot.bump_detected?"T":"F"));
@@ -2159,7 +2124,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             sleep(500);
             l_arm_up();
         }
-        if (robot.use_verbose)
+        if (robot.shxx.use_verbose)
             telemetry.addData("0: End doPlatformMission CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
 
         return next_dist;
@@ -2214,29 +2179,8 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             if (!opModeIsActive()) return;
             StraightIn(0.8, 6);
             dumper_down(true);
-//        } else {
-//            StraightIn(0.3, 7);
-//            if (!opModeIsActive()) return;
-//            glyph_grabber_open_and_push_auto();
-//            // glyph_grabber_half_close();
-//            if (!opModeIsActive()) return;
-//            StraightIn(-0.7, 7);
-//            if (!opModeIsActive()) return;
-//            rotate_refine(); // ensure grabber back straight
-//            if (!opModeIsActive()) return;
-//            glyph_slider_back_init();
-//            if (!opModeIsActive()) return;
-//            // glyph_grabber_close();
-//            // sleep(500);
-//            // 0.4 will break the arms
-//            StraightIn(0.3, 10);
-//            if (!opModeIsActive()) return;
-//            //sleep(100);
-//            StraightIn(-0.7, 3);
-//            if (!opModeIsActive()) return;
-//            glyph_grabber_auto_open();
         }
-        if (robot.use_verbose)
+        if (robot.shxx.use_verbose)
             telemetry.addData("0: End deliveryGlyph() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
@@ -2428,7 +2372,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);
         StraightCm(.4, 3); // goes back so that delivery has enough space
-        if (robot.use_verbose)
+        if (robot.shxx.use_verbose)
             telemetry.addData("0: End go_to_crypto() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
@@ -2712,14 +2656,14 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 //        if (robot.use_test_servo) {
 //            // telemetry.addData("10. test sv = ","%.3f",robot.sv_test.getPosition());
 //        }
-//        if (robot.use_relic_grabber) {
+//        if (robot.rrxx__use_relic_grabber) {
 //            telemetry.addData("9.1 relic gr/wrist/elbow = ", "%4.4f/%4.3f/%4.3f",
-//                    robot.sv_relic_grabber.getPosition(), robot.sv_relic_wrist.getPosition(),
-//                    (robot.sv_relic_elbow!=null?robot.sv_relic_elbow.getPosition():0));
+//                    robot.rrxx__sv_relic_grabber.getPosition(), robot.rrxx__sv_relic_wrist.getPosition(),
+//                    (robot.rrxx__sv_relic_elbow!=null?robot.rrxx__sv_relic_elbow.getPosition():0));
 //        }
-//        if (robot.use_relic_slider) {
+//        if (robot.rrxx__use_relic_slider) {
 //            telemetry.addData("9.2 r-slider pwr/enc/tar = ","%3.2f/%d/%d",
-//                    robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
+//                    robot.rrxx__mt_relic_slider.getPower(),robot.rrxx__mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
 //        }
 //        if (robot.isTesting){
 //            if(robot.use_newbot){
@@ -2732,6 +2676,41 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 //            }
 //        }
 //        telemetry.update();
+    }
+
+    public void auto_relic_release() {
+        stop_chassis();
+        double cur_pos = robot.rrxx__sv_relic_wrist.getPosition();
+        if (Math.abs(cur_pos - robot.SV_RELIC_WRIST_DOWN) > 0.1) {
+            rrxx__relic_arm_down();
+            sleep(500);
+        }
+        if (Math.abs(cur_pos - robot.SV_RELIC_WRIST_DOWN) > 0.02) {
+            rrxx__relic_arm_down();
+            sleep(500);
+        }
+        rrxx__relic_grabber_release();
+        sleep(250);
+        if (robot.use_newbot) {
+            rrxx__relic_slider_in(0.5, true);
+            sleep(400);
+        } else {
+            rrxx__relic_slider_in(1.0, true);
+            sleep(1000);
+        }
+        rrxx__relic_slider_stop();
+        rrxx__relic_arm_up();
+
+    }
+
+    public void relic_arm_auto() {
+        stop_chassis();
+        if (robot.use_newbot) {
+            // robot.rrxx__sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
+            rrxx__relic_arm_down();
+        } else {
+            rrxx__relic_arm_down();
+        }
     }
 
     /*
@@ -2900,7 +2879,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 ////                deliverGlyph();
 ////            }
 //        }
-//        if (robot.use_verbose)
+//        if (robot.shxx.use_verbose)
 //            telemetry.addData("0: End GrabAndDump() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
 //    }
 

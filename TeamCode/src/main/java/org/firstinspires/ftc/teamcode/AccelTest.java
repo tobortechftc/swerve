@@ -38,9 +38,9 @@ public class AccelTest extends SwerveUtilLOP{
 //        robot.use_proximity_sensor = true;
 //        robot.use_dumper = true;
 //        robot.use_intake = true;
-//        robot.use_relic_grabber = false;
-//        robot.use_relic_slider = false;
-//        robot.use_relic_grabber = false;
+//        robot.rrxx__use_relic_grabber = false;
+//        robot.rrxx__use_relic_slider = false;
+//        robot.rrxx__use_relic_grabber = false;
 //        robot.use_newbot_v2 = true;
 //        robot.use_imu2 = true;
 //        robot.allianceColor = TeamColor.BLUE;
@@ -92,7 +92,7 @@ public class AccelTest extends SwerveUtilLOP{
 //            }
 //        }
 //        robot.runtime.reset();
-//        // robot.use_verbose = true;
+//        // robot.shxx.use_verbose = true;
 //        // run until the end of the match (driver presses STOP)
 //        while (opModeIsActive()) {
 //            try {

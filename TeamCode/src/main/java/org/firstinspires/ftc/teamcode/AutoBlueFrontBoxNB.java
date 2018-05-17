@@ -28,9 +28,9 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
         robot.use_glyph_grabber = false;
         robot.use_proximity_sensor = true;
         robot.use_dumper = true;
-        robot.use_relic_grabber = false;
-        robot.use_relic_slider = false;
-        robot.use_relic_grabber = false;
+        robot.rrxx__use_relic_grabber = false;
+        robot.rrxx__use_relic_slider = false;
+        robot.rrxx__use_relic_grabber = false;
         robot.use_newbot_v2 = true;
 
         robot.allianceColor = TeamColor.BLUE;

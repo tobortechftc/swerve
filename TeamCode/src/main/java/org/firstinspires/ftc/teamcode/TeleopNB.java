@@ -10,7 +10,6 @@ public class TeleopNB extends SwerveUtilLOP {
     //SwerveDriveHardware robot           = new SwerveDriveHardware();
     boolean robot_isTesting = false;
 
-
     @Override
     public void runOpMode() throws InterruptedException{
         int adj_count = 0; // count to smooth out car turn
@@ -33,9 +32,9 @@ public class TeleopNB extends SwerveUtilLOP {
         robot.use_proximity_sensor = false;
         robot.use_Vuforia = false;
         robot.use_glyph_grabber = false;
-        robot.use_relic_grabber = true;
-        robot.use_relic_slider = true;
-        robot.use_relic_elbow = false;
+        robot.rrxx__use_relic_grabber = true;
+        robot.rrxx__use_relic_slider = true;
+        robot.rrxx__use_relic_elbow = false;
         robot.use_arm = true;
         //robot.use_front_arm = false;
 
@@ -49,7 +48,7 @@ public class TeleopNB extends SwerveUtilLOP {
         waitForStart();
 
         start_init();
-        relic_arm_up(); // arm up to prevent intake gate collision 
+        rrxx__relic_arm_up(); // arm up to prevent intake gate collision
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -329,72 +328,72 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
             } // end use_newbot
 
-            if (robot.use_relic_slider) {
+            if (robot.rrxx__use_relic_slider) {
                 // relic slider
                 if (gamepad2.left_stick_y > 0.2) { // slide in
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
                         pw *= 0.9;
-                    relic_slider_in(pw, gamepad2.start); // push start to force slide in further
+                    rrxx__relic_slider_in(pw, gamepad2.start); // push start to force slide in further
                 } else if (gamepad2.left_stick_y < -0.2) { // slide out
                     double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
                     if (!gamepad2.back)
                         pw *= 0.99;
-                    relic_slider_out(pw);
+                    rrxx__relic_slider_out(pw);
                 } else if (gamepad2.left_stick_x < -0.2) { // slide out slowly
-                    relic_slider_out(0.3);
+                    rrxx__relic_slider_out(0.3);
                 } else if (gamepad2.left_stick_x > 0.2) { // slide in slowly
-                    relic_slider_in(0.2, false);
+                    rrxx__relic_slider_in(0.2, false);
                 } else {
-                    relic_slider_stop();
+                    rrxx__relic_slider_stop();
                 }
             }
-            if (robot.use_relic_grabber) {
+            if (robot.rrxx__use_relic_grabber) {
                 // relic arm
                 if (gamepad2.right_stick_y < -0.1) {
-                    double cur_pos = robot.sv_relic_wrist.getPosition();
+                    double cur_pos = robot.rrxx__sv_relic_wrist.getPosition();
                     if (cur_pos < 0.99) {
-                        robot.sv_relic_wrist.setPosition(cur_pos + 0.005);
+                        robot.rrxx__sv_relic_wrist.setPosition(cur_pos + 0.005);
                     }
                 } else if (gamepad2.right_stick_y > 0.1) {
-                    double cur_pos = robot.sv_relic_wrist.getPosition();
+                    double cur_pos = robot.rrxx__sv_relic_wrist.getPosition();
                     if (cur_pos > 0.01) {
-                        robot.sv_relic_wrist.setPosition(cur_pos - 0.005);
+                        robot.rrxx__sv_relic_wrist.setPosition(cur_pos - 0.005);
                     }
                 } else if (gamepad2.a && gamepad2.y) {
-                    relic_arm_middle();
+                    rrxx__relic_arm_middle();
                 } else if (gamepad2.y && !gamepad2.left_bumper && !gamepad2.back) {
-                    if (robot.use_relic_elbow) {
-                        relic_elbow_up_auto();
+                    if (robot.rrxx__use_relic_elbow) {
+                        rrxx__relic_elbow_up_auto();
                     } else {
-                        relic_arm_up();
+                        rrxx__relic_arm_up();
                     }
                 } else if (gamepad2.a && !gamepad2.left_bumper && !gamepad2.back) {
-                    if (robot.use_relic_elbow) {
+                    if (robot.rrxx__use_relic_elbow) {
                         relic_elbow_down_auto();
                     } else {
-                        relic_arm_down();
+                        rrxx__relic_arm_down();
                     }
                 }
                 // relic grabber open/close
                 if (gamepad2.b && !gamepad2.start) {
-                    relic_grabber_close();
+                    rrxx__relic_grabber_close();
                 } else if (gamepad2.x && gamepad2.back) {
-                    // relic_grabber_release();
+                    // rrxx__relic_grabber_release();
                     auto_relic_release();
                 } else if (gamepad2.x && !gamepad2.dpad_right) {
-                    relic_grabber_release();
+                    rrxx__relic_grabber_release();
                     // auto_relic_release();
                 } else if (gamepad2.back && (gamepad2.right_stick_y < -0.1)) { // higher
-                    if (robot.use_relic_elbow)
-                        relic_elbow_higher();
+                    if (robot.rrxx__use_relic_elbow)
+                        rrxx__relic_elbow_higher();
                     else
-                        relic_grabber_higher();
+                        rrxx__relic_grabber_higher();
                 } else if (gamepad2.back && (gamepad2.right_stick_y > 0.1)) { // lower
-                    if (robot.use_relic_elbow)
-                        relic_elbow_lower();
+                    if (robot.rrxx__use_relic_elbow)
+                        rrxx__relic_elbow_lower();
                     else
-                        relic_grabber_lower();
+                        rrxx__relic_grabber_lower();
                 }
             }
             show_telemetry();

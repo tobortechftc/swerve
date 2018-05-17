@@ -66,7 +66,7 @@ public class MB1202Test extends LinearOpMode {
         robot.use_range_sensor = false;
         robot.use_arm = false;
         robot.use_glyph_grabber = false;
-        robot.use_relic_grabber = false;
+        robot.rrxx__use_relic_grabber = false;
         robot.use_Vuforia = false;
         robot.use_camera = false;
 
