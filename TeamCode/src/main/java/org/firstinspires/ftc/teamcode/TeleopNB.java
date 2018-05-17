@@ -8,6 +8,8 @@ public class TeleopNB extends SwerveUtilLOP {
 
     /* Declare OpMode members. */
     //SwerveDriveHardware robot           = new SwerveDriveHardware();
+    boolean robot_isTesting = false;
+
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -56,10 +58,10 @@ public class TeleopNB extends SwerveUtilLOP {
             // The left stick up/down moves the wheels forward and backwards, while the right stick left/right should rotate the wheels
 
             if(gamepad1.back && gamepad1.start){ // swap test/normalglyph_grabber_auto_open mode
-                robot.isTesting = !robot.isTesting;
+                robot_isTesting = !robot_isTesting;
                 sleep(100);
             }
-            if (robot.use_intake && !robot.isTesting) {
+            if (robot.use_intake && !robot_isTesting) {
                 if (gamepad1.x && gamepad1.dpad_right) {
                     intakeTurn(true);
                 } else if (gamepad1.x && gamepad1.dpad_left) {
@@ -86,7 +88,7 @@ public class TeleopNB extends SwerveUtilLOP {
                     front_arm_sweep();
                 }
             }
-            if (robot.use_dumper && !robot.isTesting) {
+            if (robot.use_dumper && !robot_isTesting) {
                 if (gamepad2.back && gamepad2.y) {
                     intakeBarWheelOut();
                 } else if (gamepad2.back && gamepad2.a) {
@@ -137,7 +139,7 @@ public class TeleopNB extends SwerveUtilLOP {
 
             if (robot.use_newbot) {
 
-                if(robot.isTesting){ //Allow to test individual movement
+                if(robot_isTesting){ //Allow to test individual movement
 
                     if (gamepad1.dpad_left) {
                         sleep(100);

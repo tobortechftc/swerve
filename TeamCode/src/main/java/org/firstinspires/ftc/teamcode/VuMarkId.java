@@ -74,103 +74,103 @@ public class VuMarkId extends SwerveUtilLOP {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        ElapsedTime runtime = new ElapsedTime();
-        int box_column = -1;
-        robot.use_swerve = false;
-        robot.use_imu = false;
-        robot.use_color_sensor = false;
-        robot.use_range_sensor = false;
-        robot.use_arm = false;
-        robot.use_glyph_grabber = false;
-        robot.use_relic_grabber = false;
-        robot.use_Vuforia = true;
-        robot.use_camera = true;
-
-        robot.allianceColor = TeamColor.BLUE;
-
-        robot.init(hardwareMap,telemetry);
-
-        waitForStart();
-
-        if (robot.use_Vuforia) {
-            box_column = get_cryptobox_column();
-        }
-
-        int state = 0;
-        double stepStart = this.time;
-        int LoopRep = 0;
-        Bitmap bitmap = null;
-
-        /* The state variable reflects what the loop is attempting to do:
-            -1 = quiting op mode (frame==null)
-            0 = awaiting activation
-            1 = attempting to get frame queue
-            2 = Frame retrieved
-         */
-        while (opModeIsActive() && (runtime.seconds() < 29)) {
-            LoopRep++;
-            //show_telemetry();
-            robot.waitForTick(40);
-            telemetry.addData("Box column = ", box_column);
-            if (state == 0) {
-                int capacity = robot.vuforia.getFrameQueueCapacity();
-                telemetry.addData("6. Vuforia Queue State = ", capacity);
-                if (this.time - stepStart > 0) {
-                    state = 1;
-                    stepStart = this.time;
-                    robot.camera.activate();
-                }
-            } else if (state == 1) {
-                bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
-
-                if (bitmap == null) {
-                    telemetry.addData("Couldn't get a bitmap", robot.camera.getLastError());
-                    if (this.time - stepStart > 0.5) {
-                        state = -1;
-                        continue;
-                    }
-                }
-                if (bitmap != null) {
-                    //Save
-
-                    //int whitestPixel = robot.camera.getWhitestPixel(bitmap);
-                    //robot.camera.applyWhiteBalance(bitmap, whitestPixel);
-                    //Save again
-
-
-                    state = 2;
-                    stepStart = this.time;
-                }
-            }
-
-            else if (state == 2) {
-                telemetry.addData("Color", determineJewelColor(bitmap));
-                state++;
-
-//                OutputStream output = new FileOutputStream("Phone/DCIM/Camera/Bitmap.bmp");
-//                bitmap.compress(Bitmap.CompressFormat.PNG, 90, output);
-
-            }
-            else if (state == 3){
-                telemetry.addData("Done!", null);
-            }
-
-            if (state < 0) {
-                //Error occurred if in state -1
-                robot.waitForTick(40);
-                if (state == -1) {
-                    telemetry.update();
-                    state = -2;
-                }
-            }
-            else{
-                telemetry.addData("Current State:", state);
-                telemetry.addData("Time in state:", this.time - stepStart);
-                telemetry.addData("Repetitions: x", LoopRep);
-                telemetry.update();
-                // need to deactive before timeout
-            }
-        }
-        stop_auto();
+//        ElapsedTime runtime = new ElapsedTime();
+//        int box_column = -1;
+//        robot.use_swerve = false;
+//        robot.use_imu = false;
+//        robot.use_color_sensor = false;
+//        robot.use_range_sensor = false;
+//        robot.use_arm = false;
+//        robot.use_glyph_grabber = false;
+//        robot.use_relic_grabber = false;
+//        robot.use_Vuforia = true;
+//        robot.use_camera = true;
+//
+//        robot.allianceColor = TeamColor.BLUE;
+//
+//        robot.init(hardwareMap,telemetry);
+//
+//        waitForStart();
+//
+//        if (robot.use_Vuforia) {
+//            box_column = get_cryptobox_column();
+//        }
+//
+//        int state = 0;
+//        double stepStart = this.time;
+//        int LoopRep = 0;
+//        Bitmap bitmap = null;
+//
+//        /* The state variable reflects what the loop is attempting to do:
+//            -1 = quiting op mode (frame==null)
+//            0 = awaiting activation
+//            1 = attempting to get frame queue
+//            2 = Frame retrieved
+//         */
+//        while (opModeIsActive() && (runtime.seconds() < 29)) {
+//            LoopRep++;
+//            //show_telemetry();
+//            robot.waitForTick(40);
+//            telemetry.addData("Box column = ", box_column);
+//            if (state == 0) {
+//                int capacity = robot.vuforia.getFrameQueueCapacity();
+//                telemetry.addData("6. Vuforia Queue State = ", capacity);
+//                if (this.time - stepStart > 0) {
+//                    state = 1;
+//                    stepStart = this.time;
+//                    robot.camera.activate();
+//                }
+//            } else if (state == 1) {
+//                bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+//
+//                if (bitmap == null) {
+//                    telemetry.addData("Couldn't get a bitmap", robot.camera.getLastError());
+//                    if (this.time - stepStart > 0.5) {
+//                        state = -1;
+//                        continue;
+//                    }
+//                }
+//                if (bitmap != null) {
+//                    //Save
+//
+//                    //int whitestPixel = robot.camera.getWhitestPixel(bitmap);
+//                    //robot.camera.applyWhiteBalance(bitmap, whitestPixel);
+//                    //Save again
+//
+//
+//                    state = 2;
+//                    stepStart = this.time;
+//                }
+//            }
+//
+//            else if (state == 2) {
+//                telemetry.addData("Color", determineJewelColor(bitmap));
+//                state++;
+//
+////                OutputStream output = new FileOutputStream("Phone/DCIM/Camera/Bitmap.bmp");
+////                bitmap.compress(Bitmap.CompressFormat.PNG, 90, output);
+//
+//            }
+//            else if (state == 3){
+//                telemetry.addData("Done!", null);
+//            }
+//
+//            if (state < 0) {
+//                //Error occurred if in state -1
+//                robot.waitForTick(40);
+//                if (state == -1) {
+//                    telemetry.update();
+//                    state = -2;
+//                }
+//            }
+//            else{
+//                telemetry.addData("Current State:", state);
+//                telemetry.addData("Time in state:", this.time - stepStart);
+//                telemetry.addData("Repetitions: x", LoopRep);
+//                telemetry.update();
+//                // need to deactive before timeout
+//            }
+//        }
+//        stop_auto();
     }
 }

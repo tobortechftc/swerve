@@ -58,14 +58,14 @@ public class SwerveDriveHardware {
 
     public SwerveUtilLOP.TeamColor allianceColor = SwerveUtilLOP.TeamColor.BLUE; // default blue team
 
-    public boolean fast_mode = true; //Controls how "rushed" autonomous actions are
-    public boolean straight_mode = false;
+    public boolean fast_mode = true; //Controls how "rushed" autonomous actions are [autonomous variable]
+    public boolean straight_mode = false; // [cart variable]
     public boolean deliver_mode = false; //Affects gamepad1's controls, switches the function of the sticks
 
-    boolean isTesting = false;
+    //boolean isTesting = false;  // [Moved to TeleOp as class variable]
     boolean needsUpdate = false;
-    boolean tried_clockwise = false; //For determining how to correct the glyph during autonomous collection
-    boolean snaked_left = false;
+    boolean tried_clockwise = false; //For determining how to correct the glyph during autonomous collection [autonomous variable]
+    boolean snaked_left = false; // [autonomous variable]
 
     boolean enoughToSnake = true; //See if turning radius doesn't extend to inside the robot
     boolean isSnakingLeft = false; //See if the snake drive is turning to the left
@@ -78,21 +78,21 @@ public class SwerveDriveHardware {
 
     boolean isRedBall = false;
     boolean isBlueBall = false;
-    boolean gg_slider_encoder_ok = false;
+    boolean gg_slider_encoder_ok = false; // [not sure what this is]
     boolean gg_rotator_encoder_ok = false;
     boolean gg_top_close = false;
     boolean gg_bottom_close = false;
     boolean is_gg_upside_down = false;
-    boolean stop_on_dump = false;
-    boolean bump_detected = false;
+    boolean stop_on_dump = false; // [autonomous variable]
+    boolean bump_detected = false; // [autonomous variable]
 
 
-    public double target_heading = 0.0;
+    public double target_heading = 0.0; // [cart variable]
     public double mt_glyph_slider_pw = 0.0;
-    public float leftPower = 0;
-    public float rightPower = 0;
-    public int leftCnt = 0; // left motor target counter
-    public int rightCnt = 0; // right motor target counter
+    public float leftPower = 0; // [cart variable TODO: remove if able]
+    public float rightPower = 0;  // [cart variable TODO: remove if able]
+    public int leftCnt = 0; // left motor target counter [cart variable]
+    public int rightCnt = 0; // right motor target counter  [cart variable]
 
     final static int ONE_ROTATION_60 = 1680; // AndyMark NeveRest-60
     final static int ONE_ROTATION_40 = 1120; // AndyMark NeveRest-40
@@ -241,10 +241,10 @@ public class SwerveDriveHardware {
     double insideWheelsMod;
     double outsideWheelsMod;
 
-    int targetColumn = -1;
+    int targetColumn = -1; // [autonomous variable]
 
-    double blue = 0;
-    double red = 0;
+    double blue = 0; // [convert to local]
+    double red = 0; // [convert to local ]
 
     int orig_rot_pos = 0;
     int target_rot_pos = 0;
@@ -323,29 +323,29 @@ public class SwerveDriveHardware {
     ElapsedTime runtime = new ElapsedTime();
     ElapsedTime runtimeAuto = new ElapsedTime();
 
-    static double SERVO_90_DEGREE = 0.479;
-    static double CRAB_DIFF_INC = 0.4663;
-    static double CRAB_DIFF_DEC = 0.4762;
-    static double LEFT_SV_DIFF = 0.004;
-    static double RIGHT_SV_DIFF = 0.004;
-    static double SERVO_FL_FORWARD_POSITION = 0.5;
-    static double SERVO_FR_FORWARD_POSITION = 0.4533;
-    static double SERVO_BL_FORWARD_POSITION = 0.48;
-    static double SERVO_BR_FORWARD_POSITION = 0.49;
+    final static double SERVO_90_DEGREE = 0.479;
+    final static double CRAB_DIFF_INC = 0.4663;
+    final static double CRAB_DIFF_DEC = 0.4762;
+    final static double LEFT_SV_DIFF = 0.004;
+    final static double RIGHT_SV_DIFF = 0.004;
+    final static double SERVO_FL_FORWARD_POSITION = 0.5;
+    final static double SERVO_FR_FORWARD_POSITION = 0.4533;
+    final static double SERVO_BL_FORWARD_POSITION = 0.48;
+    final static double SERVO_BR_FORWARD_POSITION = 0.49;
 
     /* variables for newbot */
-    static double NB_SERVO_90_DEGREE = 0.479;
-    static double NB_CRAB_DIFF_INC_FL = 0.4373;
-    static double NB_CRAB_DIFF_DEC_FR = 0.4612;
-    static double NB_CRAB_DIFF_INC_BL = 0.4413;
-    static double NB_CRAB_DIFF_DEC_BR = 0.4872;
+    final static double NB_SERVO_90_DEGREE = 0.479;
+    final static double NB_CRAB_DIFF_INC_FL = 0.4373;
+    final static double NB_CRAB_DIFF_DEC_FR = 0.4612;
+    final static double NB_CRAB_DIFF_INC_BL = 0.4413;
+    final static double NB_CRAB_DIFF_DEC_BR = 0.4872;
     static double NB_LEFT_SV_DIFF = 0.001;
     static double NB_RIGHT_SV_DIFF = 0.000;
 
-    static double NB_SERVO_FL_FORWARD_POSITION = 0.5278;
-    static double NB_SERVO_FR_FORWARD_POSITION = 0.4478;
-    static double NB_SERVO_BL_FORWARD_POSITION = 0.4178;
-    static double NB_SERVO_BR_FORWARD_POSITION = 0.5589;
+    final static double NB_SERVO_FL_FORWARD_POSITION = 0.5278;
+    final static double NB_SERVO_FR_FORWARD_POSITION = 0.4478;
+    final static double NB_SERVO_BL_FORWARD_POSITION = 0.4178;
+    final static double NB_SERVO_BR_FORWARD_POSITION = 0.5589;
 
     static double SERVO_FL_STRAFE_POSITION = SERVO_FL_FORWARD_POSITION + CRAB_DIFF_INC - LEFT_SV_DIFF;
     static double SERVO_FR_STRAFE_POSITION = SERVO_FR_FORWARD_POSITION - CRAB_DIFF_DEC + RIGHT_SV_DIFF;
@@ -382,11 +382,11 @@ public class SwerveDriveHardware {
     Acceleration accel = null;
 
     // State used for updating telemetry
-    Orientation angles;
+    Orientation angles; // [ convert to local variable]
     Acceleration gravity;
 
     /* local OpMode members. */
-    HardwareMap hwMap = null;
+    HardwareMap hwMap = null; // [ convert to local variable]
     private ElapsedTime period = new ElapsedTime();
 
     VuforiaLocalizer vuforia;
@@ -604,26 +604,26 @@ public class SwerveDriveHardware {
         if (use_verbose)
             tel.addData("0: initialize intake CPU time =", "%3.2f sec", period.seconds());
 
-        if (use_minibot) {
-            motorFrontLeft = hwMap.dcMotor.get("left_drive");
-            motorFrontRight = hwMap.dcMotor.get("right_drive");
-
-            motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
-            motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-
-            motorFrontLeft.setPower(0);
-            motorFrontRight.setPower(0);
-
-            // Set all motors to run without encoders.
-            // May want to use RUN_USING_ENCODERS if encoders are installed.
-            motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            use_swerve = false;
-        }
-        else if (use_swerve || use_newbot) {
+//        if (use_minibot) {
+//            motorFrontLeft = hwMap.dcMotor.get("left_drive");
+//            motorFrontRight = hwMap.dcMotor.get("right_drive");
+//
+//            motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+//            motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+//
+//            motorFrontLeft.setPower(0);
+//            motorFrontRight.setPower(0);
+//
+//            // Set all motors to run without encoders.
+//            // May want to use RUN_USING_ENCODERS if encoders are installed.
+//            motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//            motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            use_swerve = false;
+//        }
+        if (use_swerve || use_newbot) {
             // Define and Initialize Motors
             motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
             motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
@@ -731,30 +731,30 @@ public class SwerveDriveHardware {
         }
     }
 
-    /***
-     *
-     * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
-     * periodic tick.  This is used to compensate for varying processing times for each cycle.
-     * The function looks at the elapsed cycle time, and sleeps for the remaining time interval.
-     *
-     * @param periodMs  Length of wait cycle in mSec.
-     */
-    public void waitForTick(long periodMs) {
-
-        long remaining = periodMs - (long) period.milliseconds();
-
-        // sleep for the remaining portion of the regular cycle period.
-        if (remaining > 0) {
-            try {
-                Thread.sleep(remaining);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        // Reset the cycle clock for the next pass.
-        period.reset();
-    }
+//    /***
+//     *
+//     * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
+//     * periodic tick.  This is used to compensate for varying processing times for each cycle.
+//     * The function looks at the elapsed cycle time, and sleeps for the remaining time interval.
+//     *
+//     * @param periodMs  Length of wait cycle in mSec.
+//     */
+//    public void waitForTick(long periodMs) {
+//
+//        long remaining = periodMs - (long) period.milliseconds();
+//
+//        // sleep for the remaining portion of the regular cycle period.
+//        if (remaining > 0) {
+//            try {
+//                Thread.sleep(remaining);
+//            } catch (InterruptedException e) {
+//                Thread.currentThread().interrupt();
+//            }
+//        }
+//
+//        // Reset the cycle clock for the next pass.
+//        period.reset();
+//    }
 
     void initialize_newbot() {
         SPOT_TURN_ANGLE_OFFSET = (Math.atan((0.5*NB_LENGTH_BETWEEN_WHEELS)/(0.5*NB_WIDTH_BETWEEN_WHEELS))) * (1/(Math.PI));
