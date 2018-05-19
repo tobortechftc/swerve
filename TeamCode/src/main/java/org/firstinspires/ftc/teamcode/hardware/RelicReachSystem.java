@@ -77,7 +77,7 @@ public class RelicReachSystem {
 
     // put class methods here...
 
-    public void init(HardwareMap hwMap, Telemetry tel) {
+    void init(HardwareMap hwMap, Telemetry tel) {
         if (use_relic_grabber) {
             if (use_newbot) {
                 if (use_newbot_v2) {

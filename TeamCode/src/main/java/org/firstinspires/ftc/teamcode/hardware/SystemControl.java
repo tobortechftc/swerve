@@ -33,7 +33,7 @@ public class SystemControl {
      * It This object is queried when ceasing the current operation would not be inconvenient. During any long lapses in which it
      * is not invoked, there is a risk that the robot will appear unresponsive until it finally checks and reacts.
      *
-     * @param map  map of hardware devicess
+     * @param map  map of hardware devices
      * @param supplierForCanContinue supplier for 'canContinue' requests
      *
      */
@@ -47,7 +47,7 @@ public class SystemControl {
 
     //
     // Start of 'tainted access support' section
-    // TODO: Remove this section when these (undesireable) dependencies are no longer necessary
+    // TODO: Remove this section when these (undesirable) dependencies are no longer necessary
 
     TaintedAccess taintedAccess;
     SwerveUtilLOP swerveUtilLOP;

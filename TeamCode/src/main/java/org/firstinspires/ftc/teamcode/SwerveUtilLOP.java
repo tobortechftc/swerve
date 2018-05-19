@@ -12,6 +12,7 @@ import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -55,7 +56,18 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
      */
 
     public void init_and_test() throws InterruptedException {
-        robot.init(hardwareMap, telemetry, this);
+
+        // Create a Supplier object that will invoke 'opModeIsActive' calls...
+        Supplier<Boolean> supplierForOpModeIsActive = new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                // Indicate if this OpMode is active.
+                return opModeIsActive();
+            }
+        };
+        // ... and pass it along to the robot, as its "shall I continue operating" master control.
+
+        robot.init(hardwareMap, telemetry, supplierForOpModeIsActive, this);
 
 //        if (robot.use_glyph_grabber) {
 //            // test_glyph_rotator_encoder();

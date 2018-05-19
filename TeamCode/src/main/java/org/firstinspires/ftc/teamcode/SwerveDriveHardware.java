@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -380,7 +381,7 @@ public class SwerveDriveHardware {
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap, Telemetry tel, SwerveUtilLOP swerveUtilLOP) {
+    public void init(HardwareMap ahwMap, Telemetry tel, Supplier<Boolean> supplierForOpModeIsActive, SwerveUtilLOP swerveUtilLOP) {
         this.systemControl.initTaintedAccess(swerveUtilLOP);
         // Save reference to Hardware map
         hwMap = ahwMap;
@@ -517,7 +518,7 @@ public class SwerveDriveHardware {
         if (use_verbose)
             tel.addData("0: initialize dumper CPU time =", "%3.2f sec", period.seconds());
 
-        relicReachSystem.init(hwMap, tel);
+        this.systemControl.init(hwMap, supplierForOpModeIsActive);
         if (use_verbose)
             tel.addData("0: initialize relic graber CPU time =", "%3.2f sec", period.seconds());
 
