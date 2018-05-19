@@ -24,23 +24,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.hardware.RelicReachSystem;
-import org.firstinspires.ftc.teamcode.hardware.SharedSystem;
 import org.firstinspires.ftc.teamcode.hardware.SystemControl;
 
 import static java.lang.Thread.sleep;
 
 public class SwerveDriveHardware {
 
+    /**
+     * Central container for robotic subsystems classes
+     */
+    final private SystemControl systemControl;
 
-//    static class SharedSystem {
-//        public boolean use_verbose = false;
-//    }
-
-    SystemControl robot = new SystemControl();
-    public SharedSystem shxx = robot.shared;
-    public RelicReachSystem relicReachSystem = robot.rrxx;
+    /**
+     * Relic reach subsystem
+     */
+    final public RelicReachSystem relicReachSystem;
 
     // define all switches to turn on/off hardware each component
+    public boolean use_verbose = false;
     public boolean use_swerve = true;   // use four motors and four servos for chassis
     public boolean use_newbot = false;   // use four motors and four servos for new chassis
     public boolean use_newbot_v2 = false;
@@ -256,7 +257,7 @@ public class SwerveDriveHardware {
     public DcMotor mt_lift = null;
     public DcMotor mt_test = null;
 
-    public DcMotor mt_glyph_rotator = null;
+//    public DcMotor mt_glyph_rotator = null;
     public DcMotor mt_glyph_slider = null;
     public DcMotor mt_intake_left = null;
     public DcMotor mt_intake_right = null;
@@ -273,8 +274,8 @@ public class SwerveDriveHardware {
 //    public Servo sv_front_arm = null;
     public Servo sv_jkicker = null;
 
-    public Servo sv_glyph_grabber_top = null;
-    public Servo sv_glyph_grabber_bottom = null;
+//    public Servo sv_glyph_grabber_top = null;
+//    public Servo sv_glyph_grabber_bottom = null;
 
     // public Servo sv_test = null;
     public Servo sv_dumper = null;
@@ -374,10 +375,13 @@ public class SwerveDriveHardware {
 
     /* Constructor */
     public SwerveDriveHardware() {
+        this.systemControl = new SystemControl();
+        this.relicReachSystem = systemControl.relicReachSystem;
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap, Telemetry tel) {
+    public void init(HardwareMap ahwMap, Telemetry tel, SwerveUtilLOP swerveUtilLOP) {
+        this.systemControl.initTaintedAccess(swerveUtilLOP);
         // Save reference to Hardware map
         hwMap = ahwMap;
         period.reset();
@@ -400,7 +404,7 @@ public class SwerveDriveHardware {
             }
             this.camera = new SwerveUtilLOP.Camera(this.vuforia);
         }
-        if (shxx.use_verbose)
+        if (use_verbose)
             tel.addData("0: initialize Vuforia CPU time =", "%3.2f sec", period.seconds());
 
         if (use_imu) {
@@ -428,7 +432,7 @@ public class SwerveDriveHardware {
             accel = imu.getAcceleration();
             imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         }
-        if (shxx.use_verbose)
+        if (use_verbose)
             tel.addData("0: initialize imu CPU time =", "%3.2f sec", period.seconds());
 
         if (use_proximity_sensor) {
@@ -478,7 +482,7 @@ public class SwerveDriveHardware {
                     rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
                 }
         }
-        if (shxx.use_verbose)
+        if (use_verbose)
             tel.addData("0: initialize prox/color sensors CPU time =", "%3.2f sec", period.seconds());
 
         if (use_test_servo) {
@@ -510,11 +514,11 @@ public class SwerveDriveHardware {
             mt_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             mt_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        if (shxx.use_verbose)
+        if (use_verbose)
             tel.addData("0: initialize dumper CPU time =", "%3.2f sec", period.seconds());
 
         relicReachSystem.init(hwMap, tel);
-        if (shxx.use_verbose)
+        if (use_verbose)
             tel.addData("0: initialize relic graber CPU time =", "%3.2f sec", period.seconds());
 
         if (use_intake) {
@@ -529,7 +533,7 @@ public class SwerveDriveHardware {
             mt_intake_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         }
-        if (shxx.use_verbose)
+        if (use_verbose)
             tel.addData("0: initialize intake CPU time =", "%3.2f sec", period.seconds());
 
 //        if (use_minibot) {
@@ -598,7 +602,7 @@ public class SwerveDriveHardware {
                 initialize_newbot();
             }
         }
-        if (shxx.use_verbose)
+        if (use_verbose)
             tel.addData("0: initialize chassis CPU time =", "%3.2f sec", period.seconds());
 
         if (use_arm) {
@@ -630,7 +634,7 @@ public class SwerveDriveHardware {
 //            sv_front_arm = hwMap.servo.get("sv_front_arm");
 //            sv_front_arm.setPosition(SV_FRONT_ARM_IN);
 //        }
-        if (shxx.use_verbose)
+        if (use_verbose)
             tel.addData("0: initialize arms CPU time =", "%3.2f sec", period.seconds());
 
     }

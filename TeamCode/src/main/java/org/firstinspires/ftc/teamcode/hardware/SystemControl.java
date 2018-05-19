@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
+import org.firstinspires.ftc.teamcode.SwerveUtilLOP;
 
 /**
  * Main container class for this robot's subsystems.
@@ -10,21 +11,18 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
  */
 public class SystemControl {
 
-    public CoreSystem core;
+    public CoreSystem coreSystem;
 
-    public RelicReachSystem rrxx;
-    public SharedSystem shared;
+    public RelicReachSystem relicReachSystem;
 
     /**
      * Create a SystemControl object.
      */
     public SystemControl() {
-        this.core = new CoreSystem();
+        this.coreSystem = new CoreSystem();
 
-        this.rrxx = new RelicReachSystem(this.core);
+        this.relicReachSystem = new RelicReachSystem(this.coreSystem);
 
-        this.shared = new SharedSystem(this);
-        this.rrxx.shared = this.shared;
     }
 
     /**
@@ -43,12 +41,27 @@ public class SystemControl {
         if (supplierForCanContinue == null) {
             throw new AssertionError("supplierForCanContinue cannot be null");
         }
-        this.core.supplierForCanContinue = supplierForCanContinue;
-
-        // TODO: initialize each subsystem
-        // this.any.init(map);
-        // etc.
-        this.rrxx.init(map);
+        this.coreSystem.supplierForCanContinue = supplierForCanContinue;
+        this.relicReachSystem.init(map);
     }
+
+    //
+    // Start of 'tainted access support' section
+    // TODO: Remove this section when these (undesireable) dependencies are no longer necessary
+
+    TaintedAccess taintedAccess;
+    SwerveUtilLOP swerveUtilLOP;
+
+    /**
+     * Initialize 'tainted access' across subsystems
+     * @param swerveUtilLOP legacy utility code object
+     */
+    public void initTaintedAccess(SwerveUtilLOP swerveUtilLOP) {
+        this.swerveUtilLOP = swerveUtilLOP;
+        this.taintedAccess = new TaintedAccess(this);
+        this.relicReachSystem.setTaintedAccess(this.taintedAccess);
+    }
+
+    // ... end of 'tainted access support'
 
 }

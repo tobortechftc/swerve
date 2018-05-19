@@ -56,7 +56,10 @@ public class RelicReachSystem {
     // Central core of robot
     CoreSystem core;
 
-    SharedSystem shared;
+    private TaintedAccess taintedAccess;
+    void setTaintedAccess(TaintedAccess taintedAccess) {
+        this.taintedAccess = taintedAccess;
+    }
 
     RelicReachSystem(CoreSystem core) {
         this.core = core;
@@ -170,13 +173,13 @@ public class RelicReachSystem {
                 mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
         }
-        if (power>0) shared.stop_chassis();
+        if (power>0) taintedAccess.stop_chassis();
         mt_relic_slider.setPower(Math.abs(power));
     }
 
     public void relic_slider_out(double power) {
         if (Math.abs(power)>1) power=1;
-        if (power>0) shared.stop_chassis();
+        if (power>0) taintedAccess.stop_chassis();
         mt_relic_slider.setPower(-1*Math.abs(power));
     }
 
@@ -280,8 +283,8 @@ public class RelicReachSystem {
 
     public void relic_arm_down()
     {
-        shared.stop_chassis();
-        shared.intakeGateInit();
+        taintedAccess.stop_chassis();
+        taintedAccess.intakeGateInit();
         double pos = sv_relic_wrist.getPosition();
         if (use_newbot) {
             if (Math.abs(pos - SV_RELIC_WRIST_DOWN_R) > 0.2) {
@@ -318,7 +321,7 @@ public class RelicReachSystem {
     }
 
     public void relic_arm_up() {
-        shared.stop_chassis();
+        taintedAccess.stop_chassis();
         double pos = sv_relic_wrist.getPosition();
         if (use_newbot) {
             if (Math.abs(pos - SV_RELIC_WRIST_UP) > 0.15) {
@@ -350,7 +353,7 @@ public class RelicReachSystem {
     }
 
     public void relic_arm_middle() {
-        shared.stop_chassis();
+        taintedAccess.stop_chassis();
         if (use_newbot) {
             sv_relic_wrist.setPosition(SV_RELIC_WRIST_MIDDLE);
         } else {

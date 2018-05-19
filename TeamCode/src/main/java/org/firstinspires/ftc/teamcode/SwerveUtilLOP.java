@@ -24,7 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 public abstract class SwerveUtilLOP extends LinearOpMode {
 
     /* Declare OpMode members. */
-      SwerveDriveHardware robot           = new SwerveDriveHardware();
+      public SwerveDriveHardware robot           = new SwerveDriveHardware();
 
     /**
      * Is used for checking or determining a color based on an alliance
@@ -55,7 +55,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
      */
 
     public void init_and_test() throws InterruptedException {
-        robot.init(hardwareMap, telemetry);
+        robot.init(hardwareMap, telemetry, this);
 
 //        if (robot.use_glyph_grabber) {
 //            // test_glyph_rotator_encoder();
@@ -101,7 +101,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                 robot.use_imu2 = true;
             }
         }
-        if (robot.shxx.use_verbose)
+        if (robot.use_verbose)
             telemetry.addData("0: End start_init CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
@@ -448,7 +448,9 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
     /*
      **** [ 2. Glyph Intake System ] ****
      */
-    void intakeGateInit() {
+
+    // [This method is invoked within TaintedAccess]
+    public void intakeGateInit() {
         if (!robot.use_intake || !robot.use_newbot_v2)
             return;
         robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_INIT);
@@ -1293,7 +1295,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                     prev_time = cur_time;
                     prev_speed = cur_speed;
                 }
-                if (robot.shxx.use_verbose) {
+                if (robot.use_verbose) {
                     telemetry.addData("4.Speed cur/prev/i=", "%.2f/%.2f/%1d", cur_speed, prev_speed, iter);
                     telemetry.addData("5.time cur/prev/^=", "%.4f/%.4f/%.4f", cur_time, prev_time, (cur_time-prev_time));
                     telemetry.addData("6.enco cur/prev/^=", "%2d/%2d/%2d", curPosFrontLeft, prev_lpos,(curPosFrontLeft-prev_lpos));
@@ -1319,7 +1321,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                     driveTTCoast(leftPowerSign * 0.2, rightPowerSign * 0.2);
                 }
             }
-            if (robot.shxx.use_verbose) {
+            if (robot.use_verbose) {
                 //stop_chassis();
                 telemetry.addData("4.Speed cur/prev/i/bumped=", "%.2f/%.2f/%1d/%s",
                         cur_speed, prev_speed, iter, (robot.bump_detected?"T":"F"));
@@ -1660,7 +1662,8 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         //    sleep(135);
     }
 
-    void stop_chassis() {
+    // [Invoked from TaintedAccess]
+    public void stop_chassis() {
         robot.motorFrontLeft.setPower(0);
         robot.motorFrontRight.setPower(0);
         if (!robot.use_minibot && !robot.use_front_drive_only) {
@@ -2205,7 +2208,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             sleep(500);
             l_arm_up();
         }
-        if (robot.shxx.use_verbose)
+        if (robot.use_verbose)
             telemetry.addData("0: End doPlatformMission CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
 
         return next_dist;
@@ -2261,7 +2264,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             StraightIn(0.8, 6);
             dumper_down(true);
         }
-        if (robot.shxx.use_verbose)
+        if (robot.use_verbose)
             telemetry.addData("0: End deliveryGlyph() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
@@ -2453,7 +2456,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
         sleep(300);
         StraightCm(.4, 3); // goes back so that delivery has enough space
-        if (robot.shxx.use_verbose)
+        if (robot.use_verbose)
             telemetry.addData("0: End go_to_crypto() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
     }
 
