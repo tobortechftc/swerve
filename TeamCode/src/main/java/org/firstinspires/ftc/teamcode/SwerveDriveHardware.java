@@ -71,7 +71,7 @@ public class SwerveDriveHardware {
     public boolean straight_mode = false; // [cart variable]
     public boolean deliver_mode = false; //Affects gamepad1's controls, switches the function of the sticks
 
-    //boolean isTesting = false;  // [Moved to TeleOp as class variable]
+    boolean isTesting = false;  // [Moved to TeleOp as class variable]
     boolean needsUpdate = false;
     boolean tried_clockwise = false; //For determining how to correct the glyph during autonomous collection [autonomous variable]
     boolean snaked_left = false; // [autonomous variable]

@@ -2662,65 +2662,65 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
     }
 
     void show_telemetry() throws InterruptedException {
-//        telemetry.addData("1. Team", " %s sw/IMU/Vu/GG = %s%s/%s/%s/%s",
-//                robot.allianceColor, (robot.use_swerve||robot.use_newbot ?"Y":"N"),
-//                (robot.isTesting?"-T":""), (robot.use_imu?"Y":"N"),
-//                (robot.use_Vuforia ?"Y":"N"), (robot.use_glyph_grabber ?"Y":"N"));
-//        telemetry.addData("2. PW-r/L/R/Rot-En/Sl-En =", "%.2f,%.2f/%.2f/%s/%s",
-//                robot.drivePowerRatio, robot.motorPowerLeft,robot.motorPowerRight,
-//                (robot.gg_rotator_encoder_ok ?"Y":"N"),(robot.gg_slider_encoder_ok ?"Y":"N"));
-//        telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
-//                robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
-//        double range_front_left = getRange(RangeSensor.FRONT_LEFT);
-//        double range_front_right = getRange(RangeSensor.FRONT_RIGHT);
-//        double range_back = getRange(RangeSensor.BACK);
-//        boolean glyph_stuck = GlyphStuck();
-//        if (robot.use_imu||robot.use_range_sensor) {
-//            telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.0f)/L=%.0f/R=%.0f/B%s=%.0fcm",
-//                    (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right,
-//                    (glyph_stuck?"(S)":""), range_back);
-//        }
-//        if (robot.use_proximity_sensor) {
-//            if (robot.use_newbot) {
-//                telemetry.addData("4.2.1 ProxSensorLeft =", robot.proxL.getState());
-//                telemetry.addData("4.2.2 ProxSensorRight =", robot.proxR.getState());
-//            }
-//            else {
-//                telemetry.addData("4.2 ProxSensor =", robot.proxL.getState());
-//            }
-//        }
-//        if (robot.use_color_sensor) {
-//            if (robot.use_newbot_v2) {
-//                telemetry.addData("5.2 color =", "L b/r = %3d/%3d, R b/r = %3d/%3d",
-//                        robot.l_colorSensor.blue(), robot.l_colorSensor.red(),
-//                        robot.r_colorSensor.blue(), robot.r_colorSensor.red());
-//            } else {
-//                telemetry.addData("5.2 color =", "R b/r = %3d/%3d",
-//                        robot.r_colorSensor.blue(), robot.r_colorSensor.red());
-//            }
-//        }
-//
-//        if (robot.use_Vuforia) {
-//            telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
-//        }
-//        if ((robot.use_swerve || robot.use_newbot)&& !robot.servo_tune_up) {
-//            telemetry.addData("6. Drive Mode = ", "%s", robot.cur_mode);
-//            telemetry.addData("6.1 SW-Enc FL/FR/BL/BR = ", "%d/%d/%d/%d",
-//                    robot.motorFrontLeft.getCurrentPosition(),
-//                    robot.motorFrontRight.getCurrentPosition(),
-//                    (robot.motorBackLeft!=null?robot.motorBackLeft.getCurrentPosition():0),
-//                    (robot.motorBackRight!=null?robot.motorBackRight.getCurrentPosition():0));
-//        }
-//        if (robot.use_intake) {
-//            telemetry.addData("7. Intake r = ", "%2.2f", robot.intakeRatio);
-//        }
-//
-//        if (robot.use_dumper)  {
-//            telemetry.addData("8.1 dumper slide / pos = ","%d (pw=%.2f)/%3.3f",
-//                    robot.mt_lift.getCurrentPosition(), robot.mt_lift.getPower(),
-//                    robot.sv_dumper.getPosition());
-//        }
-//
+        telemetry.addData("1. Team", " %s sw/IMU/Vu/GG = %s%s/%s/%s/%s",
+                robot.allianceColor, (robot.use_swerve||robot.use_newbot ?"Y":"N"),
+                (robot.isTesting?"-T":""), (robot.use_imu?"Y":"N"),
+                (robot.use_Vuforia ?"Y":"N"), (robot.use_glyph_grabber ?"Y":"N"));
+        telemetry.addData("2. PW-r/L/R/Rot-En/Sl-En =", "%.2f,%.2f/%.2f/%s/%s",
+                robot.drivePowerRatio, robot.motorPowerLeft,robot.motorPowerRight,
+                (robot.gg_rotator_encoder_ok ?"Y":"N"),(robot.gg_slider_encoder_ok ?"Y":"N"));
+        telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
+                robot.servoPosFL, robot.servoPosFR, robot.servoPosBL, robot.servoPosBR);
+        double range_front_left = getRange(RangeSensor.FRONT_LEFT);
+        double range_front_right = getRange(RangeSensor.FRONT_RIGHT);
+        double range_back = getRange(RangeSensor.BACK);
+        boolean glyph_stuck = GlyphStuck();
+        if (robot.use_imu||robot.use_range_sensor) {
+            telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.0f)/L=%.0f/R=%.0f/B%s=%.0fcm",
+                    (robot.use_imu2?"i2":"i1"),imu_heading(),imu_heading(), range_front_left,range_front_right,
+                    (glyph_stuck?"(S)":""), range_back);
+        }
+        if (robot.use_proximity_sensor) {
+            if (robot.use_newbot) {
+                telemetry.addData("4.2.1 ProxSensorLeft =", robot.proxL.getState());
+                telemetry.addData("4.2.2 ProxSensorRight =", robot.proxR.getState());
+            }
+            else {
+                telemetry.addData("4.2 ProxSensor =", robot.proxL.getState());
+            }
+        }
+        if (robot.use_color_sensor) {
+            if (robot.use_newbot_v2) {
+                telemetry.addData("5.2 color =", "L b/r = %3d/%3d, R b/r = %3d/%3d",
+                        robot.l_colorSensor.blue(), robot.l_colorSensor.red(),
+                        robot.r_colorSensor.blue(), robot.r_colorSensor.red());
+            } else {
+                telemetry.addData("5.2 color =", "R b/r = %3d/%3d",
+                        robot.r_colorSensor.blue(), robot.r_colorSensor.red());
+            }
+        }
+
+        if (robot.use_Vuforia) {
+            telemetry.addData("5. Vuforia Column = ", "%d", get_cryptobox_column());
+        }
+        if ((robot.use_swerve || robot.use_newbot)&& !robot.servo_tune_up) {
+            telemetry.addData("6. Drive Mode = ", "%s", robot.cur_mode);
+            telemetry.addData("6.1 SW-Enc FL/FR/BL/BR = ", "%d/%d/%d/%d",
+                    robot.motorFrontLeft.getCurrentPosition(),
+                    robot.motorFrontRight.getCurrentPosition(),
+                    (robot.motorBackLeft!=null?robot.motorBackLeft.getCurrentPosition():0),
+                    (robot.motorBackRight!=null?robot.motorBackRight.getCurrentPosition():0));
+        }
+        if (robot.use_intake) {
+            telemetry.addData("7. Intake r = ", "%2.2f", robot.intakeRatio);
+        }
+
+        if (robot.use_dumper)  {
+            telemetry.addData("8.1 dumper slide / pos = ","%d (pw=%.2f)/%3.3f",
+                    robot.mt_lift.getCurrentPosition(), robot.mt_lift.getPower(),
+                    robot.sv_dumper.getPosition());
+        }
+
 //        if (robot.use_glyph_grabber)  {
 //            telemetry.addData("8.1 g-rot pw/cur/tar = ","%3.2f/%d/%d (%s)",
 //                    robot.mt_glyph_rotator.getPower(),robot.mt_glyph_rotator.getCurrentPosition(),
@@ -2732,34 +2732,35 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 //                    robot.sv_glyph_grabber_top.getPosition(),
 //                    robot.sv_glyph_grabber_bottom.getPosition(),
 //                    (robot.is_gg_upside_down ?"dw":"up"));
-//        } else if (robot.use_test_motor) {
-//            telemetry.addData("8. gg-rot pw/cur/tar = ","%3.2f/%d/%d(%s)",
-//                    robot.mt_test.getPower(),robot.mt_test.getCurrentPosition(),robot.target_rot_pos,
-//                    (robot.is_gg_upside_down ?"dw":"up"));
 //        }
-//        if (robot.use_test_servo) {
-//            // telemetry.addData("10. test sv = ","%.3f",robot.sv_test.getPosition());
-//        }
-//        if (robot.relicReachSystem.use_relic_grabber) {
-//            telemetry.addData("9.1 relic gr/wrist/elbow = ", "%4.4f/%4.3f/%4.3f",
-//                    robot.relicReachSystem.sv_relic_grabber.getPosition(), robot.relicReachSystem.sv_relic_wrist.getPosition(),
-//                    (robot.relicReachSystem.sv_relic_elbow!=null?robot.relicReachSystem.sv_relic_elbow.getPosition():0));
-//        }
-//        if (robot.relicReachSystem.use_relic_slider) {
-//            telemetry.addData("9.2 r-slider pwr/enc/tar = ","%3.2f/%d/%d",
-//                    robot.relicReachSystem.mt_relic_slider.getPower(),robot.relicReachSystem.mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
-//        }
-//        if (robot.isTesting){
-//            if(robot.use_newbot){
-//                telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.NB_LEFT_SV_DIFF, robot.NB_RIGHT_SV_DIFF);
-//                telemetry.addData("12. CRAB_90_DIFF_DEC_FR/BR = ", "%.4f/%.4f",robot.NB_CRAB_DIFF_DEC_FR, robot.NB_CRAB_DIFF_DEC_BR);
-//                telemetry.addData("13. CRAB_90_DIFF_INC_FL/BL = ", "%.4f/%.4f", robot.NB_CRAB_DIFF_INC_FL, robot.NB_CRAB_DIFF_INC_BL);
-//            }
-//            else {
-//                telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.LEFT_SV_DIFF, robot.RIGHT_SV_DIFF);
-//            }
-//        }
-//        telemetry.update();
+        if (robot.use_test_motor) {
+            telemetry.addData("8. gg-rot pw/cur/tar = ","%3.2f/%d/%d(%s)",
+                    robot.mt_test.getPower(),robot.mt_test.getCurrentPosition(),robot.target_rot_pos,
+                    (robot.is_gg_upside_down ?"dw":"up"));
+        }
+        if (robot.use_test_servo) {
+            // telemetry.addData("10. test sv = ","%.3f",robot.sv_test.getPosition());
+        }
+        if (robot.relicReachSystem.use_relic_grabber) {
+            telemetry.addData("9.1 relic gr/wrist/elbow = ", "%4.4f/%4.3f/%4.3f",
+                    robot.relicReachSystem.sv_relic_grabber.getPosition(), robot.relicReachSystem.sv_relic_wrist.getPosition(),
+                    (robot.relicReachSystem.sv_relic_elbow!=null?robot.relicReachSystem.sv_relic_elbow.getPosition():0));
+        }
+        if (robot.relicReachSystem.use_relic_slider) {
+            telemetry.addData("9.2 r-slider pwr/enc/tar = ","%3.2f/%d/%d",
+                    robot.relicReachSystem.mt_relic_slider.getPower(),robot.relicReachSystem.mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
+        }
+        if (robot.isTesting){
+            if(robot.use_newbot){
+                telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.NB_LEFT_SV_DIFF, robot.NB_RIGHT_SV_DIFF);
+                telemetry.addData("12. CRAB_90_DIFF_DEC_FR/BR = ", "%.4f/%.4f",robot.NB_CRAB_DIFF_DEC_FR, robot.NB_CRAB_DIFF_DEC_BR);
+                telemetry.addData("13. CRAB_90_DIFF_INC_FL/BL = ", "%.4f/%.4f", robot.NB_CRAB_DIFF_INC_FL, robot.NB_CRAB_DIFF_INC_BL);
+            }
+            else {
+                telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.LEFT_SV_DIFF, robot.RIGHT_SV_DIFF);
+            }
+        }
+        telemetry.update();
     }
 
     public void auto_relic_release() {
@@ -3135,11 +3136,11 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 //        return got_one;
 //    }
 
-//    public boolean GlyphStuck() {
-//        if (robot.rangeSensorBack==null)
-//            return false;
-//        return (getRange(RangeSensor.BACK)<5.1);
-//    }
+    public boolean GlyphStuck() {
+        if (robot.rangeSensorBack==null)
+            return false;
+        return (getRange(RangeSensor.BACK)<5.1);
+    }
 
 //    boolean gotOneGlyph() {
 //        boolean got_one=false;
