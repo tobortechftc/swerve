@@ -3396,29 +3396,42 @@ public class SwerveUtilLOP extends LinearOpMode {
         private VuforiaLocalizer vuforia;
         private String lastError = "";
 
+        //Makes it so that camera will constantly focus to get most accurate images and tracking possible
         boolean focusModeSet = CameraDevice.getInstance().setFocusMode(
                 CameraDevice.FOCUS_MODE.FOCUS_MODE_CONTINUOUSAUTO);
 
         /**
-         * Used to select gimbal mode
+         * Used to define the phone gimbal's behavior to its environment
          */
         public enum CameraMode{
             SERVO_LOCK, GLOBAL_LOCK, TRACK;
         }
 
         Camera(VuforiaLocalizer vuforia){
-            this.vuforia = vuforia;
+            this.vuforia = vuforia; //Initialises Vuforia Library
         }
 
+        /**
+         * Sets required values for the other methods to work
+         */
         void activate() {
             this.vuforia.setFrameQueueCapacity(1);
             Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
         }
 
+        /**
+         * returns a string of the error to most recently occur.
+         * @return String of most recently occurred error.
+         */
         String getLastError() {
             return lastError;
         }
 
+        /**
+         * Takes the frame captured by Vuforia and converts it to a Bitmap so that the android library can interpret it.
+         * @param frame A Vuforia CloseableFrame retrieved from captureBitmap()
+         * @return Returns a usable Bitmap
+         */
         private Bitmap convertFrameToBitmap(VuforiaLocalizer.CloseableFrame frame) {
             long numImages = frame.getNumImages();
             Image image = null;
@@ -3441,6 +3454,15 @@ public class SwerveUtilLOP extends LinearOpMode {
             return bitmap;
         }
 
+        /**
+         * Selects a smaller portion of the Bitmap to be used. This can be used to narrow a search area, or to save memory.
+         * @param source A bitmap for the method to crop
+         * @param xOffsetF A floating point value used to determine where the crop begins among the x axis of a landscape image
+         * @param yOffsetF A floating point value used to determine where the crop begins among the y axis of a landscape image
+         * @param widthF A floating point value used to determine the width of the crop (x axis of a landscape image)
+         * @param heightF A floating point value used to determine the height of the crop (y axis of a landscape image)
+         * @return A bitmap of reduced size based on the passed in offset, width, and height floating point values
+         */
         private Bitmap cropBitmap(Bitmap source, double xOffsetF, double yOffsetF, double widthF, double heightF) {
             int offset_x = (int)(source.getWidth() * xOffsetF);
             int offset_y = (int)(source.getHeight() * yOffsetF);
@@ -3451,6 +3473,8 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
 
         /**
+         * Utilizes the Vuforia library to capture a Vuforia frame and then convert the frame to a bitmap that can be cropped according to the
+         * offset, width, and height values. This method calls the cropBitmap method and the convertFrameToBitmap method to return the desired Bitmap image.
          * @param xOffsetF
          * @param yOffsetF
          * @param widthF
@@ -3487,8 +3511,8 @@ public class SwerveUtilLOP extends LinearOpMode {
 
         /**
          * Takes a Bitmap as input and outputs an integer of the color constant of the "whitest" pixel
-         * @param source
-         * @return
+         * @param source A Bitmap variable to get the index of the whitest pixel for the applyWhiteBalance code to use
+         * @return An integer of the index of the whitest pixel in the entire Bitmap to be used by the applyWhiteBalance code
          */
         int getWhitestPixel(Bitmap source){
             int[] pixels = new int[source.getHeight() * source.getWidth()];
@@ -3521,10 +3545,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
 
         /**
-         * Takes returned integer from getWhitestPixel and a source bitmap then returns a white balanced bitmap
-         * @param source
-         * @param whitestPixel
-         * @return
+         * Takes returned integer from getWhitestPixel and a source bitmap then returns a white balanced bitmap using a three channel color monitor
+         * white balance.
+         * @param source The Bitmap that will have the white balance applied to it. MUST be the same as the bitmap that had getWhitestPixel called on.
+         * @param whitestPixel The index value of the whitest pixel retrieved from getWhitestPixel code
+         * @return A finished bitmap with the white balance applied
          */
         Bitmap applyWhiteBalance(Bitmap source, int whitestPixel) {
             if (whitestPixel == 2){
@@ -3563,37 +3588,21 @@ public class SwerveUtilLOP extends LinearOpMode {
             }
         }
 
+        /**
+         * Undoes what startCamera method does
+         */
         void stopCamera(){
             Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, false);
             this.vuforia.setFrameQueueCapacity(0);
         }
     }
 
-//      Needs refinement of Array logic to get true gray int (-7829368)
-//        int getGrayestPixel(Bitmap source){
-//            int[] pixels = new int[source.getHeight() * source.getWidth()];
-//
-//            int grayestPixel = 0;
-//
-//            source.getPixels(pixels, 0, 1, 0, 0, source.getWidth(), source.getHeight());
-//
-//            Arrays.sort(pixels);
-//
-//            pixels[pixels.length / 2] = grayestPixel;
-//            return grayestPixel;
-//        }
-
-
-
-
-
-
     /**
      * Determines if jewel color is blue, red, or other/unsure.
      * Expects majority of bitmap to be either red or blue.
      * Outputs string as either "Red", "Blue", or "Unsure"
-     * @param bitmap
-     * @return String
+     * @param bitmap A bitmap to find the location of the jewels that are on the jewel pedestal
+     * @return TeamColor An enumerator that dictates what the color of the leftmost jewel is. Can be returned as TeamColor.UNKNOWN
      */
     TeamColor determineJewelColor(Bitmap bitmap) {
         int height = bitmap.getHeight();
@@ -3709,8 +3718,8 @@ public class SwerveUtilLOP extends LinearOpMode {
     /**
      * Uses a Vec2F (A vector with 2 float values) to show the x y component translation from the position of the
      * camera/phone (which is always 0,0). The returned data will primarily be used for drawing lines to a desired target for the robot to travel upon.
-     * @param target
-     * @return
+     * @param target The Vuforia Trackable object for the method to fine the x y coordninates of
+     * @return A 2 float Vector by the Vuforia library that contains the x y coordinates of the passed in trackable
      */
     public Vec2F intakeTargetCoord(TrackableResult target){
 
