@@ -32,6 +32,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
@@ -68,6 +70,7 @@ final int RED_LED_CHANNEL = 1;
     DeviceInterfaceModule dim;                  // Device Object
     DigitalChannel        digIn;                // Device Object
     DigitalChannel        digOut;               // Device Object
+      AnalogInput maxb;
 
     // get a reference to a Modern Robotics DIM, and IO channels.
     dim = hardwareMap.get(DeviceInterfaceModule.class, "dim");   //  Use generic form of device mapping
@@ -76,6 +79,8 @@ final int RED_LED_CHANNEL = 1;
 
     digIn.setMode(DigitalChannel.Mode.INPUT);          // Set the direction of each channel
     digOut.setMode(DigitalChannel.Mode.OUTPUT);
+
+      maxb = hardwareMap.get(AnalogInput.class, "maxb");
 
     // wait for the start button to be pressed.
     telemetry.addData(">", "Press play, and then user X button to set DigOut");

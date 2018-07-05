@@ -2007,6 +2007,35 @@ public class SwerveUtilLOP extends LinearOpMode {
         return (robot.blue - robot.red);
     }
 
+    double get_maxb_distance_cm(boolean use5V) {
+        double MAXB_5V_R = 1.515;
+        double MAXB_MIN_VOLT = 0.041;
+        double MAXB_VOLT_PER_CM = 0.0016;
+        double dist = 0;
+        double MAX = (use5V?450.0:300.0);
+        if (robot.mb_ultra==null) return 0.0;
+
+        double maxb_v = robot.mb_ultra.getVoltage();
+        double maxb_v2 = 0.0;
+
+        int trys = 0;
+
+        do {
+            maxb_v2 = robot.mb_ultra.getVoltage();
+            if (maxb_v2<maxb_v)
+                maxb_v = maxb_v2;
+
+            if (!use5V) {
+                dist = (maxb_v - MAXB_MIN_VOLT) / MAXB_VOLT_PER_CM + 20.0;
+            } else {
+                dist = (maxb_v - MAXB_MIN_VOLT * MAXB_5V_R) / MAXB_VOLT_PER_CM / MAXB_5V_R + 20.0;
+            }
+            if (dist>MAX && (++trys)<10)
+                sleep(10);
+        } while (dist>MAX && trys<10);
+        return dist;
+    }
+
     /**
      * Function to prevent range sensor from returning an error
      * If this returns 999, it failed to get the right range in under .3 seconds
@@ -3846,6 +3875,10 @@ public class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.0f)/L=%.0f/R=%.0f/B%s=%.0fcm",
                     (robot.use_imu2?"i2":"i1"),imu_heading(),imu2_heading(), range_front_left,range_front_right,
                     (glyph_stuck?"(S)":""), range_back);
+        }
+        if (robot.mb_ultra!=null) {
+            double dist = get_maxb_distance_cm(false);
+            telemetry.addData("4.1.1 MaxB ", "= %.1f cm", dist);
         }
         if (robot.use_proximity_sensor) {
             if (robot.use_newbot) {

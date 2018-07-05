@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -313,7 +314,7 @@ public class SwerveDriveHardware {
     public Bitmap bitmap = null;
     public boolean camReady = false;
 
-    public MB1202 mb_ultra = null;
+    public AnalogInput mb_ultra = null;
     public DigitalChannel proxL = null;
     public DigitalChannel proxR = null;
     public DigitalChannel proxFL = null;
@@ -488,7 +489,8 @@ public class SwerveDriveHardware {
                 r_colorSensor.enableLed(true);
             }
         }
-            if (use_range_sensor) {
+        if (use_range_sensor) {
+            mb_ultra = hwMap.get(AnalogInput.class, "maxb");
                 if (use_newbot) {
                     rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
                     rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
