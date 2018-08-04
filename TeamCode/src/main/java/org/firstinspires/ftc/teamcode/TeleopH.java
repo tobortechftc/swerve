@@ -96,7 +96,7 @@ public class TeleopH extends SwerveUtilLOP {
                             // sleep(200);
                         }
                         double pw_dir = (gamepad1.right_stick_y > 0.1 ? -1.0 : 1.0);
-                        {
+                        while (Math.abs(gamepad1.left_stick_y - gamepad1.right_stick_y) > turn_sh) {
                             robot.motorFrontLeft.setPower(robot.drivePowerRatio * pw_dir);
                             robot.motorFrontRight.setPower(-1 * robot.drivePowerRatio * pw_dir);
                             robot.motorBackLeft.setPower(robot.drivePowerRatio * pw_dir);
@@ -111,7 +111,7 @@ public class TeleopH extends SwerveUtilLOP {
                             //sleep(200);
                         }
                         double pw_dir = (gamepad1.left_stick_x > 0.1 ? -1.0 : 1.0);
-                        {
+                        while (Math.abs(gamepad1.left_stick_x + gamepad1.right_stick_x) > 2 * crab_sh) {
                             robot.motorFrontLeft.setPower(-robot.drivePowerRatio * pw_dir);
                             robot.motorFrontRight.setPower(robot.drivePowerRatio * pw_dir);
                             robot.motorBackLeft.setPower(-robot.drivePowerRatio * pw_dir);
@@ -132,8 +132,8 @@ public class TeleopH extends SwerveUtilLOP {
 
                     if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
                         // right_stick_x to control snake
-                        if (Math.abs(gamepad1.left_stick_x) > 0.2 && Math.abs(gamepad1.right_stick_x) > 0.2) {
-                            calc_snake(gamepad1.left_stick_x, gamepad1.right_stick_x);
+                        if (Math.abs(gamepad1.left_stick_y) > 0.2 && Math.abs(gamepad1.right_stick_x) > 0.2) {
+                            calc_snake(-gamepad1.right_stick_x, gamepad1.right_stick_x);
                         } else {
                             calc_snake(0, 0);
                         }
@@ -143,7 +143,10 @@ public class TeleopH extends SwerveUtilLOP {
                     correct_swerve_servos();
 
                     //set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.right_stick_x);
-                    set_swerve_power(gamepad1.left_stick_y, gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, false);
+                    set_swerve_power((float) (gamepad1.right_stick_y*robot.drivePowerRatio),
+                            (float) (gamepad1.left_stick_y*robot.drivePowerRatio),
+                            (float) (-gamepad1.left_stick_x*robot.drivePowerRatio),
+                            (float) (gamepad1.right_stick_x*robot.drivePowerRatio), false);
 
                     if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR ||
                             robot.cur_mode == SwerveDriveHardware.CarMode.STRAIGHT) {
