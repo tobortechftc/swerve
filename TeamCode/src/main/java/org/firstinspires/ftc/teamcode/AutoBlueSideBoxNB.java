@@ -15,13 +15,12 @@ public class AutoBlueSideBoxNB extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot.use_swerve = false;
-        robot.use_newbot_v2 = true;
+        robot.swerve.use_swerve = false;
+        robot.swerve.use_newbot_v2 = true;
         robot.use_arm = true;
-        robot.use_imu = true;
-        robot.use_encoder = true;
-        robot.use_newbot = true;
-        robot.use_minibot = false;
+        robot.swerve.use_imu = true;
+        robot.swerve.use_encoder = true;
+        robot.swerve.use_newbot = true;
         robot.use_range_sensor = true;
         robot.use_color_sensor = true;
         robot.use_Vuforia = true;
@@ -63,17 +62,17 @@ public class AutoBlueSideBoxNB extends SwerveUtilLOP{
 
                 go_to_crypto(next_dist, .3, robot.targetColumn, true, true); // Drive to cryptobox
                 deliverGlyph();
-                StraightTime(-.4,.5);
-                StraightCm(.4,20);
-                stop_chassis();
+                robot.swerve.StraightTime(-.4,.5);
+                robot.swerve.StraightCm(.4,20);
+                robot.swerve.stop_chassis();
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
                 telemetry.log().add(sw.toString());
-                stop_chassis();
+                robot.swerve.stop_chassis();
             }
-            stop_chassis();
+            robot.swerve.stop_chassis();
         }
     }
 }

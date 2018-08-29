@@ -17,8 +17,9 @@ public class CoreSystem {
      * @return false if the operation must halt; true otherwise
      */
     public boolean canContinue() {
-        Boolean result = this.supplierForCanContinue.get();
-        return result;
+        return true;
+        //Boolean result = this.supplierForCanContinue.get();
+        //return result;
     }
 
     /**

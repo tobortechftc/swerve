@@ -25,7 +25,7 @@ public class TaintedAccess {
     }
 
     void stop_chassis() {
-        getSwerveUtilLOP().stop_chassis();
+        systemControl.swerve.stop_chassis();
     }
 
     void intakeGateInit() {

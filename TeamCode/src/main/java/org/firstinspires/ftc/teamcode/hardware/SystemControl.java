@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.SwerveUtilLOP;
 
 /**
@@ -14,6 +16,7 @@ public class SystemControl {
     public CoreSystem coreSystem;
 
     public RelicReachSystem relicReachSystem;
+    public SwerveSystem swerve;
 
     /**
      * Create a SystemControl object.
@@ -22,6 +25,7 @@ public class SystemControl {
         this.coreSystem = new CoreSystem();
 
         this.relicReachSystem = new RelicReachSystem(this.coreSystem);
+        this.swerve = new SwerveSystem(this.coreSystem);
 
     }
 
@@ -37,12 +41,15 @@ public class SystemControl {
      * @param supplierForCanContinue supplier for 'canContinue' requests
      *
      */
-    public void init(HardwareMap map, Supplier<Boolean> supplierForCanContinue) {
+    public void init(HardwareMap map, Telemetry tel, ElapsedTime period, Supplier<Boolean> supplierForCanContinue) {
         if (supplierForCanContinue == null) {
             throw new AssertionError("supplierForCanContinue cannot be null");
         }
         this.coreSystem.supplierForCanContinue = supplierForCanContinue;
-        this.relicReachSystem.init(map);
+        this.relicReachSystem.init(map,tel,period);
+
+        this.swerve.init(map,tel,period);
+
     }
 
     //

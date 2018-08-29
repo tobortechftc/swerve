@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -35,6 +36,7 @@ public class RelicReachSystem {
     final static double SV_RELIC_ELBOW_FLAT = 0.5117;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
 
+    public boolean use_verbose = false;
     public boolean use_relic_elbow = false;
     public boolean use_relic_grabber = true;
     public boolean use_relic_slider = true;
@@ -77,7 +79,7 @@ public class RelicReachSystem {
 
     // put class methods here...
 
-    void init(HardwareMap hwMap, Telemetry tel) {
+    void init(HardwareMap hwMap, Telemetry tel, ElapsedTime period) {
         if (use_relic_grabber) {
             if (use_newbot) {
                 if (use_newbot_v2) {
@@ -110,6 +112,8 @@ public class RelicReachSystem {
             mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+        if (use_verbose)
+            tel.addData("0: initialize Relic system CPU time =", "%3.2f sec", period.seconds());
     }
 
     public void relic_grabber_lower() {
@@ -283,7 +287,7 @@ public class RelicReachSystem {
 
     public void relic_arm_down()
     {
-        taintedAccess.stop_chassis();
+        //taintedAccess.stop_chassis();
         taintedAccess.intakeGateInit();
         double pos = sv_relic_wrist.getPosition();
         if (use_newbot) {
