@@ -58,11 +58,11 @@ import java.util.List;
  * positioning and orientation of robot on the FTC field.
  * The code is structured as a LinearOpMode
  *
- * Vuforia uses the phone's camera to inspect it's surroundings, and attempt to locate target images.
+ * Vuforia uses the phone's icamera to inspect it's surroundings, and attempt to locate target images.
  *
  * When images are located, Vuforia is able to determine the position and orientation of the
- * image relative to the camera.  This sample code than combines that information with a
- * knowledge of where the target images are on the field, to determine the location of the camera.
+ * image relative to the icamera.  This sample code than combines that information with a
+ * knowledge of where the target images are on the field, to determine the location of the icamera.
  *
  * This example assumes a "diamond" field configuration where the red and blue alliance stations
  * are adjacent on the corner of the field furthest from the audience.
@@ -70,7 +70,7 @@ import java.util.List;
  * The two vision target are located on the two walls closest to the audience, facing in.
  * The Stones are on the RED side of the field, and the Chips are on the Blue side.
  *
- * A final calculation then uses the location of the camera on the robot to determine the
+ * A final calculation then uses the location of the icamera on the robot to determine the
  * robot's location and orientation on the field.
  *
  * @see VuforiaLocalizer
@@ -101,12 +101,12 @@ public class VuforiaOp extends LinearOpMode {
     @Override public void runOpMode() {
         /**
          * Start up Vuforia, telling it the id of the view that we wish to use as the parent for
-         * the camera monitor feedback; if no camera monitor feedback is desired, use the parameterless
-         * constructor instead. We also indicate which camera on the RC that we wish to use. For illustration
-         * purposes here, we choose the back camera; for a competition robot, the front camera might
+         * the icamera monitor feedback; if no icamera monitor feedback is desired, use the parameterless
+         * constructor instead. We also indicate which icamera on the RC that we wish to use. For illustration
+         * purposes here, we choose the back icamera; for a competition robot, the front icamera might
          * prove to be more convenient.
          *
-         * Note that in addition to indicating which camera is in use, we also need to tell the system
+         * Note that in addition to indicating which icamera is in use, we also need to tell the system
          * the location of the phone on the robot; see phoneLocationOnRobot below.
          *
          * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -243,7 +243,7 @@ public class VuforiaOp extends LinearOpMode {
         /**
          * Create a transformation matrix describing where the phone is on the robot. Here, we
          * put the phone on the right hand side of the robot with the screen facing in (see our
-         * choice of BACK camera above) and in landscape mode. Starting from alignment between the
+         * choice of BACK icamera above) and in landscape mode. Starting from alignment between the
          * robot's and phone's axes, this is a rotation of -90deg along the Y axis.
          *
          * When determining whether a rotation is positive or negative, consider yourself as looking

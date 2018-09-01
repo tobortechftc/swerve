@@ -23,25 +23,8 @@ public class TeleopNB extends SwerveUtilLOP {
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.swerve.use_swerve = false;
-        robot.swerve.use_newbot = true;
-        robot.swerve.use_newbot_v2= true;
-        robot.swerve.use_front_drive_only = false; // front drive only
-        robot.use_intake = true;
-        robot.use_dumper = true;
-        robot.use_dumper_gate = true;
-        robot.swerve.use_imu = false;
-        robot.swerve.use_encoder = true;
-        robot.use_range_sensor = false;
-        robot.use_color_sensor = false;
-        robot.use_proximity_sensor = false;
-        robot.use_Vuforia = false;
-        robot.use_glyph_grabber = false;
-        robot.relicReachSystem.use_relic_grabber = true;
-        robot.relicReachSystem.use_relic_slider = true;
-        robot.relicReachSystem.use_relic_elbow = false;
-        robot.use_arm = true;
-        //robot.use_front_arm = false;
+        enable_hardware_for_teleop();
+        // set_verbose();  // uncomment this line to debug
 
         init_and_test();
 
@@ -65,25 +48,25 @@ public class TeleopNB extends SwerveUtilLOP {
                 robot.isTesting = !robot.isTesting;
                 sleep(100);
             }
-            if (robot.use_intake && !robot.isTesting) {
+            if (robot.intake.use_intake && !robot.isTesting) {
                 if (gamepad1.x && gamepad1.dpad_right) {
-                    intakeTurn(true);
+                    robot.intake.intakeTurn(true);
                 } else if (gamepad1.x && gamepad1.dpad_left) {
-                    intakeTurn(false);
+                    robot.intake.intakeTurn(false);
                 } else if (gamepad1.x && gamepad1.a) {
-                    correctGlyph(false);
+                    robot.intake.correctGlyph(false);
                 } else if (gamepad1.x || (gamepad2.left_bumper&&!gamepad2.right_bumper)) { // intake IN
-                    intakeIn();
+                    robot.intake.intakeIn();
                 } else if (gamepad1.b || (gamepad2.left_trigger > 0.1)) { // intake OUT
-                    intakeOut();
+                    robot.intake.intakeOut();
                 } else {
-                    intakeStop();
+                    robot.intake.intakeStop();
                 }
                 if (gamepad1.dpad_up && gamepad1.x) {
-                    robot.intakeRatio += 0.01;
+                    robot.intake.intakeRatio += 0.01;
                     sleep(50);
                 } else if (gamepad1.dpad_down && gamepad1.x) {
-                    robot.intakeRatio -= 0.01;
+                    robot.intake.intakeRatio -= 0.01;
                     sleep(50);
                 }
             }
@@ -92,52 +75,52 @@ public class TeleopNB extends SwerveUtilLOP {
 //                    front_arm_sweep();
 //                }
 //            }
-            if (robot.use_dumper && !robot.isTesting) {
+            if (robot.dumper.use_dumper && !robot.isTesting) {
                 if (gamepad2.back && gamepad2.y) {
-                    intakeBarWheelOut();
+                    robot.intake.intakeBarWheelOut();
                 } else if (gamepad2.back && gamepad2.a) {
-                    intakeBarWheelIn();
+                    robot.intake.intakeBarWheelIn();
                 } else {
-                    intakeBarWheelStop();
+                    robot.intake.intakeBarWheelStop();
                 }
                 if (gamepad2.right_bumper && gamepad2.left_bumper) {
-                    lift_back_init(); // back to initial position for collecting glyph
+                    robot.dumper.lift_back_init(); // back to initial position for collecting glyph
                 } else if (gamepad2.dpad_left && !gamepad2.y) {
                     // dumper_higher();
-                    intakeGateUp();
+                    robot.intake.intakeGateUp();
                     sleep(50);
                 } else if (gamepad2.dpad_right) {
                     // dumper_lower();
-                    intakeGateDown();
+                    robot.intake.intakeGateDown();
                     sleep(50);
                 } else if ((gamepad1.dpad_down&&gamepad1.start) || (gamepad2.dpad_down&&gamepad2.start)) {
-                    dumper_shake();
+                    robot.dumper.dumper_shake();
                 }
                 else if ((gamepad1.dpad_up&&!gamepad1.x) || gamepad2.dpad_up) {
-                    dumper_up();
+                    robot.dumper.dumper_up();
                     boolean auto_up_down = false;
                     if (gamepad1.a) {
                         auto_up_down = true;
                     }
-                    double pos = robot.sv_dumper.getPosition();
+                    double pos = robot.dumper.sv_dumper.getPosition();
                     sleep(200);
-                    if (auto_up_down && (Math.abs(pos-robot.SV_DUMPER_UP)<0.05)) {
-                        lift_up_and_down(true);
+                    if (auto_up_down && (Math.abs(pos-robot.dumper.SV_DUMPER_UP)<0.05)) {
+                        robot.dumper.lift_up_and_down(true);
                     }
                 } else if ((gamepad1.dpad_down && !gamepad1.x) || gamepad2.dpad_down) {
-                    dumper_down(true);
+                    robot.dumper.dumper_down(true);
                 }
 
                 if ((gamepad2.right_bumper) && gamepad2.back) { // manual lift up
-                    lift_up(true);
+                    robot.dumper.lift_up(true);
                 } else if ((gamepad2.right_trigger>0.1) && gamepad2.back) { // force down
-                    lift_down(true);
+                    robot.dumper.lift_down(true);
                 } else if (gamepad2.right_bumper && !gamepad2.back) { // manual lift up
-                    lift_up(false);
+                    robot.dumper.lift_up(false);
                 } else if ((gamepad2.right_trigger > 0.1) && !gamepad2.back) { // manual down
-                    lift_down(false);
+                    robot.dumper.lift_down(false);
                 } else {
-                    lift_stop();
+                    robot.dumper.lift_stop();
                 }
             }
 

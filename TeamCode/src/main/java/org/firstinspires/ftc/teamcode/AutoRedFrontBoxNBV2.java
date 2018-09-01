@@ -14,21 +14,8 @@ public class AutoRedFrontBoxNBV2 extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot.swerve.use_swerve = false;
-        robot.use_arm = true;
-        robot.swerve.use_imu = true;
-        robot.swerve.use_encoder = true;
-        robot.swerve.use_newbot = true;
-        robot.swerve.use_newbot_v2 = true;
-        robot.use_range_sensor = true;
-        robot.use_color_sensor = true;
-        robot.use_Vuforia = true;
-        robot.use_camera = true;
-        robot.use_glyph_grabber = false;
-        robot.use_proximity_sensor = true;
-        robot.use_dumper = true;
-        robot.relicReachSystem.use_relic_grabber = false;
-        robot.relicReachSystem.use_relic_slider = false;
+        enable_hardware_for_auto();
+        // set_verbose();  // uncomment this line to debug
 
         robot.allianceColor = TeamColor.RED;
 

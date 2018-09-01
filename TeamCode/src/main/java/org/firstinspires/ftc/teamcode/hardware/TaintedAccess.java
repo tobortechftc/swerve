@@ -29,7 +29,7 @@ public class TaintedAccess {
     }
 
     void intakeGateInit() {
-        getSwerveUtilLOP().intakeGateInit();
+        systemControl.intake.intakeGateInit();
     }
 
 }

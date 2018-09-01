@@ -27,7 +27,7 @@ public class ColorChooser extends SwerveUtilLOP {
 //        robot.use_test_motor = false;
 //        robot.init(hardwareMap, telemetry);
 //        // robot.l_colorSensor.enableLed(true);
-//        robot.camera.activate();
+//        robot.icamera.activate();
 //
 //        robot.allianceColor = TeamColor.BLUE;
 //

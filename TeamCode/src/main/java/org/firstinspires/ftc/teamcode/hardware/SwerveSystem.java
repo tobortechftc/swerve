@@ -25,16 +25,15 @@ import org.firstinspires.ftc.teamcode.SwerveUtilLOP;
 public class SwerveSystem {
     // final static double SV_RELIC_GRABBER_INIT = 0.5039;
     public boolean use_verbose = false;
-    public boolean use_swerve = true;   // use four motors and four servos for chassis
+    public boolean use_swerve = false;   // use four motors and four servos for chassis
     public boolean use_newbot = false;   // use four motors and four servos for new chassis
-    public boolean use_newbot_v2 = false;
+    public boolean use_newbot_v2 = true;
     public boolean use_front_drive_only = false;
     public boolean use_imu = true;
     public boolean use_imu2 = false;
     public boolean use_encoder = true;
     boolean stop_on_bump = false; // [autonomous variable]
     boolean bump_detected = false; // [autonomous variable]
-
 
     public boolean fast_mode = true; //Controls how "rushed" autonomous actions are [autonomous variable]
     public boolean straight_mode = false; // [cart variable]
@@ -179,6 +178,31 @@ public class SwerveSystem {
     boolean opModeIsActive() { // worksround for now until find a way to get real opModeIsActive
         return (gTime.seconds()<30.0);
     }
+    public void enable(boolean isAuto) {
+        use_swerve = false;   // use four motors and four servos for chassis
+        use_newbot = false;   // use four motors and four servos for new chassis
+        use_newbot_v2 = true;
+        use_front_drive_only = false;
+        use_encoder = true;
+        if (isAuto) {
+            use_imu = true;
+            use_imu2 = false;
+        } else {
+            use_imu = false;
+            use_imu2 = false;
+        }
+    }
+
+    void disable () {
+        use_swerve = false;   // use four motors and four servos for chassis
+        use_newbot = false;   // use four motors and four servos for new chassis
+        use_newbot_v2 = false;
+        use_front_drive_only = false;
+        use_encoder = false;
+        use_imu = false;
+        use_imu2 = false;
+    }
+
     void init(HardwareMap hwMap, Telemetry tel, ElapsedTime period) {
         ltel = tel;
         gTime = period;
@@ -1150,7 +1174,8 @@ public class SwerveSystem {
 //        isTestingBR = false;
     }
 
-    public void set_swerve_power(float right_stick, float left_stick, float left_t, float right_t, boolean isK){
+    public void set_swerve_power(float right_stick /*turning power*/, float left_stick /*drive power*/,
+                                 float left_t, float right_t, boolean isK){
         float x_stick = 0;
         if (left_t > 0.1)
             x_stick = -1 * left_t;

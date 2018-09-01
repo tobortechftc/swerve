@@ -118,13 +118,13 @@ public class VuMarkId extends SwerveUtilLOP {
 //                if (this.time - stepStart > 0) {
 //                    state = 1;
 //                    stepStart = this.time;
-//                    robot.camera.activate();
+//                    robot.icamera.activate();
 //                }
 //            } else if (state == 1) {
-//                bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+//                bitmap = robot.icamera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
 //
 //                if (bitmap == null) {
-//                    telemetry.addData("Couldn't get a bitmap", robot.camera.getLastError());
+//                    telemetry.addData("Couldn't get a bitmap", robot.icamera.getLastError());
 //                    if (this.time - stepStart > 0.5) {
 //                        state = -1;
 //                        continue;
@@ -133,8 +133,8 @@ public class VuMarkId extends SwerveUtilLOP {
 //                if (bitmap != null) {
 //                    //Save
 //
-//                    //int whitestPixel = robot.camera.getWhitestPixel(bitmap);
-//                    //robot.camera.applyWhiteBalance(bitmap, whitestPixel);
+//                    //int whitestPixel = robot.icamera.getWhitestPixel(bitmap);
+//                    //robot.icamera.applyWhiteBalance(bitmap, whitestPixel);
 //                    //Save again
 //
 //

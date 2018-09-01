@@ -17,16 +17,23 @@ public class SystemControl {
 
     public RelicReachSystem relicReachSystem;
     public SwerveSystem swerve;
+    public GlyphIntakeSystem intake;
+    public GlyphDumperSystem dumper;
+    public JewelSystem jewel;
+    public CameraSystem camera;
+
 
     /**
      * Create a SystemControl object.
      */
     public SystemControl() {
         this.coreSystem = new CoreSystem();
-
         this.relicReachSystem = new RelicReachSystem(this.coreSystem);
         this.swerve = new SwerveSystem(this.coreSystem);
-
+        this.intake = new GlyphIntakeSystem(this.coreSystem);
+        this.dumper = new GlyphDumperSystem(this.coreSystem);
+        this.jewel = new JewelSystem(this.coreSystem);
+        this.camera = new CameraSystem(this.coreSystem);
     }
 
     /**
@@ -47,9 +54,11 @@ public class SystemControl {
         }
         this.coreSystem.supplierForCanContinue = supplierForCanContinue;
         this.relicReachSystem.init(map,tel,period);
-
         this.swerve.init(map,tel,period);
-
+        this.intake.init(map,tel,period);
+        this.dumper.init(map, this.swerve,tel,period);
+        this.jewel.init(map,this.swerve,tel,period);
+        this.camera.init(map,tel,period);
     }
 
     //

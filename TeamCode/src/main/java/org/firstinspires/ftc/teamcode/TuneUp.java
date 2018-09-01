@@ -17,25 +17,12 @@ public class TuneUp extends SwerveUtilLOP {
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
+        enable_hardware_for_teleop();
         robot.servo_tune_up = true; // enable servo tune up
-        robot.swerve.use_swerve = false;
-        robot.swerve.use_newbot = true;
-        robot.swerve.use_newbot_v2= true;
-        robot.use_dumper = true;
-        robot.use_dumper_gate = true;
-        robot.use_intake = true;
         robot.swerve.use_imu = true;
-        robot.use_Vuforia = false;
-        robot.use_camera = false;
-        // robot.use_color_sensor = true;
-        robot.use_arm = true;
-        robot.use_glyph_grabber = false;
-        robot.relicReachSystem.use_relic_grabber = true;
-        robot.relicReachSystem.use_relic_elbow = false;
-        robot.relicReachSystem.use_relic_slider = true;
         robot.use_range_sensor = true;
         robot.use_proximity_sensor = true;
-        // robot.use_verbose = true;
+        // set_verbose();  // uncomment this line to debug
 
         init_and_test();
 
@@ -51,17 +38,17 @@ public class TuneUp extends SwerveUtilLOP {
                 robot.swerve.servoFrontRight,
                 robot.swerve.servoBackLeft,
                 robot.swerve.servoBackRight,
-                robot.sv_shoulder,
-                robot.sv_elbow,
-                robot.sv_left_arm,
-                robot.sv_right_arm,
+                robot.jewel.sv_shoulder,
+                robot.jewel.sv_elbow,
+                robot.jewel.sv_left_arm,
+                robot.jewel.sv_right_arm,
                 robot.relicReachSystem.sv_relic_grabber,
                 robot.relicReachSystem.sv_relic_wrist,
                 robot.relicReachSystem.sv_relic_elbow,
-                robot.sv_dumper,
-                robot.sv_intake_gate,
-                robot.sv_dumper_gate,
-                robot.sv_jkicker
+                robot.dumper.sv_dumper,
+                robot.intake.sv_intake_gate,
+                robot.dumper.sv_dumper_gate,
+                robot.jewel.sv_jkicker
         };
         String [] sv_names = {
                 "FrontLeft",
@@ -107,54 +94,13 @@ public class TuneUp extends SwerveUtilLOP {
                 if (INCREMENT<0.001) INCREMENT = 0.001;
             }
 
-            if (robot.use_arm && !robot.swerve.use_newbot) {
-                if (gamepad2.dpad_down) {
-                    double pos = robot.sv_shoulder.getPosition();
-                    if (pos >= INCREMENT) {
-                        robot.sv_shoulder.setPosition(pos - INCREMENT);
-                    }
-                }
-                if (gamepad2.dpad_up) {
-                    double pos = robot.sv_shoulder.getPosition();
-                    if (pos <= (1 - INCREMENT)) {
-                        robot.sv_shoulder.setPosition(pos + INCREMENT);
-                    }
-                }
-                if (gamepad2.dpad_right) {
-                    double pos = robot.sv_elbow.getPosition();
-                    if (pos <= (1 - INCREMENT)) {
-                        robot.sv_elbow.setPosition(pos + INCREMENT);
-                    }
-                }
-                if (gamepad2.dpad_left) {
-                    double pos = robot.sv_elbow.getPosition();
-                    if (pos >= INCREMENT) {
-                        robot.sv_elbow.setPosition(pos - INCREMENT);
-                    }
-                }
-                if (gamepad2.a) {
-                    robot.sv_elbow.setPosition(robot.SV_ELBOW_DOWN);
-                }
-                if (gamepad2.y) {
-                    robot.sv_elbow.setPosition(robot.SV_ELBOW_UP);
-                }
-                if (gamepad2.x) {
-                    robot.sv_shoulder.setPosition(robot.SV_SHOULDER_LEFT_3);
-                }
-                if (gamepad2.b) {
-                    robot.sv_shoulder.setPosition(robot.SV_SHOULDER_RIGHT_3);
-                }
-                if (gamepad2.left_bumper) {
-                    robot.sv_shoulder.setPosition(robot.SV_SHOULDER_DOWN);
-                }
-            }
             if (robot.swerve.use_newbot_v2) {
                 if (gamepad2.dpad_left && gamepad2.y) {
-                    intakeBarWheelOut();
+                    robot.intake.intakeBarWheelOut();
                 } else if (gamepad2.dpad_left && gamepad2.a) {
-                    intakeBarWheelIn();
+                    robot.intake.intakeBarWheelIn();
                 } else {
-                    intakeBarWheelStop();
+                    robot.intake.intakeBarWheelStop();
                 }
             }
 
@@ -286,7 +232,7 @@ public class TuneUp extends SwerveUtilLOP {
                     }
                 } // end isTesting
             } // end use_swerve
-            if (robot.sv_bar_wheel!=null) {
+            if (robot.intake.sv_bar_wheel!=null) {
                 if (gamepad2.y) {
                     cs_val += 0.1;
                     if (cs_val>1) cs_val=1;
@@ -294,7 +240,7 @@ public class TuneUp extends SwerveUtilLOP {
                     cs_val -= 0.1;
                     if (cs_val<-1) cs_val=-1;
                 }
-                robot.sv_bar_wheel.setPower(cs_val);
+                robot.intake.sv_bar_wheel.setPower(cs_val);
             }
 
             if (robot.servo_tune_up && !robot.isTesting) {
@@ -354,9 +300,9 @@ public class TuneUp extends SwerveUtilLOP {
             } else {
                 telemetry.addLine("7. No active servo to tune-up.");
             }
-            if (robot.use_color_sensor) {
-                double l_d = (robot.swerve.use_newbot_v2?0:calcDelta(true));
-                double r_d = calcDelta(false);
+            if (robot.jewel.use_color_sensor) {
+                double l_d = (robot.swerve.use_newbot_v2?0:robot.jewel.calcDelta(true));
+                double r_d = robot.jewel.calcDelta(false);
                 telemetry.addData("5.1 Color delta", "l_d=%1.0f, r_d=%1.0f", l_d,r_d);
             }
             show_telemetry();

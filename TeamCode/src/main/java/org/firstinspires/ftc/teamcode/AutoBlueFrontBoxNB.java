@@ -16,17 +16,16 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
     public void runOpMode() throws InterruptedException {
 
         robot.swerve.use_swerve = false;
-        robot.use_arm = true;
+        robot.jewel.use_arm = true;
+        robot.jewel.use_color_sensor = true;
         robot.swerve.use_imu = true;
         robot.swerve.use_encoder = true;
         robot.swerve.use_newbot = true;
         robot.use_range_sensor = true;
-        robot.use_color_sensor = true;
-        robot.use_Vuforia = true;
-        robot.use_camera = true;
-        robot.use_glyph_grabber = false;
+        robot.camera.use_Vuforia = true;
+        robot.camera.use_camera = true;
         robot.use_proximity_sensor = true;
-        robot.use_dumper = true;
+        robot.dumper.use_dumper = true;
         robot.relicReachSystem.use_relic_grabber = false;
         robot.relicReachSystem.use_relic_slider = false;
         robot.relicReachSystem.use_relic_grabber = false;

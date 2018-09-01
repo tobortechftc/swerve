@@ -122,13 +122,13 @@ public class PositionDiagnostics extends SwerveUtilLOP {
 ////
 ////                        ElapsedTime period = new ElapsedTime();
 ////
-////                        Bitmap bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+////                        Bitmap bitmap = robot.icamera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
 ////                        TeamColor jewel = determineJewelColor(bitmap);
 ////
-////                        //Current mounting solution only allows camera to check the left jewel color
+////                        //Current mounting solution only allows icamera to check the left jewel color
 ////                        if (jewel == TeamColor.UNKNOWN) {
 ////                            telemetry.addData("Camera can't see the Jewels!", jewel);
-////                            bitmap = robot.camera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
+////                            bitmap = robot.icamera.captureBitmap(IMAGE_OFFSET_X, IMAGE_OFFSET_Y, IMAGE_WIDTH_CROP, IMAGE_HEIGHT_CROP);
 ////                            jewel = determineJewelColor(bitmap);
 ////                        } else {
 ////                            telemetry.addData("Camera can see the Jewels!", null);

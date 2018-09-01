@@ -35,18 +35,16 @@ public class RelicReachSystem {
     final static double SV_RELIC_ELBOW_UP = 0.5689;
     final static double SV_RELIC_ELBOW_FLAT = 0.5117;
     final static double SV_RELIC_ELBOW_DOWN = 0.5;
+    final static int RELIC_SLIDE_MAX = -8800;
 
     public boolean use_verbose = false;
     public boolean use_relic_elbow = false;
     public boolean use_relic_grabber = true;
     public boolean use_relic_slider = true;
-    final boolean use_newbot = true; // TODO: Clean up this assumption
-    final boolean use_newbot_v2 = true; // TODO: Clean up this assumption
 
     public Servo sv_relic_grabber = null;
     public Servo sv_relic_wrist = null;
     public Servo sv_relic_elbow = null;
-
     public DcMotor mt_relic_slider = null;
 
     enum RelicArmPos{
@@ -67,47 +65,37 @@ public class RelicReachSystem {
         this.core = core;
     }
 
-
-    // Initialize hardware devices and other settings
-    void init(HardwareMap hwMap) {
-        // TODO: initialize each hardware device
-        // this.xyzMotor = map.get("xyz_motor");
-        // this.xyzMotor.setDirection(Direction.FORWARD);
-        // etc.
-
+    public void enable(boolean isAuto) {
+        if (isAuto) {
+            use_relic_elbow = false;
+            use_relic_grabber = false;
+            use_relic_slider = false;
+        } else {
+            use_relic_elbow = false;
+            use_relic_grabber = true;
+            use_relic_slider = true;
+        }
     }
 
-    // put class methods here...
-
+    void disable () {
+        use_relic_elbow = false;
+        use_relic_grabber = false;
+        use_relic_slider = false;
+    }
     void init(HardwareMap hwMap, Telemetry tel, ElapsedTime period) {
         if (use_relic_grabber) {
-            if (use_newbot) {
-                if (use_newbot_v2) {
                     if (use_relic_elbow) {
                         sv_relic_elbow = hwMap.servo.get("sv_relic_arm");
                         sv_relic_elbow.setPosition(SV_RELIC_ELBOW_INIT);
                     }
                     sv_relic_wrist = hwMap.servo.get("sv_relic_wrist");
                     sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
-                } else {
-                    sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
-                    sv_relic_wrist.setPosition(SV_RELIC_WRIST_INIT);
-                }
-            } else {
-                sv_relic_wrist = hwMap.servo.get("sv_relic_arm");
-                sv_relic_wrist.setPosition(SV_RELIC_ARM_INIT);
-            }
             sv_relic_grabber = hwMap.servo.get("sv_relic_grabber");
-            sv_relic_grabber.setPosition((use_newbot ? SV_RELIC_GRABBER_INIT_NB : SV_RELIC_GRABBER_INIT));
+            sv_relic_grabber.setPosition(SV_RELIC_GRABBER_INIT_NB);
         }
         if (use_relic_slider) {
             mt_relic_slider = hwMap.dcMotor.get("mt_relic_slider");
-            if (use_newbot) {
-                if (!use_newbot_v2)
-                    mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
-            } else {
-                // rrxx__mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
-            }
+            // mt_relic_slider.setDirection(DcMotor.Direction.REVERSE);
             mt_relic_slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -129,29 +117,21 @@ public class RelicReachSystem {
     }
 
     public void relic_grabber_close() {
-        if (use_newbot) {
-            sv_relic_grabber.setPosition(SV_RELIC_GRABBER_CLOSE_NB);
-        } else {
-            sv_relic_grabber.setPosition(SV_RELIC_GRABBER_CLOSE);
-        }
+        sv_relic_grabber.setPosition(SV_RELIC_GRABBER_CLOSE_NB);
     }
 
     public void relic_grabber_open(boolean wide) {
-        if (use_newbot) {
             if (wide) {
                 sv_relic_grabber.setPosition(SV_RELIC_GRABBER_OPEN_W_NB);
             } else {
                 sv_relic_grabber.setPosition(SV_RELIC_GRABBER_OPEN_NB);
             }
-        } else {
-            sv_relic_grabber.setPosition(SV_RELIC_GRABBER_OPEN);
-        }
     }
 
     public void relic_grabber_release() {
         // sv_relic_wrist.setPosition(SV_RELIC_ARM_DOWN_R);
         double pos = sv_relic_grabber.getPosition();
-        double tar = (use_newbot?SV_RELIC_GRABBER_OPEN_NB:SV_RELIC_GRABBER_OPEN);
+        double tar = SV_RELIC_GRABBER_OPEN_NB;
         if (pos < tar) {
             sv_relic_grabber.setPosition(pos+0.1);
             core.sleep(.250);
@@ -290,7 +270,7 @@ public class RelicReachSystem {
         //taintedAccess.stop_chassis();
         taintedAccess.intakeGateInit();
         double pos = sv_relic_wrist.getPosition();
-        if (use_newbot) {
+        {
             if (Math.abs(pos - SV_RELIC_WRIST_DOWN_R) > 0.2) {
                 while (Math.abs(pos - SV_RELIC_WRIST_DOWN_R) > 0.1) {
                     if (pos < SV_RELIC_WRIST_DOWN_R) {
@@ -306,28 +286,13 @@ public class RelicReachSystem {
             } else {
                 sv_relic_wrist.setPosition(SV_RELIC_WRIST_DOWN);
             }
-        } else {
-            if (Math.abs(pos - SV_RELIC_ARM_DOWN_R) > 0.2) {
-                while (Math.abs(pos - SV_RELIC_ARM_DOWN_R) > 0.1) {
-                    if (pos < SV_RELIC_ARM_DOWN_R) {
-                        pos = SV_RELIC_ARM_DOWN_R - 0.1;
-                    } else {
-                        pos = SV_RELIC_ARM_DOWN_R + 0.1;
-                    }
-                    sv_relic_wrist.setPosition(pos);
-                    core.sleep(.050);
-                }
-                sv_relic_wrist.setPosition(SV_RELIC_ARM_DOWN_R);
-            } else {
-                sv_relic_wrist.setPosition(SV_RELIC_ARM_DOWN);
-            }
         }
     }
 
     public void relic_arm_up() {
         taintedAccess.stop_chassis();
         double pos = sv_relic_wrist.getPosition();
-        if (use_newbot) {
+        {
             if (Math.abs(pos - SV_RELIC_WRIST_UP) > 0.15) {
                 if (pos < SV_RELIC_WRIST_UP) {
                     pos = SV_RELIC_WRIST_UP - 0.2;
@@ -340,29 +305,12 @@ public class RelicReachSystem {
             } else {
                 sv_relic_wrist.setPosition(SV_RELIC_WRIST_UP);
             }
-        } else {
-            if (Math.abs(pos - SV_RELIC_ARM_UP) > 0.15) {
-                if (pos < SV_RELIC_ARM_UP) {
-                    pos = SV_RELIC_ARM_UP - 0.2;
-                } else {
-                    pos = SV_RELIC_ARM_UP + 0.2;
-                }
-                sv_relic_wrist.setPosition(pos);
-                core.sleep(.300);
-                sv_relic_wrist.setPosition(SV_RELIC_ARM_UP);
-            } else {
-                sv_relic_wrist.setPosition(SV_RELIC_ARM_UP + 0.12);
-            }
         }
     }
 
     public void relic_arm_middle() {
         taintedAccess.stop_chassis();
-        if (use_newbot) {
-            sv_relic_wrist.setPosition(SV_RELIC_WRIST_MIDDLE);
-        } else {
-            sv_relic_wrist.setPosition(SV_RELIC_ARM_MIDDLE);
-        }
+        sv_relic_wrist.setPosition(SV_RELIC_WRIST_MIDDLE);
     }
 
 }
