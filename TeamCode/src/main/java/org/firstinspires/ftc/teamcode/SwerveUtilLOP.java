@@ -30,6 +30,9 @@ public class SwerveUtilLOP extends LinearOpMode {
 
     /* Declare OpMode members. */
       SwerveDriveHardware robot           = new SwerveDriveHardware();
+    public boolean calledFromOne = false;
+    public boolean calledFromTwo = false;
+    int adj_count = 0;
 
     /**
      * Is used for checking or determining a color based on an alliance
@@ -406,11 +409,11 @@ public class SwerveUtilLOP extends LinearOpMode {
         driveTT(0,0);
     }
 
-    public void glyph_grabber_auto_init() {
+    public void glyph_grabber_auto_init()throws InterruptedException {
         glyph_slider_back_init();
     }
 
-    public void glyph_grabber_auto_rotate(double power) {
+    public void glyph_grabber_auto_rotate(double power) throws InterruptedException {
         stop_chassis();
         // if grabber is close and at ladder 0, need to slide up a little bit before rotation
         boolean need_slide_up = false;
@@ -775,12 +778,12 @@ public class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
-    public void relic_slider_out_max() {
+    public void relic_slider_out_max() throws InterruptedException {
         robot.target_relic_slider_pos = robot.RELIC_SLIDE_MAX;
         relic_slide_to_target(1.0);
     }
 
-    public void relic_slider_back_auto() {
+    public void relic_slider_back_auto() throws InterruptedException {
         robot.target_relic_slider_pos = robot.RELIC_SLIDE_MAX/2;
         relic_slide_to_target(1.0);
         relic_arm_up();
@@ -860,50 +863,50 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_glyph_rotator.setPower(0);
     }
 
-    void glyph_slider_init() {
+    void glyph_slider_init() throws InterruptedException{
         robot.target_gg_slider_pos = (int)(robot.GG_SLIDE_INIT);
         slide_to_target(.8);
         robot.gg_layer = 0;
     }
 
-    void glyph_slider_position(int pos) {
+    void glyph_slider_position(int pos) throws InterruptedException {
         robot.target_gg_slider_pos = pos;
         slide_to_target(.5);
     }
 
-    void glyph_slider_up_inches(double power, double in) {
+    void glyph_slider_up_inches(double power, double in) throws InterruptedException {
         int count = (int)(in / robot.GG_SLIDE_INCHES_PER_ROTATION * robot.ONE_ROTATION_60);
         robot.target_gg_slider_pos = robot.init_gg_slider_pos + count;
         slide_to_target(power);
     }
 
-    void glyph_slider_up_auto() {
+    void glyph_slider_up_auto() throws InterruptedException{
         if (robot.gg_layer<robot.max_gg_layer)
             robot.gg_layer ++;
         robot.target_gg_slider_pos = robot.layer_positions[robot.gg_layer];
         slide_to_target(robot.GG_SLIDE_UP_POWER);
     }
 
-    void glyph_slider_down_auto() {
+    void glyph_slider_down_auto() throws InterruptedException {
         if (robot.gg_layer>0)
             robot.gg_layer --;
         robot.target_gg_slider_pos = robot.layer_positions[robot.gg_layer];
         slide_to_target(robot.GG_SLIDE_DOWN_POWER);
     }
 
-    void glyph_slider_back_init() { // back to initial position
+    void glyph_slider_back_init() throws InterruptedException { // back to initial position
         robot.target_gg_slider_pos = robot.init_gg_slider_pos;
         slide_to_target(robot.GG_SLIDE_DOWN_POWER);
         robot.gg_layer = 0;
     }
 
-    void lift_back_init() { // back to initial position
+    void lift_back_init() throws InterruptedException{ // back to initial position
         robot.target_gg_slider_pos = robot.init_gg_slider_pos;
         slide_to_target(robot.GG_SLIDE_DOWN_POWER);
         dumper_down(true);
     }
 
-    void lift_up_level_half() {
+    void lift_up_level_half() throws InterruptedException{
         robot.target_gg_slider_pos = robot.layer_positions[1] / 2;
         lift_up(false);
         slide_to_target(robot.GG_SLIDE_UP_POWER);
@@ -1027,7 +1030,7 @@ public class SwerveUtilLOP extends LinearOpMode {
             robot.gg_slider_encoder_ok = false;
     }
 
-    public void relic_slide_to_target(double power) {
+    public void relic_slide_to_target(double power) throws InterruptedException{
         if (!robot.gg_slider_encoder_ok)
             return;
 
@@ -1042,24 +1045,25 @@ public class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("9.2 relic pwr/cur/tar = ","%3.2f/%d/%d",
                     robot.mt_relic_slider.getPower(),robot.mt_relic_slider.getCurrentPosition(),robot.target_relic_slider_pos);
             telemetry.update();
+            checkInputsDuringAuto();
         }
 
         robot.mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.mt_relic_slider.setPower(0);
     }
 
-    public void lift_to_target(int pos) {
+    public void lift_to_target(int pos) throws InterruptedException{
         if (!robot.gg_slider_encoder_ok)
             return;
         robot.target_gg_slider_pos = pos;
         slide_to_target(0.5);
     }
 
-    public void slide_to_target(double power) {
+    public void slide_to_target(double power) throws InterruptedException{
         if (!robot.gg_slider_encoder_ok)
             return;
 
-        stop_chassis(); // ensure chassis stops
+        //stop_chassis(); // ensure chassis stops
 
         if (power<0) power=-1.0*power;
         DcMotor mt = (robot.use_newbot? robot.mt_lift:robot.mt_glyph_slider);
@@ -1072,12 +1076,14 @@ public class SwerveUtilLOP extends LinearOpMode {
             telemetry.addData("8. gg-rot pwr/cur/tar = ", "%3.2f/%d/%d",
                     mt.getPower(), mt.getCurrentPosition(), robot.target_gg_slider_pos);
             telemetry.update();
+            checkInputsDuringAuto();
         }
         mt.setPower(Math.abs(power / 2.0));
         while (mt.isBusy() && (robot.runtime.seconds() < 1) && opModeIsActive()) {
             telemetry.addData("8. gg-rot pwr/cur/tar = ", "%3.2f/%d/%d",
                     mt.getPower(), mt.getCurrentPosition(), robot.target_gg_slider_pos);
             telemetry.update();
+            checkInputsDuringAuto();
         }
         mt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         mt.setPower(0);
@@ -3855,6 +3861,335 @@ public class SwerveUtilLOP extends LinearOpMode {
         robot.mt_intake_left.setPower(0);
         robot.mt_intake_right.setPower(0);
         intakeBarWheelStop();
+    }
+
+    public void checkGamepadOneInputs(boolean calledFromAuto) throws InterruptedException{
+        if(gamepad1.back && gamepad1.start){ // swap test/normalglyph_grabber_auto_open mode
+            robot.isTesting = !robot.isTesting;
+            sleep(100);
+        }
+        if (robot.use_intake && !robot.isTesting) {
+            if (gamepad1.x && gamepad1.dpad_right) {
+                intakeTurn(true);
+            } else if (gamepad1.x && gamepad1.dpad_left) {
+                intakeTurn(false);
+            } else if (gamepad1.x && gamepad1.a) {
+                correctGlyph(false);
+            } else if (gamepad1.x) { // intake IN
+                intakeIn();
+            } else if (gamepad1.b) { // intake OUT
+                intakeOut();
+            } else {
+                intakeStop();
+            }
+            if (gamepad1.dpad_up && gamepad1.x) {
+                robot.intakeRatio += 0.01;
+                sleep(50);
+            } else if (gamepad1.dpad_down && gamepad1.x) {
+                robot.intakeRatio -= 0.01;
+                sleep(50);
+            }
+        }
+        if(robot.use_dumper && !robot.isTesting && !calledFromAuto) {
+            if (gamepad1.dpad_down && gamepad1.start) {
+                dumper_shake();
+            } else if (gamepad1.dpad_up && !gamepad1.x) {
+                calledFromOne = true;
+                dumper_up();
+                boolean auto_up_down = false;
+                if (gamepad1.a) {
+                    auto_up_down = true;
+                }
+                double pos = robot.sv_dumper.getPosition();
+                sleep(200);
+                if (auto_up_down && (Math.abs(pos - robot.SV_DUMPER_UP) < 0.05)) {
+                    calledFromOne = true;
+                    lift_up_and_down(true);
+                }
+            } else if (gamepad1.dpad_down && !gamepad1.x) {
+                calledFromOne = true;
+                dumper_down(true);
+            }
+        }
+        if(robot.use_newbot){
+            if (Math.abs(gamepad1.right_stick_x) > 0.1) {
+                //if (Math.abs(gamepad1.right_stick_y) > 0.2 &&
+                //        Math.abs(gamepad1.right_stick_y) > 0.2 &&
+                //        Math.abs(gamepad1.left_stick_y - gamepad1.right_stick_y) > 0.4 ) {
+                // Swerve Turn
+                if (robot.cur_mode != SwerveDriveHardware.CarMode.TURN) {
+                    change_swerve_pos(SwerveDriveHardware.CarMode.TURN);
+                    // sleep(200);
+                }
+                // double pw_dir = (gamepad1.right_stick_y>0.1?-1.0:1.0);
+                double pw_dir = (gamepad1.right_stick_x > 0.1 ? -1.0 : 1.0);
+                // while (Math.abs(gamepad1.left_stick_y -gamepad1.right_stick_y) > 0.4) {
+                while (Math.abs(gamepad1.right_stick_x) > 0.1) {
+                    robot.motorFrontLeft.setPower(robot.drivePowerRatio * pw_dir);
+                    robot.motorFrontRight.setPower(-1 * robot.drivePowerRatio * pw_dir);
+                    robot.motorBackLeft.setPower(robot.drivePowerRatio * pw_dir);
+                    robot.motorBackRight.setPower(-1 * robot.drivePowerRatio * pw_dir);
+                    if(!calledFromAuto) checkGamepadTwoInputs(true);
+                }
+                robot.motorFrontLeft.setPower(0);
+                robot.motorFrontRight.setPower(0);
+                robot.motorBackLeft.setPower(0);
+                robot.motorBackRight.setPower(0);
+            } else if (gamepad1.left_bumper || gamepad1.right_bumper) {
+                //} else if (Math.abs(gamepad1.left_stick_x)>0.2 &&
+                //        Math.abs(gamepad1.right_stick_x)>0.2 &&
+                //        Math.abs(gamepad1.left_stick_x+gamepad1.right_stick_x)>0.2) {
+                // crab move left / right
+                if (robot.cur_mode != SwerveDriveHardware.CarMode.CRAB) {
+                    change_swerve_pos(SwerveDriveHardware.CarMode.CRAB);
+                    sleep(100);
+                }
+                //double pw_dir = (gamepad1.left_stick_x>0.1?-1.0:1.0);
+                //while (Math.abs(gamepad1.left_stick_x+gamepad1.right_stick_x)>0.2) {
+                while (gamepad1.left_bumper || gamepad1.right_bumper) {
+                    double pw_dir = (gamepad1.left_bumper ? 1.0:-1.0);
+                    robot.motorFrontLeft.setPower(-robot.drivePowerRatio*pw_dir);
+                    robot.motorFrontRight.setPower(robot.drivePowerRatio*pw_dir);
+                    robot.motorBackLeft.setPower(-robot.drivePowerRatio*pw_dir);
+                    robot.motorBackRight.setPower(robot.drivePowerRatio*pw_dir);
+                    if(!calledFromAuto) checkGamepadTwoInputs(true);
+                }
+                robot.motorFrontLeft.setPower(0);
+                robot.motorFrontRight.setPower(0);
+                robot.motorBackLeft.setPower(0);
+                robot.motorBackRight.setPower(0);
+            } else if (Math.abs(gamepad1.left_stick_y)>0.1) {
+                if (robot.cur_mode != SwerveDriveHardware.CarMode.CAR) {
+                    change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
+                    sleep(200);
+                }
+            }
+            else if (gamepad1.dpad_left && !gamepad1.x){ // orbit left
+                if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
+                    change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
+                    sleep(200);
+                }
+                while (gamepad1.dpad_left && !gamepad1.x) {
+                    robot.motorFrontLeft.setPower(-robot.drivePowerRatio);
+                    robot.motorFrontRight.setPower(robot.drivePowerRatio);
+                    robot.motorBackLeft.setPower(-robot.drivePowerRatio);
+                    robot.motorBackRight.setPower(robot.drivePowerRatio);
+                    if(!calledFromAuto) checkGamepadTwoInputs(true);
+                }
+                // change_swerve_pos(robot.old_mode);
+                robot.motorFrontLeft.setPower(0);
+                robot.motorFrontRight.setPower(0);
+                robot.motorBackLeft.setPower(0);
+                robot.motorBackRight.setPower(0);
+            } else if (gamepad1.dpad_right && !gamepad1.x){ // orbit right
+                if (robot.cur_mode != SwerveDriveHardware.CarMode.ORBIT) {
+                    change_swerve_pos(SwerveDriveHardware.CarMode.ORBIT);
+                    sleep(200);
+                }
+                while (gamepad1.dpad_right && !gamepad1.x) {
+                    robot.motorFrontLeft.setPower(robot.drivePowerRatio);
+                    robot.motorFrontRight.setPower(-robot.drivePowerRatio);
+                    robot.motorBackLeft.setPower(robot.drivePowerRatio);
+                    robot.motorBackRight.setPower(-robot.drivePowerRatio);
+                    if(!calledFromAuto) checkGamepadTwoInputs(true);
+                }
+                // change_swerve_pos(robot.old_mode);
+                robot.motorFrontLeft.setPower(0);
+                robot.motorFrontRight.setPower(0);
+                robot.motorBackLeft.setPower(0);
+                robot.motorBackRight.setPower(0);
+            }
+
+            if (gamepad1.a && gamepad1.y) {
+                robot.drivePowerRatio = 0.9;
+                sleep(20);
+
+            } else if (gamepad1.a && gamepad1.back){
+                robot.drivePowerRatio -=0.01;
+                if(robot.drivePowerRatio < 0.1){
+                    robot.drivePowerRatio = 0.1;
+                }
+            }
+            else if (gamepad1.y && gamepad1.back){
+                robot.drivePowerRatio += 0.01;
+                if(robot.drivePowerRatio > 1.0){
+                    robot.drivePowerRatio = 1.0;
+                }
+            } else if (gamepad1.y) { // slow mode
+                robot.drivePowerRatio = 0.7;
+            } else if (gamepad1.a && !gamepad1.x && !gamepad1.dpad_up) { // slow mode
+                robot.drivePowerRatio = 0.2;
+            }
+
+            if (robot.cur_mode == SwerveDriveHardware.CarMode.CAR) {
+                if (gamepad1.left_trigger > 0.1 || gamepad1.right_trigger > 0.1) {
+                    calc_snake(gamepad1.left_trigger, gamepad1.right_trigger);
+                } else {
+                    float left_x = 0, right_x = 0;
+                    calc_snake(left_x, right_x);
+                }
+                snake_servo_adj();
+            }
+
+            correct_swerve_servos();
+
+            //set_swerve_power(gamepad1.right_stick_y, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            set_swerve_power(gamepad1.left_stick_y, gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
+
+            if (robot.cur_mode==SwerveDriveHardware.CarMode.CAR ||
+                    robot.cur_mode==SwerveDriveHardware.CarMode.STRAIGHT) {
+                // use gamepad1.joy_stick_x to turn like Car
+                if ((adj_count++)%20==0)
+                    car_servo_adj(gamepad1.left_stick_x);
+            }
+        } // end use_newbot
+        if(!calledFromAuto) calledFromOne = false;
+    }
+
+    public void checkGamepadTwoInputs(boolean calledFromAuto) throws InterruptedException{
+        if (robot.use_front_arm) {
+            if (gamepad2.back && gamepad2.dpad_down) {
+                front_arm_sweep();
+            }
+        }
+        if(robot.use_intake && !robot.isTesting){
+            if ((gamepad2.left_bumper&&!gamepad2.right_bumper)) { // intake IN
+                intakeIn();
+            } else if ((gamepad2.left_trigger > 0.1)) { // intake OUT
+                intakeOut();
+            } else {
+                intakeStop();
+            }
+        }
+        if (robot.use_dumper && !robot.isTesting) {
+            if (gamepad2.back && gamepad2.y) {
+                intakeBarWheelOut();
+            } else if (gamepad2.back && gamepad2.a) {
+                intakeBarWheelIn();
+            } else {
+                intakeBarWheelStop();
+            }
+            if (gamepad2.right_bumper && gamepad2.left_bumper && !calledFromAuto) {
+                calledFromTwo = true;
+                lift_back_init(); // back to initial position for collecting glyph
+            } else if (gamepad2.dpad_left && !gamepad2.y) {
+                // dumper_higher();
+                calledFromTwo = true;
+                intakeGateUp();
+                sleep(50);
+            } else if (gamepad2.dpad_right) {
+                // dumper_lower();
+                calledFromTwo = true;
+                intakeGateDown();
+                sleep(50);
+            } else if (gamepad2.dpad_down&&gamepad2.start) {
+                dumper_shake();
+            }
+            else if (gamepad2.dpad_up && !calledFromAuto) {
+                calledFromTwo = true;
+                dumper_up();
+                boolean auto_up_down = false;
+                if (gamepad1.a) {
+                    auto_up_down = true;
+                }
+                double pos = robot.sv_dumper.getPosition();
+                sleep(200);
+                if (auto_up_down && (Math.abs(pos-robot.SV_DUMPER_UP)<0.05)) {
+                    calledFromTwo = true;
+                    lift_up_and_down(true);
+                }
+            } else if (gamepad2.dpad_down && !calledFromAuto) {
+                calledFromTwo = true;
+                dumper_down(true);
+            }
+
+            if ((gamepad2.right_bumper) && gamepad2.back) { // manual lift up
+                lift_up(true);
+            } else if ((gamepad2.right_trigger>0.1) && gamepad2.back) { // force down
+                lift_down(true);
+            } else if (gamepad2.right_bumper && !gamepad2.back) { // manual lift up
+                lift_up(false);
+            } else if ((gamepad2.right_trigger > 0.1) && !gamepad2.back) { // manual down
+                lift_down(false);
+            } else {
+                lift_stop();
+            }
+        }
+        if (robot.use_relic_slider) {
+            // relic slider
+            if (gamepad2.left_stick_y > 0.2) { // slide in
+                double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
+                if (!gamepad2.back)
+                    pw *= 0.9;
+                relic_slider_in(pw, gamepad2.start); // push start to force slide in further
+            } else if (gamepad2.left_stick_y < -0.2) { // slide out
+                double pw = gamepad2.left_stick_y*gamepad2.left_stick_y;
+                if (!gamepad2.back)
+                    pw *= 0.99;
+                relic_slider_out(pw);
+            } else if (gamepad2.left_stick_x < -0.2) { // slide out slowly
+                relic_slider_out(0.3);
+            } else if (gamepad2.left_stick_x > 0.2) { // slide in slowly
+                relic_slider_in(0.2, false);
+            } else {
+                relic_slider_stop();
+            }
+        }
+        if (robot.use_relic_grabber) {
+            // relic arm
+            if (gamepad2.right_stick_y < -0.1) {
+                double cur_pos = robot.sv_relic_wrist.getPosition();
+                if (cur_pos < 0.99) {
+                    robot.sv_relic_wrist.setPosition(cur_pos + 0.005);
+                }
+            } else if (gamepad2.right_stick_y > 0.1) {
+                double cur_pos = robot.sv_relic_wrist.getPosition();
+                if (cur_pos > 0.01) {
+                    robot.sv_relic_wrist.setPosition(cur_pos - 0.005);
+                }
+            } else if (gamepad2.a && gamepad2.y) {
+                relic_arm_middle();
+            } else if (gamepad2.y && !gamepad2.left_bumper && !gamepad2.back) {
+                if (robot.use_relic_elbow) {
+                    relic_elbow_up_auto();
+                } else {
+                    relic_arm_up();
+                }
+            } else if (gamepad2.a && !gamepad2.left_bumper && !gamepad2.back) {
+                if (robot.use_relic_elbow) {
+                    relic_elbow_down_auto();
+                } else {
+                    relic_arm_down();
+                }
+            }
+            // relic grabber open/close
+            if (gamepad2.b && !gamepad2.start) {
+                relic_grabber_close();
+            } else if (gamepad2.x && gamepad2.back && !calledFromAuto) {
+                // relic_grabber_release();
+                calledFromTwo = true;
+                auto_relic_release();
+            } else if (gamepad2.x && !gamepad2.dpad_right) {
+                relic_grabber_release();
+                // auto_relic_release();
+            } else if (gamepad2.back && (gamepad2.right_stick_y < -0.1)) { // higher
+                if (robot.use_relic_elbow)
+                    relic_elbow_higher();
+                else
+                    relic_grabber_higher();
+            } else if (gamepad2.back && (gamepad2.right_stick_y > 0.1)) { // lower
+                if (robot.use_relic_elbow)
+                    relic_elbow_lower();
+                else
+                    relic_grabber_lower();
+            }
+        }
+        if(!calledFromAuto) calledFromTwo = false;
+    }
+
+    void checkInputsDuringAuto() throws InterruptedException{
+        if(calledFromOne) checkGamepadTwoInputs(true);
+        else if(calledFromTwo) checkGamepadOneInputs(true);
     }
 
     void show_telemetry() throws InterruptedException {
