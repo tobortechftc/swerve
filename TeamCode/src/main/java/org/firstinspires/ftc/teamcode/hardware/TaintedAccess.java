@@ -1,35 +1,31 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.teamcode.SwerveDriveHardware;
 import org.firstinspires.ftc.teamcode.SwerveUtilLOP;
-import org.firstinspires.ftc.teamcode.template.hardware.CoreSystem;
 
 /**
  * Holding class for methods that access objects in ways that should be disallowed.
  */
 public class TaintedAccess {
 
-    private SystemControl systemControl;
+    private GreenManba greenManba;
 
-    TaintedAccess(SystemControl systemControl) {
-        this.systemControl = systemControl;
+    TaintedAccess(GreenManba greenManba) {
+        this.greenManba = greenManba;
     }
 
-    SwerveUtilLOP getSwerveUtilLOP() {
-        if (this.systemControl.swerveUtilLOP == null) {
-            throw new IllegalStateException ("Internal TaintedAccess.swerveUtilLOP object must be set. ");
-        }
-        return this.systemControl.swerveUtilLOP;
-    }
+//    SwerveUtilLOP getSwerveUtilLOP() {
+//        if (this.greenManba.swerveUtilLOP == null) {
+//            throw new IllegalStateException ("Internal TaintedAccess.swerveUtilLOP object must be set. ");
+//        }
+//        return this.greenManba.swerveUtilLOP;
+//    }
 
     void stop_chassis() {
-        systemControl.swerve.stop_chassis();
+        greenManba.swerve.stop_chassis();
     }
 
     void intakeGateInit() {
-        systemControl.intake.intakeGateInit();
+        greenManba.intake.intakeGateInit();
     }
 
 }

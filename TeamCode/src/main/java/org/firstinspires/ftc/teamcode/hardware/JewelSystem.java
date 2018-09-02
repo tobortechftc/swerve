@@ -65,8 +65,6 @@ public class JewelSystem {
 
     // Central core of robot
     CoreSystem core;
-    Telemetry ltel;
-    ElapsedTime gTime;
     ElapsedTime runtime;
 
     private TaintedAccess taintedAccess;
@@ -88,47 +86,27 @@ public class JewelSystem {
         }
     }
 
-    void disable () {
+    public void disable() {
         use_color_sensor = false;
         use_arm = false;
     }
 
-    void init(HardwareMap hwMap, SwerveSystem swerve, Telemetry tel, ElapsedTime period) {
-        ltel = tel;
-        gTime = period;
+    void init(HardwareMap hwMap) {
         if (use_color_sensor) {
             r_colorSensor = hwMap.get(ColorSensor.class, "colorRight");
             r_colorSensor.enableLed(true);
 
         }
         if (use_arm) {
-            if (swerve.use_newbot) {
-                if (swerve.use_newbot_v2) {
                     sv_right_arm = hwMap.servo.get("sv_right_arm");
                     sv_right_arm.setPosition(SV_RIGHT_ARM_UP_NB);
                     // sv_jkicker = hwMap.servo.get("sv_jkicker");
                     // sv_jkicker.setPosition(SV_JKICKER_INIT);
-                }
-                else {
-                    sv_left_arm = hwMap.servo.get("sv_left_arm");
-                    sv_right_arm = hwMap.servo.get("sv_right_arm");
-                    sv_left_arm.setPosition(SV_LEFT_ARM_UP_NB);
-                    sv_right_arm.setPosition(SV_RIGHT_ARM_UP_NB);
-                }
-            }
-            else{
-                sv_elbow = hwMap.servo.get("sv_elbow");
-                sv_shoulder = hwMap.servo.get("sv_shoulder");
-                sv_right_arm = hwMap.servo.get("sv_right_arm");
-                sv_elbow.setPosition(SV_ELBOW_UP);
-                sv_shoulder.setPosition(SV_SHOULDER_INIT);
-                sv_right_arm.setPosition(SV_RIGHT_ARM_UP);
-            }
 
         }
         if (use_verbose) {
-            ltel.addData("0: initialize arms CPU time =", "%3.2f sec", period.seconds());
-            ltel.update();
+            core.telemetry.addData("0: initialize arms CPU time =", "%3.2f sec", core.run_seconds());
+            core.telemetry.update();
         }
     }
 

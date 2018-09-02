@@ -17,7 +17,7 @@ public class GlyphIntakeSystem {
 
     final static double SV_INTAKE_GATE_INIT = 0.844;
     final static double SV_INTAKE_GATE_UP = 0.61;
-    final static double SV_INTAKE_GATE_MID = 0.5;
+    public final static double SV_INTAKE_GATE_MID = 0.5;
     final static double SV_INTAKE_GATE_DOWN = 0.217;
     final static double SV_DUMPER_GATE_INIT = 0.25;
     final static double SV_DUMPER_GATE_UP = 0.25;
@@ -32,8 +32,6 @@ public class GlyphIntakeSystem {
 
     // Central core of robot
     CoreSystem core;
-    Telemetry ltel;
-    ElapsedTime gTime;
 
     private TaintedAccess taintedAccess;
     void setTaintedAccess(TaintedAccess taintedAccess) {
@@ -52,13 +50,11 @@ public class GlyphIntakeSystem {
         }
     }
 
-    void disable () {
+    public void disable() {
         use_intake = false;
     }
 
-    void init(HardwareMap hwMap, Telemetry tel, ElapsedTime period) {
-        ltel = tel;
-        gTime = period;
+    void init(HardwareMap hwMap) {
 
         sv_intake_gate = hwMap.servo.get("sv_intake_gate");
         sv_intake_gate.setPosition(SV_INTAKE_GATE_INIT);
@@ -75,8 +71,8 @@ public class GlyphIntakeSystem {
             mt_intake_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         if (use_verbose) {
-            ltel.addData("0: initialize intake CPU time =", "%3.2f sec", period.seconds());
-            ltel.update();
+            core.telemetry.addData("0: initialize intake CPU time =", "%3.2f sec", core.run_seconds());
+            core.telemetry.update();
         }
     }
     public void correctGlyph(boolean leadClockwise) {

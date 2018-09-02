@@ -77,12 +77,12 @@ public class RelicReachSystem {
         }
     }
 
-    void disable () {
+    public void disable() {
         use_relic_elbow = false;
         use_relic_grabber = false;
         use_relic_slider = false;
     }
-    void init(HardwareMap hwMap, Telemetry tel, ElapsedTime period) {
+    void init(HardwareMap hwMap) {
         if (use_relic_grabber) {
                     if (use_relic_elbow) {
                         sv_relic_elbow = hwMap.servo.get("sv_relic_arm");
@@ -100,8 +100,10 @@ public class RelicReachSystem {
             mt_relic_slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             mt_relic_slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        if (use_verbose)
-            tel.addData("0: initialize Relic system CPU time =", "%3.2f sec", period.seconds());
+        if (use_verbose) {
+            core.telemetry.addData("0: initialize Relic system CPU time =", "%3.2f sec", core.run_seconds());
+            core.telemetry.update();
+        }
     }
 
     public void relic_grabber_lower() {
@@ -267,7 +269,7 @@ public class RelicReachSystem {
 
     public void relic_arm_down()
     {
-        //taintedAccess.stop_chassis();
+        taintedAccess.stop_chassis();
         taintedAccess.intakeGateInit();
         double pos = sv_relic_wrist.getPosition();
         {

@@ -20,8 +20,8 @@ public class TuneUp extends SwerveUtilLOP {
         enable_hardware_for_teleop();
         robot.servo_tune_up = true; // enable servo tune up
         robot.swerve.use_imu = true;
-        robot.use_range_sensor = true;
-        robot.use_proximity_sensor = true;
+        robot.swerve.use_range_sensor = true;
+        robot.swerve.use_proximity_sensor = true;
         // set_verbose();  // uncomment this line to debug
 
         init_and_test();
@@ -94,7 +94,7 @@ public class TuneUp extends SwerveUtilLOP {
                 if (INCREMENT<0.001) INCREMENT = 0.001;
             }
 
-            if (robot.swerve.use_newbot_v2) {
+            {
                 if (gamepad2.dpad_left && gamepad2.y) {
                     robot.intake.intakeBarWheelOut();
                 } else if (gamepad2.dpad_left && gamepad2.a) {
@@ -109,7 +109,7 @@ public class TuneUp extends SwerveUtilLOP {
                 sleep(100);
             }
 
-            if (robot.swerve.use_newbot) { // newbot related control
+            if (robot.swerve.use_swerve) { // newbot related control
               /*  if (robot.use_newbot_v2) {
                     if (gamepad2.bumperleft) {
                         robot.sv_intake_gate.setPosition(robot.sv_intake_gate.getPosition() + 0.01);
@@ -223,7 +223,7 @@ public class TuneUp extends SwerveUtilLOP {
                         }
                         sleep(400);
                     }
-                    if (robot.swerve.use_newbot) {
+                    {
                         robot.swerve.initialize_newbot();
                         if(needsUpdate){
                             robot.swerve.change_swerve_pos(robot.swerve.cur_mode);
@@ -301,9 +301,8 @@ public class TuneUp extends SwerveUtilLOP {
                 telemetry.addLine("7. No active servo to tune-up.");
             }
             if (robot.jewel.use_color_sensor) {
-                double l_d = (robot.swerve.use_newbot_v2?0:robot.jewel.calcDelta(true));
                 double r_d = robot.jewel.calcDelta(false);
-                telemetry.addData("5.1 Color delta", "l_d=%1.0f, r_d=%1.0f", l_d,r_d);
+                telemetry.addData("5.1 Color delta", "r_d=%1.0f", r_d);
             }
             show_telemetry();
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.

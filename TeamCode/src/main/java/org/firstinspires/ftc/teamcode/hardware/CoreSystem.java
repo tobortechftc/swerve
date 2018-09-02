@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Supplier;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * Central system for the robot, which all of the other subsystems can access.
@@ -9,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
 public class CoreSystem {
 
     final static long MAX_NAP_LENGTH = 500; // Maximum internal sleep segment (seconds)
+    private ElapsedTime period = new ElapsedTime();
+    public Telemetry telemetry;
 
     Supplier<Boolean> supplierForCanContinue;
 
@@ -20,6 +25,17 @@ public class CoreSystem {
         return true;
         //Boolean result = this.supplierForCanContinue.get();
         //return result;
+    }
+
+    public double run_seconds() {
+        return period.seconds();
+    }
+    public void reset_run_period() {
+        period.reset();
+    }
+
+    public boolean opModeIsActive() {
+        return supplierForCanContinue.get();
     }
 
     /**

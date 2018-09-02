@@ -24,7 +24,7 @@ public class TeleopNB extends SwerveUtilLOP {
          * The init() method of the hardware class does all the work here
          */
         enable_hardware_for_teleop();
-        // set_verbose();  // uncomment this line to debug
+        //set_verbose();  // uncomment this line to debug
 
         init_and_test();
 
@@ -36,7 +36,7 @@ public class TeleopNB extends SwerveUtilLOP {
         waitForStart();
 
         start_init();
-        robot.relicReachSystem.relic_arm_up(); // arm up to prevent intake gate collision
+        // robot.relicReachSystem.relic_arm_up(); // arm up to prevent intake gate collision
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -124,7 +124,7 @@ public class TeleopNB extends SwerveUtilLOP {
                 }
             }
 
-            if (robot.swerve.use_newbot) {
+            if (robot.swerve.use_swerve) {
 
                 if(robot.isTesting){ //Allow to test individual movement
 
@@ -181,9 +181,8 @@ public class TeleopNB extends SwerveUtilLOP {
                         }
                         sleep(400);
                     }
-                    if (robot.swerve.use_newbot) {
-                        robot.swerve.initialize_newbot();
-                    }
+                    robot.swerve.initialize_newbot();
+
                 } // end isTesting
                 else { //If not allowed to test servo positions, triggers do teleop spot turn
                     if (Math.abs(gamepad1.right_stick_x) > 0.1) {

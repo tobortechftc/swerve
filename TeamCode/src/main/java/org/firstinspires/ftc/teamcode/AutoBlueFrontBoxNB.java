@@ -15,21 +15,8 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot.swerve.use_swerve = false;
-        robot.jewel.use_arm = true;
-        robot.jewel.use_color_sensor = true;
-        robot.swerve.use_imu = true;
-        robot.swerve.use_encoder = true;
-        robot.swerve.use_newbot = true;
-        robot.use_range_sensor = true;
-        robot.camera.use_Vuforia = true;
-        robot.camera.use_camera = true;
-        robot.use_proximity_sensor = true;
-        robot.dumper.use_dumper = true;
-        robot.relicReachSystem.use_relic_grabber = false;
-        robot.relicReachSystem.use_relic_slider = false;
-        robot.relicReachSystem.use_relic_grabber = false;
-        robot.swerve.use_newbot_v2 = true;
+        enable_hardware_for_auto();
+        // set_verbose();
 
         robot.allianceColor = TeamColor.BLUE;
 
@@ -53,7 +40,6 @@ public class AutoBlueFrontBoxNB extends SwerveUtilLOP{
             sleep(15000);
             requestOpModeStop();
         }
-
 
         // run until the end of the match (driver presses STOP)
         if (opModeIsActive()) {

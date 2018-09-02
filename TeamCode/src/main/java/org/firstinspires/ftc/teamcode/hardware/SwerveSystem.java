@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,11 +28,13 @@ public class SwerveSystem {
     // final static double SV_RELIC_GRABBER_INIT = 0.5039;
     public boolean use_verbose = false;
     public boolean use_swerve = false;   // use four motors and four servos for chassis
-    public boolean use_newbot = false;   // use four motors and four servos for new chassis
-    public boolean use_newbot_v2 = true;
+    //public boolean use_newbot = false;   // use four motors and four servos for new chassis
+    //public boolean use_newbot_v2 = true;
     public boolean use_front_drive_only = false;
     public boolean use_imu = true;
     public boolean use_imu2 = false;
+    public boolean use_range_sensor = false;
+    public boolean use_proximity_sensor = false;
     public boolean use_encoder = true;
     boolean stop_on_bump = false; // [autonomous variable]
     boolean bump_detected = false; // [autonomous variable]
@@ -142,6 +146,13 @@ public class SwerveSystem {
     ElapsedTime runtime;
     public double target_heading = 0.0; // [cart variable]
 
+    public DigitalChannel proxL = null;
+    public DigitalChannel proxR = null;
+    public DigitalChannel proxFL = null;
+    public DigitalChannel proxML = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorFrontRight = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorFrontLeft = null;
+    public ModernRoboticsI2cRangeSensor rangeSensorBack = null;
     // The IMU sensor object
     public BNO055IMU imu = null;
     public BNO055IMU imu2 = null;
@@ -150,7 +161,9 @@ public class SwerveSystem {
     // State used for updating telemetry
     Orientation angles; // [ convert to local variable]
     Acceleration gravity;
-
+    public enum RangeSensor{
+        FRONT_LEFT, FRONT_RIGHT, BACK
+    }
     public enum CarMode {
         CAR,
         STRAIGHT,
@@ -160,7 +173,6 @@ public class SwerveSystem {
     }
     public CarMode cur_mode = CarMode.CAR;
     public CarMode old_mode = CarMode.CAR;
-    Telemetry ltel;
     ElapsedTime gTime;
 
     // Central core of robot
@@ -179,33 +191,33 @@ public class SwerveSystem {
         return (gTime.seconds()<30.0);
     }
     public void enable(boolean isAuto) {
-        use_swerve = false;   // use four motors and four servos for chassis
-        use_newbot = false;   // use four motors and four servos for new chassis
-        use_newbot_v2 = true;
+        use_swerve = true;   // use four motors and four servos for chassis
         use_front_drive_only = false;
         use_encoder = true;
         if (isAuto) {
             use_imu = true;
             use_imu2 = false;
+            use_range_sensor = true;
+            use_proximity_sensor = true;
         } else {
             use_imu = false;
             use_imu2 = false;
+            use_range_sensor = false;
+            use_proximity_sensor = false;
         }
     }
 
     void disable () {
-        use_swerve = false;   // use four motors and four servos for chassis
-        use_newbot = false;   // use four motors and four servos for new chassis
-        use_newbot_v2 = false;
+        use_swerve = false;   // disable four motors and four servos for chassis
         use_front_drive_only = false;
         use_encoder = false;
         use_imu = false;
         use_imu2 = false;
+        use_range_sensor = false;
+        use_proximity_sensor = false;
     }
 
-    void init(HardwareMap hwMap, Telemetry tel, ElapsedTime period) {
-        ltel = tel;
-        gTime = period;
+    void init(HardwareMap hwMap) {
         if (use_imu) {
             // Set up the parameters with which we will use our IMU. Note that integration
             // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -231,10 +243,32 @@ public class SwerveSystem {
             accel = imu.getAcceleration();
             imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         }
-        if (use_verbose)
-            tel.addData("0: initialize imu CPU time =", "%3.2f sec", period.seconds());
+        if (use_verbose) {
+            core.telemetry.addData("0: initialize imu CPU time =", "%3.2f sec", core.run_seconds());
+            core.telemetry.update();
+        }
 
-        if (use_swerve || use_newbot) {
+        if (use_proximity_sensor) {
+            proxL = hwMap.get(DigitalChannel.class, "proxL");
+            proxL.setMode(DigitalChannel.Mode.INPUT);
+            proxR = hwMap.get(DigitalChannel.class, "proxR");
+            proxR.setMode(DigitalChannel.Mode.INPUT);
+            proxFL = hwMap.get(DigitalChannel.class, "proxFL");
+            proxFL.setMode(DigitalChannel.Mode.INPUT);
+            proxML= hwMap.get(DigitalChannel.class, "proxML");
+            proxML.setMode(DigitalChannel.Mode.INPUT);
+        }
+        if (use_range_sensor) {
+            // rangeSensorFrontRight = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontRight");
+            rangeSensorFrontLeft = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsFrontLeft");
+            rangeSensorBack = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsBack");
+        }
+        if (use_verbose) {
+            core.telemetry.addData("0: initialize prox/ranger sensors CPU time =", "%3.2f sec", core.run_seconds());
+            core.telemetry.update();
+        }
+
+        if (use_swerve) {
             // Define and Initialize Motors
             motorFrontLeft = hwMap.dcMotor.get("motorFrontLeft");
             motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
@@ -277,16 +311,18 @@ public class SwerveSystem {
                 motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
-            if (use_newbot) {
+            if (use_swerve) {
                 initialize_newbot();
             }
-            if (use_verbose)
-                tel.addData("0: initialize chassis CPU time =", "%3.2f sec", period.seconds());
+            if (use_verbose) {
+                core.telemetry.addData("0: initialize chassis CPU time =", "%3.2f sec", core.run_seconds());
+                core.telemetry.update();
+            }
         }
     }
 
     void set_chassis_forward_position() {
-        if (use_newbot) {
+        {
             servoFrontLeft.setPosition(NB_SERVO_FL_FORWARD_POSITION);
             servoFrontRight.setPosition(NB_SERVO_FR_FORWARD_POSITION);
             servoBackLeft.setPosition(NB_SERVO_BL_FORWARD_POSITION);
@@ -296,16 +332,6 @@ public class SwerveSystem {
             servoPosFR = NB_SERVO_FR_FORWARD_POSITION;
             servoPosBL = NB_SERVO_BL_FORWARD_POSITION;
             servoPosBR = NB_SERVO_BR_FORWARD_POSITION;
-        } else {
-            servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION);
-            servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION);
-            servoBackLeft.setPosition(SERVO_BL_FORWARD_POSITION);
-            servoBackRight.setPosition(SERVO_BR_FORWARD_POSITION);
-
-            servoPosFL = SERVO_FL_FORWARD_POSITION;
-            servoPosFR = SERVO_FR_FORWARD_POSITION;
-            servoPosBL = SERVO_BL_FORWARD_POSITION;
-            servoPosBR = SERVO_BR_FORWARD_POSITION;
         }
     }
 
@@ -341,12 +367,7 @@ public class SwerveSystem {
         if (!use_imu)
             return 999;
 
-        if(!use_newbot) {
-            angles = (use_imu2 ? imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES) :
-                    imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
-            return angles.firstAngle;
-        }
-        else{
+        {
             if(!use_imu2){
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 return angles.firstAngle;
@@ -358,23 +379,62 @@ public class SwerveSystem {
         }
     }
 
+    public void reset_prox(){
+        proxL.setMode(DigitalChannel.Mode.OUTPUT);
+        proxR.setMode(DigitalChannel.Mode.OUTPUT);
+        proxL.setState(true);
+        proxR.setState(true);
+        proxL.setMode(DigitalChannel.Mode.INPUT);
+        proxR.setMode(DigitalChannel.Mode.INPUT);
+
+        proxFL.setMode(DigitalChannel.Mode.OUTPUT);
+        proxML.setMode(DigitalChannel.Mode.OUTPUT);
+        proxFL.setState(true);
+        proxML.setState(true);
+        proxFL.setMode(DigitalChannel.Mode.INPUT);
+        proxML.setMode(DigitalChannel.Mode.INPUT);
+        core.sleep(200);
+    }
+
+    public double getRange(RangeSensor direction){
+        ElapsedTime elapsedTime = new ElapsedTime();
+        double distance = 999;
+        if (!use_range_sensor)
+            return 0.0;
+        if(direction == RangeSensor.FRONT_LEFT){
+            if (rangeSensorFrontLeft==null)
+                distance = 0;
+            else while(distance > 365 && elapsedTime.seconds() < 0.3){
+                distance = rangeSensorFrontLeft.getDistance(DistanceUnit.CM);
+            }
+        } else if(direction == RangeSensor.FRONT_RIGHT){
+            if (rangeSensorFrontRight==null)
+                distance = 0;
+            else while(distance > 365 && elapsedTime.seconds() < 0.3){
+                distance = rangeSensorFrontRight.getDistance(DistanceUnit.CM);
+            }
+        } else if(direction == RangeSensor.BACK){
+            if (rangeSensorBack==null)
+                distance = 0;
+            else while(distance > 365 && elapsedTime.seconds() < 0.3){
+                distance = rangeSensorBack.getDistance(DistanceUnit.CM);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Direction not specified!");
+        }
+        if (distance>365) distance = 999;
+        return distance;
+    }
+
     public void driveTT(double lp, double rp) {
         if(!fast_mode && straight_mode) { // expect to go straight
             if (use_imu) {
                 double cur_heading = imu_heading();
                 double heading_off_by = ((cur_heading - target_heading) / 360);
-                if(use_swerve|| use_newbot) {
+                if(use_swerve) {
                     if(cur_mode == CarMode.STRAIGHT || cur_mode == CarMode.CAR) {
                         if(rp > 0 && lp > 0) { //When going forward
-                            if(use_swerve) {
-                                if (cur_heading - target_heading > 0.7) {
-                                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION - heading_off_by);
-                                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION - heading_off_by);
-                                } else if (cur_heading - target_heading < -0.7) {
-                                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION + heading_off_by);
-                                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION + heading_off_by);
-                                }
-                            } else if (use_newbot) {
                                 if (cur_heading - target_heading > 0.7) {
                                     servoFrontLeft.setPosition(NB_SERVO_FL_FORWARD_POSITION - heading_off_by);
                                     servoFrontRight.setPosition(NB_SERVO_FR_FORWARD_POSITION - heading_off_by);
@@ -382,19 +442,9 @@ public class SwerveSystem {
                                     servoFrontLeft.setPosition(NB_SERVO_FL_FORWARD_POSITION + heading_off_by);
                                     servoFrontRight.setPosition(NB_SERVO_FR_FORWARD_POSITION + heading_off_by);
                                 }
-                            }
-
                         }
                         else{ // When going backward
-                            if(use_swerve) {
-                                if (cur_heading - target_heading > 0.7) { //Drifting to the left
-                                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION + heading_off_by); //Turn Front servos to the right
-                                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION + heading_off_by);
-                                } else if (cur_heading - target_heading < -0.7) { //Drifting to the right
-                                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION - heading_off_by); //Turn Front servos to the left
-                                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION - heading_off_by);
-                                }
-                            } if (use_newbot) {
+                            {
                                 if (cur_heading - target_heading > 0.7) { //Drifting to the left
                                     servoFrontLeft.setPosition(NB_SERVO_FL_FORWARD_POSITION + heading_off_by); //Turn Front servos to the right
                                     servoFrontRight.setPosition(NB_SERVO_FR_FORWARD_POSITION + heading_off_by);
@@ -417,7 +467,7 @@ public class SwerveSystem {
                 }
             }
         }
-        if(use_swerve || use_newbot) {
+        if (use_swerve) {
             if (cur_mode == CarMode.STRAIGHT || cur_mode == CarMode.CAR) {
                 motorFrontRight.setPower(rp);
                 motorFrontLeft.setPower(lp);
@@ -443,6 +493,30 @@ public class SwerveSystem {
                 }
             }
         }
+    }
+
+    public void driveTTSnake(double drivePower, float turnIntensity, boolean snakeRight){ //Turn intensity is a value 0 to 1 meant to represent the triggers for determining the snake angle
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        calc_snake(snakeRight?0:turnIntensity,snakeRight?turnIntensity:0);
+        snake_servo_adj();
+        {
+            insideWheelsMod = drivePower * ((Math.pow((Math.pow(0.5 * NB_LENGTH_BETWEEN_WHEELS, 2) + Math.pow((r_Value) - NB_WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                    (r_Value));
+            outsideWheelsMod = drivePower * ((Math.pow((Math.pow(0.5 * NB_LENGTH_BETWEEN_WHEELS, 2) + Math.pow((r_Value) + NB_WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+                    (r_Value));
+        }
+        if (!snakeRight) {
+            motorPowerLeft = insideWheelsMod;
+            motorPowerRight = outsideWheelsMod;
+        } else {
+            motorPowerLeft = outsideWheelsMod;
+            motorPowerRight = insideWheelsMod;
+        }
+        motorFrontRight.setPower(motorPowerRight);
+        motorFrontLeft.setPower(motorPowerLeft);
+        motorBackLeft.setPower(0);
+        motorBackRight.setPower(0);
     }
 
     public void driveTTCoast(double lp, double rp){
@@ -476,18 +550,10 @@ public class SwerveSystem {
             if (use_imu) {
                 double cur_heading = imu_heading();
                 double heading_off_by = ((cur_heading - target_heading) / 360);
-                if(use_swerve || use_newbot) {
+                if(use_swerve) {
                     if(cur_mode == CarMode.STRAIGHT || cur_mode == CarMode.CAR) {
                         if(rp > 0 && lp > 0) { //When going forward
-                            if(use_swerve) {
-                                if (cur_heading - target_heading > 0.7) {
-                                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION - heading_off_by);
-                                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION - heading_off_by);
-                                } else if (cur_heading - target_heading < -0.7) {
-                                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION + heading_off_by);
-                                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION + heading_off_by);
-                                }
-                            } else if(use_newbot) {
+                            if (use_swerve) {
                                 if (cur_heading - target_heading > 0.7) {
                                     servoFrontLeft.setPosition(NB_SERVO_FL_FORWARD_POSITION - heading_off_by);
                                     servoFrontRight.setPosition(NB_SERVO_FR_FORWARD_POSITION - heading_off_by);
@@ -498,15 +564,7 @@ public class SwerveSystem {
                             }
                         }
                         else{ // When going backward
-                            if(use_swerve) {
-                                if (cur_heading - target_heading > 0.7) { //Drifting to the left
-                                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION + heading_off_by); //Turn Front servos to the right
-                                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION + heading_off_by);
-                                } else if (cur_heading - target_heading < -0.7) { //Drifting to the right
-                                    servoFrontLeft.setPosition(SERVO_FL_FORWARD_POSITION - heading_off_by); //Turn Front servos to the left
-                                    servoFrontRight.setPosition(SERVO_FR_FORWARD_POSITION - heading_off_by);
-                                }
-                            } else if (use_newbot) {
+                            if (use_swerve) {
                                 if (cur_heading - target_heading > 0.7) { //Drifting to the left
                                     servoFrontLeft.setPosition(NB_SERVO_FL_FORWARD_POSITION + heading_off_by); //Turn Front servos to the right
                                     servoFrontRight.setPosition(NB_SERVO_FR_FORWARD_POSITION + heading_off_by);
@@ -529,7 +587,7 @@ public class SwerveSystem {
                 }
             }
         }
-        if(use_swerve || use_newbot) {
+        if(use_swerve) {
             if (cur_mode == CarMode.STRAIGHT || cur_mode == CarMode.CAR) {
                 motorFrontRight.setPower(rp);
                 motorFrontLeft.setPower(lp);
@@ -655,10 +713,10 @@ public class SwerveSystem {
                     prev_speed = cur_speed;
                 }
                 if (use_verbose) {
-                    ltel.addData("4.Speed cur/prev/i=", "%.2f/%.2f/%1d", cur_speed, prev_speed, iter);
-                    ltel.addData("5.time cur/prev/^=", "%.4f/%.4f/%.4f", cur_time, prev_time, (cur_time-prev_time));
-                    ltel.addData("6.enco cur/prev/^=", "%2d/%2d/%2d", curPosFrontLeft, prev_lpos,(curPosFrontLeft-prev_lpos));
-                    ltel.update();
+                    core.telemetry.addData("4.Speed cur/prev/i=", "%.2f/%.2f/%1d", cur_speed, prev_speed, iter);
+                    core.telemetry.addData("5.time cur/prev/^=", "%.4f/%.4f/%.4f", cur_time, prev_time, (cur_time-prev_time));
+                    core.telemetry.addData("6.enco cur/prev/^=", "%2d/%2d/%2d", curPosFrontLeft, prev_lpos,(curPosFrontLeft-prev_lpos));
+                    core.telemetry.update();
                 }
             }
 
@@ -678,12 +736,12 @@ public class SwerveSystem {
             }
             if (use_verbose) {
                 //stop_chassis();
-                ltel.addData("4.Speed cur/prev/i/bumped=", "%.2f/%.2f/%1d/%s",
+                core.telemetry.addData("4.Speed cur/prev/i/bumped=", "%.2f/%.2f/%1d/%s",
                         cur_speed, prev_speed, iter, (bump_detected?"T":"F"));
-                ltel.addData("5.time cur/prev/^=", "%.4f/%.4f/%.4f", cur_time, prev_time, (cur_time-prev_time));
-                ltel.addData("6.enco cur/prev/^=", "%2d/%2d/%2d", curPosFrontLeft, prev_lpos,(curPosFrontLeft-prev_lpos));
-                ltel.addLine("7.Hit B/X button to go next/exit ...");
-                ltel.update();
+                core.telemetry.addData("5.time cur/prev/^=", "%.4f/%.4f/%.4f", cur_time, prev_time, (cur_time-prev_time));
+                core.telemetry.addData("6.enco cur/prev/^=", "%2d/%2d/%2d", curPosFrontLeft, prev_lpos,(curPosFrontLeft-prev_lpos));
+                core.telemetry.addLine("7.Hit B/X button to go next/exit ...");
+                core.telemetry.update();
                 //while (!gamepad1.x&&!gamepad1.b) {;}
             }
         }
@@ -1182,18 +1240,13 @@ public class SwerveSystem {
         else x_stick = right_t;
 
         if(cur_mode == CarMode.CAR) {
-            if(use_newbot){
-                insideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * NB_LENGTH_BETWEEN_WHEELS, 2) + Math.pow((r_Value) - NB_WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+
+            insideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * NB_LENGTH_BETWEEN_WHEELS, 2) + Math.pow((r_Value) - NB_WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
                         (r_Value));
-                outsideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * NB_LENGTH_BETWEEN_WHEELS, 2) + Math.pow((r_Value) + NB_WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
+            outsideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * NB_LENGTH_BETWEEN_WHEELS, 2) + Math.pow((r_Value) + NB_WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
                         (r_Value));
-            }
-            else {
-                insideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * LENGTH_BETWEEN_WHEELS, 2) + Math.pow((r_Value) - WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
-                        (r_Value));
-                outsideWheelsMod = left_stick * ((Math.pow((Math.pow(0.5 * LENGTH_BETWEEN_WHEELS, 2) + Math.pow((r_Value) + WIDTH_BETWEEN_WHEELS, 2)), 0.5)) /
-                        (r_Value));
-            }
+
+
             if (enoughToSnake) {
                 if (!use_front_drive_only) {
                     motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -1311,14 +1364,11 @@ public class SwerveSystem {
             r_Value = MAX_TURNING_RADIUS - (Math.abs(stick_x) * (MAX_TURNING_RADIUS - MIN_TURNING_RADIUS));
         }
 
-        if(use_newbot){
+        {
             thetaOneCalc = (Math.atan((0.5 * NB_WIDTH_BETWEEN_WHEELS) / ((r_Value) - (0.5 * NB_LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1 (inside wheels)
             thetaTwoCalc = (Math.atan((0.5 * NB_WIDTH_BETWEEN_WHEELS) / ((r_Value) + (0.5 * NB_LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2 (outside wheels)
         }
-        else {
-            thetaOneCalc = (Math.atan((0.5 * WIDTH_BETWEEN_WHEELS) / ((r_Value) - (0.5 * LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 1
-            thetaTwoCalc = (Math.atan((0.5 * WIDTH_BETWEEN_WHEELS) / ((r_Value) + (0.5 * LENGTH_BETWEEN_WHEELS))) / (Math.PI)) + 0.5; //Theta 2
-        }
+
     }
 
 }

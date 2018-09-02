@@ -40,8 +40,6 @@ public class CameraSystem {
 
     // Central core of robot
     CoreSystem core;
-    Telemetry ltel;
-    ElapsedTime gTime;
     ElapsedTime runtime;
 
     private TaintedAccess taintedAccess;
@@ -68,9 +66,7 @@ public class CameraSystem {
         use_camera = false;
     }
 
-    void init(HardwareMap hwMap, Telemetry tel, ElapsedTime period) {
-        ltel = tel;
-        gTime = period;
+    void init(HardwareMap hwMap) {
 
         if (use_Vuforia) {
             int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
@@ -91,8 +87,8 @@ public class CameraSystem {
             }
         }
         if (use_verbose) {
-            tel.addData("0: initialize Vuforia CPU time =", "%3.2f sec", period.seconds());
-            tel.update();
+            core.telemetry.addData("0: initialize Vuforia CPU time =", "%3.2f sec", core.run_seconds());
+            core.telemetry.update();
         }
     }
 
@@ -131,8 +127,8 @@ public class CameraSystem {
                 /* Found an instance of the template. In the actual game, you will probably
                  * loop until this condition occurs, then move on to act accordingly depending
                  * on which VuMark was visible. */
-                ltel.addData("VuMark", "%s visible", vuMark);
-                ltel.update();
+                core.telemetry.addData("VuMark", "%s visible", vuMark);
+                core.telemetry.update();
                 column = getColumnIndex(vuMark);
             }
         }

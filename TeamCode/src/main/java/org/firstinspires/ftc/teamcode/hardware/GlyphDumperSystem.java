@@ -19,7 +19,7 @@ public class GlyphDumperSystem {
 
     final static double SV_DUMPER_INIT = 0.6822;
     final static double SV_DUMPER_DOWN = 0.6822;
-    final static double SV_DUMPER_LIFT = 0.599;
+    public final static double SV_DUMPER_LIFT = 0.599;
     final static double SV_DUMPER_HALF_UP = 0.551;
     public final static double SV_DUMPER_UP = 0.204;
     final static double SV_DUMPER_DUMP = 0.214;
@@ -45,8 +45,6 @@ public class GlyphDumperSystem {
 
     // Central core of robot
     CoreSystem core;
-    Telemetry ltel;
-    ElapsedTime gTime;
     ElapsedTime runtime;
 
     private TaintedAccess taintedAccess;
@@ -68,18 +66,16 @@ public class GlyphDumperSystem {
         }
     }
 
-    void disable () {
+    public void disable() {
         use_dumper = false;
         use_dumper_gate = false;
     }
 
-    void init(HardwareMap hwMap, SwerveSystem swerve, Telemetry tel, ElapsedTime period) {
-        ltel = tel;
-        gTime = period;
+    void init(HardwareMap hwMap) {
         if (use_dumper) {
             sv_dumper = hwMap.servo.get("sv_dumper");
             sv_dumper.setPosition(SV_DUMPER_INIT);
-            if (swerve.use_newbot_v2) {
+            {
                 if (use_dumper_gate) {
                     sv_dumper_gate = hwMap.servo.get("sv_dumper_gate");
                     sv_dumper_gate.setPosition(SV_DUMPER_GATE_INIT);
@@ -94,8 +90,8 @@ public class GlyphDumperSystem {
             mt_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         if (use_verbose) {
-            ltel.addData("0: initialize dumper CPU time =", "%3.2f sec", period.seconds());
-            ltel.update();
+            core.telemetry.addData("0: initialize dumper CPU time =", "%3.2f sec", core.run_seconds());
+            core.telemetry.update();
         }
     }
     public void dumper_vertical() {
@@ -202,16 +198,16 @@ public class GlyphDumperSystem {
         mt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         runtime.reset();
         mt.setPower(Math.abs(power));
-        while (mt.isBusy() && (runtime.seconds() < 3) && taintedAccess.getSwerveUtilLOP().opModeIsActive()) {
-            ltel.addData("8. gg-rot pwr/cur/tar = ", "%3.2f/%d/%d",
+        while (mt.isBusy() && (runtime.seconds() < 3) && core.opModeIsActive()) {
+            core.telemetry.addData("8. gg-rot pwr/cur/tar = ", "%3.2f/%d/%d",
                     mt.getPower(), mt.getCurrentPosition(), target_gg_slider_pos);
-            ltel.update();
+            core.telemetry.update();
         }
         mt.setPower(Math.abs(power / 2.0));
-        while (mt.isBusy() && (runtime.seconds() < 1) && taintedAccess.getSwerveUtilLOP().opModeIsActive()) {
-            ltel.addData("8. gg-rot pwr/cur/tar = ", "%3.2f/%d/%d",
+        while (mt.isBusy() && (runtime.seconds() < 1) && core.opModeIsActive()) {
+            core.telemetry.addData("8. gg-rot pwr/cur/tar = ", "%3.2f/%d/%d",
                     mt.getPower(), mt.getCurrentPosition(), target_gg_slider_pos);
-            ltel.update();
+            core.telemetry.update();
         }
         mt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         mt.setPower(0);

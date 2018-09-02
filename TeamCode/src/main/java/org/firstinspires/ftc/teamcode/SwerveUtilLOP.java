@@ -5,17 +5,13 @@ import android.graphics.Color;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.vuforia.Image;
-import com.vuforia.PIXEL_FORMAT;
-import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.teamcode.hardware.GlyphDumperSystem;
+import org.firstinspires.ftc.teamcode.hardware.GlyphIntakeSystem;
+import org.firstinspires.ftc.teamcode.hardware.SwerveSystem;
+import org.firstinspires.ftc.teamcode.hardware.GreenManba;
 
 import static org.firstinspires.ftc.teamcode.hardware.SwerveSystem.CarMode.CAR;
 import static org.firstinspires.ftc.teamcode.hardware.SwerveSystem.CarMode.CRAB;
@@ -24,7 +20,8 @@ import static org.firstinspires.ftc.teamcode.hardware.SwerveSystem.CarMode.CRAB;
 public abstract class SwerveUtilLOP extends LinearOpMode {
 
     /* Declare OpMode members. */
-      public SwerveDriveHardware robot           = new SwerveDriveHardware();
+      // public SwerveDriveHardware robot           = new SwerveDriveHardware();
+      public GreenManba robot = new GreenManba();
 
     /**
      * Is used for checking or determining a color based on an alliance
@@ -46,9 +43,9 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         }
     }
 
-    enum RangeSensor{
-        FRONT_LEFT, FRONT_RIGHT, BACK
-    }
+//    enum RangeSensor{
+//        FRONT_LEFT, FRONT_RIGHT, BACK
+//    }
 
     /*
      **** [ Initialization code (called just once at start) ] ****
@@ -65,28 +62,25 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             }
         };
         // ... and pass it along to the robot, as its "shall I continue operating" master control.
-
-        robot.init(hardwareMap, telemetry, supplierForOpModeIsActive, this);
+        robot.init(hardwareMap, supplierForOpModeIsActive);
 
         if (robot.dumper.use_dumper) {
+            // check if lift encoder is working
             robot.gg_slider_encoder_ok = true;
         }
     }
 
     public void start_init() throws InterruptedException {
         robot.runtimeAuto.reset();
+        robot.coreSystem.reset_run_period();
         //if (robot.use_dumper) {
         //    lift_to_target(robot.LIFT_INIT_COUNT);
         //}
-        if (robot.swerve.use_newbot_v2 && robot.jewel.use_arm && (robot.jewel.sv_jkicker!=null)) {
+        if (robot.jewel.use_arm && (robot.jewel.sv_jkicker!=null)) {
             robot.jewel.sv_jkicker.setPosition(robot.jewel.SV_JKICKER_UP);
         }
         if (robot.relicReachSystem.use_relic_grabber) {
-            if (robot.swerve.use_newbot) {
-                robot.relicReachSystem.relic_grabber_open(false);
-            } else {
-                robot.relicReachSystem.relic_grabber_open(false);
-            }
+            robot.relicReachSystem.relic_grabber_open(false);
             relic_arm_auto();
         }
         if (robot.intake.use_intake) {
@@ -125,8 +119,6 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         robot.camera.enable(true);
         robot.jewel.enable(true);
         robot.relicReachSystem.enable(true);
-        robot.use_range_sensor = true;
-        robot.use_proximity_sensor = true;
     }
 
     public void enable_hardware_for_teleop() {
@@ -136,49 +128,6 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         robot.camera.disable();
         robot.jewel.enable(false);
         robot.relicReachSystem.enable(false);
-        robot.use_range_sensor = false;
-        robot.use_proximity_sensor = false;
-    }
-
-    /*
-     **** [ 7. Autonomous or TeleOp Mission  ]
-     */
-
-    /**
-     * Function to prevent range sensor from returning an error
-     * If this returns 999, it failed to get the right range in under .3 seconds
-     * @param direction
-     * @return
-     */
-    double getRange(RangeSensor direction){
-        ElapsedTime elapsedTime = new ElapsedTime();
-        double distance = 999;
-        if (!robot.use_range_sensor)
-            return 0.0;
-        if(direction == RangeSensor.FRONT_LEFT){
-            if (robot.rangeSensorFrontLeft==null)
-                distance = 0;
-            else while(distance > 365 && elapsedTime.seconds() < 0.3){
-                distance = robot.rangeSensorFrontLeft.getDistance(DistanceUnit.CM);
-            }
-        } else if(direction == RangeSensor.FRONT_RIGHT){
-            if (robot.rangeSensorFrontRight==null)
-                distance = 0;
-            else while(distance > 365 && elapsedTime.seconds() < 0.3){
-                distance = robot.rangeSensorFrontRight.getDistance(DistanceUnit.CM);
-            }
-        } else if(direction == RangeSensor.BACK){
-            if (robot.rangeSensorBack==null)
-                distance = 0;
-            else while(distance > 365 && elapsedTime.seconds() < 0.3){
-                distance = robot.rangeSensorBack.getDistance(DistanceUnit.CM);
-            }
-        }
-        else {
-            throw new IllegalArgumentException("Direction not specified!");
-        }
-        if (distance>365) distance = 999;
-        return distance;
     }
 
     /**
@@ -197,19 +146,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             robot.targetColumn = robot.camera.get_cryptobox_column();
         }
 
-        if (robot.swerve.use_newbot) {
-            if (robot.allianceColor == TeamColor.BLUE || robot.swerve.use_newbot_v2) {
-                robot.jewel.r_arm_down();
-            } else {
-                robot.jewel.l_arm_down();
-            }
-        } else { // oldBot
-            if (robot.allianceColor == TeamColor.BLUE) {
-                robot.jewel.l_arm_down();
-            } else {
-                robot.jewel.r_arm_down();
-            }
-        }
+        robot.jewel.r_arm_down();
 
         if(robot.camera.use_camera) {
             new Thread(new Runnable() {
@@ -244,8 +181,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 
         if (!opModeIsActive()) return 0;
 
-        if (robot.swerve.use_newbot_v2)
-            robot.intake.intakeGateUp();
+        robot.intake.intakeGateUp();
 
         if (!opModeIsActive()) return 0;
 
@@ -271,7 +207,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 
         // Determines if right jewel is red
         int directionI = calcArmDirection(rightJewelColorCS, robot.camera.rightJewelColorCamera, isBlueAlliance);
-        if (robot.swerve.use_newbot_v2 && !isBlueAlliance) {
+        if (!isBlueAlliance) {
             directionI *= -1;
         }
         if (!opModeIsActive()) return 0;
@@ -281,38 +217,16 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             else if (directionI>0)
                 robot.jewel.jkick_right();
             robot.jewel.r_arm_up();
-        } else if (robot.swerve.use_newbot) {
+        } else { // move chassis to knoc the jewel
             int dist = (directionI > 0 ? 7 : 6);
             robot.swerve.StraightCm(-.2 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
             sleep(100);
-            if (isBlueAlliance || robot.swerve.use_newbot_v2)
-                robot.jewel.r_arm_up(); // arm up to ensure the jewel is knocked out
-            else
-                robot.jewel.l_arm_up(); // arm up to ensure the jewel is knocked out
+            robot.jewel.r_arm_up(); // arm up to ensure the jewel is knocked out
             // next_dist = -1.0*dist*directionI;
             robot.swerve.StraightCm(.4 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
-        } else { // oldBot
-            if (isBlueAlliance) {
-                if (directionI == 1) { // Right jewel is our color
-                    robot.jewel.arm_left();
-                } else if (directionI == -1) { // Right jewel is their color
-                    robot.jewel.arm_right();
-                }
-                // if directionI 0, then color is unknown
-            } else {
-                int dist = (directionI > 0 ? 7 : 5);
-                robot.swerve.StraightCm(.1 * directionI, dist); // Drives forward if right jewel is red, backwards if blue
-                sleep(100);
-                robot.jewel.r_arm_up(); // arm up to ensure the jewel is knocked out
-                robot.swerve.StraightCm(-.15 * directionI, dist); // Drives forward if right jewel is blue, backwards if red
-            }
         }
         if (!opModeIsActive()) return next_dist;
 
-        if (isBlueAlliance && !robot.swerve.use_newbot) {
-            sleep(500);
-            robot.jewel.l_arm_up();
-        }
         if (robot.use_verbose)
             telemetry.addData("0: End doPlatformMission CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
 
@@ -334,11 +248,6 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             else if (camera == TeamColor.BLUE)
                 result = -1;
         }
-//        if (isBlueAlliance)
-//            result *= -1;
-//        if (robot.use_newbot && isBlueAlliance){
-//            result *= -1;
-//        }
         return result;
     }
 
@@ -354,7 +263,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 
     public void deliverGlyph() throws InterruptedException{
         if (!opModeIsActive()) return;
-        if (robot.swerve.use_newbot) {
+        if (robot.swerve.use_verbose) {
             robot.swerve.StraightIn(0.6, 2);
             if (!opModeIsActive()) return;
             robot.dumper.dumper_vertical();
@@ -369,62 +278,11 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             robot.swerve.StraightIn(0.8, 6);
             robot.dumper.dumper_down(true);
         }
-        if (robot.use_verbose)
+        if (robot.use_verbose) {
             telemetry.addData("0: End deliveryGlyph() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
+            telemetry.update();
+        }
     }
-
-//    TeamColor checkBallColor(boolean isBlueAlliance) throws InterruptedException {
-//        boolean isBlueBall = false;
-//        boolean isRedBall = false;
-//        robot.runtime.reset();
-//        double d = calcDelta(isBlueAlliance);
-//        TeamColor result = TeamColor.UNKNOWN;
-//
-//        while (!isBlueBall && !isRedBall && (robot.runtime.seconds()<1.5)) {
-//            if ((d >= robot.BLUE_BALL_MIN) && (d <= robot.BLUE_BALL_MAX)) {
-//                isBlueBall = true;
-//            } else {
-//                isBlueBall = false;
-//            }
-//            if (d >= robot.RED_BALL_MIN && d <= robot.RED_BALL_MAX) {
-//                isRedBall = true;
-//            } else {
-//                isRedBall = false;
-//            }
-//
-//            d = calcDelta(isBlueAlliance);
-//        }
-////        telemetry.addData("delta/isBlueBall/isRedBall=", "%3.1f/%s/%s",d,robot.isBlueBall,robot.isRedBall);
-////        telemetry.update();
-//        if (isBlueBall && isRedBall) {
-//            result = TeamColor.UNKNOWN;
-//        } else if (isBlueBall) {
-//            result = TeamColor.BLUE;
-//        }
-//        else if (isRedBall) {
-//            result = TeamColor.RED;
-//        }
-//        else {
-//            result = TeamColor.UNKNOWN;
-//        }
-//        return result;
-//    }
-
-//    int getColumnIndex(RelicRecoveryVuMark vuMark) throws InterruptedException {
-//        // return row index for Cryptograph
-//        // unknown : -1
-//        // left    :  0
-//        // center  :  1
-//        // right   :  2
-//        if (vuMark == RelicRecoveryVuMark.LEFT)
-//            return 0;
-//        else if (vuMark == RelicRecoveryVuMark.CENTER)
-//            return 1;
-//        else if (vuMark == RelicRecoveryVuMark.RIGHT)
-//            return 2;
-//
-//        return -1;
-//    }
 
     void go_to_crypto(double next_dist, double power, int targetColumn, boolean isBlue, boolean isSideBox)throws InterruptedException {
         if (targetColumn < 0) targetColumn = 1;
@@ -432,15 +290,11 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         if ((targetColumn==0 && isBlue==true) || (targetColumn==2 && isBlue==false))
             nearest_col = true;
 
-        int direction = (robot.swerve.use_newbot_v2&&!isBlue?1:-1);
-        if (robot.swerve.use_newbot) {
-            double dist = next_dist + (isSideBox ? 20 : 24);
-            if (nearest_col)
-                dist += 3;
-            robot.swerve.StraightIn(direction*.3, dist); // Drive off the balance stone
-        } else {
-            robot.swerve.StraightIn(-.25, (isSideBox ? 22 : 24)); // Drive off the balance stone
-        }
+        int direction = (!isBlue?1:-1);
+        double dist = next_dist + (isSideBox ? 20 : 24);
+        if (nearest_col)
+            dist += 3;
+        robot.swerve.StraightIn(direction*.3, dist); // Drive off the balance stone
         if (direction==1 && !isSideBox) { // red front need to turn 180 degree
             robot.swerve.TurnLeftD(0.4, 180);
             robot.swerve.alignUsingIMU(0.18, 178.0);
@@ -449,7 +303,6 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         }
 
         double driveDistance;
-        double dist;
 
         if (isSideBox) {
             if (isBlue) driveDistance = 6 + (18.5 * targetColumn); // 18cm between columns
@@ -457,17 +310,14 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
             if (driveDistance<7) driveDistance=7; // ensure turn not hitting balance stone
             robot.swerve.StraightCm(direction*power, driveDistance); // drive to cryptobox
 
-            if (isBlue || robot.swerve.use_newbot_v2) {
+            {
                 robot.swerve.TurnLeftD(0.35, 90);
                 robot.swerve.alignUsingIMU(0.18, 90.0);
-            } else {
-                robot.swerve.TurnRightD(0.35, 90);
-                robot.swerve.alignUsingIMU(0.18, -90.0);
             }
             if (!opModeIsActive()) return;
             enable_bump_detection();
             for(int i = 0 ; i < 3 ; i++) {
-                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 15;
+                dist = Math.max(robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_LEFT), robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_RIGHT)) - 15;
                 if (dist > 30) dist = 7;
                 if (dist<1) break;
                 robot.swerve.StraightCm(-.3, dist); // drive close to cryptobox
@@ -478,10 +328,8 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                 robot.swerve.StraightCm(.3, 2);
             }
             disable_bump_detection();
-            if (isBlue || robot.swerve.use_newbot_v2) {
+            {
                 robot.swerve.alignUsingIMU(0.18, 90.0);
-            } else {
-                robot.swerve.alignUsingIMU(0.18, -90.0);
             }
         } else { // Front box
             if (isBlue) { // Front Blue
@@ -507,7 +355,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 
             enable_bump_detection();
             for (int i=1; i<3; i++) {
-                dist = Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 15;
+                dist = Math.max(robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_LEFT), robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_RIGHT)) - 15;
                 if (dist<2) break;
                 if (dist > 50 || (dist <= 5 && i==0)) {
                     robot.swerve.StraightCm(-.25, 16);
@@ -527,7 +375,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         robot.swerve.change_swerve_pos(CRAB);
         // sleep(200);
         if (!opModeIsActive()) return;
-        reset_prox();
+        robot.swerve.reset_prox();
         //if (nearest_col) {
         //    // allow more time for proximity sensor to reset
         //    sleep(400);
@@ -543,8 +391,8 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         boolean edge_undetected_R=true;
         robot.runtime.reset();
         do {
-            edge_undetected_L = robot.proxL.getState();
-            edge_undetected_R = (nearest_col&&isBlue?true:robot.proxR.getState());
+            edge_undetected_L = robot.swerve.proxL.getState();
+            edge_undetected_R = (nearest_col&&isBlue?true:robot.swerve.proxR.getState());
             if (!opModeIsActive()) return;
         } while ((edge_undetected_L && edge_undetected_R) && (robot.runtime.seconds() < 1.5));
 
@@ -620,12 +468,14 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                 unknownCount++;
             }
         }
-
-        telemetry.addData("Red Count", redCount).setRetained(true);
-        telemetry.addData("Blue Count", blueCount).setRetained(true);
-        telemetry.addData("Unknown Count", unknownCount).setRetained(true);
-        telemetry.addData("Red Start", redStart).setRetained(true);
-        telemetry.addData("Blue Start", blueStart).setRetained(true);
+        if (robot.use_verbose) {
+            telemetry.addData("Red Count", redCount).setRetained(true);
+            telemetry.addData("Blue Count", blueCount).setRetained(true);
+            telemetry.addData("Unknown Count", unknownCount).setRetained(true);
+            telemetry.addData("Red Start", redStart).setRetained(true);
+            telemetry.addData("Blue Start", blueStart).setRetained(true);
+            telemetry.update();
+        }
 
         if(redStart < blueStart && redStart != -1 && blueStart != -1){
             return TeamColor.RED;
@@ -638,7 +488,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
     }
 
     void stop_tobot() {
-        if (robot.swerve.use_swerve||robot.swerve.use_newbot)
+        if (robot.swerve.use_swerve)
             robot.swerve.stop_chassis();
         if (robot.jewel!=null)
             robot.jewel.stop();
@@ -649,79 +499,27 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         // stop all sensors
     }
 
-
-
-//    void intakeTurn(boolean clockwise) {
-//        if (!robot.use_intake)
-//            return;
-//        if (clockwise) {
-//            robot.mt_intake_left.setPower(-robot.intake.intakeRatio / 2.0);
-//            robot.mt_intake_right.setPower(robot.intake.intakeRatio);
-//        } else {
-//            robot.mt_intake_left.setPower(robot.intake.intakeRatio);
-//            robot.mt_intake_right.setPower(-robot.intake.intakeRatio / 2);
-//        }
-//    }
-//
-//    void intakeOut() {
-//        if (!robot.use_intake)
-//            return;
-//        robot.mt_intake_left.setPower(-1.0*robot.intake.intakeRatio);
-//        robot.mt_intake_right.setPower(-1.0*robot.intake.intakeRatio);
-//        robot.intake.intakeBarWheelOut();
-//    }
-//
-//    void intakeStop() {
-//        if (!robot.use_intake)
-//            return;
-//        robot.mt_intake_left.setPower(0);
-//        robot.mt_intake_right.setPower(0);
-//        robot.intake.intakeBarWheelStop();
-//    }
-
-    void reset_prox(){
-        robot.proxL.setMode(DigitalChannel.Mode.OUTPUT);
-        robot.proxR.setMode(DigitalChannel.Mode.OUTPUT);
-        robot.proxL.setState(true);
-        robot.proxR.setState(true);
-        robot.proxL.setMode(DigitalChannel.Mode.INPUT);
-        robot.proxR.setMode(DigitalChannel.Mode.INPUT);
-
-        robot.proxFL.setMode(DigitalChannel.Mode.OUTPUT);
-        robot.proxML.setMode(DigitalChannel.Mode.OUTPUT);
-        robot.proxFL.setState(true);
-        robot.proxML.setState(true);
-        robot.proxFL.setMode(DigitalChannel.Mode.INPUT);
-        robot.proxML.setMode(DigitalChannel.Mode.INPUT);
-        sleep(200);
-    }
-
     void show_telemetry() throws InterruptedException {
         telemetry.addData("1. Team", " %s sw/IMU/Vu = %s%s/%s/%s",
-                robot.allianceColor, (robot.swerve.use_swerve||robot.swerve.use_newbot ?"Y":"N"),
+                robot.allianceColor, (robot.swerve.use_swerve ?"Y":"N"),
                 (robot.isTesting?"-T":""), (robot.swerve.use_imu?"Y":"N"),
                 (robot.camera.use_Vuforia ?"Y":"N"));
         telemetry.addData("2. PW-r/L/R/Sl-En =", "%.2f,%.2f/%.2f/%s",
                 robot.swerve.drivePowerRatio, robot.swerve.motorPowerLeft,robot.swerve.motorPowerRight,(robot.gg_slider_encoder_ok ?"Y":"N"));
         telemetry.addData("3. W-sv angle FL/FR/BL/BR =", "%.3f/%.3f/%.3f/%.3f",
                 robot.swerve.servoPosFL, robot.swerve.servoPosFR, robot.swerve.servoPosBL, robot.swerve.servoPosBR);
-        double range_front_left = getRange(RangeSensor.FRONT_LEFT);
-        double range_front_right = getRange(RangeSensor.FRONT_RIGHT);
-        double range_back = getRange(RangeSensor.BACK);
+        double range_front_left = robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_LEFT);
+        double range_front_right = robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_RIGHT);
+        double range_back = robot.swerve.getRange(SwerveSystem.RangeSensor.BACK);
         boolean glyph_stuck = GlyphStuck();
-        if (robot.swerve.use_imu||robot.use_range_sensor) {
+        if (robot.swerve.use_imu||robot.swerve.use_range_sensor) {
             telemetry.addData("4.1 IMU/Range", "%s=%.2f(i2=%.0f)/L=%.0f/R=%.0f/B%s=%.0fcm",
                     (robot.swerve.use_imu2?"i2":"i1"),robot.swerve.imu_heading(),robot.swerve.imu_heading(), range_front_left,range_front_right,
                     (glyph_stuck?"(S)":""), range_back);
         }
-        if (robot.use_proximity_sensor) {
-            if (robot.swerve.use_newbot) {
-                telemetry.addData("4.2.1 ProxSensorLeft =", robot.proxL.getState());
-                telemetry.addData("4.2.2 ProxSensorRight =", robot.proxR.getState());
-            }
-            else {
-                telemetry.addData("4.2 ProxSensor =", robot.proxL.getState());
-            }
+        if (robot.swerve.use_proximity_sensor) {
+            telemetry.addData("4.2.1 ProxSensorLeft =", robot.swerve.proxL.getState());
+            telemetry.addData("4.2.2 ProxSensorRight =", robot.swerve.proxR.getState());
         }
         if (robot.jewel.use_color_sensor) {
             telemetry.addData("5.2 color =", "R b/r = %3d/%3d",
@@ -731,7 +529,7 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         if (robot.camera.use_Vuforia) {
             telemetry.addData("5. Vuforia Column = ", "%d", robot.camera.get_cryptobox_column());
         }
-        if ((robot.swerve.use_swerve || robot.swerve.use_newbot)&& !robot.servo_tune_up) {
+        if ((robot.swerve.use_swerve)&& !robot.servo_tune_up) {
             telemetry.addData("6. Drive Mode = ", "%s", robot.swerve.cur_mode);
             telemetry.addData("6.1 SW-Enc FL/FR/BL/BR = ", "%d/%d/%d/%d",
                     robot.swerve.motorFrontLeft.getCurrentPosition(),
@@ -759,14 +557,10 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
                     robot.relicReachSystem.mt_relic_slider.getPower(),robot.relicReachSystem.mt_relic_slider.getCurrentPosition());
         }
         if (robot.isTesting){
-            if(robot.swerve.use_newbot){
-                telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.swerve.NB_LEFT_SV_DIFF, robot.swerve.NB_RIGHT_SV_DIFF);
-                telemetry.addData("12. CRAB_90_DIFF_DEC_FR/BR = ", "%.4f/%.4f",robot.swerve.NB_CRAB_DIFF_DEC_FR, robot.swerve.NB_CRAB_DIFF_DEC_BR);
-                telemetry.addData("13. CRAB_90_DIFF_INC_FL/BL = ", "%.4f/%.4f", robot.swerve.NB_CRAB_DIFF_INC_FL, robot.swerve.NB_CRAB_DIFF_INC_BL);
-            }
-            else {
-                telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.swerve.LEFT_SV_DIFF, robot.swerve.RIGHT_SV_DIFF);
-            }
+            telemetry.addData("11. CRAB_LEFT_DIFF/CRAB_RIGHT_DIFF = ", "%.4f/%.4f", robot.swerve.NB_LEFT_SV_DIFF, robot.swerve.NB_RIGHT_SV_DIFF);
+            telemetry.addData("12. CRAB_90_DIFF_DEC_FR/BR = ", "%.4f/%.4f",robot.swerve.NB_CRAB_DIFF_DEC_FR, robot.swerve.NB_CRAB_DIFF_DEC_BR);
+            telemetry.addData("13. CRAB_90_DIFF_INC_FL/BL = ", "%.4f/%.4f", robot.swerve.NB_CRAB_DIFF_INC_FL, robot.swerve.NB_CRAB_DIFF_INC_BL);
+
         }
         telemetry.update();
     }
@@ -784,12 +578,9 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
         }
         robot.relicReachSystem.relic_grabber_release();
         sleep(250);
-        if (robot.swerve.use_newbot) {
+        {
             robot.relicReachSystem.relic_slider_in(0.5, true);
             sleep(400);
-        } else {
-            robot.relicReachSystem.relic_slider_in(1.0, true);
-            sleep(1000);
         }
         robot.relicReachSystem.relic_slider_stop();
         robot.relicReachSystem.relic_arm_up();
@@ -798,310 +589,279 @@ public abstract class SwerveUtilLOP extends LinearOpMode {
 
     public void relic_arm_auto() {
         robot.swerve.stop_chassis();
-        if (robot.swerve.use_newbot) {
-            // robot.relicReachSystem.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
-            robot.relicReachSystem.relic_arm_down();
-        } else {
-            robot.relicReachSystem.relic_arm_down();
+        // robot.relicReachSystem.sv_relic_wrist.setPosition(robot.SV_RELIC_WRIST_DOWN_AUTO);
+        robot.relicReachSystem.relic_arm_down();
+    }
+
+
+    public void grabAndDump(boolean isSide, boolean isBlue) throws InterruptedException {
+        intakeGateMid();
+        double orig_imu = robot.swerve.imu_heading();
+
+        if (opModeIsActive()==false ||
+                (isSide==true && robot.runtimeAuto.seconds() > 24) ||
+                (isSide==false && robot.runtimeAuto.seconds() > 22)) {
+            return;
+        }
+        if (opModeIsActive()) {
+            robot.swerve.fast_mode = true;
+//            for(int i=0; i<2; i++) {
+//                double distance = getRange(RangeSensor.BACK);
+//                if (distance>20) {
+//                    distance += 20;
+//                    StraightCm((i==0?0.95:0.3), distance);
+//                }
+//            }
+            if (isSide)
+                robot.swerve.StraightCm(.95, 75);
+            else
+                robot.swerve.StraightCm(.95,115);
+            robot.swerve.fast_mode = false;
+        }
+        boolean got_one = autoIntakeGlyphs(isSide, isBlue);
+
+        if(isSide) robot.swerve.alignUsingIMU(0.3, orig_imu);
+        else robot.swerve.alignUsingIMU(0.3, orig_imu + (isBlue?14:-14));
+
+        if (opModeIsActive()) {
+            enable_bump_detection();
+            for (int i=0; i<2 && robot.bump_detected==false; i++) {
+                double dist = (isSide? Math.max(robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_LEFT),
+                        robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_RIGHT)) - 20:
+                        Math.min(robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_LEFT),
+                                robot.swerve.getRange(SwerveSystem.RangeSensor.FRONT_RIGHT)) - 20);
+                if (i==0) {
+                    if (isSide) {
+                        if (dist < 53) dist = 53;
+                        else if (dist > 80)
+                            dist = 80;
+                    } else { // front
+                        if (dist < 93) dist = 93;
+                        else if (dist > 120)
+                            dist = 120;
+                    }
+                    if (robot.runtimeAuto.seconds() > 27.5 || !got_one) {
+                        dist -= 15;
+                    }
+                } else if (dist<1) break;
+                if (i==0)robot.swerve.fast_mode = true;
+                robot.swerve.StraightCm((i==0?-0.9:-0.5), dist);
+                robot.swerve.fast_mode =false;
+                if (robot.runtimeAuto.seconds() > 29) return;
+            }
+            if (robot.bump_detected) {
+                robot.swerve.StraightCm(0.6,5);
+            }
+            disable_bump_detection();
+            robot.swerve.StraightCm(0.6, 4);
+        }
+        if((robot.runtimeAuto.seconds() > 29 || !got_one) && !robot.servo_tune_up){
+            return;
+        }
+        else if (got_one && opModeIsActive()) {
+            //lift_up_level_half();
+            quickDump(isSide);
+            //lift_back_init();
+//            if (alignBoxEdge() && opModeIsActive()) {
+//                deliverGlyph();
+//            }
+        }
+        if (robot.use_verbose) {
+            telemetry.addData("0: End GrabAndDump() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
+            telemetry.update();
         }
     }
 
-    /*
-     **** [ UNDECIDED :( ] ****
-     */
-
-//    @Override
-//    public void runOpMode() throws InterruptedException{
-//        /* Initialize the hardware variables.
-//         * The init() method of the hardware class does all the work here
-//         */
-//        robot.init(hardwareMap, telemetry);
-//
-//        // Send telemetry message to signify robot waiting;
-//        telemetry.addData("Say", "Hello! Driver");    //
-//        telemetry.update();
-//
-//        // Wait for the game to start (driver presses PLAY)
-//        waitForStart();
-//
-//        // run until the end of the match (driver presses STOP)
-//        while (opModeIsActive()) {
-//
-//        }
-//    }
-
-    // returns true if it bumped the wall (noticeable negative acceleration), false if it went two seconds without hitting the wall
-//    public boolean didBump() {
-//        robot.accel = robot.imu.getAcceleration();
-//        if (Math.abs(robot.accel.xAccel)+Math.abs(robot.accel.zAccel) >= 1.8) {
-//            robot.bump_detected = true;
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    public void grabAndDump(boolean isSide, boolean isBlue) throws InterruptedException {
-//        intakeGateMid();
-//        double orig_imu = imu_heading();
-//
-//        if (opModeIsActive()==false ||
-//                (isSide==true && robot.runtimeAuto.seconds() > 24) ||
-//                (isSide==false && robot.runtimeAuto.seconds() > 22)) {
-//            return;
-//        }
-//        if (opModeIsActive()) {
-//            robot.fast_mode = true;
-////            for(int i=0; i<2; i++) {
-////                double distance = getRange(RangeSensor.BACK);
-////                if (distance>20) {
-////                    distance += 20;
-////                    StraightCm((i==0?0.95:0.3), distance);
-////                }
-////            }
-//            if (isSide)
-//                StraightCm(.95, 75);
-//            else
-//                StraightCm(.95,115);
-//            robot.fast_mode = false;
-//        }
-//        boolean got_one = autoIntakeGlyphs(isSide, isBlue);
-//
-//        if(isSide) alignUsingIMU(0.3, orig_imu);
-//        else alignUsingIMU(0.3, orig_imu + (isBlue?14:-14));
-//
-//        if (opModeIsActive()) {
-//            enable_bump_detection();
-//            for (int i=0; i<2 && robot.bump_detected==false; i++) {
-//                double dist = (isSide? Math.max(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 20:
-//                        Math.min(getRange(RangeSensor.FRONT_LEFT), getRange(RangeSensor.FRONT_RIGHT)) - 20);
-//                if (i==0) {
-//                    if (isSide) {
-//                        if (dist < 53) dist = 53;
-//                        else if (dist > 80)
-//                            dist = 80;
-//                    } else { // front
-//                        if (dist < 93) dist = 93;
-//                        else if (dist > 120)
-//                            dist = 120;
-//                    }
-//                    if (robot.runtimeAuto.seconds() > 27.5 || !got_one) {
-//                        dist -= 15;
-//                    }
-//                } else if (dist<1) break;
-//                if (i==0)robot.fast_mode = true;
-//                StraightCm((i==0?-0.9:-0.5), dist);
-//                robot.fast_mode =false;
-//                if (robot.runtimeAuto.seconds() > 29) return;
-//            }
-//            if (robot.bump_detected) {
-//                StraightCm(0.6,5);
-//            }
-//            disable_bump_detection();
-//            StraightCm(0.6, 4);
-//        }
-//        if((robot.runtimeAuto.seconds() > 29 || !got_one) && !robot.servo_tune_up){
-//            return;
-//        }
-//        else if (got_one && opModeIsActive()) {
-//            //lift_up_level_half();
-//            quickDump(isSide);
-//            //lift_back_init();
-////            if (alignBoxEdge() && opModeIsActive()) {
-////                deliverGlyph();
-////            }
-//        }
-//        if (robot.shxx.use_verbose)
-//            telemetry.addData("0: End GrabAndDump() CPU time =", "%3.2f sec", robot.runtimeAuto.seconds());
-//    }
-
-//    public void quickDump(boolean isSide) throws InterruptedException {
-//        double turn_left_angles = -5;
-//        if (!opModeIsActive()) return;
-//        dumper_vertical();
-//        if (isSide) {
-//            if (robot.targetColumn == 0) {
-//                TurnRightD(0.6, 5);
-//            } else {
-//                TurnLeftD(0.6, 5);
-//            }
-//            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
-//        }
-//        else {
-//            if (robot.allianceColor == TeamColor.RED) {
-//                TurnLeftD(0.6, 3);
-//            } else {
-//                TurnRightD(0.6, 3);
-//            }
-//            change_swerve_pos(SwerveDriveHardware.CarMode.CAR);
-//        }
-//        // dumper_up();
-//        if (!opModeIsActive()) return;
-//        sleep(300);
-//        if (!opModeIsActive()) return;
-//        if (robot.runtimeAuto.seconds() < 29 || robot.servo_tune_up==true) {
-//            // sleep(100);
-//            driveTT(0.6, 0.6); // drive backward for .2 sec
-//            sleep(300);
-//            driveTT(0, 0);
-//            if (!opModeIsActive()) return;
-//            StraightIn(0.9,3); // out 5.5 in
-//            if (!opModeIsActive()) return;
-//            if (robot.runtimeAuto.seconds() < 29.5)
-//                sleep(100);
-//            StraightIn(0.9,4); // out 5.5 in
-//            if (!opModeIsActive()) return;
-//            dumper_down(false);
-//        } else {
-//            StraightIn(0.9,5.5);
-//        }
-//        if (!opModeIsActive()) return;
-//    }
-
-//    public boolean autoIntakeGlyphs(boolean isSide, boolean isBlue) throws InterruptedException {
-//        boolean got_at_least_one = false;
-//        boolean got_two = false;
-//        boolean tried_two = false;
-//        double time_out = (isSide?20:19);
-//        reset_prox();
-//        for (int i=0; i<1; i++) {
-//            // StraightIn(0.2,6);
-//            got_at_least_one = autoIntakeOneGlyph(isSide, isBlue);
-//        }
-//        if(/*robot.runtimeAuto.seconds() < time_out-4 && got_at_least_one && !gotTwoGlyphs()*/ false) {
-//            robot.snaked_left = false;
-//            got_two = autoIntakeSecondGlyph(isSide, isBlue);
-//        }
-//        if(robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false) return got_at_least_one;
-//        if (got_at_least_one && opModeIsActive()) {
-//            //dumper_shake();
-//            //intakeIn();
-//            //sleep(100);
-//            //intakeStop();
-//            //dumper_shake();
-//            robot.sv_dumper.setPosition(robot.SV_DUMPER_LIFT);
-//        }
-//        return got_at_least_one;
-//    }
-
-//    public boolean autoIntakeOneGlyph(boolean isSide, boolean isBlue) throws InterruptedException {
-//        double time_out = (isSide?26:24.5);
-//
-//        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
-//            return false;
-//        }
-//        boolean got_one = autoIntake(isSide, true, isBlue);
-//        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
-//            return false;
-//        }
-//
-//        for (int i=0; (i<3) && !got_one; i++) { // try upto 3 times
-//            if(robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false) return false;
-//            got_one = autoIntake(isSide, true, isBlue);
-//            if (!opModeIsActive()) return false;
-//        }
-//        return got_one;
-//    }
-
-//    public boolean autoIntakeSecondGlyph(boolean isSide,boolean isBlue) throws InterruptedException {
-//        double time_out = (isSide?22:20);
-//        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
-//            return false;
-//        }
-//        StraightCm(0.4,15);
-//        boolean got_two = autoIntake(isSide, false, isBlue);
-//        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
-//            return false;
-//        }
-//        for (int i=0; (i<1) && !got_two; i++) { // try upto 1 time
-//            if(robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false) return false;
-//            got_two = autoIntake(isSide, false, isBlue);
-//            if (!opModeIsActive()) return false;
-//        }
-//
-//        return got_two;
-//    }
-
-//    void intakeGateMid() {
-//        if (!robot.use_intake || !robot.use_newbot_v2)
-//            return;
-//        robot.sv_intake_gate.setPosition(robot.SV_INTAKE_GATE_MID);
-//    }
-
-//    public boolean autoIntake(boolean isSide, boolean isFirstGlyph, boolean isBlue) throws InterruptedException {
-//        double time_out = (isSide?26:24.5);
-//        boolean got_one = false;
-//        boolean curve_right = robot.snaked_left;
-//        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-1) && robot.servo_tune_up==false)) {
-//            intakeStop(); stop_chassis();return false;
-//        }
-////        double cur_heading = imu_heading();
-////        if (isBlue) { // drive to right
-////            driveTT(-0.2,-0.1);
-////        } else {
-////            driveTT(-0.1,-0.2);
-////        }
-//        driveTTSnake(-0.5,(float) 1.0,curve_right);
-//        robot.snaked_left = !robot.snaked_left;
-//        intakeIn();
-//        sleep(700);
-//        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-.5) && robot.servo_tune_up==false)) {
-//            intakeStop(); stop_chassis();return false;
-//        }
-//        stop_chassis();
-//        if(GlyphStuck()) {
-//            if(!robot.tried_clockwise) {
-//                correctGlyph(false);
-//                robot.tried_clockwise = true;
-//            }
-//            else{
-//                correctGlyph(false);
-//                robot.tried_clockwise = false;
-//            }
-//        }
-//        else{
-//            intakeOut();
-//            sleep(300);
-//        }
-//        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
-//            intakeStop(); stop_chassis();return false;
-//        }
-//        //driveTTSnake(-0.3,(float) 1.0,!curve_right);
-//        intakeIn();
-//        sleep(600);
-//        intakeStop();
-//        stop_chassis();
-//        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out+0.5) && robot.servo_tune_up==false)) {
-//            return false;
-//        }
-//        if(isFirstGlyph) {
-//            got_one = gotOneGlyph();
-//        }
-//        else{
-//            got_one = gotTwoGlyphs();
-//        }
-//        return got_one;
-//    }
-
-    public boolean GlyphStuck() {
-        if (robot.rangeSensorBack==null)
-            return false;
-        return (getRange(RangeSensor.BACK)<5.1);
+    public void quickDump(boolean isSide) throws InterruptedException {
+        double turn_left_angles = -5;
+        if (!opModeIsActive()) return;
+        robot.dumper.dumper_vertical();
+        if (isSide) {
+            if (robot.targetColumn == 0) {
+                robot.swerve.TurnRightD(0.6, 5);
+            } else {
+                robot.swerve.TurnLeftD(0.6, 5);
+            }
+            robot.swerve.change_swerve_pos(SwerveSystem.CarMode.CAR);
+        }
+        else {
+            if (robot.allianceColor == TeamColor.RED) {
+                robot.swerve.TurnLeftD(0.6, 3);
+            } else {
+                robot.swerve.TurnRightD(0.6, 3);
+            }
+            robot.swerve.change_swerve_pos(SwerveSystem.CarMode.CAR);
+        }
+        // dumper_up();
+        if (!opModeIsActive()) return;
+        sleep(300);
+        if (!opModeIsActive()) return;
+        if (robot.runtimeAuto.seconds() < 29 || robot.servo_tune_up==true) {
+            // sleep(100);
+            robot.swerve.driveTT(0.6, 0.6); // drive backward for .2 sec
+            sleep(300);
+            robot.swerve.driveTT(0, 0);
+            if (!opModeIsActive()) return;
+            robot.swerve.StraightIn(0.9,3); // out 5.5 in
+            if (!opModeIsActive()) return;
+            if (robot.runtimeAuto.seconds() < 29.5)
+                sleep(100);
+            robot.swerve.StraightIn(0.9,4); // out 5.5 in
+            if (!opModeIsActive()) return;
+            robot.dumper.dumper_down(false);
+        } else {
+            robot.swerve.StraightIn(0.9,5.5);
+        }
+        if (!opModeIsActive()) return;
     }
 
-//    boolean gotOneGlyph() {
-//        boolean got_one=false;
-//        if (robot.use_proximity_sensor) {
-//            got_one = !robot.proxFL.getState() || !robot.proxML.getState();
-//        }
-//        return got_one;
-//    }
+    public boolean autoIntakeGlyphs(boolean isSide, boolean isBlue) throws InterruptedException {
+        boolean got_at_least_one = false;
+        boolean got_two = false;
+        boolean tried_two = false;
+        double time_out = (isSide?20:19);
+        robot.swerve.reset_prox();
+        for (int i=0; i<1; i++) {
+            // StraightIn(0.2,6);
+            got_at_least_one = autoIntakeOneGlyph(isSide, isBlue);
+        }
+        if(/*robot.runtimeAuto.seconds() < time_out-4 && got_at_least_one && !gotTwoGlyphs()*/ false) {
+            robot.snaked_left = false;
+            got_two = autoIntakeSecondGlyph(isSide, isBlue);
+        }
+        if(robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false) return got_at_least_one;
+        if (got_at_least_one && opModeIsActive()) {
+            //dumper_shake();
+            //intakeIn();
+            //sleep(100);
+            //intakeStop();
+            //dumper_shake();
+            robot.dumper.sv_dumper.setPosition(GlyphDumperSystem.SV_DUMPER_LIFT);
+        }
+        return got_at_least_one;
+    }
 
-//    boolean gotTwoGlyphs() {
-//        boolean got_two=false;
-//        if (robot.use_proximity_sensor) {
-//            got_two = !robot.proxML.getState() && !robot.proxFL.getState();
+    public boolean autoIntakeOneGlyph(boolean isSide, boolean isBlue) throws InterruptedException {
+        double time_out = (isSide?26:24.5);
+
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
+            return false;
+        }
+        boolean got_one = autoIntake(isSide, true, isBlue);
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
+            return false;
+        }
+
+        for (int i=0; (i<3) && !got_one; i++) { // try upto 3 times
+            if(robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false) return false;
+            got_one = autoIntake(isSide, true, isBlue);
+            if (!opModeIsActive()) return false;
+        }
+        return got_one;
+    }
+
+    public boolean autoIntakeSecondGlyph(boolean isSide,boolean isBlue) throws InterruptedException {
+        double time_out = (isSide?22:20);
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
+            return false;
+        }
+        robot.swerve.StraightCm(0.4,15);
+        boolean got_two = autoIntake(isSide, false, isBlue);
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
+            return false;
+        }
+        for (int i=0; (i<1) && !got_two; i++) { // try upto 1 time
+            if(robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false) return false;
+            got_two = autoIntake(isSide, false, isBlue);
+            if (!opModeIsActive()) return false;
+        }
+
+        return got_two;
+    }
+
+    void intakeGateMid() {
+        if (!robot.intake.use_intake)
+            return;
+        robot.intake.sv_intake_gate.setPosition(GlyphIntakeSystem.SV_INTAKE_GATE_MID);
+    }
+
+    public boolean autoIntake(boolean isSide, boolean isFirstGlyph, boolean isBlue) throws InterruptedException {
+        double time_out = (isSide?26:24.5);
+        boolean got_one = false;
+        boolean curve_right = robot.snaked_left;
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-1) && robot.servo_tune_up==false)) {
+            robot.intake.intakeStop();
+            robot.swerve.stop_chassis();
+            return false;
+        }
+//        double cur_heading = imu_heading();
+//        if (isBlue) { // drive to right
+//            driveTT(-0.2,-0.1);
+//        } else {
+//            driveTT(-0.1,-0.2);
 //        }
-//        return got_two;
-//    }
+        robot.swerve.driveTTSnake(-0.5,(float) 1.0,curve_right);
+        robot.snaked_left = !robot.snaked_left;
+        robot.intake.intakeIn();
+        sleep(700);
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out-.5) && robot.servo_tune_up==false)) {
+            robot.intake.intakeStop(); robot.swerve.stop_chassis();return false;
+        }
+        robot.swerve.stop_chassis();
+        if(GlyphStuck()) {
+            if(!robot.tried_clockwise) {
+                robot.intake.correctGlyph(false);
+                robot.tried_clockwise = true;
+            }
+            else{
+                robot.intake.correctGlyph(false);
+                robot.tried_clockwise = false;
+            }
+        }
+        else{
+            robot.intake.intakeOut();
+            sleep(300);
+        }
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > time_out && robot.servo_tune_up==false)) {
+            robot.intake.intakeStop(); robot.swerve.stop_chassis();return false;
+        }
+        //driveTTSnake(-0.3,(float) 1.0,!curve_right);
+        robot.intake.intakeIn();
+        sleep(600);
+        robot.intake.intakeStop();
+        robot.swerve.stop_chassis();
+        if (!opModeIsActive() || (robot.runtimeAuto.seconds() > (time_out+0.5) && robot.servo_tune_up==false)) {
+            return false;
+        }
+        if(isFirstGlyph) {
+            got_one = gotOneGlyph();
+        }
+        else{
+            got_one = gotTwoGlyphs();
+        }
+        return got_one;
+    }
+
+    public boolean GlyphStuck() {
+        if (robot.swerve.rangeSensorBack==null)
+            return false;
+        return (robot.swerve.getRange(SwerveSystem.RangeSensor.BACK)<5.1);
+    }
+
+    boolean gotOneGlyph() {
+        boolean got_one=false;
+        if (robot.swerve.use_proximity_sensor) {
+            got_one = !robot.swerve.proxFL.getState() || !robot.swerve.proxML.getState();
+        }
+        return got_one;
+    }
+
+    boolean gotTwoGlyphs() {
+        boolean got_two=false;
+        if (robot.swerve.use_proximity_sensor) {
+            got_two = !robot.swerve.proxML.getState() && !robot.swerve.proxFL.getState();
+        }
+        return got_two;
+    }
 
 }
