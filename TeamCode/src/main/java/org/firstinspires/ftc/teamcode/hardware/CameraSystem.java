@@ -16,9 +16,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.SwerveUtilLOP;
+import org.opencv.core.Core;
 
 /**
- * Put brief class description here...
+ * @author Mason
  */
 public class CameraSystem {
     public boolean use_verbose = false;
